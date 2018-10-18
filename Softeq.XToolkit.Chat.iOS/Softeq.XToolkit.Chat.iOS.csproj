@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{3B93AB11-8D14-4F66-97FA-951528306916}</ProjectGuid>
+    <ProjectTypeGuids>{FEACFBD2-3405-455C-9665-78FE426C6842};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <OutputType>Library</OutputType>
+    <RootNamespace>Softeq.XToolkit.Chat.iOS</RootNamespace>
+    <AssemblyName>Softeq.XToolkit.Chat.UI.iOS</AssemblyName>
+    <IPhoneResourcePrefix>Resources</IPhoneResourcePrefix>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug</OutputPath>
+    <DefineConstants>DEBUG;</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <CodesignKey>iPhone Developer</CodesignKey>
+    <MtouchDebug>true</MtouchDebug>
+    <MtouchNoSymbolStrip>true</MtouchNoSymbolStrip>
+    <MtouchFastDev>true</MtouchFastDev>
+    <IOSDebuggerPort>18908</IOSDebuggerPort>
+    <MtouchHttpClientHandler>NSUrlSessionHandler</MtouchHttpClientHandler>
+    <DeviceSpecificBuild>false</DeviceSpecificBuild>
+    <MtouchVerbosity></MtouchVerbosity>
+    <MtouchLink></MtouchLink>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release</OutputPath>
+    <DefineConstants></DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <CodesignKey>iPhone Developer</CodesignKey>
+    <MtouchNoSymbolStrip>true</MtouchNoSymbolStrip>
+    <MtouchLink>SdkOnly</MtouchLink>
+    <MtouchHttpClientHandler>NSUrlSessionHandler</MtouchHttpClientHandler>
+    <MtouchVerbosity></MtouchVerbosity>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Core" />
+    <Reference Include="Xamarin.iOS" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="TPKeyboardAvoiding.Binding">
+      <Version>1.3.2</Version>
+    </PackageReference>
+    <PackageReference Include="AsyncDisplayKitBindings">
+      <Version>2.5.0</Version>
+    </PackageReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Resources\" />
+    <Folder Include="ViewControllers\" />
+    <Folder Include="Views\" />
+    <Folder Include="Extensions\" />
+    <Folder Include="Resources\ChatImages.xcassets\ScrollDown.imageset\" />
+    <Folder Include="Resources\ChatImages.xcassets\BubbleMine.imageset\" />
+    <Folder Include="Resources\ChatImages.xcassets\BubbleOther.imageset\" />
+    <Folder Include="Resources\ChatImages.xcassets\Close.imageset\" />
+    <Folder Include="Resources\ChatImages.xcassets\SendMessage.imageset\" />
+    <Folder Include="Resources\ChatImages.xcassets\AttachImage.imageset\" />
+    <Folder Include="TableSources\" />
+    <Folder Include="Resources\ChatImages.xcassets\NoPhoto.imageset\" />
+    <Folder Include="Resources\ChatImages.xcassets\MessageSending.imageset\" />
+    <Folder Include="Resources\ChatImages.xcassets\MessageDelivered.imageset\" />
+    <Folder Include="Resources\ChatImages.xcassets\MessageRead.imageset\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ViewControllers\ChatDetailsViewController.cs" />
+    <Compile Include="ViewControllers\ChatDetailsViewController.designer.cs">
+      <DependentUpon>ChatDetailsViewController.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ViewControllers\ChatsListViewController.cs" />
+    <Compile Include="ViewControllers\ChatsListViewController.designer.cs">
+      <DependentUpon>ChatsListViewController.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ViewControllers\ChatMessagesViewController.cs" />
+    <Compile Include="ViewControllers\ChatMessagesViewController.designer.cs">
+      <DependentUpon>ChatMessagesViewController.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ViewControllers\SelectContactsViewController.cs" />
+    <Compile Include="ViewControllers\SelectContactsViewController.designer.cs">
+      <DependentUpon>SelectContactsViewController.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Views\ChatDetailsHeaderView.cs" />
+    <Compile Include="Views\ChatDetailsHeaderView.designer.cs">
+      <DependentUpon>ChatDetailsHeaderView.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Views\ChatMessageNode.cs" />
+    <Compile Include="Views\ChatSummaryViewCell.cs" />
+    <Compile Include="Views\ChatSummaryViewCell.designer.cs">
+      <DependentUpon>ChatSummaryViewCell.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Views\ChatUserViewCell.cs" />
+    <Compile Include="Views\ChatUserViewCell.designer.cs">
+      <DependentUpon>ChatUserViewCell.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Views\InfoMessageNode.cs" />
+    <Compile Include="BootstrapperIos.cs" />
+    <Compile Include="Extensions\MvxCachedImageViewExtensions.cs" />
+    <Compile Include="TableSources\GroupedTableDataSource.cs" />
+    <Compile Include="TableSources\GroupedTableDelegate.cs" />
+    <Compile Include="Views\MessagesDateHeaderViewCell.cs" />
+    <Compile Include="Views\MessagesDateHeaderViewCell.designer.cs">
+      <DependentUpon>MessagesDateHeaderViewCell.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Views\ConnectionStatusView.cs" />
+    <Compile Include="Views\ConnectionStatusView.designer.cs">
+      <DependentUpon>ConnectionStatusView.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Views\ChatMessagesInputBarView.cs" />
+    <Compile Include="Views\ChatMessagesInputBarView.designer.cs">
+      <DependentUpon>ChatMessagesInputBarView.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ViewControllers\ChatMessagesViewController.InputAndKeyboard.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <InterfaceDefinition Include="ViewControllers\ChatDetailsStoryboard.storyboard" />
+    <InterfaceDefinition Include="ViewControllers\ChatsListStoryboard.storyboard" />
+    <InterfaceDefinition Include="ViewControllers\ChatMessagesStoryboard.storyboard" />
+    <InterfaceDefinition Include="ViewControllers\SelectContactsStoryboard.storyboard" />
+    <InterfaceDefinition Include="Views\ChatDetailsHeaderView.xib" />
+    <InterfaceDefinition Include="Views\ChatSummaryViewCell.xib" />
+    <InterfaceDefinition Include="Views\ChatUserViewCell.xib" />
+    <InterfaceDefinition Include="Views\MessagesDateHeaderViewCell.xib" />
+    <InterfaceDefinition Include="Views\ConnectionStatusView.xib" />
+    <InterfaceDefinition Include="Views\ChatMessagesInputBarView.xib" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Softeq.XToolkit.Chat\Softeq.XToolkit.Chat.csproj">
+      <Project>{B0A49876-1ED1-4545-A763-22E9A452C80D}</Project>
+      <Name>Softeq.XToolkit.Chat</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Softeq.XToolkit.Chat.Models\Softeq.XToolkit.Chat.Models.csproj">
+      <Project>{F88419DF-EE33-446F-915A-B4191112D592}</Project>
+      <Name>Softeq.XToolkit.Chat.Models</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\XToolkit\Softeq.XToolkit.Bindings\Softeq.XToolkit.Bindings.csproj">
+      <Project>{6CC4B55D-2EA0-4883-BF2A-BBEBC80150AF}</Project>
+      <Name>Softeq.XToolkit.Bindings</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\XToolkit\Softeq.XToolkit.Bindings.iOS\Softeq.XToolkit.Bindings.iOS.csproj">
+      <Project>{2D399BA9-1878-43E2-AF05-6873EAE9151B}</Project>
+      <Name>Softeq.XToolkit.Bindings.iOS</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\XToolkit\Softeq.XToolkit.Common\Softeq.XToolkit.Common.csproj">
+      <Project>{21503153-9566-4789-9B5A-73F2BA71AA51}</Project>
+      <Name>Softeq.XToolkit.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\XToolkit.WhiteLabel\Softeq.XToolkit.WhiteLabel.iOS\Softeq.XToolkit.WhiteLabel.iOS.csproj">
+      <Project>{CC89DBC6-E68A-4C85-91C4-E276D3BC3C2E}</Project>
+      <Name>Softeq.XToolkit.WhiteLabel.iOS</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\XToolkit\Softeq.XToolkit.Common.iOS\Softeq.XToolkit.Common.iOS.csproj">
+      <Project>{6BCB2009-2E46-458C-BCAA-AFC27A631924}</Project>
+      <Name>Softeq.XToolkit.Common.iOS</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\XToolkit.WhiteLabel\Softeq.XToolkit.WhiteLabel\Softeq.XToolkit.WhiteLabel.csproj">
+      <Project>{051C065C-DF97-4406-BEAB-F2F91842275C}</Project>
+      <Name>Softeq.XToolkit.WhiteLabel</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <ImageAsset Include="Resources\ChatImages.xcassets\Contents.json" />
+    <ImageAsset Include="Resources\ChatImages.xcassets\ScrollDown.imageset\Contents.json" />
+    <ImageAsset Include="Resources\ChatImages.xcassets\ScrollDown.imageset\ScrollDown.pdf" />
+    <ImageAsset Include="Resources\ChatImages.xcassets\BubbleMine.imageset\Contents.json" />
+    <ImageAsset Include="Resources\ChatImages.xcassets\BubbleOther.imageset\Contents.json" />
+    <ImageAsset Include="Resources\ChatImages.xcassets\Close.imageset\Contents.json" />
+    <ImageAsset Include="Resources\ChatImages.xcassets\Close.imageset\Close.pdf" />
+    <ImageAsset Include="Resources\ChatImages.xcassets\SendMessage.imageset\Contents.json" />
+    <ImageAsset Include="Resources\ChatImages.xcassets\AttachImage.imageset\Contents.json" />
+    <ImageAsset Include="Resources\ChatImages.xcassets\AttachImage.imageset\AttachImage.pdf" />
+    <ImageAsset Include="Resources\ChatImages.xcassets\BubbleMine.imageset\BubbleMine.pdf" />
+    <ImageAsset Include="Resources\ChatImages.xcassets\BubbleOther.imageset\BubbleOther.pdf" />
+    <ImageAsset Include="Resources\ChatImages.xcassets\SendMessage.imageset\SendMessage.pdf" />
+    <ImageAsset Include="Resources\ChatImages.xcassets\NoPhoto.imageset\Contents.json" />
+    <ImageAsset Include="Resources\ChatImages.xcassets\NoPhoto.imageset\Smiley.png" />
+    <ImageAsset Include="Resources\ChatImages.xcassets\MessageSending.imageset\Contents.json" />
+    <ImageAsset Include="Resources\ChatImages.xcassets\MessageSending.imageset\icSent.pdf" />
+    <ImageAsset Include="Resources\ChatImages.xcassets\MessageDelivered.imageset\Contents.json" />
+    <ImageAsset Include="Resources\ChatImages.xcassets\MessageDelivered.imageset\icSend.pdf" />
+    <ImageAsset Include="Resources\ChatImages.xcassets\MessageRead.imageset\Contents.json" />
+    <ImageAsset Include="Resources\ChatImages.xcassets\MessageRead.imageset\icRead.pdf" />
+  </ItemGroup>
+  <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />
+</Project>

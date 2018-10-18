@@ -1,0 +1,220 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{D119087C-75FE-4C82-8A43-D9852B1257FF}</ProjectGuid>
+    <ProjectTypeGuids>{EFBA0AD7-5A72-4C68-AF49-83D382785DCF};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <OutputType>Library</OutputType>
+    <RootNamespace>Softeq.XToolkit.Chat.Droid</RootNamespace>
+    <AssemblyName>Softeq.XToolkit.Chat.Droid</AssemblyName>
+    <TargetFrameworkVersion>v8.1</TargetFrameworkVersion>
+    <AndroidResgenFile>Resources\Resource.designer.cs</AndroidResgenFile>
+    <AndroidResgenClass>Resource</AndroidResgenClass>
+    <MonoAndroidResourcePrefix>Resources</MonoAndroidResourcePrefix>
+    <MonoAndroidAssetsPrefix>Assets</MonoAndroidAssetsPrefix>
+    <AndroidUseLatestPlatformSdk>false</AndroidUseLatestPlatformSdk>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug</OutputPath>
+    <DefineConstants>DEBUG;</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AndroidLinkMode>None</AndroidLinkMode>
+    <JavaMaximumHeapSize></JavaMaximumHeapSize>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AndroidManagedSymbols>true</AndroidManagedSymbols>
+    <AndroidUseSharedRuntime>false</AndroidUseSharedRuntime>
+    <JavaMaximumHeapSize></JavaMaximumHeapSize>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Core" />
+    <Reference Include="Mono.Android" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Xamarin.Android.Support.Constraint.Layout">
+      <Version>1.1.2</Version>
+    </PackageReference>
+    <PackageReference Include="Xamarin.Android.Support.Design">
+      <Version>27.0.2.1</Version>
+    </PackageReference>
+    <PackageReference Include="Xamarin.Android.Support.v7.RecyclerView">
+      <Version>27.0.2.1</Version>
+    </PackageReference>
+    <PackageReference Include="Xamarin.Android.Support.v7.AppCompat">
+      <Version>27.0.2.1</Version>
+    </PackageReference>
+    <PackageReference Include="Xamarin.Android.Support.Compat">
+      <Version>27.0.2.1</Version>
+    </PackageReference>
+    <PackageReference Include="Xamarin.FFImageLoading.Transformations">
+      <Version>2.4.3.840</Version>
+    </PackageReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Views\ChatsListActivity.cs" />
+    <Compile Include="Views\ChatDetailsActivity.cs" />
+    <Compile Include="Views\ChatMessagesActivity.cs" />
+    <Compile Include="Views\SelectContactsActivity.cs" />
+    <Compile Include="BootstrapperDroid.cs" />
+    <Compile Include="Resources\Resource.designer.cs" />
+    <Compile Include="ViewHolders\ChatUserViewHolder.cs" />
+    <Compile Include="ViewHolders\ChatViewHolder.cs" />
+    <Compile Include="ViewHolders\ConversationInfoViewHolder.cs" />
+    <Compile Include="ViewHolders\ConversationViewHolder.cs" />
+    <Compile Include="ViewHolders\IBindableViewHolder.cs" />
+    <Compile Include="Adapters\ChatObservableRecyclerViewAdapter.cs" />
+    <Compile Include="Adapters\ConversationsObservableRecyclerViewAdapter.cs" />
+    <Compile Include="Extensions\MvxCachedImageViewExtensions.cs" />
+    <Compile Include="ViewHolders\BindableViewHolder.cs" />
+    <Compile Include="Adapters\BaseChatObservableRecyclerViewAdapter.cs" />
+    <Compile Include="LayoutManagers\GuardedLinearLayoutManager.cs" />
+    <Compile Include="Listeners\ScrollDownScrollListener.cs" />
+    <Compile Include="Listeners\RecyclerViewTouchListener.cs" />
+    <Compile Include="LinkerPleaseInclude.cs" />
+    <Compile Include="Adapters\GroupedObservableRecyclerViewAdapter.cs" />
+    <Compile Include="ItemTouchCallbacks\SwipeCallback.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\AboutResources.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\values\strings.xml" />
+    <AndroidResource Include="Resources\layout\activity_chat_details.xml" />
+    <AndroidResource Include="Resources\layout\item_chat.xml" />
+    <AndroidResource Include="Resources\layout\activity_chat.xml" />
+    <AndroidResource Include="Resources\layout\item_contact.xml" />
+    <AndroidResource Include="Resources\layout\item_conversation_incoming.xml" />
+    <AndroidResource Include="Resources\layout\item_conversation_info.xml" />
+    <AndroidResource Include="Resources\layout\item_conversation_outcoming.xml" />
+    <AndroidResource Include="Resources\layout\activity_conversations.xml" />
+    <AndroidResource Include="Resources\layout\activity_chat_create.xml" />
+    <AndroidResource Include="Resources\values\themes.xml" />
+    <AndroidResource Include="Resources\menu\popup_conversation.xml" />
+    <AndroidResource Include="Resources\menu\toolbar_chat.xml" />
+    <AndroidResource Include="Resources\menu\toolbar_conversations.xml" />
+    <AndroidResource Include="Resources\drawable-hdpi\ic_new.png" />
+    <AndroidResource Include="Resources\drawable-mdpi\ic_new.png" />
+    <AndroidResource Include="Resources\drawable-xhdpi\ic_new.png" />
+    <AndroidResource Include="Resources\drawable-xxhdpi\ic_new.png" />
+    <AndroidResource Include="Resources\drawable-xxxhdpi\ic_new.png" />
+    <AndroidResource Include="Resources\drawable-hdpi\ic_attachment.png" />
+    <AndroidResource Include="Resources\drawable-hdpi\ic_send.png" />
+    <AndroidResource Include="Resources\drawable-mdpi\ic_attachment.png" />
+    <AndroidResource Include="Resources\drawable-mdpi\ic_send.png" />
+    <AndroidResource Include="Resources\drawable-xhdpi\ic_attachment.png" />
+    <AndroidResource Include="Resources\drawable-xhdpi\ic_send.png" />
+    <AndroidResource Include="Resources\drawable-xxhdpi\ic_attachment.png" />
+    <AndroidResource Include="Resources\drawable-xxhdpi\ic_send.png" />
+    <AndroidResource Include="Resources\drawable-xxxhdpi\ic_attachment.png" />
+    <AndroidResource Include="Resources\drawable-xxxhdpi\ic_send.png" />
+    <AndroidResource Include="Resources\drawable-hdpi\ic_close.png" />
+    <AndroidResource Include="Resources\drawable-mdpi\ic_close.png" />
+    <AndroidResource Include="Resources\drawable-xhdpi\ic_close.png" />
+    <AndroidResource Include="Resources\drawable-xxhdpi\ic_close.png" />
+    <AndroidResource Include="Resources\drawable-xxxhdpi\ic_close.png" />
+    <AndroidResource Include="Resources\drawable\bg_conversation_editing_indicator.xml" />
+    <AndroidResource Include="Resources\values\colors.xml" />
+    <AndroidResource Include="Resources\menu\toolbar_create_chat.xml" />
+    <AndroidResource Include="Resources\drawable-hdpi\conversation_bubble_incoming.9.png" />
+    <AndroidResource Include="Resources\drawable-hdpi\conversation_bubble_outcoming.9.png" />
+    <AndroidResource Include="Resources\drawable-mdpi\conversation_bubble_incoming.9.png" />
+    <AndroidResource Include="Resources\drawable-mdpi\conversation_bubble_outcoming.9.png" />
+    <AndroidResource Include="Resources\drawable-xhdpi\conversation_bubble_incoming.9.png" />
+    <AndroidResource Include="Resources\drawable-xhdpi\conversation_bubble_outcoming.9.png" />
+    <AndroidResource Include="Resources\drawable-xxhdpi\conversation_bubble_incoming.9.png" />
+    <AndroidResource Include="Resources\drawable-xxhdpi\conversation_bubble_outcoming.9.png" />
+    <AndroidResource Include="Resources\drawable-xxxhdpi\conversation_bubble_incoming.9.png" />
+    <AndroidResource Include="Resources\drawable-xxxhdpi\conversation_bubble_outcoming.9.png" />
+    <AndroidResource Include="Resources\anim\news_enter_left_to_right.xml" />
+    <AndroidResource Include="Resources\anim\news_enter_right_to_left.xml" />
+    <AndroidResource Include="Resources\anim\news_exit_left_to_right.xml" />
+    <AndroidResource Include="Resources\anim\news_exit_right_to_left.xml" />
+    <AndroidResource Include="Resources\drawable-hdpi\conversation_scroll_down.png" />
+    <AndroidResource Include="Resources\drawable-mdpi\conversation_scroll_down.png" />
+    <AndroidResource Include="Resources\drawable-xhdpi\conversation_scroll_down.png" />
+    <AndroidResource Include="Resources\drawable-xxhdpi\conversation_scroll_down.png" />
+    <AndroidResource Include="Resources\drawable-xxxhdpi\conversation_scroll_down.png" />
+    <AndroidResource Include="Resources\drawable-hdpi\ic_delivered.png" />
+    <AndroidResource Include="Resources\drawable-hdpi\ic_read.png" />
+    <AndroidResource Include="Resources\drawable-hdpi\ic_sent.png" />
+    <AndroidResource Include="Resources\drawable-mdpi\ic_delivered.png" />
+    <AndroidResource Include="Resources\drawable-mdpi\ic_read.png" />
+    <AndroidResource Include="Resources\drawable-mdpi\ic_sent.png" />
+    <AndroidResource Include="Resources\drawable-xhdpi\ic_delivered.png" />
+    <AndroidResource Include="Resources\drawable-xhdpi\ic_read.png" />
+    <AndroidResource Include="Resources\drawable-xhdpi\ic_sent.png" />
+    <AndroidResource Include="Resources\drawable-xxhdpi\ic_delivered.png" />
+    <AndroidResource Include="Resources\drawable-xxhdpi\ic_read.png" />
+    <AndroidResource Include="Resources\drawable-xxhdpi\ic_sent.png" />
+    <AndroidResource Include="Resources\drawable-xxxhdpi\ic_delivered.png" />
+    <AndroidResource Include="Resources\drawable-xxxhdpi\ic_read.png" />
+    <AndroidResource Include="Resources\drawable-xxxhdpi\ic_sent.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Views\" />
+    <Folder Include="Resources\layout\" />
+    <Folder Include="Resources\drawable\" />
+    <Folder Include="Resources\menu\" />
+    <Folder Include="Extensions\" />
+    <Folder Include="LayoutManagers\" />
+    <Folder Include="Listeners\" />
+    <Folder Include="ItemTouchCallbacks\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\XToolkit\Softeq.XToolkit.Bindings.Droid\Softeq.XToolkit.Bindings.Droid.csproj">
+      <Project>{2B4A678B-63B4-49DB-99B1-BFE7793110C4}</Project>
+      <Name>Softeq.XToolkit.Bindings.Droid</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\XToolkit\Softeq.XToolkit.Bindings\Softeq.XToolkit.Bindings.csproj">
+      <Project>{6CC4B55D-2EA0-4883-BF2A-BBEBC80150AF}</Project>
+      <Name>Softeq.XToolkit.Bindings</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\XToolkit\Softeq.XToolkit.Common\Softeq.XToolkit.Common.csproj">
+      <Project>{21503153-9566-4789-9B5A-73F2BA71AA51}</Project>
+      <Name>Softeq.XToolkit.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\XToolkit\Softeq.XToolkit.Common.Droid\Softeq.XToolkit.Common.Droid.csproj">
+      <Project>{18D3FDC1-B0A1-401E-87F2-1C43034E610C}</Project>
+      <Name>Softeq.XToolkit.Common.Droid</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\XToolkit.WhiteLabel\Softeq.XToolkit.WhiteLabel\Softeq.XToolkit.WhiteLabel.csproj">
+      <Project>{051C065C-DF97-4406-BEAB-F2F91842275C}</Project>
+      <Name>Softeq.XToolkit.WhiteLabel</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Softeq.XToolkit.Chat.Models\Softeq.XToolkit.Chat.Models.csproj">
+      <Project>{F88419DF-EE33-446F-915A-B4191112D592}</Project>
+      <Name>Softeq.XToolkit.Chat.Models</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Softeq.XToolkit.Chat.HttpClient\Softeq.XToolkit.Chat.HttpClient.csproj">
+      <Project>{914F7803-23F8-4D1E-8CA9-E96F69B37768}</Project>
+      <Name>Softeq.XToolkit.Chat.HttpClient</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Softeq.XToolkit.Chat.SignalRClient\Softeq.XToolkit.Chat.SignalRClient.csproj">
+      <Project>{6CF3B7D4-E886-4425-B8CE-2D7180102530}</Project>
+      <Name>Softeq.XToolkit.Chat.SignalRClient</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\XToolkit.WhiteLabel\Softeq.XToolkit.WhiteLabel.Droid\Softeq.XToolkit.WhiteLabel.Droid.csproj">
+      <Project>{7F44F0F6-8396-42D0-8A1B-DC40CE8C478C}</Project>
+      <Name>Softeq.XToolkit.WhiteLabel.Droid</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Softeq.XToolkit.Chat\Softeq.XToolkit.Chat.csproj">
+      <Project>{B0A49876-1ED1-4545-A763-22E9A452C80D}</Project>
+      <Name>Softeq.XToolkit.Chat</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
+</Project>

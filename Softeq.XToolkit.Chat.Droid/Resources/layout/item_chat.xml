@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="80dp"
+    android:foreground="?selectableItemBackground">
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@android:color/white"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentBottom="true"  />
+
+    <ffimageloading.cross.MvxCachedImageView
+        android:id="@+id/chat_photo_image_view"
+        android:layout_width="45dp"
+        android:layout_height="45dp"
+        android:layout_alignParentLeft="true"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginTop="8dp"/>
+
+    <TextView
+        android:id="@+id/chat_name_text_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_toLeftOf="@+id/message_status_indicator"
+        android:layout_toRightOf="@+id/chat_photo_image_view"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:text="[chat name]"
+        android:textColor="@android:color/black"
+        android:textSize="17sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/username_text_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/chat_name_text_view"
+        android:layout_alignRight="@+id/chat_name_text_view"
+        android:layout_below="@+id/chat_name_text_view"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:text="[username]"
+        android:visibility="gone" />
+
+    <TextView
+        android:id="@+id/message_body_text_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/username_text_view"
+        android:layout_alignParentBottom="true"
+        android:layout_below="@+id/username_text_view"
+        android:layout_toLeftOf="@+id/date_time_text_view"
+        android:ellipsize="end"
+        android:gravity="center_vertical"
+        android:maxLines="2"
+        android:text="[message body]"
+        android:textColor="#8d8d8d"
+        android:textSize="15sp" />
+
+    <TextView
+        android:id="@+id/date_time_text_view"
+        android:layout_width="50dp"
+        android:layout_height="20dp"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginRight="20dp"
+        android:layout_marginTop="8dp"
+        android:gravity="end"
+        android:maxLines="1"
+        android:text="[12:15]"
+        android:textColor="#8d8d8d"
+        android:textSize="12sp" />
+
+    <View
+        android:id="@+id/message_status_indicator"
+        android:layout_width="18dp"
+        android:layout_height="18dp"
+        android:layout_toLeftOf="@+id/date_time_text_view"
+        android:background="@android:color/holo_green_light"
+        android:visibility="gone" />
+
+    <TextView
+        android:id="@+id/unreaded_messages_count_text_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="false"
+        android:layout_alignParentRight="true"
+        android:layout_below="@+id/date_time_text_view"
+        android:layout_centerHorizontal="false"
+        android:layout_centerInParent="false"
+        android:layout_centerVertical="false"
+        android:layout_marginRight="20dp"
+        android:layout_marginTop="12dp"
+        android:gravity="center"
+        android:maxLines="1"
+        android:minWidth="20dp"
+        android:padding="2dp"
+        android:text="0"
+        android:textColor="@android:color/white"
+        android:textSize="12sp" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_alignParentBottom="true"
+        android:layout_marginLeft="8dp"
+        android:layout_toRightOf="@+id/chat_photo_image_view"
+        android:background="#cccccc" />
+</RelativeLayout>

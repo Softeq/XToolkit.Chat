@@ -1,0 +1,132 @@
+﻿// Developed by Softeq Development Corporation
+// http://www.softeq.com
+
+using System;
+using Android.Graphics;
+using Android.Graphics.Drawables;
+using Android.Views;
+using Android.Widget;
+using FFImageLoading;
+using FFImageLoading.Cross;
+using FFImageLoading.Transformations;
+using Softeq.XToolkit.Bindings;
+using Softeq.XToolkit.Chat.Models;
+using Softeq.XToolkit.Chat.ViewModels;
+using Softeq.XToolkit.Common;
+using Softeq.XToolkit.Common.Command;
+using Softeq.XToolkit.Common.Droid.Converters;
+
+namespace Softeq.XToolkit.Chat.Droid.ViewHolders
+{
+    public class ChatViewHolder : BindableViewHolder<ChatSummaryViewModel>
+    {
+        private const string UnreadMessagesCountColor = "#5bc6c9";
+        private const string UnreadMutedMessagesCountColor = "#b4b4b4";
+        private const string ChatStatusDefaultColor = "#dedede";
+
+        private readonly WeakAction<ChatSummaryViewModel> _selectChatAction;
+
+        private WeakReferenceEx<ChatSummaryViewModel> _viewModelRef;
+
+        public ChatViewHolder(View itemView, Action<ChatSummaryViewModel> selectChatAction) : base(itemView)
+        {
+            _selectChatAction = new WeakAction<ChatSummaryViewModel>(selectChatAction);
+
+            ChatPhotoImageView = itemView.FindViewById<MvxCachedImageView>(Resource.Id.chat_photo_image_view);
+            ChatNameTextView = itemView.FindViewById<TextView>(Resource.Id.chat_name_text_view);
+            UserNameTextView = itemView.FindViewById<TextView>(Resource.Id.username_text_view);
+            MessageBodyTextView = itemView.FindViewById<TextView>(Resource.Id.message_body_text_view);
+            DateTimeTextView = itemView.FindViewById<TextView>(Resource.Id.date_time_text_view);
+            UnreadMessageCountTextView = itemView.FindViewById<TextView>(Resource.Id.unreaded_messages_count_text_view);
+            MessageStatusIndicatorView = itemView.FindViewById<View>(Resource.Id.message_status_indicator);
+
+            itemView.SetCommand(nameof(itemView.Click), new RelayCommand(ChatClickHandler));
+        }
+
+        private MvxCachedImageView ChatPhotoImageView { get; }
+        private TextView ChatNameTextView { get; }
+        private TextView UserNameTextView { get; }
+        private TextView MessageBodyTextView { get; }
+        private TextView DateTimeTextView { get; }
+        private TextView UnreadMessageCountTextView { get; }
+        private View MessageStatusIndicatorView { get; }
+
+        public override void BindViewModel(ChatSummaryViewModel viewModel)
+        {
+            _viewModelRef = WeakReferenceEx.Create(viewModel);
+
+            Bindings.Add(this.SetBinding(() => _viewModelRef.Target.ChatName, () => ChatNameTextView.Text));
+            Bindings.Add(this.SetBinding(() => _viewModelRef.Target.LastMessageUsername, () => UserNameTextView.Text));
+            Bindings.Add(this.SetBinding(() => _viewModelRef.Target.LastMessageBody, () => MessageBodyTextView.Text));
+            Bindings.Add(this.SetBinding(() => _viewModelRef.Target.LastMessageDateTime, () => DateTimeTextView.Text));
+
+            Bindings.Add(this.SetBinding(() => _viewModelRef.Target.ChatPhotoUrl).WhenSourceChanges(() =>
+            {
+                if (ChatPhotoImageView == null)
+                {
+                    return;
+                }
+
+                ImageService.Instance
+                            .LoadUrl(_viewModelRef.Target.ChatPhotoUrl)
+                            .Transform(new CircleTransformation())
+                            .IntoAsync(ChatPhotoImageView);
+            }));
+
+            Bindings.Add(this.SetBinding(() => _viewModelRef.Target.UnreadMessageCount).WhenSourceChanges(() =>
+            {
+                if (UnreadMessageCountTextView != null)
+                {
+                    UnreadMessageCountTextView.Text = _viewModelRef.Target.UnreadMessageCount.ToString();
+                    UnreadMessageCountTextView.Visibility = BoolToViewStateConverter.ConvertGone(_viewModelRef.Target.UnreadMessageCount > 0);
+                }
+            }));
+
+            Bindings.Add(this.SetBinding(() => _viewModelRef.Target.IsMuted).WhenSourceChanges(() =>
+            {
+                if (UnreadMessageCountTextView != null)
+                {
+                    var color = _viewModelRef.Target.IsMuted ? UnreadMutedMessagesCountColor : UnreadMessagesCountColor;
+                    UnreadMessageCountTextView.Background = CreateBackgroundWithCornerRadius(Color.ParseColor(color), 56f);
+                }
+            }));
+
+            Bindings.Add(this.SetBinding(() => _viewModelRef.Target.LastMessageStatus).WhenSourceChanges(() =>
+            {
+                Color color;
+
+                switch (_viewModelRef.Target.LastMessageStatus)
+                {
+                    case ChatMessageStatus.Read:
+                        color = Color.GreenYellow;
+                        break;
+                    case ChatMessageStatus.Other:
+                        color = Color.Transparent;
+                        break;
+                    default:
+                        color = Color.ParseColor(ChatStatusDefaultColor);
+                        break;
+                }
+
+                MessageStatusIndicatorView?.SetBackgroundColor(color);
+            }));
+        }
+
+        // TODO: move to XToolkit.Common
+        private static Drawable CreateBackgroundWithCornerRadius(Color color, float radius)
+        {
+            var drawable = new GradientDrawable();
+
+            drawable.SetShape(ShapeType.Rectangle);
+            drawable.SetColor(color);
+            drawable.SetCornerRadius(radius);
+
+            return drawable;
+        }
+
+        private void ChatClickHandler()
+        {
+            _selectChatAction.Execute(_viewModelRef.Target);
+        }
+    }
+}
