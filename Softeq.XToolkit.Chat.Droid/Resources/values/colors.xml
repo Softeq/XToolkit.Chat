@@ -1,0 +1,10 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <color name="chat_primary_text_color">#000000</color>
+  <color name="chat_secondary_text_color">#cccccc</color>
+  <color name="chat_normal_control_color">#bbbbbb</color>
+  <color name="chat_brand_color">#3edad7</color>
+  <color name="chat_unreaded_color">#5bc6c9</color>
+  <color name="chat_unreaded_muted_color">#b4b4b4</color>
+  <color name="chat_status_default_color">#dedede</color>
+</resources>

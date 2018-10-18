@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14113" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina5_9" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14088"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <scenes>
+        <!--Chat Messages View Controller-->
+        <scene sceneID="Sfa-WX-oGs">
+            <objects>
+                <viewController storyboardIdentifier="ChatMessagesViewController" id="hEd-6e-eGO" customClass="ChatMessagesViewController" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="hpo-qg-Fhu">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="812"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <view contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="LFP-9B-hjR" customClass="ConnectionStatusView">
+                                <rect key="frame" x="-101" y="-50" width="240" height="128"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                            </view>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="5Z8-CY-Xex">
+                                <rect key="frame" x="0.0" y="44" width="375" height="768"/>
+                                <subviews>
+                                    <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" animating="YES" style="gray" translatesAutoresizingMaskIntoConstraints="NO" id="cs2-Vj-07f">
+                                        <rect key="frame" x="177" y="374" width="20" height="20"/>
+                                    </activityIndicatorView>
+                                    <button hidden="YES" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="TSq-is-kiR">
+                                        <rect key="frame" x="309" y="710" width="50" height="50"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="50" id="hcr-JY-8m6"/>
+                                            <constraint firstAttribute="width" constant="50" id="upz-7c-JO3"/>
+                                        </constraints>
+                                        <state key="normal" backgroundImage="ScrollDown"/>
+                                    </button>
+                                </subviews>
+                                <color key="backgroundColor" red="0.96078431372549022" green="0.96078431372549022" blue="0.96078431372549022" alpha="1" colorSpace="calibratedRGB"/>
+                                <constraints>
+                                    <constraint firstAttribute="trailing" secondItem="TSq-is-kiR" secondAttribute="trailing" constant="16" id="38N-yR-bGU"/>
+                                    <constraint firstItem="cs2-Vj-07f" firstAttribute="centerX" secondItem="5Z8-CY-Xex" secondAttribute="centerX" id="BVe-M2-ebz"/>
+                                    <constraint firstAttribute="bottom" secondItem="TSq-is-kiR" secondAttribute="bottom" constant="8" id="tmG-xS-jnD"/>
+                                    <constraint firstItem="cs2-Vj-07f" firstAttribute="centerY" secondItem="5Z8-CY-Xex" secondAttribute="centerY" id="tvA-Ty-tIB"/>
+                                </constraints>
+                            </view>
+                        </subviews>
+                        <color key="backgroundColor" red="0.96078431372549022" green="0.96078431372549022" blue="0.96078431372549022" alpha="1" colorSpace="calibratedRGB"/>
+                        <constraints>
+                            <constraint firstAttribute="bottom" secondItem="5Z8-CY-Xex" secondAttribute="bottom" id="D3j-6p-3aK"/>
+                            <constraint firstItem="5Z8-CY-Xex" firstAttribute="top" secondItem="AwT-YV-5Kv" secondAttribute="top" id="F2K-a0-f5p"/>
+                            <constraint firstItem="5Z8-CY-Xex" firstAttribute="trailing" secondItem="AwT-YV-5Kv" secondAttribute="trailing" id="LTi-09-0Am"/>
+                            <constraint firstItem="5Z8-CY-Xex" firstAttribute="leading" secondItem="AwT-YV-5Kv" secondAttribute="leading" id="qoD-v8-Jvi"/>
+                        </constraints>
+                        <viewLayoutGuide key="safeArea" id="AwT-YV-5Kv"/>
+                    </view>
+                    <connections>
+                        <outlet property="CustomTitleView" destination="LFP-9B-hjR" id="EeP-pt-m19"/>
+                        <outlet property="MainView" destination="5Z8-CY-Xex" id="nfG-lh-GIo"/>
+                        <outlet property="MainViewBottomConstraint" destination="D3j-6p-3aK" id="a24-gc-ggZ"/>
+                        <outlet property="ScrollDownBottomConstraint" destination="tmG-xS-jnD" id="G5y-Zj-9qI"/>
+                        <outlet property="ScrollToBottomButton" destination="TSq-is-kiR" id="D4V-gp-0Bq"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="SWf-WD-X0i" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="101.59999999999999" y="131.78410794602701"/>
+        </scene>
+    </scenes>
+    <resources>
+        <image name="ScrollDown" width="51" height="51"/>
+    </resources>
+</document>

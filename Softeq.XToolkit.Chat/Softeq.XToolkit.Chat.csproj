@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Softeq.XToolkit.Chat.Models\Softeq.XToolkit.Chat.Models.csproj" />
+    <ProjectReference Include="..\..\XToolkit.WhiteLabel\Softeq.XToolkit.WhiteLabel\Softeq.XToolkit.WhiteLabel.csproj" />
+    <ProjectReference Include="..\Softeq.XToolkit.Chat.SignalRClient\Softeq.XToolkit.Chat.SignalRClient.csproj" />
+    <ProjectReference Include="..\Softeq.XToolkit.Chat.HttpClient\Softeq.XToolkit.Chat.HttpClient.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="System.Reactive" Version="4.0.0" />
+    <PackageReference Include="Autofac" Version="4.8.1" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="ViewModels\" />
+    <Folder Include="Manager\" />
+    <Folder Include="Exceptions\" />
+  </ItemGroup>
+</Project>

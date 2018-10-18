@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="System.Reactive" Version="4.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="1.0.3" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\XToolkit\Softeq.XToolkit.Auth\Softeq.XToolkit.Auth.csproj" />
+    <ProjectReference Include="..\Softeq.XToolkit.Chat.Models\Softeq.XToolkit.Chat.Models.csproj" />
+    <ProjectReference Include="..\..\XToolkit\Softeq.XToolkit.RemoteData\Softeq.XToolkit.RemoteData.csproj" />
+    <ProjectReference Include="..\..\XToolkit\Softeq.XToolkit.Connectivity\Softeq.XToolkit.Connectivity.csproj" />
+  </ItemGroup>
+</Project>
