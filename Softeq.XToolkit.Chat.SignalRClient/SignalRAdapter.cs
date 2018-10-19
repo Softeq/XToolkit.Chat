@@ -49,13 +49,14 @@ namespace Softeq.XToolkit.Chat.SignalRClient
                               IRefreshTokenService refreshTokenService,
                               IRestHttpClient httpClient,
                               ILogManager logManager,
-                              IInternetConnectionManager internetConnectionManager)
+                              IInternetConnectionManager internetConnectionManager,
+                              IChatConfiguration chatConfiguration)
         {
             _accountService = accountService;
             _refreshTokenService = refreshTokenService;
             _httpClient = httpClient;
             _logger = logManager.GetLogger<SignalRAdapter>();
-            _signalRClient = new SignalRClient(ChatConfig.BaseUrl);
+            _signalRClient = new SignalRClient(chatConfiguration.BaseUrl);
 
             SubscribeToEvents();
 

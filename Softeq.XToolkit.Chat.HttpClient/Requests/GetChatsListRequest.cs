@@ -1,14 +1,20 @@
 ﻿// Developed by Softeq Development Corporation
 // http://www.softeq.com
 
-using Softeq.XToolkit.Chat.Models;
 using Softeq.XToolkit.RemoteData.HttpClient;
 
 namespace Softeq.XToolkit.Chat.HttpClient.Requests
 {
     internal class GetChatsListRequest : BaseRestRequest
     {
-        public override string EndpointUrl => $"{ChatConfig.ApiUrl}/channel/allowed";
+        private readonly string _apiUrl;
+
+        public GetChatsListRequest(string apiUrl)
+        {
+            _apiUrl = apiUrl;
+        }
+
+        public override string EndpointUrl => $"{_apiUrl}/channel/allowed";
 
         public override bool UseOriginalEndpoint => true;
     }
