@@ -1,21 +1,22 @@
 ﻿// Developed by Softeq Development Corporation
 // http://www.softeq.com
 
-using Softeq.XToolkit.Chat.Models;
 using Softeq.XToolkit.RemoteData.HttpClient;
 
 namespace Softeq.XToolkit.Chat.HttpClient.Requests
 {
     internal class GetChatMembersRequest : BaseRestRequest
     {
-        public readonly string _chatId;
+        private readonly string _apiUrl;
+        private readonly string _chatId;
 
-        public GetChatMembersRequest(string chatId)
+        public GetChatMembersRequest(string apiUrl, string chatId)
         {
+            _apiUrl = apiUrl;
             _chatId = chatId;
         }
 
-        public override string EndpointUrl => $"{ChatConfig.ApiUrl}/channel/{_chatId}/participant";
+        public override string EndpointUrl => $"{_apiUrl}/channel/{_chatId}/participant";
 
         public override bool UseOriginalEndpoint => true;
     }
