@@ -1,9 +1,7 @@
 ﻿// Developed by Softeq Development Corporation
 // http://www.softeq.com
 
-using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using Android.App;
 using Android.Graphics;
 using Android.OS;
@@ -95,7 +93,14 @@ namespace Softeq.XToolkit.Chat.Droid.Views
         protected override void DoAttachBindings()
         {
             base.DoAttachBindings();
-            Bindings.Add(this.SetBinding(() => ViewModel.ConnectionStatus).WhenSourceChanges(UpdateTitle));
+
+            Bindings.Add(this.SetBinding(() => ViewModel.ConnectionStatusViewModel.ConnectionStatusText).WhenSourceChanges(() =>
+            {
+                Execute.BeginOnUIThread(() =>
+                {
+                    SupportActionBar.Title = ViewModel.ConnectionStatusViewModel.ConnectionStatusText;
+                });
+            }));
         }
 
         protected override void OnDestroy()
@@ -103,29 +108,6 @@ namespace Softeq.XToolkit.Chat.Droid.Views
             _chatsRecyclerView.GetAdapter().Dispose();
 
             base.OnDestroy();
-        }
-
-        private void UpdateTitle()
-        {
-            Execute.BeginOnUIThread(() =>
-            {
-                switch (ViewModel.ConnectionStatus)
-                {
-                    case Models.Enum.ConnectionStatus.Online:
-                        SupportActionBar.Title = "Chats";
-                        break;
-                    case Models.Enum.ConnectionStatus.WaitingForNetwork:
-                        SupportActionBar.Title = "Waiting for network";
-                        break;
-                    case Models.Enum.ConnectionStatus.Updating:
-                        SupportActionBar.Title = "Updating...";
-                        break;
-                    case Models.Enum.ConnectionStatus.Connecting:
-                        SupportActionBar.Title = "Connecting...";
-                        break;
-                    default: throw new InvalidEnumArgumentException();
-                }
-            });
         }
 
         private void InitializeRecyclerView()

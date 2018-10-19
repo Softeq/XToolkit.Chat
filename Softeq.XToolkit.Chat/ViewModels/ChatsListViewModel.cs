@@ -23,7 +23,6 @@ namespace Softeq.XToolkit.Chat.ViewModels
         private readonly IPageNavigationService _pageNavigationService;
         private readonly ChatManager _chatManager;
 
-        private ConnectionStatus _connectionStatus;
         private ISampleChatLoginService _loginService;
         private string _userName = "Not Logged In";
         private bool _isReloginButtonVisible = true;
@@ -33,13 +32,16 @@ namespace Softeq.XToolkit.Chat.ViewModels
         public ChatsListViewModel(
             IDialogsService dialogsService,
             IPageNavigationService pageNavigationService,
-            ChatManager chatManager)
+            ChatManager chatManager,
+            ConnectionStatusViewModel connectionStatusViewModel)
         {
             TryInitLoginService();
 
             _dialogsService = dialogsService;
             _pageNavigationService = pageNavigationService;
             _chatManager = chatManager;
+
+            ConnectionStatusViewModel = connectionStatusViewModel;
 
             Chats = _chatManager.ChatsCollection;
 
@@ -75,11 +77,7 @@ namespace Softeq.XToolkit.Chat.ViewModels
             }
         }
 
-        public ConnectionStatus ConnectionStatus
-        {
-            get => _connectionStatus;
-            set => Set(ref _connectionStatus, value);
-        }
+        public ConnectionStatusViewModel ConnectionStatusViewModel { get; }
 
         public string UserName
         {
@@ -96,8 +94,9 @@ namespace Softeq.XToolkit.Chat.ViewModels
         public override void OnAppearing()
         {
             base.OnAppearing();
+
             _subscriptions.Add(_chatManager.ConnectionStatusChanged.Subscribe(OnConnectionStatusChanged));
-            ConnectionStatus = _chatManager.ConnectionStatus;
+            OnConnectionStatusChanged(_chatManager.ConnectionStatus);
         }
 
         public override void OnDisappearing()
@@ -150,9 +149,10 @@ namespace Softeq.XToolkit.Chat.ViewModels
             }
         }
 
-        private void OnConnectionStatusChanged(ConnectionStatus connectionStatus)
+        private void OnConnectionStatusChanged(ConnectionStatus status)
         {
-            ConnectionStatus = connectionStatus;
+            ConnectionStatusViewModel.UpdateConnectionStatus(status, "Chats");
+            RaisePropertyChanged(nameof(ConnectionStatusViewModel));
         }
     }
 }

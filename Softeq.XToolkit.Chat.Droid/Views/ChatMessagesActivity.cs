@@ -1,7 +1,6 @@
 ﻿// Developed by Softeq Development Corporation
 // http://www.softeq.com
 
-using System.ComponentModel;
 using Android.App;
 using Android.OS;
 using Android.Support.V7.Widget;
@@ -115,8 +114,13 @@ namespace Softeq.XToolkit.Chat.Droid.Views
         {
             base.DoAttachBindings();
 
-            Bindings.Add(this.SetBinding(() => ViewModel.ChatName).WhenSourceChanges(UpdateTitle));
-            Bindings.Add(this.SetBinding(() => ViewModel.ConnectionStatus).WhenSourceChanges(UpdateTitle));
+            Bindings.Add(this.SetBinding(() => ViewModel.ConnectionStatusViewModel.ConnectionStatusText).WhenSourceChanges(() =>
+            {
+                Execute.BeginOnUIThread(() =>
+                {
+                    SupportActionBar.Title = ViewModel.ConnectionStatusViewModel.ConnectionStatusText;
+                });
+            }));
             Bindings.Add(this.SetBinding(() => ViewModel.MessageToSendBody, () => _messageEditText.Text, BindingMode.TwoWay));
             Bindings.Add(this.SetBinding(() => ViewModel.IsInEditMessageMode).WhenSourceChanges(() =>
             {
@@ -152,29 +156,6 @@ namespace Softeq.XToolkit.Chat.Droid.Views
 
                 _isAdapterSourceInitialized = true;
             }));
-        }
-
-        private void UpdateTitle()
-        {
-            Execute.BeginOnUIThread(() =>
-            {
-                switch (ViewModel.ConnectionStatus)
-                {
-                    case Models.Enum.ConnectionStatus.Online:
-                        Title = ViewModel.ChatName;
-                        break;
-                    case Models.Enum.ConnectionStatus.WaitingForNetwork:
-                        Title = "Waiting for network";
-                        break;
-                    case Models.Enum.ConnectionStatus.Updating:
-                        Title = "Updating...";
-                        break;
-                    case Models.Enum.ConnectionStatus.Connecting:
-                        Title = "Connecting...";
-                        break;
-                    default: throw new InvalidEnumArgumentException();
-                }
-            });
         }
 
         private void ScrollToPosition(int lastPosition)
