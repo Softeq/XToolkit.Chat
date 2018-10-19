@@ -36,7 +36,6 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
             // Reset text for back button
             NavigationItem.BackBarButtonItem = new UIBarButtonItem("", UIBarButtonItemStyle.Plain, null, null);
             NavigationItem.TitleView = CustomTitleView;
-            CustomTitleView.DefaultTitle = "Chats";
 
             // Setup brand color for NavigationBar buttons
             NavigationController.NavigationBar.BarTintColor = UIColor.White;
@@ -75,7 +74,10 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
             Bindings.Add(this.SetBinding(() => ViewModel.IsReloginButtonVisible, () => LoginButton.Hidden)
                          .ConvertSourceToTarget(x => !x));
 
-            Bindings.Add(this.SetBinding(() => ViewModel.ConnectionStatus, () => CustomTitleView.ConnectionStatus));
+            Bindings.Add(this.SetBinding(() => ViewModel.ConnectionStatusViewModel).WhenSourceChanges(() =>
+            {
+                CustomTitleView.Update(ViewModel.ConnectionStatusViewModel);
+            }));
         }
 
         public override void ViewWillDisappear(bool animated)

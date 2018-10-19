@@ -30,7 +30,6 @@ namespace Softeq.XToolkit.Chat.ViewModels
         private readonly IPageNavigationService _pageNavigationService;
         private ChatSummaryViewModel _chatSummaryViewModel;
 
-        private ConnectionStatus _connectionStatus;
         private bool _areLatestMessagesLoaded;
 
         public ObservableKeyGroupsCollection<DateTimeOffset, ChatMessageViewModel> Messages { get; }
@@ -46,11 +45,13 @@ namespace Softeq.XToolkit.Chat.ViewModels
         public ChatMessagesViewModel(
             IViewModelFactoryService viewModelFactoryService,
             IPageNavigationService pageNavigationService,
-            ChatManager chatManager)
+            ChatManager chatManager,
+            ConnectionStatusViewModel connectionStatusViewModel)
         {
             _viewModelFactoryService = viewModelFactoryService;
             _pageNavigationService = pageNavigationService;
             _chatManager = chatManager;
+            ConnectionStatusViewModel = connectionStatusViewModel;
 
             SendCommand = new RelayCommand(SendMessageAsync);
             AttachImageCommand = new RelayCommand(AttachImage);
@@ -71,11 +72,7 @@ namespace Softeq.XToolkit.Chat.ViewModels
             }
         }
 
-        public ConnectionStatus ConnectionStatus
-        {
-            get => _connectionStatus;
-            set => Set(ref _connectionStatus, value);
-        }
+        public ConnectionStatusViewModel ConnectionStatusViewModel { get; }
 
         public string MessageToSendBody
         {
@@ -109,7 +106,7 @@ namespace Softeq.XToolkit.Chat.ViewModels
             _subscriptions.Add(_chatManager.MessagesBatchUpdated.Subscribe(OnMessagesBatchUpdated));
             _subscriptions.Add(_chatManager.MessagesBatchDeleted.Subscribe(OnMessagesBatchDeleted));
             _subscriptions.Add(_chatManager.ConnectionStatusChanged.Subscribe(OnConnectionStatusChanged));
-            ConnectionStatus = _chatManager.ConnectionStatus;
+            OnConnectionStatusChanged(_chatManager.ConnectionStatus);
 
             if (!_areLatestMessagesLoaded)
             {
@@ -252,6 +249,12 @@ namespace Softeq.XToolkit.Chat.ViewModels
             DeleteAllMessages(x => deletedMessagesIds.Contains(x.Id));
         }
 
+        private void OnConnectionStatusChanged(ConnectionStatus status)
+        {
+            ConnectionStatusViewModel.UpdateConnectionStatus(status, ChatName);
+            RaisePropertyChanged(nameof(ConnectionStatusViewModel));
+        }
+
         private void DeleteAllMessages(Func<ChatMessageViewModel, bool> predicate)
         {
             var messagesToDelete = Messages.Where(x => x.Any(predicate))
@@ -324,11 +327,6 @@ namespace Softeq.XToolkit.Chat.ViewModels
             _messageBeingEdited = value ? editedMessage : null;
             MessageToSendBody = editedMessage?.Body;
             RaisePropertyChanged(nameof(IsInEditMessageMode));
-        }
-
-        private void OnConnectionStatusChanged(ConnectionStatus connectionStatus)
-        {
-            ConnectionStatus = connectionStatus;
         }
     }
 }
