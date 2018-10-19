@@ -8,7 +8,7 @@ using Softeq.XToolkit.WhiteLabel.Mvvm;
 
 namespace Softeq.XToolkit.Chat.ViewModels
 {
-    public class ChatUserViewModel : ViewModelBase, IViewModelParameter<ChatUserModel>
+    public class ChatUserViewModel : ObservableObject, IViewModelParameter<ChatUserModel>
     {
         private ChatUserModel _model;
         private bool _isSelected;

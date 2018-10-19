@@ -12,7 +12,7 @@ using Softeq.XToolkit.WhiteLabel.Threading;
 
 namespace Softeq.XToolkit.Chat.ViewModels
 {
-    public class ChatMessageViewModel : ViewModelBase, IViewModelParameter<ChatMessageModel>, IEquatable<ChatMessageViewModel>
+    public class ChatMessageViewModel : ObservableObject, IViewModelParameter<ChatMessageModel>, IEquatable<ChatMessageViewModel>
     {
         private readonly IFullScreenPhotosService _fullScreenPhotosService;
 
