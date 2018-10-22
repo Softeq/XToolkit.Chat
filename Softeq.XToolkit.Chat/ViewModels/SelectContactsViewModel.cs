@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using Softeq.XToolkit.Chat.Manager;
 using Softeq.XToolkit.Chat.Models.Enum;
+using Softeq.XToolkit.Chat.Models.Interfaces;
 using Softeq.XToolkit.Common.Collections;
 using Softeq.XToolkit.Common.Command;
 using Softeq.XToolkit.Common.Extensions;
@@ -21,6 +22,8 @@ namespace Softeq.XToolkit.Chat.ViewModels
     {
         private readonly ChatManager _chatManager;
         private readonly IPageNavigationService _pageNavigationService;
+        private readonly IChatLocalizedStrings _localizedStrings;
+        private readonly IFormatService _formatService;
         private readonly ICommand _memberSelectedCommand;
 
         private SelectedContactsAction _selectedContactsAction;
@@ -28,27 +31,31 @@ namespace Softeq.XToolkit.Chat.ViewModels
         private string _openedChatId;
         private string _chatName;
 
-        public SelectContactsViewModel(ChatManager chatManager, IPageNavigationService pageNavigationService)
+        public SelectContactsViewModel(
+            ChatManager chatManager,
+            IPageNavigationService pageNavigationService,
+            IChatLocalizedStrings localizedStrings,
+            IFormatService formatService)
         {
             _chatManager = chatManager;
             _pageNavigationService = pageNavigationService;
+            _localizedStrings = localizedStrings;
+            _formatService = formatService;
 
             _memberSelectedCommand = new RelayCommand(() => RaisePropertyChanged(nameof(ContactsCountText)));
             AddChatCommand = new RelayCommand(() => AddChatAsync().SafeTaskWrapper());
         }
 
         public ICommand AddChatCommand { get; }
-        public string ActionButtonName => IsCreateChat ? "Create" : "Invite";
-        public string ContactsCountText
-        {
-            get
-            {
-                var count = Contacts.Count(x => x.IsSelected);
-                return $"{count} member" + (count == 1 ? string.Empty : "s");
-            }
-        }
+
+        public string Title => IsInviteToChat ? _localizedStrings.InviteUsers : _localizedStrings.CreateGroup;
+        public string ActionButtonName => IsInviteToChat ? _localizedStrings.Invite : _localizedStrings.Create;
+        public string ContactsCountText => _formatService.PluralizeWithQuantity(Contacts.Count(x => x.IsSelected),
+                                                                                _localizedStrings.MembersPlural,
+                                                                                _localizedStrings.MemberSingular);
 
         public ObservableRangeCollection<ChatUserViewModel> Contacts { get; } = new ObservableRangeCollection<ChatUserViewModel>();
+
         public (SelectedContactsAction, IList<string> FilteredUsers, string OpenedChatId) Parameter
         {
             set

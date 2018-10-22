@@ -2,32 +2,46 @@
 // http://www.softeq.com
 
 using System;
+using System.ComponentModel;
 using Android.Views;
 using Android.Widget;
 using FFImageLoading;
 using FFImageLoading.Cross;
 using FFImageLoading.Transformations;
 using Softeq.XToolkit.Bindings;
+using Softeq.XToolkit.Chat.Models;
 using Softeq.XToolkit.Chat.ViewModels;
 using Softeq.XToolkit.Common;
 using Softeq.XToolkit.Common.WeakSubscription;
-using PopupMenu = Android.Support.V7.Widget.PopupMenu;
 using Softeq.XToolkit.WhiteLabel.Threading;
-using System.ComponentModel;
-using Softeq.XToolkit.Chat.Models;
+using PopupMenu = Android.Support.V7.Widget.PopupMenu;
 
 namespace Softeq.XToolkit.Chat.Droid.ViewHolders
 {
     public class ConversationViewHolder : BindableViewHolder<ChatMessageViewModel>
     {
+        private const int EditMenuItemId = 2001;
+        private const int DeleteMenuItemId = 2002;
+
+        private readonly IDisposable _messageLongClickSubscription;
+        private readonly bool _isIncomingMessageViewType;
+        private readonly string[] _contextMenuOptions;
+
         private WeakReferenceEx<ChatMessageViewModel> _viewModelRef;
 
-        private readonly bool _isIncomingMessageViewType;
-        private readonly IDisposable _messageLongClickSubscription;
-
-        public ConversationViewHolder(View itemView, bool isIncomingMessageViewType) : base(itemView)
+        public ConversationViewHolder(
+            View itemView,
+            bool isIncomingMessageViewType,
+            string[] contextMenuOptions)
+            : base(itemView)
         {
             _isIncomingMessageViewType = isIncomingMessageViewType;
+            _contextMenuOptions = contextMenuOptions;
+
+            if (contextMenuOptions.Length != 2)
+            {
+                throw new ArgumentException(nameof(contextMenuOptions));
+            }
 
             MessageContainer = itemView.FindViewById<LinearLayout>(Resource.Id.ll_message_container);
             MessageBodyTextView = itemView.FindViewById<TextView>(Resource.Id.tv_message_body);
@@ -129,18 +143,21 @@ namespace Softeq.XToolkit.Chat.Droid.ViewHolders
         private PopupMenu CreatePopupMenuFor(View itemView)
         {
             var popup = new PopupMenu(itemView.Context, itemView);
-            popup.Inflate(Resource.Menu.popup_conversation);
+
+            popup.Menu.Add(0, EditMenuItemId, 0, _contextMenuOptions[0]);
+            popup.Menu.Add(0, DeleteMenuItemId, 1, _contextMenuOptions[1]);
+
             popup.MenuItemClick += PopupMenuItemClickHandler;
             return popup;
         }
 
         private void PopupMenuItemClickHandler(object sender, PopupMenu.MenuItemClickEventArgs e)
         {
-            if (e.Item.ItemId == Resource.Id.edit_message)
+            if (e.Item.ItemId == EditMenuItemId)
             {
                 _viewModelRef.Target.RequestEdit();
             }
-            else if (e.Item.ItemId == Resource.Id.delete_message)
+            else if (e.Item.ItemId == DeleteMenuItemId)
             {
                 _viewModelRef.Target.RequestDelete();
             }

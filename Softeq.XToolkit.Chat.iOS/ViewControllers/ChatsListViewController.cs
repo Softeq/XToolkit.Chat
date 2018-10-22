@@ -17,6 +17,9 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
 {
     public partial class ChatsListViewController : ViewControllerBase<ChatsListViewModel>
     {
+        private const string ReLoginButtonText = "(RE)LOGIN";
+        private const string ReLoginButtonFormattedText = "(RE)LOGIN: {0}";
+
         private WeakReferenceEx<ObservableTableViewSource<ChatSummaryViewModel>> _sourceRef;
 
         public ChatsListViewController(IntPtr handle) : base(handle)
@@ -67,7 +70,9 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
 
             Bindings.Add(this.SetBinding(() => ViewModel.UserName).WhenSourceChanges(() =>
             {
-                var reloginButtonTitle = string.IsNullOrEmpty(ViewModel.UserName) ? "(RE)LOGIN" : $"(RE)LOGIN: {ViewModel.UserName}";
+                var reloginButtonTitle = string.IsNullOrEmpty(ViewModel.UserName)
+                    ? ReLoginButtonText
+                    : string.Format(ReLoginButtonFormattedText, ViewModel.UserName);
                 LoginButton.SetTitle(reloginButtonTitle, UIControlState.Normal);
             }));
             Bindings.Add(this.SetBinding(() => ViewModel.SelectedChat, () => _sourceRef.Target.SelectedItem, BindingMode.TwoWay));
@@ -112,13 +117,18 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
                                               && _sourceRef.Target.DataSource[indexPath.Row].IsCreatedByMe;
                 var buttons = new List<UITableViewRowAction>
                 {
-                     UITableViewRowAction.Create(UITableViewRowActionStyle.Default, "Leave",
-                                                (row, index) => OnClickLeave(row, index, tableView))
+                    UITableViewRowAction.Create(
+                        UITableViewRowActionStyle.Default,
+                        _viewModelRef.Target?.LeaveChatOptionText,
+                        (row, index) => OnClickLeave(row, index, tableView))
                 };
+
                 if (isCreatedByMe)
                 {
-                    var closeButton = UITableViewRowAction.Create(UITableViewRowActionStyle.Default, "Close",
-                                                                  (row, index) => OnClickDelete(row, index, tableView));
+                    var closeButton = UITableViewRowAction.Create(
+                        UITableViewRowActionStyle.Default,
+                        _viewModelRef.Target?.DeleteChatOptionText,
+                        (row, index) => OnClickDelete(row, index, tableView));
                     closeButton.BackgroundColor = UIColor.Orange;
                     buttons.Add(closeButton);
                 }

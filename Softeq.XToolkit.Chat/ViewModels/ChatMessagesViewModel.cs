@@ -17,6 +17,7 @@ using Softeq.XToolkit.Common.Extensions;
 using Softeq.XToolkit.WhiteLabel.Interfaces;
 using Softeq.XToolkit.WhiteLabel.Mvvm;
 using Softeq.XToolkit.WhiteLabel.Navigation;
+using Softeq.XToolkit.Chat.Models.Interfaces;
 
 namespace Softeq.XToolkit.Chat.ViewModels
 {
@@ -28,6 +29,7 @@ namespace Softeq.XToolkit.Chat.ViewModels
         private readonly ChatManager _chatManager;
         private readonly IViewModelFactoryService _viewModelFactoryService;
         private readonly IPageNavigationService _pageNavigationService;
+        private readonly IChatLocalizedStrings _localizedStrings;
         private ChatSummaryViewModel _chatSummaryViewModel;
 
         private bool _areLatestMessagesLoaded;
@@ -45,12 +47,15 @@ namespace Softeq.XToolkit.Chat.ViewModels
         public ChatMessagesViewModel(
             IViewModelFactoryService viewModelFactoryService,
             IPageNavigationService pageNavigationService,
+            IChatLocalizedStrings localizedStrings,
             ChatManager chatManager,
             ConnectionStatusViewModel connectionStatusViewModel)
         {
             _viewModelFactoryService = viewModelFactoryService;
             _pageNavigationService = pageNavigationService;
+            _localizedStrings = localizedStrings;
             _chatManager = chatManager;
+
             ConnectionStatusViewModel = connectionStatusViewModel;
 
             SendCommand = new RelayCommand(SendMessageAsync);
@@ -83,6 +88,9 @@ namespace Softeq.XToolkit.Chat.ViewModels
         public string ChatName => _chatSummaryViewModel?.ChatName;
 
         public string EditedMessageOriginalBody => _messageBeingEdited?.Body;
+
+        public string EditMessageOptionText => _localizedStrings.Edit;
+        public string DeleteMessageOptionText => _localizedStrings.Delete;
 
         public bool IsInEditMessageMode { get; private set; }
 

@@ -130,7 +130,7 @@ namespace Softeq.XToolkit.Chat.Droid.Views
         {
             SetSupportActionBar(toolbar);
 
-            SupportActionBar.Title = "Info";
+            SupportActionBar.Title = ViewModel.Title;
             SupportActionBar.SetDisplayHomeAsUpEnabled(true);
         }
 

@@ -148,7 +148,8 @@ namespace Softeq.XToolkit.Chat.Droid.Views
                         ViewModel.Messages,
                         CollectionChangedAutoScrollToBottomHandler,
                         LoadItemsRequestedScrollChangeHandler,
-                        ViewModel.GetDateString);
+                        ViewModel.GetDateString,
+                        new[] { ViewModel.EditMessageOptionText, ViewModel.DeleteMessageOptionText });
 
                 _conversationsAdapter.SetCommand(nameof(_conversationsAdapter.LastItemRequested), ViewModel.LoadOlderMessagesCommand);
 

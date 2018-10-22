@@ -24,7 +24,7 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
         {
             base.ViewDidLoad();
 
-            Title = "Info";
+            Title = ViewModel.Title;
 
             TableView.RegisterNibForCellReuse(ChatUserViewCell.Nib, ChatUserViewCell.Key);
             TableView.RowHeight = 80;

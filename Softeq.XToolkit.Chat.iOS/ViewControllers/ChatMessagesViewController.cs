@@ -56,8 +56,8 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
 
             UIMenuController.SharedMenuController.MenuItems = new UIMenuItem[]
             {
-                new UIMenuItem("Edit", new Selector("edit")),
-                new UIMenuItem("Delete", new Selector("delete"))
+                new UIMenuItem(ViewModel.EditMessageOptionText, new Selector("edit")),
+                new UIMenuItem(ViewModel.DeleteMessageOptionText, new Selector("delete"))
             };
             UIMenuController.SharedMenuController.Update();
 

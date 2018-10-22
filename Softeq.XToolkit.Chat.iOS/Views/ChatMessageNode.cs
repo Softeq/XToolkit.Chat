@@ -126,6 +126,7 @@ namespace Softeq.XToolkit.Chat.iOS.Views
                     return;
                 }
                 var statusImage = default(UIImage);
+                // TODO: refactoring
                 switch (_viewModelRef.Target.Status)
                 {
                     case Models.ChatMessageStatus.Sending:

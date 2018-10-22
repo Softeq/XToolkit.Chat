@@ -103,7 +103,6 @@
     <AndroidResource Include="Resources\layout\activity_conversations.xml" />
     <AndroidResource Include="Resources\layout\activity_chat_create.xml" />
     <AndroidResource Include="Resources\values\themes.xml" />
-    <AndroidResource Include="Resources\menu\popup_conversation.xml" />
     <AndroidResource Include="Resources\menu\toolbar_chat.xml" />
     <AndroidResource Include="Resources\menu\toolbar_conversations.xml" />
     <AndroidResource Include="Resources\drawable-hdpi\ic_new.png" />
