@@ -8,6 +8,7 @@ using Android.Views;
 using Android.Widget;
 using Softeq.XToolkit.Bindings;
 using Softeq.XToolkit.Chat.Droid.Adapters;
+using Softeq.XToolkit.Chat.Droid.Controls;
 using Softeq.XToolkit.Chat.Droid.LayoutManagers;
 using Softeq.XToolkit.Chat.Droid.Listeners;
 using Softeq.XToolkit.Chat.Models;
@@ -35,6 +36,7 @@ namespace Softeq.XToolkit.Chat.Droid.Views
         private TextView _editingMessageBodyTextView;
         private ImageButton _editingMessageCloseButton;
         private ImageButton _scrollDownImageButton;
+        private ContextMenuComponent _contextMenuComponent;
         private bool _shouldSendStateMessageToChat;
         private bool _isAdapterSourceInitialized;
         private bool _isAutoScrollToFooterEnabled = true;
@@ -58,6 +60,8 @@ namespace Softeq.XToolkit.Chat.Droid.Views
 
             InitializeToolbar(toolbar);
             InitializeConversationsRecyclerView();
+
+            _contextMenuComponent = new ContextMenuComponent(ViewModel.MessageCommandActions);
 
             _sendButton.SetCommand(nameof(_sendButton.Click), ViewModel.SendCommand);
             _editingMessageCloseButton.SetCommand(nameof(_editingMessageCloseButton.Click), ViewModel.CancelEditingMessageModeCommand);
@@ -148,7 +152,8 @@ namespace Softeq.XToolkit.Chat.Droid.Views
                         ViewModel.Messages,
                         CollectionChangedAutoScrollToBottomHandler,
                         LoadItemsRequestedScrollChangeHandler,
-                        ViewModel.GetDateString);
+                        ViewModel.GetDateString,
+                        _contextMenuComponent);
 
                 _conversationsAdapter.SetCommand(nameof(_conversationsAdapter.LastItemRequested), ViewModel.LoadOlderMessagesCommand);
 

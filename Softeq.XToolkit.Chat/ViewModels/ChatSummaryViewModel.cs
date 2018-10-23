@@ -14,13 +14,24 @@ namespace Softeq.XToolkit.Chat.ViewModels
 {
     public class ChatSummaryViewModel : ViewModelBase, IViewModelParameter<ChatSummaryModel>, IEquatable<ChatSummaryViewModel>
     {
+        private const string TypingUsersDelimiter = ",";
+        private const string SpaceDelimiter = " ";
         private const int MaxVisibleTypingUsersCount = 3;
+
         private readonly ISocketChatAdapter _chatAdapter;
+        private readonly IChatLocalizedStrings _localizedStrings;
+        private readonly IFormatService _formatService;
+
         private ChatSummaryModel _chatSummary;
 
-        public ChatSummaryViewModel(ISocketChatAdapter chatAdapter)
+        public ChatSummaryViewModel(
+            ISocketChatAdapter chatAdapter,
+            IChatLocalizedStrings localizedStrings,
+            IFormatService formatService)
         {
             _chatAdapter = chatAdapter;
+            _localizedStrings = localizedStrings;
+            _formatService = formatService;
         }
 
         public ChatSummaryModel Parameter
@@ -33,7 +44,7 @@ namespace Softeq.XToolkit.Chat.ViewModels
         public string LastMessageUsername => _chatSummary.LastMessage?.SenderName;
         public string LastMessageBody => _chatSummary.LastMessage?.Body;
         public ChatMessageStatus LastMessageStatus => _chatSummary.LastMessage?.Status ?? ChatMessageStatus.Other;
-        public string LastMessageDateTime => _chatSummary.LastMessage?.DateTime.LocalDateTime.ToString("HH:mm");
+        public string LastMessageDateTime => _formatService.ToShortTimeFormat(_chatSummary.LastMessage?.DateTime.LocalDateTime);
 
         public int UnreadMessageCount
         {
@@ -88,13 +99,15 @@ namespace Softeq.XToolkit.Chat.ViewModels
                 var result = TypingUsersNames[0];
                 for (int i = 0; i < MaxVisibleTypingUsersCount; i++)
                 {
-                    result += $", {TypingUsersNames[i]}";
+                    result += TypingUsersDelimiter + SpaceDelimiter + TypingUsersNames[i];
                 }
                 if (AreMoreThanThreeUsersTyping)
                 {
-                    result += " and other";
+                    result += SpaceDelimiter + _localizedStrings.AndOther;
                 }
-                result += TypingUsersNames.Count > 1 ? " are typing..." : " is typing...";
+                result += SpaceDelimiter + _formatService.PluralizeWithQuantity(TypingUsersNames.Count,
+                                                                                _localizedStrings.TypingPlural,
+                                                                                _localizedStrings.TypingSingular);
                 return result;
             }
         }

@@ -11,6 +11,7 @@ using Softeq.XToolkit.Common.Command;
 using Softeq.XToolkit.WhiteLabel.Interfaces;
 using Softeq.XToolkit.WhiteLabel.Mvvm;
 using Softeq.XToolkit.WhiteLabel.Navigation;
+using Softeq.XToolkit.Chat.Models.Interfaces;
 
 namespace Softeq.XToolkit.Chat.ViewModels
 {
@@ -18,16 +19,25 @@ namespace Softeq.XToolkit.Chat.ViewModels
     {
         private readonly ChatManager _chatManager;
         private readonly IPageNavigationService _pageNavigationService;
-
+        private readonly IChatLocalizedStrings _localizedStrings;
+        private readonly IFormatService _formatService;
         private ChatSummaryViewModel _chatSummaryViewModel;
 
-        public ChatDetailsViewModel(ChatManager chatManager, IPageNavigationService pageNavigationService)
+        public ChatDetailsViewModel(
+            ChatManager chatManager,
+            IPageNavigationService pageNavigationService,
+            IChatLocalizedStrings localizedStrings,
+            IFormatService formatService)
         {
             _chatManager = chatManager;
             _pageNavigationService = pageNavigationService;
+            _localizedStrings = localizedStrings;
+            _formatService = formatService;
 
             AddMembersCommand = new RelayCommand(AddMembers);
         }
+
+        public string Title => _localizedStrings.DetailsTitle;
 
         public ChatSummaryViewModel Parameter { set => _chatSummaryViewModel = value; }
 
@@ -36,7 +46,9 @@ namespace Softeq.XToolkit.Chat.ViewModels
 
         public string ChatAvatarUrl => _chatSummaryViewModel.ChatPhotoUrl;
         public string ChatName => _chatSummaryViewModel.ChatName;
-        public string MembersCountText => $"{Members.Count} member" + (Members.Count == 1 ? string.Empty : "s");
+        public string MembersCountText => _formatService.PluralizeWithQuantity(Members.Count,
+                                                                               _localizedStrings.MembersPlural,
+                                                                               _localizedStrings.MemberSingular);
 
         public bool IsNavigated { get; private set; }
 

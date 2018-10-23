@@ -21,10 +21,11 @@ namespace Softeq.XToolkit.Chat.ViewModels
     {
         private readonly IDialogsService _dialogsService;
         private readonly IPageNavigationService _pageNavigationService;
+        private readonly IChatLocalizedStrings _localizedStrings;
         private readonly ChatManager _chatManager;
 
         private ISampleChatLoginService _loginService;
-        private string _userName = "Not Logged In";
+        private string _userName;
         private bool _isReloginButtonVisible = true;
 
         private List<IDisposable> _subscriptions = new List<IDisposable>();
@@ -32,6 +33,7 @@ namespace Softeq.XToolkit.Chat.ViewModels
         public ChatsListViewModel(
             IDialogsService dialogsService,
             IPageNavigationService pageNavigationService,
+            IChatLocalizedStrings localizedStrings,
             ChatManager chatManager,
             ConnectionStatusViewModel connectionStatusViewModel)
         {
@@ -39,7 +41,10 @@ namespace Softeq.XToolkit.Chat.ViewModels
 
             _dialogsService = dialogsService;
             _pageNavigationService = pageNavigationService;
+            _localizedStrings = localizedStrings;
             _chatManager = chatManager;
+
+            _userName = _localizedStrings.NotLoggedIn;
 
             ConnectionStatusViewModel = connectionStatusViewModel;
 
@@ -78,6 +83,9 @@ namespace Softeq.XToolkit.Chat.ViewModels
         }
 
         public ConnectionStatusViewModel ConnectionStatusViewModel { get; }
+
+        public string DeleteChatOptionText => _localizedStrings.Close;
+        public string LeaveChatOptionText => _localizedStrings.Leave;
 
         public string UserName
         {
@@ -151,7 +159,7 @@ namespace Softeq.XToolkit.Chat.ViewModels
 
         private void OnConnectionStatusChanged(ConnectionStatus status)
         {
-            ConnectionStatusViewModel.UpdateConnectionStatus(status, "Chats");
+            ConnectionStatusViewModel.UpdateConnectionStatus(status, _localizedStrings.ChatsTitle);
             RaisePropertyChanged(nameof(ConnectionStatusViewModel));
         }
     }

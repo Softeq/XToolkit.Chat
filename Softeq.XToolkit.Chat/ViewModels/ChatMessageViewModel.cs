@@ -9,20 +9,25 @@ using Softeq.XToolkit.Common.Interfaces;
 using Softeq.XToolkit.WhiteLabel.Interfaces;
 using Softeq.XToolkit.WhiteLabel.Mvvm;
 using Softeq.XToolkit.WhiteLabel.Threading;
+using Softeq.XToolkit.Chat.Models.Interfaces;
 
 namespace Softeq.XToolkit.Chat.ViewModels
 {
     public class ChatMessageViewModel : ObservableObject, IViewModelParameter<ChatMessageModel>, IEquatable<ChatMessageViewModel>
     {
         private readonly IFullScreenPhotosService _fullScreenPhotosService;
+        private readonly IFormatService _formatService;
 
-        public ChatMessageViewModel(IFullScreenPhotosService fullScreenPhotosService)
+        public ChatMessageViewModel(
+            IFullScreenPhotosService fullScreenPhotosService,
+            IFormatService formatService)
         {
             _fullScreenPhotosService = fullScreenPhotosService;
+            _formatService = formatService;
         }
 
-        public RelayCommand<ChatMessageViewModel> EditRequested { get; set; }
-        public RelayCommand<ChatMessageViewModel> DeleteRequested { get; set; }
+        //public RelayCommand<ChatMessageViewModel> EditRequested { get; set; }
+        //public RelayCommand<ChatMessageViewModel> DeleteRequested { get; set; }
 
         public ChatMessageModel Parameter
         {
@@ -34,7 +39,7 @@ namespace Softeq.XToolkit.Chat.ViewModels
         public string Id => Model.Id;
         public string ChatId => Model.ChannelId;
         public DateTimeOffset DateTime => Model.DateTime;
-        public string TextDateTime => Model.DateTime.LocalDateTime.ToString("HH:mm");
+        public string TextDateTime => _formatService.ToShortTimeFormat(Model.DateTime.LocalDateTime);
 
         public string Body
         {
@@ -63,15 +68,15 @@ namespace Softeq.XToolkit.Chat.ViewModels
             _fullScreenPhotosService.DisplayImages(new List<string> { AttachmentImageUrl }, 0);
         }
 
-        public void RequestEdit()
-        {
-            EditRequested?.Execute(this);
-        }
+        //public void RequestEdit()
+        //{
+        //    EditRequested?.Execute(this);
+        //}
 
-        public void RequestDelete()
-        {
-            DeleteRequested?.Execute(this);
-        }
+        //public void RequestDelete()
+        //{
+        //    DeleteRequested?.Execute(this);
+        //}
 
         public bool IsEarlierThan(ChatMessageViewModel message) => Model.IsEarlierThan(message?.Model);
         public bool IsEarlierOrEqualsThan(ChatMessageViewModel message) => Model.IsEarlierOrEqualsThan(message.Model);

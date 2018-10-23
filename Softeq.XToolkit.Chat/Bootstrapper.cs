@@ -7,6 +7,7 @@ using Softeq.XToolkit.Chat.Manager;
 using Softeq.XToolkit.Chat.Models.Interfaces;
 using Softeq.XToolkit.Chat.SignalRClient;
 using Softeq.XToolkit.Chat.ViewModels;
+using Softeq.XToolkit.Chat.Services;
 
 namespace Softeq.XToolkit.Chat
 {
@@ -22,6 +23,7 @@ namespace Softeq.XToolkit.Chat
                 .InstancePerLifetimeScope();
             containerBuilder.RegisterType<ChatManager>().InstancePerLifetimeScope();
             containerBuilder.RegisterType<InMemoryMessagesCache>().As<IMessagesCache>().InstancePerLifetimeScope();
+            containerBuilder.RegisterType<FormatService>().As<IFormatService>().InstancePerLifetimeScope();
 
             containerBuilder.RegisterType<ChatSummaryViewModel>().InstancePerDependency();
             containerBuilder.RegisterType<ChatMessageViewModel>().InstancePerDependency();

@@ -12,6 +12,7 @@ using Softeq.XToolkit.Chat.ViewModels;
 using Softeq.XToolkit.Common;
 using Softeq.XToolkit.Common.Collections;
 using Softeq.XToolkit.Common.EventArguments;
+using Softeq.XToolkit.Chat.Droid.Controls;
 
 namespace Softeq.XToolkit.Chat.Droid.Adapters
 {
@@ -25,6 +26,7 @@ namespace Softeq.XToolkit.Chat.Droid.Adapters
         private readonly WeakAction<int> _collectionChangedAction;
         private readonly WeakAction<int> _lastItemsLoadedAction;
         private readonly WeakFunc<DateTimeOffset, string> _headerGroupConverter;
+        private readonly ContextMenuComponent _contextMenuComponent;
 
         public event EventHandler LastItemRequested;
 
@@ -32,12 +34,14 @@ namespace Softeq.XToolkit.Chat.Droid.Adapters
             ObservableKeyGroupsCollection<DateTimeOffset, ChatMessageViewModel> items,
             Action<int> collectionChangedAction,
             Action<int> lastItemsLoadedAction,
-            Func<DateTimeOffset, string> headerGroupConverter)
+            Func<DateTimeOffset, string> headerGroupConverter,
+            ContextMenuComponent contextMenuComponent)
             : base(items, null)
         {
             _collectionChangedAction = new WeakAction<int>(collectionChangedAction);
             _lastItemsLoadedAction = new WeakAction<int>(lastItemsLoadedAction);
             _headerGroupConverter = new WeakFunc<DateTimeOffset, string>(headerGroupConverter);
+            _contextMenuComponent = contextMenuComponent;
         }
 
         public override int GetItemViewType(int position)
@@ -61,18 +65,14 @@ namespace Softeq.XToolkit.Chat.Droid.Adapters
             switch (viewType)
             {
                 case InfoMessageViewType:
-                    return new ConversationInfoViewHolder(
-                        LayoutInflater.From(parent.Context)
-                                      .Inflate(Resource.Layout.item_conversation_info, parent, false),
-                        CreateHeaderModel);
+                    return new ConversationInfoViewHolder(LayoutInflater.From(parent.Context)
+                        .Inflate(Resource.Layout.item_conversation_info, parent, false), CreateHeaderModel);
                 case InComingMessageViewType:
-                    return new ConversationViewHolder(
-                        LayoutInflater.From(parent.Context)
-                                      .Inflate(Resource.Layout.item_conversation_incoming, parent, false), true);
+                    return new ConversationViewHolder(LayoutInflater.From(parent.Context)
+                        .Inflate(Resource.Layout.item_conversation_incoming, parent, false), true, _contextMenuComponent);
                 case OutComingMessageViewType:
-                    return new ConversationViewHolder(
-                        LayoutInflater.From(parent.Context)
-                                      .Inflate(Resource.Layout.item_conversation_outcoming, parent, false), false);
+                    return new ConversationViewHolder(LayoutInflater.From(parent.Context)
+                        .Inflate(Resource.Layout.item_conversation_outcoming, parent, false), false, _contextMenuComponent);
                 default:
                     throw new InvalidEnumArgumentException(nameof(viewType), viewType, typeof(int));
             }

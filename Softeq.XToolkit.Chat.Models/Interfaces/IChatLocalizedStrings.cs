@@ -5,9 +5,31 @@ namespace Softeq.XToolkit.Chat.Models.Interfaces
 {
     public interface IChatLocalizedStrings
     {
-        // connection status
         string WaitingForNetwork { get; }
         string Updating { get; }
         string Connecting { get; }
+
+        string ChatsTitle { get; }
+        string DetailsTitle { get; }
+        string InviteUsers { get; }
+        string CreateGroup { get; }
+
+        string MembersPlural { get; }
+        string MemberSingular { get; }
+
+        string Invite { get; }
+        string Create { get; }
+
+        string NotLoggedIn { get; }
+
+        string AndOther { get; }
+        string TypingPlural { get; }
+        string TypingSingular { get; }
+
+        string Edit { get; }
+        string Delete { get; }
+
+        string Leave { get; }
+        string Close { get; }
     }
 }

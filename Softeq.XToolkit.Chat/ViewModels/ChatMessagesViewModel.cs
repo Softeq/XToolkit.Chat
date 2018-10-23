@@ -17,6 +17,7 @@ using Softeq.XToolkit.Common.Extensions;
 using Softeq.XToolkit.WhiteLabel.Interfaces;
 using Softeq.XToolkit.WhiteLabel.Mvvm;
 using Softeq.XToolkit.WhiteLabel.Navigation;
+using Softeq.XToolkit.Chat.Models.Interfaces;
 
 namespace Softeq.XToolkit.Chat.ViewModels
 {
@@ -28,6 +29,7 @@ namespace Softeq.XToolkit.Chat.ViewModels
         private readonly ChatManager _chatManager;
         private readonly IViewModelFactoryService _viewModelFactoryService;
         private readonly IPageNavigationService _pageNavigationService;
+        private readonly IChatLocalizedStrings _localizedStrings;
         private ChatSummaryViewModel _chatSummaryViewModel;
 
         private bool _areLatestMessagesLoaded;
@@ -45,12 +47,15 @@ namespace Softeq.XToolkit.Chat.ViewModels
         public ChatMessagesViewModel(
             IViewModelFactoryService viewModelFactoryService,
             IPageNavigationService pageNavigationService,
+            IChatLocalizedStrings localizedStrings,
             ChatManager chatManager,
             ConnectionStatusViewModel connectionStatusViewModel)
         {
             _viewModelFactoryService = viewModelFactoryService;
             _pageNavigationService = pageNavigationService;
+            _localizedStrings = localizedStrings;
             _chatManager = chatManager;
+
             ConnectionStatusViewModel = connectionStatusViewModel;
 
             SendCommand = new RelayCommand(SendMessageAsync);
@@ -93,6 +98,22 @@ namespace Softeq.XToolkit.Chat.ViewModels
         public ICommand MessageAddedCommand { get; set; }
         public ICommand LoadOlderMessagesCommand { get; set; }
 
+        public IReadOnlyList<CommandAction> MessageCommandActions => new List<CommandAction>
+        {
+            new CommandAction
+            {
+                Title = _localizedStrings.Edit,
+                Command = new RelayCommand<ChatMessageViewModel>(EditMessage),
+                CommandActionStyle = CommandActionStyle.Default
+            },
+            new CommandAction
+            {
+                Title = _localizedStrings.Delete,
+                Command = new RelayCommand<ChatMessageViewModel>(DeleteMessage),
+                CommandActionStyle = CommandActionStyle.Destructive
+            }
+        };
+
         public abstract string GetDateString(DateTimeOffset date);
 
         public override void OnAppearing()
@@ -116,7 +137,6 @@ namespace Softeq.XToolkit.Chat.ViewModels
 
             _chatManager.MakeChatActive(_chatSummaryViewModel?.ChatId);
             Messages.ItemsChanged += OnMessagesAddedToCollection;
-            SubscribeToMessages(Messages.SelectMany(x => x));
             MarkMessagesAsRead();
         }
 
@@ -170,35 +190,12 @@ namespace Softeq.XToolkit.Chat.ViewModels
         {
             if (e.Action == NotifyCollectionChangedAction.Add)
             {
-                foreach (var newSection in e.ModifiedSectionsIndexes)
-                {
-                    Messages[newSection].Apply(SubscribeToMessage);
-                }
-                foreach (var (oldSection, newIndexes) in e.ModifiedItemsIndexes)
-                {
-                    foreach (var index in newIndexes)
-                    {
-                        SubscribeToMessage(Messages[oldSection][index]);
-                    }
-                }
                 MarkMessagesAsRead();
             }
             else if (e.Action == NotifyCollectionChangedAction.Reset)
             {
-                SubscribeToMessages(Messages.SelectMany(x => x));
                 MarkMessagesAsRead();
             }
-        }
-
-        private void SubscribeToMessages(IEnumerable<ChatMessageViewModel> messages)
-        {
-            messages?.Apply(SubscribeToMessage);
-        }
-
-        private void SubscribeToMessage(ChatMessageViewModel message)
-        {
-            message.DeleteRequested = new RelayCommand<ChatMessageViewModel>(DeleteMessage);
-            message.EditRequested = new RelayCommand<ChatMessageViewModel>(EditMessage);
         }
 
         private void OnMessageReceived(ChatMessageViewModel chatMessage)

@@ -7,8 +7,8 @@ using System.Threading.Tasks;
 using AsyncDisplayKitBindings;
 using CoreGraphics;
 using Foundation;
-using ObjCRuntime;
 using Softeq.XToolkit.Bindings;
+using Softeq.XToolkit.Chat.iOS.Controls;
 using Softeq.XToolkit.Chat.iOS.TableSources;
 using Softeq.XToolkit.Chat.iOS.Views;
 using Softeq.XToolkit.Chat.ViewModels;
@@ -16,8 +16,8 @@ using Softeq.XToolkit.Common;
 using Softeq.XToolkit.Common.Command;
 using Softeq.XToolkit.Common.Extensions;
 using Softeq.XToolkit.WhiteLabel;
-using Softeq.XToolkit.WhiteLabel.iOS;
 using Softeq.XToolkit.WhiteLabel.Interfaces;
+using Softeq.XToolkit.WhiteLabel.iOS;
 using Softeq.XToolkit.WhiteLabel.Threading;
 using UIKit;
 
@@ -37,6 +37,7 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
         private bool _isAutoScrollToBottomEnabled = true;
         private bool _shouldUpdateTableViewContentOffset;
         private NSLayoutConstraint _tableViewBottomConstraint;
+        private ContextMenuComponent _contextMenuComponent;
 
         public ChatMessagesViewController(IntPtr handle) : base(handle) { }
 
@@ -54,11 +55,10 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
 
             InitTableViewAsync().SafeTaskWrapper();
 
-            UIMenuController.SharedMenuController.MenuItems = new UIMenuItem[]
-            {
-                new UIMenuItem("Edit", new Selector("edit")),
-                new UIMenuItem("Delete", new Selector("delete"))
-            };
+            _contextMenuComponent = new ContextMenuComponent();
+            _contextMenuComponent.AddCommand(ContextMenuActions.Edit, ViewModel.MessageCommandActions[0]);
+            _contextMenuComponent.AddCommand(ContextMenuActions.Delete, ViewModel.MessageCommandActions[1]);
+            UIMenuController.SharedMenuController.MenuItems = _contextMenuComponent.BuildMenuItems();
             UIMenuController.SharedMenuController.Update();
 
             InputBar.Send.SetCommand(ViewModel.SendCommand);
@@ -181,7 +181,7 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
             var tableSource = new GroupedTableDataSource<DateTimeOffset, ChatMessageViewModel>(
                 ViewModel.Messages,
                 TableNode.View,
-                viewModel => new ChatMessageNode(viewModel),
+                viewModel => new ChatMessageNode(viewModel, _contextMenuComponent),
                 TableNode.Inverted);
             var tableDelegate = new MessagesTableDelegate(TableNode.Inverted)
             {

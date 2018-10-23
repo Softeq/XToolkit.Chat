@@ -15,6 +15,8 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
 {
     public partial class SelectContactsViewController : ViewControllerBase<SelectContactsViewModel>
     {
+        private const string TempChatPhotoUrl = "https://cdn.pixabay.com/photo/2015/10/23/17/03/eye-1003315_960_720.jpg";
+
         private WeakReferenceEx<ObservableTableViewSource<ChatUserViewModel>> _sourceRef;
 
         private UIBarButtonItem _actionButton;
@@ -43,7 +45,7 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
             {
                 IsEditMode = true,
                 IsAddMembersButtonHidden = true,
-                ChatAvatarUrl = "https://cdn.pixabay.com/photo/2015/10/23/17/03/eye-1003315_960_720.jpg",
+                ChatAvatarUrl = TempChatPhotoUrl,
             };
             TableView.TableHeaderView = _chatDetailsHeaderView;
             TableView.TableFooterView = new UIView();
@@ -81,7 +83,7 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
                     TableView.TableHeaderView = new UIView();
                 }
 
-                Title = ViewModel.IsInviteToChat ? "Invite users" : "Create group";
+                Title = ViewModel.Title;
             }));
             Bindings.Add(this.SetBinding(() => ViewModel.ContactsCountText, () => _chatDetailsHeaderView.ChatMembersCount));
         }
