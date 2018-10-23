@@ -87,6 +87,7 @@
     <Compile Include="LinkerPleaseInclude.cs" />
     <Compile Include="Adapters\GroupedObservableRecyclerViewAdapter.cs" />
     <Compile Include="ItemTouchCallbacks\SwipeCallback.cs" />
+    <Compile Include="Controls\ContextMenuComponent.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\AboutResources.txt" />
@@ -172,6 +173,7 @@
     <Folder Include="LayoutManagers\" />
     <Folder Include="Listeners\" />
     <Folder Include="ItemTouchCallbacks\" />
+    <Folder Include="Controls\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\XToolkit\Softeq.XToolkit.Bindings.Droid\Softeq.XToolkit.Bindings.Droid.csproj">

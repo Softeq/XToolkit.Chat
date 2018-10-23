@@ -26,8 +26,8 @@ namespace Softeq.XToolkit.Chat.ViewModels
             _formatService = formatService;
         }
 
-        public RelayCommand<ChatMessageViewModel> EditRequested { get; set; }
-        public RelayCommand<ChatMessageViewModel> DeleteRequested { get; set; }
+        //public RelayCommand<ChatMessageViewModel> EditRequested { get; set; }
+        //public RelayCommand<ChatMessageViewModel> DeleteRequested { get; set; }
 
         public ChatMessageModel Parameter
         {
@@ -68,15 +68,15 @@ namespace Softeq.XToolkit.Chat.ViewModels
             _fullScreenPhotosService.DisplayImages(new List<string> { AttachmentImageUrl }, 0);
         }
 
-        public void RequestEdit()
-        {
-            EditRequested?.Execute(this);
-        }
+        //public void RequestEdit()
+        //{
+        //    EditRequested?.Execute(this);
+        //}
 
-        public void RequestDelete()
-        {
-            DeleteRequested?.Execute(this);
-        }
+        //public void RequestDelete()
+        //{
+        //    DeleteRequested?.Execute(this);
+        //}
 
         public bool IsEarlierThan(ChatMessageViewModel message) => Model.IsEarlierThan(message?.Model);
         public bool IsEarlierOrEqualsThan(ChatMessageViewModel message) => Model.IsEarlierOrEqualsThan(message.Model);

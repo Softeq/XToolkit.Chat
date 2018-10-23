@@ -9,6 +9,7 @@ using FFImageLoading;
 using FFImageLoading.Cross;
 using FFImageLoading.Transformations;
 using Softeq.XToolkit.Bindings;
+using Softeq.XToolkit.Chat.Droid.Controls;
 using Softeq.XToolkit.Chat.Models;
 using Softeq.XToolkit.Chat.ViewModels;
 using Softeq.XToolkit.Common;
@@ -20,28 +21,20 @@ namespace Softeq.XToolkit.Chat.Droid.ViewHolders
 {
     public class ConversationViewHolder : BindableViewHolder<ChatMessageViewModel>
     {
-        private const int EditMenuItemId = 2001;
-        private const int DeleteMenuItemId = 2002;
-
         private readonly IDisposable _messageLongClickSubscription;
         private readonly bool _isIncomingMessageViewType;
-        private readonly string[] _contextMenuOptions;
+        private readonly ContextMenuComponent _contextMenuComponent;
 
         private WeakReferenceEx<ChatMessageViewModel> _viewModelRef;
 
         public ConversationViewHolder(
             View itemView,
             bool isIncomingMessageViewType,
-            string[] contextMenuOptions)
+            ContextMenuComponent contextMenuComponent)
             : base(itemView)
         {
             _isIncomingMessageViewType = isIncomingMessageViewType;
-            _contextMenuOptions = contextMenuOptions;
-
-            if (contextMenuOptions.Length != 2)
-            {
-                throw new ArgumentException(nameof(contextMenuOptions));
-            }
+            _contextMenuComponent = contextMenuComponent;
 
             MessageContainer = itemView.FindViewById<LinearLayout>(Resource.Id.ll_message_container);
             MessageBodyTextView = itemView.FindViewById<TextView>(Resource.Id.tv_message_body);
@@ -142,25 +135,14 @@ namespace Softeq.XToolkit.Chat.Droid.ViewHolders
 
         private PopupMenu CreatePopupMenuFor(View itemView)
         {
-            var popup = new PopupMenu(itemView.Context, itemView);
-
-            popup.Menu.Add(0, EditMenuItemId, 0, _contextMenuOptions[0]);
-            popup.Menu.Add(0, DeleteMenuItemId, 1, _contextMenuOptions[1]);
-
+            var popup = _contextMenuComponent.BuildMenu(itemView.Context, itemView);
             popup.MenuItemClick += PopupMenuItemClickHandler;
             return popup;
         }
 
         private void PopupMenuItemClickHandler(object sender, PopupMenu.MenuItemClickEventArgs e)
         {
-            if (e.Item.ItemId == EditMenuItemId)
-            {
-                _viewModelRef.Target.RequestEdit();
-            }
-            else if (e.Item.ItemId == DeleteMenuItemId)
-            {
-                _viewModelRef.Target.RequestDelete();
-            }
+            _contextMenuComponent.ExecuteCommand(e.Item.ItemId, _viewModelRef.Target);
         }
 
         private void ChangeMessageViewStatus(ChatMessageStatus status)

@@ -89,9 +89,6 @@ namespace Softeq.XToolkit.Chat.ViewModels
 
         public string EditedMessageOriginalBody => _messageBeingEdited?.Body;
 
-        public string EditMessageOptionText => _localizedStrings.Edit;
-        public string DeleteMessageOptionText => _localizedStrings.Delete;
-
         public bool IsInEditMessageMode { get; private set; }
 
         public ICommand SendCommand { get; }
@@ -100,6 +97,22 @@ namespace Softeq.XToolkit.Chat.ViewModels
         public ICommand ShowInfoCommand { get; }
         public ICommand MessageAddedCommand { get; set; }
         public ICommand LoadOlderMessagesCommand { get; set; }
+
+        public IReadOnlyList<CommandAction> MessageCommandActions => new List<CommandAction>
+        {
+            new CommandAction
+            {
+                Title = _localizedStrings.Edit,
+                Command = new RelayCommand<ChatMessageViewModel>(EditMessage),
+                CommandActionStyle = CommandActionStyle.Default
+            },
+            new CommandAction
+            {
+                Title = _localizedStrings.Delete,
+                Command = new RelayCommand<ChatMessageViewModel>(DeleteMessage),
+                CommandActionStyle = CommandActionStyle.Destructive
+            }
+        };
 
         public abstract string GetDateString(DateTimeOffset date);
 
@@ -124,7 +137,6 @@ namespace Softeq.XToolkit.Chat.ViewModels
 
             _chatManager.MakeChatActive(_chatSummaryViewModel?.ChatId);
             Messages.ItemsChanged += OnMessagesAddedToCollection;
-            SubscribeToMessages(Messages.SelectMany(x => x));
             MarkMessagesAsRead();
         }
 
@@ -178,35 +190,12 @@ namespace Softeq.XToolkit.Chat.ViewModels
         {
             if (e.Action == NotifyCollectionChangedAction.Add)
             {
-                foreach (var newSection in e.ModifiedSectionsIndexes)
-                {
-                    Messages[newSection].Apply(SubscribeToMessage);
-                }
-                foreach (var (oldSection, newIndexes) in e.ModifiedItemsIndexes)
-                {
-                    foreach (var index in newIndexes)
-                    {
-                        SubscribeToMessage(Messages[oldSection][index]);
-                    }
-                }
                 MarkMessagesAsRead();
             }
             else if (e.Action == NotifyCollectionChangedAction.Reset)
             {
-                SubscribeToMessages(Messages.SelectMany(x => x));
                 MarkMessagesAsRead();
             }
-        }
-
-        private void SubscribeToMessages(IEnumerable<ChatMessageViewModel> messages)
-        {
-            messages?.Apply(SubscribeToMessage);
-        }
-
-        private void SubscribeToMessage(ChatMessageViewModel message)
-        {
-            message.DeleteRequested = new RelayCommand<ChatMessageViewModel>(DeleteMessage);
-            message.EditRequested = new RelayCommand<ChatMessageViewModel>(EditMessage);
         }
 
         private void OnMessageReceived(ChatMessageViewModel chatMessage)

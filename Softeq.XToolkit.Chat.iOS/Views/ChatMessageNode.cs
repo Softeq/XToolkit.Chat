@@ -8,15 +8,16 @@ using AsyncDisplayKitBindings;
 using CoreGraphics;
 using Foundation;
 using ObjCRuntime;
+using UIKit;
 using Softeq.XToolkit.Bindings;
 using Softeq.XToolkit.Chat.iOS.Extensions;
+using Softeq.XToolkit.Chat.iOS.Controls;
 using Softeq.XToolkit.Chat.ViewModels;
 using Softeq.XToolkit.Common;
 using Softeq.XToolkit.Common.Extensions;
 using Softeq.XToolkit.Common.iOS.Helpers;
 using Softeq.XToolkit.WhiteLabel.iOS.Helpers;
 using Softeq.XToolkit.WhiteLabel.Threading;
-using UIKit;
 
 namespace Softeq.XToolkit.Chat.iOS.Views
 {
@@ -25,6 +26,7 @@ namespace Softeq.XToolkit.Chat.iOS.Views
         private const double AvatarSize = 35;
 
         private readonly WeakReferenceEx<ChatMessageViewModel> _viewModelRef;
+        private readonly ContextMenuComponent _contextMenuComponent;
         private readonly bool _isMyMessage;
 
         private readonly ASTextNode _descriptionTextNode = new ASTextNode();
@@ -36,9 +38,10 @@ namespace Softeq.XToolkit.Chat.iOS.Views
         private Binding _messageBodyBinding;
         private Binding _messageStatusBinding;
 
-        public ChatMessageNode(ChatMessageViewModel viewModel)
+        public ChatMessageNode(ChatMessageViewModel viewModel, ContextMenuComponent contextMenuComponent)
         {
             _viewModelRef = WeakReferenceEx.Create(viewModel);
+            _contextMenuComponent = contextMenuComponent;
             _isMyMessage = viewModel.IsMine;
 
             Execute.BeginOnUIThread(() => View.AddGestureRecognizer(new UILongPressGestureRecognizer(TryShowMenu)));
@@ -287,16 +290,16 @@ namespace Softeq.XToolkit.Chat.iOS.Views
             });
         }
 
-        [Export("edit")]
+        [Export(ContextMenuActions.Edit)]
         private void Edit()
         {
-            _viewModelRef.Target?.RequestEdit();
+            _contextMenuComponent.ExecuteCommand(ContextMenuActions.Edit, _viewModelRef.Target);
         }
 
-        [Export("delete")]
+        [Export(ContextMenuActions.Delete)]
         private void Delete()
         {
-            _viewModelRef.Target?.RequestDelete();
+            _contextMenuComponent.ExecuteCommand(ContextMenuActions.Delete, _viewModelRef.Target);
         }
 
         [Export("OnAttachmentTapped")]

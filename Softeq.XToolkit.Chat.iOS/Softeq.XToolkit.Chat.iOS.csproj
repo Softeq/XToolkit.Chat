@@ -71,6 +71,7 @@
     <Folder Include="Resources\ChatImages.xcassets\MessageSending.imageset\" />
     <Folder Include="Resources\ChatImages.xcassets\MessageDelivered.imageset\" />
     <Folder Include="Resources\ChatImages.xcassets\MessageRead.imageset\" />
+    <Folder Include="Controls\" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -121,6 +122,8 @@
       <DependentUpon>ChatMessagesInputBarView.cs</DependentUpon>
     </Compile>
     <Compile Include="ViewControllers\ChatMessagesViewController.InputAndKeyboard.cs" />
+    <Compile Include="Controls\ContextMenuComponent.cs" />
+    <Compile Include="Controls\ContextMenuActions.cs" />
   </ItemGroup>
   <ItemGroup>
     <InterfaceDefinition Include="ViewControllers\ChatDetailsStoryboard.storyboard" />
