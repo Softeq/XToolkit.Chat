@@ -7,7 +7,7 @@
     <ProjectTypeGuids>{FEACFBD2-3405-455C-9665-78FE426C6842};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <OutputType>Library</OutputType>
     <RootNamespace>Softeq.XToolkit.Chat.iOS</RootNamespace>
-    <AssemblyName>Softeq.XToolkit.Chat.UI.iOS</AssemblyName>
+    <AssemblyName>Softeq.XToolkit.Chat.iOS</AssemblyName>
     <IPhoneResourcePrefix>Resources</IPhoneResourcePrefix>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -138,38 +138,14 @@
     <InterfaceDefinition Include="Views\ChatMessagesInputBarView.xib" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Softeq.XToolkit.Chat\Softeq.XToolkit.Chat.csproj">
-      <Project>{B0A49876-1ED1-4545-A763-22E9A452C80D}</Project>
-      <Name>Softeq.XToolkit.Chat</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Softeq.XToolkit.Chat.Models\Softeq.XToolkit.Chat.Models.csproj">
-      <Project>{F88419DF-EE33-446F-915A-B4191112D592}</Project>
-      <Name>Softeq.XToolkit.Chat.Models</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\XToolkit\Softeq.XToolkit.Bindings\Softeq.XToolkit.Bindings.csproj">
-      <Project>{6CC4B55D-2EA0-4883-BF2A-BBEBC80150AF}</Project>
-      <Name>Softeq.XToolkit.Bindings</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\XToolkit\Softeq.XToolkit.Bindings.iOS\Softeq.XToolkit.Bindings.iOS.csproj">
-      <Project>{2D399BA9-1878-43E2-AF05-6873EAE9151B}</Project>
-      <Name>Softeq.XToolkit.Bindings.iOS</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\XToolkit\Softeq.XToolkit.Common\Softeq.XToolkit.Common.csproj">
-      <Project>{21503153-9566-4789-9B5A-73F2BA71AA51}</Project>
-      <Name>Softeq.XToolkit.Common</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\XToolkit.WhiteLabel\Softeq.XToolkit.WhiteLabel.iOS\Softeq.XToolkit.WhiteLabel.iOS.csproj">
-      <Project>{CC89DBC6-E68A-4C85-91C4-E276D3BC3C2E}</Project>
-      <Name>Softeq.XToolkit.WhiteLabel.iOS</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\XToolkit\Softeq.XToolkit.Common.iOS\Softeq.XToolkit.Common.iOS.csproj">
-      <Project>{6BCB2009-2E46-458C-BCAA-AFC27A631924}</Project>
-      <Name>Softeq.XToolkit.Common.iOS</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\XToolkit.WhiteLabel\Softeq.XToolkit.WhiteLabel\Softeq.XToolkit.WhiteLabel.csproj">
-      <Project>{051C065C-DF97-4406-BEAB-F2F91842275C}</Project>
-      <Name>Softeq.XToolkit.WhiteLabel</Name>
-    </ProjectReference>
+    <ProjectReference Include="..\Softeq.XToolkit.Chat\Softeq.XToolkit.Chat.csproj" />
+    <ProjectReference Include="..\Softeq.XToolkit.Chat.Models\Softeq.XToolkit.Chat.Models.csproj" />
+    <ProjectReference Include="..\..\XToolkit\Softeq.XToolkit.Bindings\Softeq.XToolkit.Bindings.csproj" />
+    <ProjectReference Include="..\..\XToolkit\Softeq.XToolkit.Bindings.iOS\Softeq.XToolkit.Bindings.iOS.csproj" />
+    <ProjectReference Include="..\..\XToolkit\Softeq.XToolkit.Common\Softeq.XToolkit.Common.csproj" />
+    <ProjectReference Include="..\..\XToolkit.WhiteLabel\Softeq.XToolkit.WhiteLabel.iOS\Softeq.XToolkit.WhiteLabel.iOS.csproj" />
+    <ProjectReference Include="..\..\XToolkit\Softeq.XToolkit.Common.iOS\Softeq.XToolkit.Common.iOS.csproj" />
+    <ProjectReference Include="..\..\XToolkit.WhiteLabel\Softeq.XToolkit.WhiteLabel\Softeq.XToolkit.WhiteLabel.csproj" />
   </ItemGroup>
   <ItemGroup>
     <ImageAsset Include="Resources\ChatImages.xcassets\Contents.json" />
