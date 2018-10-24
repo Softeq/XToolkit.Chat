@@ -26,7 +26,7 @@ namespace Softeq.XToolkit.Chat.SignalRClient
 {
     public class SignalRAdapter : ISocketChatAdapter
     {
-        private readonly AccountService _accountService;
+        private readonly IAccountService _accountService;
         private readonly IRefreshTokenService _refreshTokenService;
         private readonly IRestHttpClient _httpClient;
         private readonly ILogger _logger;
@@ -45,7 +45,7 @@ namespace Softeq.XToolkit.Chat.SignalRClient
         private bool _isConnected = false;
         private bool _canReconnectAutomatically = true;
 
-        public SignalRAdapter(AccountService accountService,
+        public SignalRAdapter(IAccountService accountService,
                               IRefreshTokenService refreshTokenService,
                               IRestHttpClient httpClient,
                               ILogManager logManager,

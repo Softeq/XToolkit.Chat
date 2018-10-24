@@ -62,9 +62,9 @@ namespace Softeq.XToolkit.Chat.iOS.Views
             ChangeChatPhotoButton.SetCommand(command);
         }
 
-        protected override void DoInit()
+        protected override void Initialize()
         {
-            base.DoInit();
+            base.Initialize();
 
             ChatNameTextField.ShouldReturn += (textField) =>
             {
