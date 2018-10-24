@@ -84,9 +84,9 @@ namespace Softeq.XToolkit.Chat.iOS.Views
             _cachedIntrinsicContentSize = CalculateIntrinsicContentSize();
         }
 
-        protected override void DoInit()
+        protected override void Initialize()
         {
-            base.DoInit();
+            base.Initialize();
 
             AutoresizingMask = UIViewAutoresizing.FlexibleHeight;
             EditingIndicatorView.Layer.CornerRadius = 2f;
@@ -127,7 +127,7 @@ namespace Softeq.XToolkit.Chat.iOS.Views
             {
                 return;
             }
-            
+
             var changedHeight = EditViewContainerHeightConstraint.Constant;
             if (changedHeight > 0)
             {
