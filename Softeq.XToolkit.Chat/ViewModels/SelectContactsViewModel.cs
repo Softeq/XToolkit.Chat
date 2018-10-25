@@ -43,9 +43,11 @@ namespace Softeq.XToolkit.Chat.ViewModels
             _formatService = formatService;
 
             _memberSelectedCommand = new RelayCommand(() => RaisePropertyChanged(nameof(ContactsCountText)));
+            BackCommand = new RelayCommand(_pageNavigationService.GoBack, () => _pageNavigationService.CanGoBack);
             AddChatCommand = new RelayCommand(() => AddChatAsync().SafeTaskWrapper());
         }
 
+        public ICommand BackCommand { get; }
         public ICommand AddChatCommand { get; }
 
         public string Title => IsInviteToChat ? _localizedStrings.InviteUsers : _localizedStrings.CreateGroup;
@@ -102,16 +104,30 @@ namespace Softeq.XToolkit.Chat.ViewModels
 
         private async Task AddChatAsync()
         {
-            var selectedContactsIds = Contacts.Where(x => x.IsSelected).Select(x => x.Id).ToList();
-            if (IsCreateChat)
+            if (IsBusy)
             {
-                await _chatManager.CreateChatAsync(_chatName, selectedContactsIds).ConfigureAwait(false);
+                return;
             }
-            else if (IsInviteToChat)
+
+            IsBusy = true;
+
+            try
             {
-                await _chatManager.InviteMembersAsync(_openedChatId, selectedContactsIds).ConfigureAwait(false);
+                var selectedContactsIds = Contacts.Where(x => x.IsSelected).Select(x => x.Id).ToList();
+                if (IsCreateChat)
+                {
+                    await _chatManager.CreateChatAsync(_chatName, selectedContactsIds).ConfigureAwait(false);
+                }
+                else if (IsInviteToChat)
+                {
+                    await _chatManager.InviteMembersAsync(_openedChatId, selectedContactsIds).ConfigureAwait(false);
+                }
+                _pageNavigationService.GoBack();
             }
-            _pageNavigationService.GoBack();
+            finally
+            {
+                IsBusy = false;
+            }
         }
     }
 }
