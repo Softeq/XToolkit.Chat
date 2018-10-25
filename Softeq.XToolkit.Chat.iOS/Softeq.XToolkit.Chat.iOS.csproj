@@ -56,21 +56,10 @@
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Resources\" />
     <Folder Include="ViewControllers\" />
     <Folder Include="Views\" />
     <Folder Include="Extensions\" />
-    <Folder Include="Resources\ChatImages.xcassets\ScrollDown.imageset\" />
-    <Folder Include="Resources\ChatImages.xcassets\BubbleMine.imageset\" />
-    <Folder Include="Resources\ChatImages.xcassets\BubbleOther.imageset\" />
-    <Folder Include="Resources\ChatImages.xcassets\Close.imageset\" />
-    <Folder Include="Resources\ChatImages.xcassets\SendMessage.imageset\" />
-    <Folder Include="Resources\ChatImages.xcassets\AttachImage.imageset\" />
     <Folder Include="TableSources\" />
-    <Folder Include="Resources\ChatImages.xcassets\NoPhoto.imageset\" />
-    <Folder Include="Resources\ChatImages.xcassets\MessageSending.imageset\" />
-    <Folder Include="Resources\ChatImages.xcassets\MessageDelivered.imageset\" />
-    <Folder Include="Resources\ChatImages.xcassets\MessageRead.imageset\" />
     <Folder Include="Controls\" />
   </ItemGroup>
   <ItemGroup>
@@ -148,27 +137,6 @@
     <ProjectReference Include="..\..\XToolkit.WhiteLabel\Softeq.XToolkit.WhiteLabel\Softeq.XToolkit.WhiteLabel.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <ImageAsset Include="Resources\ChatImages.xcassets\Contents.json" />
-    <ImageAsset Include="Resources\ChatImages.xcassets\ScrollDown.imageset\Contents.json" />
-    <ImageAsset Include="Resources\ChatImages.xcassets\ScrollDown.imageset\ScrollDown.pdf" />
-    <ImageAsset Include="Resources\ChatImages.xcassets\BubbleMine.imageset\Contents.json" />
-    <ImageAsset Include="Resources\ChatImages.xcassets\BubbleOther.imageset\Contents.json" />
-    <ImageAsset Include="Resources\ChatImages.xcassets\Close.imageset\Contents.json" />
-    <ImageAsset Include="Resources\ChatImages.xcassets\Close.imageset\Close.pdf" />
-    <ImageAsset Include="Resources\ChatImages.xcassets\SendMessage.imageset\Contents.json" />
-    <ImageAsset Include="Resources\ChatImages.xcassets\AttachImage.imageset\Contents.json" />
-    <ImageAsset Include="Resources\ChatImages.xcassets\AttachImage.imageset\AttachImage.pdf" />
-    <ImageAsset Include="Resources\ChatImages.xcassets\BubbleMine.imageset\BubbleMine.pdf" />
-    <ImageAsset Include="Resources\ChatImages.xcassets\BubbleOther.imageset\BubbleOther.pdf" />
-    <ImageAsset Include="Resources\ChatImages.xcassets\SendMessage.imageset\SendMessage.pdf" />
-    <ImageAsset Include="Resources\ChatImages.xcassets\NoPhoto.imageset\Contents.json" />
-    <ImageAsset Include="Resources\ChatImages.xcassets\NoPhoto.imageset\Smiley.png" />
-    <ImageAsset Include="Resources\ChatImages.xcassets\MessageSending.imageset\Contents.json" />
-    <ImageAsset Include="Resources\ChatImages.xcassets\MessageSending.imageset\icSent.pdf" />
-    <ImageAsset Include="Resources\ChatImages.xcassets\MessageDelivered.imageset\Contents.json" />
-    <ImageAsset Include="Resources\ChatImages.xcassets\MessageDelivered.imageset\icSend.pdf" />
-    <ImageAsset Include="Resources\ChatImages.xcassets\MessageRead.imageset\Contents.json" />
-    <ImageAsset Include="Resources\ChatImages.xcassets\MessageRead.imageset\icRead.pdf" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />
 </Project>
