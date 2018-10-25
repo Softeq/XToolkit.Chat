@@ -9,5 +9,7 @@ namespace Softeq.XToolkit.Chat.Models.Interfaces
         string PluralizeWithQuantity(int count, string plural, string singular);
 
         string ToShortTimeFormat(DateTime? dateTime);
+
+        string Humanize(DateTimeOffset date, string today, string yesterday);
     }
 }

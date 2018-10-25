@@ -35,6 +35,7 @@ namespace Softeq.XToolkit.Chat.ViewModels
             _formatService = formatService;
 
             AddMembersCommand = new RelayCommand(AddMembers);
+            BackCommand = new RelayCommand(_pageNavigationService.GoBack, () => _pageNavigationService.CanGoBack);
         }
 
         public string Title => _localizedStrings.DetailsTitle;
@@ -53,6 +54,7 @@ namespace Softeq.XToolkit.Chat.ViewModels
         public bool IsNavigated { get; private set; }
 
         public ICommand AddMembersCommand { get; }
+        public ICommand BackCommand { get; }
 
         public async override void OnAppearing()
         {

@@ -114,6 +114,7 @@
     <Compile Include="ViewControllers\ChatMessagesViewController.InputAndKeyboard.cs" />
     <Compile Include="Controls\ContextMenuComponent.cs" />
     <Compile Include="Controls\ContextMenuActions.cs" />
+    <Compile Include="Styles.cs" />
   </ItemGroup>
   <ItemGroup>
     <InterfaceDefinition Include="ViewControllers\ChatDetailsStoryboard.storyboard" />

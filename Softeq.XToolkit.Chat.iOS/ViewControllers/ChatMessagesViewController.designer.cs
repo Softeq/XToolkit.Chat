@@ -13,7 +13,10 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
 	partial class ChatMessagesViewController
 	{
 		[Outlet]
-		Softeq.XToolkit.Chat.iOS.Views.ConnectionStatusView CustomTitleView { get; set; }
+		UIKit.UINavigationBar CustomNavigationBar { get; set; }
+
+		[Outlet]
+		UIKit.UINavigationItem CustomNavigationItem { get; set; }
 
 		[Outlet]
 		UIKit.UIView MainView { get; set; }
@@ -29,9 +32,14 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
 		
 		void ReleaseDesignerOutlets ()
 		{
-			if (CustomTitleView != null) {
-				CustomTitleView.Dispose ();
-				CustomTitleView = null;
+			if (CustomNavigationBar != null) {
+				CustomNavigationBar.Dispose ();
+				CustomNavigationBar = null;
+			}
+
+			if (CustomNavigationItem != null) {
+				CustomNavigationItem.Dispose ();
+				CustomNavigationItem = null;
 			}
 
 			if (MainView != null) {

@@ -16,7 +16,10 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
 		UIKit.UITableView ChatsTableView { get; set; }
 
 		[Outlet]
-		Softeq.XToolkit.Chat.iOS.Views.ConnectionStatusView CustomTitleView { get; set; }
+		UIKit.UINavigationBar CustomNavigationBar { get; set; }
+
+		[Outlet]
+		UIKit.UINavigationItem CustomNavigationItem { get; set; }
 
 		[Outlet]
 		UIKit.UIButton LoginButton { get; set; }
@@ -28,14 +31,19 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
 				ChatsTableView = null;
 			}
 
-			if (CustomTitleView != null) {
-				CustomTitleView.Dispose ();
-				CustomTitleView = null;
-			}
-
 			if (LoginButton != null) {
 				LoginButton.Dispose ();
 				LoginButton = null;
+			}
+
+			if (CustomNavigationItem != null) {
+				CustomNavigationItem.Dispose ();
+				CustomNavigationItem = null;
+			}
+
+			if (CustomNavigationBar != null) {
+				CustomNavigationBar.Dispose ();
+				CustomNavigationBar = null;
 			}
 		}
 	}

@@ -13,6 +13,7 @@ namespace Softeq.XToolkit.Chat.iOS
             Bootstrapper.Configure(containerBuilder);
 
             containerBuilder.RegisterType<ChatsListViewModel>().InstancePerDependency();
+            containerBuilder.RegisterType<ChatMessagesViewModel>().InstancePerDependency(); // TODO:
             containerBuilder.RegisterType<ChatDetailsViewModel>().InstancePerDependency();
             containerBuilder.RegisterType<SelectContactsViewModel>().InstancePerDependency();
         }
