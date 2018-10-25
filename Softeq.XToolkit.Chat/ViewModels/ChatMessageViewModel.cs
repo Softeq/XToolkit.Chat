@@ -2,10 +2,7 @@
 // http://www.softeq.com
 
 using System;
-using System.Collections.Generic;
 using Softeq.XToolkit.Chat.Models;
-using Softeq.XToolkit.Common.Command;
-using Softeq.XToolkit.Common.Interfaces;
 using Softeq.XToolkit.WhiteLabel.Interfaces;
 using Softeq.XToolkit.WhiteLabel.Mvvm;
 using Softeq.XToolkit.WhiteLabel.Threading;
@@ -15,19 +12,12 @@ namespace Softeq.XToolkit.Chat.ViewModels
 {
     public class ChatMessageViewModel : ObservableObject, IViewModelParameter<ChatMessageModel>, IEquatable<ChatMessageViewModel>
     {
-        private readonly IFullScreenPhotosService _fullScreenPhotosService;
         private readonly IFormatService _formatService;
 
-        public ChatMessageViewModel(
-            IFullScreenPhotosService fullScreenPhotosService,
-            IFormatService formatService)
+        public ChatMessageViewModel(IFormatService formatService)
         {
-            _fullScreenPhotosService = fullScreenPhotosService;
             _formatService = formatService;
         }
-
-        //public RelayCommand<ChatMessageViewModel> EditRequested { get; set; }
-        //public RelayCommand<ChatMessageViewModel> DeleteRequested { get; set; }
 
         public ChatMessageModel Parameter
         {
@@ -63,20 +53,11 @@ namespace Softeq.XToolkit.Chat.ViewModels
         public string AttachmentImageUrl => Model?.ImageUrl;
         public bool HasAttachment => !string.IsNullOrEmpty(AttachmentImageUrl?.Trim());
 
+        // TODO: add implementation of imageViewer
         public void OpenImage()
         {
-            _fullScreenPhotosService.DisplayImages(new List<string> { AttachmentImageUrl }, 0);
+            //_fullScreenPhotosService.DisplayImages(new List<string> { AttachmentImageUrl }, 0);
         }
-
-        //public void RequestEdit()
-        //{
-        //    EditRequested?.Execute(this);
-        //}
-
-        //public void RequestDelete()
-        //{
-        //    DeleteRequested?.Execute(this);
-        //}
 
         public bool IsEarlierThan(ChatMessageViewModel message) => Model.IsEarlierThan(message?.Model);
         public bool IsEarlierOrEqualsThan(ChatMessageViewModel message) => Model.IsEarlierOrEqualsThan(message.Model);

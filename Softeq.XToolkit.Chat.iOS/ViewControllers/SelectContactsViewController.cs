@@ -10,6 +10,7 @@ using Softeq.XToolkit.Bindings.iOS;
 using Softeq.XToolkit.Bindings;
 using Softeq.XToolkit.Chat.iOS.Views;
 using Softeq.XToolkit.Chat.ViewModels;
+using Softeq.XToolkit.WhiteLabel.iOS.Extensions;
 
 namespace Softeq.XToolkit.Chat.iOS.ViewControllers
 {
@@ -19,7 +20,6 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
 
         private WeakReferenceEx<ObservableTableViewSource<ChatUserViewModel>> _sourceRef;
 
-        private UIBarButtonItem _actionButton;
         private ChatDetailsHeaderView _chatDetailsHeaderView;
 
         public SelectContactsViewController(IntPtr handle) : base(handle) { }
@@ -28,9 +28,9 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
         {
             base.ViewDidLoad();
 
-            _actionButton = new UIBarButtonItem();
-            _actionButton.SetCommand(ViewModel.AddChatCommand);
-            NavigationItem.RightBarButtonItem = _actionButton;
+            CustomNavigationItem.SetCommand(UIImage.FromBundle(Styles.BackButtonBundleName), ViewModel.BackCommand, true);
+            CustomNavigationItem.SetCommand(ViewModel.ActionButtonName, Styles.NavigationBarTintColor,
+                ViewModel.AddChatCommand, false);
 
             TableView.AllowsSelection = false;
             TableView.RegisterNibForCellReuse(ChatUserViewCell.Nib, ChatUserViewCell.Key);
@@ -73,7 +73,6 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
         {
             base.DoAttachBindings();
 
-            Bindings.Add(this.SetBinding(() => ViewModel.ActionButtonName, () => _actionButton.Title));
             Bindings.Add(this.SetBinding(() => ViewModel.ChatName, () => _chatDetailsHeaderView.ChatNameField.Text, BindingMode.TwoWay));
             Bindings.Add(this.SetBinding(() => ViewModel.IsInviteToChat).WhenSourceChanges(() =>
             {
@@ -83,7 +82,7 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
                     TableView.TableHeaderView = new UIView();
                 }
 
-                Title = ViewModel.Title;
+                CustomNavigationItem.Title = ViewModel.Title;
             }));
             Bindings.Add(this.SetBinding(() => ViewModel.ContactsCountText, () => _chatDetailsHeaderView.ChatMembersCount));
         }

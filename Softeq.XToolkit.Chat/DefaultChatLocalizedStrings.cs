@@ -33,5 +33,8 @@ namespace Softeq.XToolkit.Chat
 
         public string Leave => "Leave";
         public string Close => "Close";
+
+        public string Today => "Today";
+        public string Yesterday => "Yesterday";
     }
 }

@@ -21,7 +21,7 @@ using Softeq.XToolkit.Chat.Models.Interfaces;
 
 namespace Softeq.XToolkit.Chat.ViewModels
 {
-    public abstract class ChatMessagesViewModel : ViewModelBase, IViewModelParameter<ChatSummaryViewModel>
+    public class ChatMessagesViewModel : ViewModelBase, IViewModelParameter<ChatSummaryViewModel>
     {
         private const int InitialReadMessagesBatchCount = 20;
         private const int OlderMessagesBatchCount = 50;
@@ -30,6 +30,7 @@ namespace Softeq.XToolkit.Chat.ViewModels
         private readonly IViewModelFactoryService _viewModelFactoryService;
         private readonly IPageNavigationService _pageNavigationService;
         private readonly IChatLocalizedStrings _localizedStrings;
+        private readonly IFormatService _formatService;
         private ChatSummaryViewModel _chatSummaryViewModel;
 
         private bool _areLatestMessagesLoaded;
@@ -48,16 +49,19 @@ namespace Softeq.XToolkit.Chat.ViewModels
             IViewModelFactoryService viewModelFactoryService,
             IPageNavigationService pageNavigationService,
             IChatLocalizedStrings localizedStrings,
+            IFormatService formatService,
             ChatManager chatManager,
             ConnectionStatusViewModel connectionStatusViewModel)
         {
             _viewModelFactoryService = viewModelFactoryService;
             _pageNavigationService = pageNavigationService;
             _localizedStrings = localizedStrings;
+            _formatService = formatService;
             _chatManager = chatManager;
 
             ConnectionStatusViewModel = connectionStatusViewModel;
 
+            BackCommand = new RelayCommand(_pageNavigationService.GoBack, () => _pageNavigationService.CanGoBack);
             SendCommand = new RelayCommand(SendMessageAsync);
             AttachImageCommand = new RelayCommand(AttachImage);
             CancelEditingMessageModeCommand = new RelayCommand(CancelEditingMessageMode);
@@ -91,6 +95,7 @@ namespace Softeq.XToolkit.Chat.ViewModels
 
         public bool IsInEditMessageMode { get; private set; }
 
+        public ICommand BackCommand { get; }
         public ICommand SendCommand { get; }
         public ICommand AttachImageCommand { get; }
         public ICommand CancelEditingMessageModeCommand { get; }
@@ -114,7 +119,10 @@ namespace Softeq.XToolkit.Chat.ViewModels
             }
         };
 
-        public abstract string GetDateString(DateTimeOffset date);
+        public virtual string GetDateString(DateTimeOffset date)
+        {
+            return _formatService.Humanize(date, _localizedStrings.Today, _localizedStrings.Yesterday);
+        }
 
         public override void OnAppearing()
         {
