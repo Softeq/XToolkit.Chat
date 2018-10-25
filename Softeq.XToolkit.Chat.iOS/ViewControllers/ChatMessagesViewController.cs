@@ -20,6 +20,7 @@ using Softeq.XToolkit.WhiteLabel.Interfaces;
 using Softeq.XToolkit.WhiteLabel.iOS;
 using Softeq.XToolkit.WhiteLabel.Threading;
 using UIKit;
+using Softeq.XToolkit.WhiteLabel.iOS.Extensions;
 
 namespace Softeq.XToolkit.Chat.iOS.ViewControllers
 {
@@ -38,6 +39,7 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
         private bool _shouldUpdateTableViewContentOffset;
         private NSLayoutConstraint _tableViewBottomConstraint;
         private ContextMenuComponent _contextMenuComponent;
+        private ConnectionStatusView _customTitleView;
 
         public ChatMessagesViewController(IntPtr handle) : base(handle) { }
 
@@ -47,11 +49,11 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
 
             SetupInputAccessoryView();
 
-            NavigationItem.TitleView = CustomTitleView;
+            _customTitleView = new ConnectionStatusView(CGRect.Empty);
 
-            var infoButton = new UIBarButtonItem(UIBarButtonSystemItem.Bookmarks);
-            infoButton.SetCommand(ViewModel.ShowInfoCommand);
-            NavigationItem.RightBarButtonItem = infoButton;
+            CustomNavigationItem.AddTitleView(_customTitleView);
+            CustomNavigationItem.SetCommand(UIImage.FromBundle(Styles.BackButtonBundleName), ViewModel.BackCommand, true);
+            CustomNavigationItem.SetCommand(UIBarButtonSystemItem.Bookmarks, ViewModel.ShowInfoCommand, false);
 
             InitTableViewAsync().SafeTaskWrapper();
 
@@ -131,7 +133,7 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
             Bindings.Add(this.SetBinding(() => ViewModel.Messages, () => _dataSourceRef.Target.DataSource));
             Bindings.Add(this.SetBinding(() => ViewModel.ConnectionStatusViewModel).WhenSourceChanges(() =>
             {
-                CustomTitleView.Update(ViewModel.ConnectionStatusViewModel);
+                _customTitleView.Update(ViewModel.ConnectionStatusViewModel);
             }));
         }
 

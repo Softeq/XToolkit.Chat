@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14113" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14313.18" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="retina4_7" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
-        <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14088"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14283.14"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -13,28 +13,39 @@
         <scene sceneID="8CU-Xi-ly4">
             <objects>
                 <viewController storyboardIdentifier="ChatDetailsViewController" id="rOE-UK-gtY" customClass="ChatDetailsViewController" sceneMemberID="viewController">
-                    <layoutGuides>
-                        <viewControllerLayoutGuide type="top" id="eSq-l1-8CH"/>
-                        <viewControllerLayoutGuide type="bottom" id="w0I-jT-t9o"/>
-                    </layoutGuides>
                     <view key="view" contentMode="scaleToFill" id="PQq-nB-TEC">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
+                            <navigationBar contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="ZYQ-7Q-g6I">
+                                <rect key="frame" x="0.0" y="20" width="375" height="44"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="44" id="GSL-aQ-nSB"/>
+                                </constraints>
+                                <items>
+                                    <navigationItem largeTitleDisplayMode="never" id="hur-io-XUn"/>
+                                </items>
+                            </navigationBar>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" allowsSelection="NO" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="xQb-u6-XfH">
-                                <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                                <rect key="frame" x="0.0" y="64" width="375" height="603"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                             </tableView>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
-                            <constraint firstAttribute="trailing" secondItem="xQb-u6-XfH" secondAttribute="trailing" id="4sC-3t-9Pf"/>
-                            <constraint firstItem="xQb-u6-XfH" firstAttribute="top" secondItem="PQq-nB-TEC" secondAttribute="top" id="7wn-Hf-XtK"/>
-                            <constraint firstItem="xQb-u6-XfH" firstAttribute="leading" secondItem="PQq-nB-TEC" secondAttribute="leading" id="MM0-y0-ThG"/>
-                            <constraint firstAttribute="bottom" secondItem="xQb-u6-XfH" secondAttribute="bottom" id="tM9-76-MjG"/>
+                            <constraint firstItem="Cbk-k9-mBZ" firstAttribute="trailing" secondItem="xQb-u6-XfH" secondAttribute="trailing" id="4sC-3t-9Pf"/>
+                            <constraint firstItem="ZYQ-7Q-g6I" firstAttribute="top" secondItem="Cbk-k9-mBZ" secondAttribute="top" id="6Ea-Of-1fO"/>
+                            <constraint firstItem="ZYQ-7Q-g6I" firstAttribute="trailing" secondItem="Cbk-k9-mBZ" secondAttribute="trailing" id="Dh8-U2-r3d"/>
+                            <constraint firstItem="xQb-u6-XfH" firstAttribute="leading" secondItem="Cbk-k9-mBZ" secondAttribute="leading" id="MM0-y0-ThG"/>
+                            <constraint firstItem="xQb-u6-XfH" firstAttribute="top" secondItem="ZYQ-7Q-g6I" secondAttribute="bottom" id="O4l-ZC-Dpl"/>
+                            <constraint firstItem="ZYQ-7Q-g6I" firstAttribute="leading" secondItem="Cbk-k9-mBZ" secondAttribute="leading" id="SFw-M7-jJG"/>
+                            <constraint firstItem="Cbk-k9-mBZ" firstAttribute="bottom" secondItem="xQb-u6-XfH" secondAttribute="bottom" id="tM9-76-MjG"/>
                         </constraints>
+                        <viewLayoutGuide key="safeArea" id="Cbk-k9-mBZ"/>
                     </view>
                     <connections>
+                        <outlet property="CustomNavigationBar" destination="ZYQ-7Q-g6I" id="dd9-MP-EQq"/>
+                        <outlet property="CustomNavigationItem" destination="hur-io-XUn" id="Y0B-b5-5Ms"/>
                         <outlet property="TableView" destination="xQb-u6-XfH" id="sB5-fd-08W"/>
                     </connections>
                 </viewController>

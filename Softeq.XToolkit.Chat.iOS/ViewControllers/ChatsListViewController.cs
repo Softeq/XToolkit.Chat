@@ -12,6 +12,8 @@ using Softeq.XToolkit.Common;
 using Softeq.XToolkit.WhiteLabel;
 using Softeq.XToolkit.WhiteLabel.iOS;
 using UIKit;
+using Softeq.XToolkit.WhiteLabel.iOS.Extensions;
+using CoreGraphics;
 
 namespace Softeq.XToolkit.Chat.iOS.ViewControllers
 {
@@ -21,6 +23,7 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
         private const string ReLoginButtonFormattedText = "(RE)LOGIN: {0}";
 
         private WeakReferenceEx<ObservableTableViewSource<ChatSummaryViewModel>> _sourceRef;
+        private ConnectionStatusView _customTitleView;
 
         public ChatsListViewController(IntPtr handle) : base(handle)
         {
@@ -36,18 +39,15 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
 
             base.ViewDidLoad();
 
-            // Reset text for back button
-            NavigationItem.BackBarButtonItem = new UIBarButtonItem("", UIBarButtonItemStyle.Plain, null, null);
-            NavigationItem.TitleView = CustomTitleView;
-
             // Setup brand color for NavigationBar buttons
-            NavigationController.NavigationBar.BarTintColor = UIColor.White;
-            NavigationController.NavigationBar.TintColor = UIColor.FromRGB(62, 218, 215);
-            NavigationController.NavigationBar.Translucent = false;
+            CustomNavigationBar.TintColor = Styles.NavigationBarTintColor;
 
-            var addButton = new UIBarButtonItem(UIBarButtonSystemItem.Add);
-            addButton.SetCommand(ViewModel.CreateChatCommand);
-            NavigationItem.RightBarButtonItem = addButton;
+            _customTitleView = new ConnectionStatusView(CGRect.Empty);
+
+            // Setup NavigationBar
+            CustomNavigationItem.AddTitleView(_customTitleView);
+            CustomNavigationItem.SetCommand(UIBarButtonSystemItem.Add, ViewModel.CreateChatCommand, false);
+
 
             LoginButton.SetCommand(ViewModel.LoginCommand);
 
@@ -81,7 +81,7 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
 
             Bindings.Add(this.SetBinding(() => ViewModel.ConnectionStatusViewModel).WhenSourceChanges(() =>
             {
-                CustomTitleView.Update(ViewModel.ConnectionStatusViewModel);
+                _customTitleView.Update(ViewModel.ConnectionStatusViewModel);
             }));
         }
 

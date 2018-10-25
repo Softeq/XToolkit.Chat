@@ -10,6 +10,7 @@ using Softeq.XToolkit.Bindings;
 using Softeq.XToolkit.Common;
 using Softeq.XToolkit.Bindings.iOS;
 using Softeq.XToolkit.Chat.ViewModels;
+using Softeq.XToolkit.WhiteLabel.iOS.Extensions;
 
 namespace Softeq.XToolkit.Chat.iOS.ViewControllers
 {
@@ -24,7 +25,8 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
         {
             base.ViewDidLoad();
 
-            Title = ViewModel.Title;
+            CustomNavigationItem.Title = ViewModel.Title;
+            CustomNavigationItem.SetCommand(UIImage.FromBundle(Styles.BackButtonBundleName), ViewModel.BackCommand, true);
 
             TableView.RegisterNibForCellReuse(ChatUserViewCell.Nib, ChatUserViewCell.Key);
             TableView.RowHeight = 80;

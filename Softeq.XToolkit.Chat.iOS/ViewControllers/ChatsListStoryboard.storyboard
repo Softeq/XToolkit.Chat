@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14113" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
-    <device id="retina4_7" orientation="portrait">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14313.18" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina5_9" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
-        <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14088"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14283.14"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -15,22 +14,26 @@
             <objects>
                 <viewController storyboardIdentifier="ChatsListViewController" id="fbS-Y8-KJ0" customClass="ChatsListViewController" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="Gt4-mM-lpM">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="812"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <view contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="2uW-KY-YSf" customClass="ConnectionStatusView">
-                                <rect key="frame" x="-31" y="-59" width="240" height="128"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                            </view>
+                            <navigationBar contentMode="scaleToFill" translucent="NO" translatesAutoresizingMaskIntoConstraints="NO" id="e3e-4v-EfG">
+                                <rect key="frame" x="0.0" y="44" width="375" height="44"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="44" id="nCq-OG-G9j"/>
+                                </constraints>
+                                <items>
+                                    <navigationItem largeTitleDisplayMode="never" id="icw-VK-o8Y"/>
+                                </items>
+                            </navigationBar>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="ouP-dJ-4uv">
-                                <rect key="frame" x="0.0" y="20" width="375" height="597"/>
+                                <rect key="frame" x="0.0" y="88" width="375" height="674"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <inset key="separatorInset" minX="80" minY="0.0" maxX="0.0" maxY="0.0"/>
                                 <sections/>
                             </tableView>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="vas-Dt-tPu">
-                                <rect key="frame" x="0.0" y="617" width="375" height="50"/>
+                                <rect key="frame" x="0.0" y="762" width="375" height="50"/>
                                 <color key="backgroundColor" red="1" green="0.74009874129999997" blue="0.25992838540000002" alpha="0.39966823630136988" colorSpace="calibratedRGB"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="50" id="BcG-7A-luE"/>
@@ -42,10 +45,13 @@
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
                             <constraint firstItem="vas-Dt-tPu" firstAttribute="top" secondItem="ouP-dJ-4uv" secondAttribute="bottom" id="Hae-Rz-rLo"/>
-                            <constraint firstItem="ouP-dJ-4uv" firstAttribute="top" secondItem="zip-Zx-2dh" secondAttribute="top" id="Hm5-hz-JFf"/>
+                            <constraint firstItem="e3e-4v-EfG" firstAttribute="leading" secondItem="zip-Zx-2dh" secondAttribute="leading" id="RzS-ki-wtA"/>
+                            <constraint firstItem="e3e-4v-EfG" firstAttribute="trailing" secondItem="zip-Zx-2dh" secondAttribute="trailing" id="UPx-IO-SFW"/>
                             <constraint firstItem="vas-Dt-tPu" firstAttribute="leading" secondItem="zip-Zx-2dh" secondAttribute="leading" id="XUN-PC-6VJ"/>
                             <constraint firstItem="ouP-dJ-4uv" firstAttribute="trailing" secondItem="zip-Zx-2dh" secondAttribute="trailing" id="b0i-e6-35V"/>
+                            <constraint firstItem="ouP-dJ-4uv" firstAttribute="top" secondItem="e3e-4v-EfG" secondAttribute="bottom" id="b8n-mJ-oal"/>
                             <constraint firstItem="ouP-dJ-4uv" firstAttribute="leading" secondItem="zip-Zx-2dh" secondAttribute="leading" id="kcK-dg-CnR"/>
+                            <constraint firstItem="e3e-4v-EfG" firstAttribute="top" secondItem="zip-Zx-2dh" secondAttribute="top" id="mUz-hQ-8sC"/>
                             <constraint firstAttribute="bottom" secondItem="vas-Dt-tPu" secondAttribute="bottom" id="ogh-YQ-rcx"/>
                             <constraint firstItem="vas-Dt-tPu" firstAttribute="trailing" secondItem="zip-Zx-2dh" secondAttribute="trailing" id="x3y-tk-uFH"/>
                         </constraints>
@@ -53,13 +59,14 @@
                     </view>
                     <connections>
                         <outlet property="ChatsTableView" destination="ouP-dJ-4uv" id="W6c-qr-ipj"/>
-                        <outlet property="CustomTitleView" destination="2uW-KY-YSf" id="iR1-sA-1gF"/>
+                        <outlet property="CustomNavigationBar" destination="e3e-4v-EfG" id="9Jz-zP-SOg"/>
+                        <outlet property="CustomNavigationItem" destination="icw-VK-o8Y" id="5b0-G4-rmp"/>
                         <outlet property="LoginButton" destination="vas-Dt-tPu" id="s4R-Ue-rFN"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="5Sf-zj-A8e" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="149.59999999999999" y="156.97151424287858"/>
+            <point key="canvasLocation" x="149.59999999999999" y="156.65024630541873"/>
         </scene>
     </scenes>
 </document>
