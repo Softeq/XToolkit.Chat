@@ -20,7 +20,6 @@ namespace Softeq.XToolkit.Chat.ViewModels
     public class ChatsListViewModel : ViewModelBase
     {
         private readonly IDialogsService _dialogsService;
-        private readonly IPageNavigationService _pageNavigationService;
         private readonly IChatLocalizedStrings _localizedStrings;
         private readonly ChatManager _chatManager;
 
@@ -32,7 +31,6 @@ namespace Softeq.XToolkit.Chat.ViewModels
 
         public ChatsListViewModel(
             IDialogsService dialogsService,
-            IPageNavigationService pageNavigationService,
             IChatLocalizedStrings localizedStrings,
             ChatManager chatManager,
             ConnectionStatusViewModel connectionStatusViewModel)
@@ -40,7 +38,6 @@ namespace Softeq.XToolkit.Chat.ViewModels
             TryInitLoginService();
 
             _dialogsService = dialogsService;
-            _pageNavigationService = pageNavigationService;
             _localizedStrings = localizedStrings;
             _chatManager = chatManager;
 
@@ -77,7 +74,7 @@ namespace Softeq.XToolkit.Chat.ViewModels
                 RaisePropertyChanged();
                 if (value != null)
                 {
-                    _pageNavigationService.NavigateToViewModel<ChatMessagesViewModel, ChatSummaryViewModel>(value);
+                    FrameNavigationService.NavigateToViewModel<ChatMessagesViewModel, ChatSummaryViewModel>(value);
                 }
             }
         }
@@ -129,7 +126,7 @@ namespace Softeq.XToolkit.Chat.ViewModels
 
         private void CreateChat()
         {
-            _pageNavigationService.NavigateToViewModel<SelectContactsViewModel,
+            FrameNavigationService.NavigateToViewModel<SelectContactsViewModel,
                 (SelectedContactsAction, IList<string> FilteredUsers, string OpenedChatId)>(
                 (SelectedContactsAction.CreateChat, null, null));
         }

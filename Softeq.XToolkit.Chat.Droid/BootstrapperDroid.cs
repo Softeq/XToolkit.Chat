@@ -12,10 +12,10 @@ namespace Softeq.XToolkit.Chat.Droid
         {
             Bootstrapper.Configure(containerBuilder);
 
-            containerBuilder.RegisterType<ChatsListViewModel>().InstancePerLifetimeScope();
-            //containerBuilder.RegisterType<ChatMessagesViewModel>().InstancePerLifetimeScope();
-            containerBuilder.RegisterType<ChatDetailsViewModel>().InstancePerLifetimeScope();
-            containerBuilder.RegisterType<SelectContactsViewModel>().InstancePerLifetimeScope();
+            containerBuilder.RegisterType<ChatsListViewModel>().InstancePerDependency();
+            containerBuilder.RegisterType<ChatMessagesViewModel>().InstancePerDependency();
+            containerBuilder.RegisterType<ChatDetailsViewModel>().InstancePerDependency();
+            containerBuilder.RegisterType<SelectContactsViewModel>().InstancePerDependency();
         }
     }
 }

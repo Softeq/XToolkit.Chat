@@ -28,7 +28,6 @@ namespace Softeq.XToolkit.Chat.ViewModels
 
         private readonly ChatManager _chatManager;
         private readonly IViewModelFactoryService _viewModelFactoryService;
-        private readonly IPageNavigationService _pageNavigationService;
         private readonly IChatLocalizedStrings _localizedStrings;
         private readonly IFormatService _formatService;
         private ChatSummaryViewModel _chatSummaryViewModel;
@@ -47,21 +46,19 @@ namespace Softeq.XToolkit.Chat.ViewModels
 
         public ChatMessagesViewModel(
             IViewModelFactoryService viewModelFactoryService,
-            IPageNavigationService pageNavigationService,
             IChatLocalizedStrings localizedStrings,
             IFormatService formatService,
             ChatManager chatManager,
             ConnectionStatusViewModel connectionStatusViewModel)
         {
             _viewModelFactoryService = viewModelFactoryService;
-            _pageNavigationService = pageNavigationService;
             _localizedStrings = localizedStrings;
             _formatService = formatService;
             _chatManager = chatManager;
 
             ConnectionStatusViewModel = connectionStatusViewModel;
 
-            BackCommand = new RelayCommand(_pageNavigationService.GoBack, () => _pageNavigationService.CanGoBack);
+            BackCommand = new RelayCommand(() => FrameNavigationService.GoBack(), () => FrameNavigationService.CanGoBack);
             SendCommand = new RelayCommand(SendMessageAsync);
             AttachImageCommand = new RelayCommand(AttachImage);
             CancelEditingMessageModeCommand = new RelayCommand(CancelEditingMessageMode);
@@ -179,7 +176,7 @@ namespace Softeq.XToolkit.Chat.ViewModels
 
         private void ShowInfo()
         {
-            _pageNavigationService.NavigateToViewModel<ChatDetailsViewModel, ChatSummaryViewModel>(_chatSummaryViewModel);
+            FrameNavigationService.NavigateToViewModel<ChatDetailsViewModel, ChatSummaryViewModel>(_chatSummaryViewModel);
         }
 
         private void AttachImage()

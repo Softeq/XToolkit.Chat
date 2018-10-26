@@ -68,10 +68,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Views\ChatsListActivity.cs" />
-    <Compile Include="Views\ChatDetailsActivity.cs" />
-    <Compile Include="Views\ChatMessagesActivity.cs" />
-    <Compile Include="Views\SelectContactsActivity.cs" />
+    <Compile Include="Views\ChatsListFragment.cs" />
+    <Compile Include="Views\ChatDetailsFragment.cs" />
+    <Compile Include="Views\ChatMessagesFragment.cs" />
+    <Compile Include="Views\SelectContactsFragment.cs" />
     <Compile Include="BootstrapperDroid.cs" />
     <Compile Include="Resources\Resource.designer.cs" />
     <Compile Include="ViewHolders\ChatUserViewHolder.cs" />
