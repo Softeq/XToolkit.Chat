@@ -10,6 +10,7 @@ using Softeq.XToolkit.Common.Collections;
 using Softeq.XToolkit.Common.Command;
 using Softeq.XToolkit.WhiteLabel.Interfaces;
 using Softeq.XToolkit.WhiteLabel.Mvvm;
+using Softeq.XToolkit.WhiteLabel.Navigation;
 using Softeq.XToolkit.Chat.Models.Interfaces;
 
 namespace Softeq.XToolkit.Chat.ViewModels
@@ -17,21 +18,24 @@ namespace Softeq.XToolkit.Chat.ViewModels
     public class ChatDetailsViewModel : ViewModelBase, IViewModelParameter<ChatSummaryViewModel>
     {
         private readonly ChatManager _chatManager;
+        private readonly IPageNavigationService _pageNavigationService;
         private readonly IChatLocalizedStrings _localizedStrings;
         private readonly IFormatService _formatService;
         private ChatSummaryViewModel _chatSummaryViewModel;
 
         public ChatDetailsViewModel(
             ChatManager chatManager,
+            IPageNavigationService pageNavigationService,
             IChatLocalizedStrings localizedStrings,
             IFormatService formatService)
         {
             _chatManager = chatManager;
+            _pageNavigationService = pageNavigationService;
             _localizedStrings = localizedStrings;
             _formatService = formatService;
 
             AddMembersCommand = new RelayCommand(AddMembers);
-            BackCommand = new RelayCommand(() => FrameNavigationService.GoBack(), () => FrameNavigationService.CanGoBack);
+            BackCommand = new RelayCommand(_pageNavigationService.GoBack, () => _pageNavigationService.CanGoBack);
         }
 
         public string Title => _localizedStrings.DetailsTitle;
@@ -79,7 +83,7 @@ namespace Softeq.XToolkit.Chat.ViewModels
 
         private void AddMembers()
         {
-            FrameNavigationService.NavigateToViewModel<SelectContactsViewModel,
+            _pageNavigationService.NavigateToViewModel<SelectContactsViewModel,
                 (SelectedContactsAction, IList<string> FilteredUsers, string OpenedChatId)>(
                 (SelectedContactsAction.InviteToChat, Members.Select(x => x.Id).ToList(), _chatSummaryViewModel.ChatId));
         }

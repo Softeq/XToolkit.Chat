@@ -13,6 +13,7 @@ using Softeq.XToolkit.Common.Command;
 using Softeq.XToolkit.Common.Extensions;
 using Softeq.XToolkit.WhiteLabel.Interfaces;
 using Softeq.XToolkit.WhiteLabel.Mvvm;
+using Softeq.XToolkit.WhiteLabel.Navigation;
 
 namespace Softeq.XToolkit.Chat.ViewModels
 {
@@ -20,6 +21,7 @@ namespace Softeq.XToolkit.Chat.ViewModels
         IViewModelParameter<(SelectedContactsAction, IList<string> FilteredUsers, string OpenedChatId)>
     {
         private readonly ChatManager _chatManager;
+        private readonly IPageNavigationService _pageNavigationService;
         private readonly IChatLocalizedStrings _localizedStrings;
         private readonly IFormatService _formatService;
         private readonly ICommand _memberSelectedCommand;
@@ -31,15 +33,17 @@ namespace Softeq.XToolkit.Chat.ViewModels
 
         public SelectContactsViewModel(
             ChatManager chatManager,
+            IPageNavigationService pageNavigationService,
             IChatLocalizedStrings localizedStrings,
             IFormatService formatService)
         {
             _chatManager = chatManager;
+            _pageNavigationService = pageNavigationService;
             _localizedStrings = localizedStrings;
             _formatService = formatService;
 
             _memberSelectedCommand = new RelayCommand(() => RaisePropertyChanged(nameof(ContactsCountText)));
-            BackCommand = new RelayCommand(() => FrameNavigationService.GoBack(), () => FrameNavigationService.CanGoBack);
+            BackCommand = new RelayCommand(_pageNavigationService.GoBack, () => _pageNavigationService.CanGoBack);
             AddChatCommand = new RelayCommand(() => AddChatAsync().SafeTaskWrapper());
         }
 
@@ -118,7 +122,7 @@ namespace Softeq.XToolkit.Chat.ViewModels
                 {
                     await _chatManager.InviteMembersAsync(_openedChatId, selectedContactsIds).ConfigureAwait(false);
                 }
-                BackCommand.Execute(null);
+                _pageNavigationService.GoBack();
             }
             finally
             {

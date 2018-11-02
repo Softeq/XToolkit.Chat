@@ -3,7 +3,6 @@
 
 using Android.App;
 using Android.OS;
-using Android.Support.V7.App;
 using Android.Support.V7.Widget;
 using Android.Views;
 using Android.Widget;
@@ -25,7 +24,8 @@ using Toolbar = Android.Support.V7.Widget.Toolbar;
 
 namespace Softeq.XToolkit.Chat.Droid.Views
 {
-    public class ChatMessagesFragment : FragmentBase<ChatMessagesViewModel>
+    [Activity(Theme = "@style/ChatTheme")]
+    public class ChatMessagesActivity : ActivityBase<ChatMessagesViewModel>
     {
         private RecyclerView _conversationsRecyclerView;
         private ConversationsObservableRecyclerViewAdapter _conversationsAdapter;
@@ -41,27 +41,22 @@ namespace Softeq.XToolkit.Chat.Droid.Views
         private bool _isAdapterSourceInitialized;
         private bool _isAutoScrollToFooterEnabled = true;
 
-        private AppCompatActivity SupportActivity => (AppCompatActivity)Activity;
-
-        public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
+        protected override void OnCreate(Bundle savedInstanceState)
         {
-            return inflater.Inflate(Resource.Layout.activity_conversations, container, false);
-        }
+            base.OnCreate(savedInstanceState);
 
-        public override void OnViewCreated(View view, Bundle savedInstanceState)
-        {
-            base.OnViewCreated(view, savedInstanceState);
+            SetContentView(Resource.Layout.activity_conversations);
 
-            var toolbar = view.FindViewById<Toolbar>(Resource.Id.toolbar_conversations);
+            var toolbar = FindViewById<Toolbar>(Resource.Id.toolbar_conversations);
 
-            _conversationsRecyclerView = view.FindViewById<RecyclerView>(Resource.Id.rv_conversations_list);
-            _messageEditText = view.FindViewById<EditText>(Resource.Id.et_conversations_message);
-            _addAttachmentButton = view.FindViewById<ImageButton>(Resource.Id.ib_conversations_add_attachment);
-            _sendButton = view.FindViewById<ImageButton>(Resource.Id.ib_conversations_send);
-            _editingMessageLayout = view.FindViewById<RelativeLayout>(Resource.Id.rl_conversations_editing_message);
-            _editingMessageBodyTextView = view.FindViewById<TextView>(Resource.Id.tv_editing_message_body);
-            _editingMessageCloseButton = view.FindViewById<ImageButton>(Resource.Id.ib_conversations_editing_message_close);
-            _scrollDownImageButton = view.FindViewById<ImageButton>(Resource.Id.ib_conversations_scroll_down);
+            _conversationsRecyclerView = FindViewById<RecyclerView>(Resource.Id.rv_conversations_list);
+            _messageEditText = FindViewById<EditText>(Resource.Id.et_conversations_message);
+            _addAttachmentButton = FindViewById<ImageButton>(Resource.Id.ib_conversations_add_attachment);
+            _sendButton = FindViewById<ImageButton>(Resource.Id.ib_conversations_send);
+            _editingMessageLayout = FindViewById<RelativeLayout>(Resource.Id.rl_conversations_editing_message);
+            _editingMessageBodyTextView = FindViewById<TextView>(Resource.Id.tv_editing_message_body);
+            _editingMessageCloseButton = FindViewById<ImageButton>(Resource.Id.ib_conversations_editing_message_close);
+            _scrollDownImageButton = FindViewById<ImageButton>(Resource.Id.ib_conversations_scroll_down);
 
             InitializeToolbar(toolbar);
             InitializeConversationsRecyclerView();
@@ -77,7 +72,7 @@ namespace Softeq.XToolkit.Chat.Droid.Views
             //_addAttachmentButton.SetCommand(nameof(_addAttachmentButton.Click), ViewModel.AttachImageCommand);
         }
 
-        public override void OnPause()
+        protected override void OnPause()
         {
             if (_shouldSendStateMessageToChat)
             {
@@ -89,7 +84,7 @@ namespace Softeq.XToolkit.Chat.Droid.Views
             base.OnPause();
         }
 
-        public override void OnResume()
+        protected override void OnResume()
         {
             base.OnResume();
 
@@ -103,14 +98,14 @@ namespace Softeq.XToolkit.Chat.Droid.Views
             }
         }
 
-        //public override void OnBackPressed()
-        //{
-        //    _shouldSendStateMessageToChat = false;
+        public override void OnBackPressed()
+        {
+            _shouldSendStateMessageToChat = false;
 
-        //    base.OnBackPressed();
-        //}
+            base.OnBackPressed();
+        }
 
-        public override void OnDestroy()
+        protected override void OnDestroy()
         {
             _conversationsRecyclerView.GetAdapter().Dispose();
             _conversationsRecyclerView.ClearOnScrollListeners();
@@ -127,7 +122,7 @@ namespace Softeq.XToolkit.Chat.Droid.Views
             {
                 Execute.BeginOnUIThread(() =>
                 {
-                    SupportActivity.SupportActionBar.Title = ViewModel.ConnectionStatusViewModel.ConnectionStatusText;
+                    SupportActionBar.Title = ViewModel.ConnectionStatusViewModel.ConnectionStatusText;
                 });
             }));
             Bindings.Add(this.SetBinding(() => ViewModel.MessageToSendBody, () => _messageEditText.Text, BindingMode.TwoWay));
@@ -176,17 +171,17 @@ namespace Softeq.XToolkit.Chat.Droid.Views
             });
         }
 
-        public override void OnCreateOptionsMenu(IMenu menu, MenuInflater inflater)
+        public override bool OnCreateOptionsMenu(IMenu menu)
         {
-            inflater.Inflate(Resource.Menu.toolbar_conversations, menu);
-            base.OnCreateOptionsMenu(menu, inflater);
+            MenuInflater.Inflate(Resource.Menu.toolbar_conversations, menu);
+            return base.OnCreateOptionsMenu(menu);
         }
 
         public override bool OnOptionsItemSelected(IMenuItem item)
         {
             if (item.ItemId == AndroidResource.Id.Home)
             {
-                ViewModel.BackCommand.Execute(null);
+                OnBackPressed();
                 return true;
             }
             if (item.ItemId == Resource.Id.action_details)
@@ -199,17 +194,15 @@ namespace Softeq.XToolkit.Chat.Droid.Views
 
         private void InitializeToolbar(Toolbar toolbar)
         {
-            SupportActivity.SetSupportActionBar(toolbar);
+            SetSupportActionBar(toolbar);
 
-            SupportActivity.SupportActionBar.SetDisplayHomeAsUpEnabled(true);
-
-            HasOptionsMenu = true;
+            SupportActionBar.SetDisplayHomeAsUpEnabled(true);
         }
 
         private void InitializeConversationsRecyclerView()
         {
             _conversationsRecyclerView.SetLayoutManager(
-                new GuardedLinearLayoutManager(Activity)
+                new GuardedLinearLayoutManager(this)
                 {
                     StackFromEnd = true
                 });

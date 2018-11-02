@@ -18,34 +18,33 @@ using Softeq.XToolkit.Chat.ViewModels;
 using Softeq.XToolkit.Common.Droid.Extensions;
 using Softeq.XToolkit.WhiteLabel.Droid;
 using Softeq.XToolkit.WhiteLabel.Threading;
-using Android.Support.V7.App;
 
 namespace Softeq.XToolkit.Chat.Droid.Views
 {
-    public class ChatsListFragment : FragmentBase<ChatsListViewModel>
+    [Activity(Theme = "@style/ChatTheme")]
+    public class ChatsListActivity : ActivityBase<ChatsListViewModel>
     {
         private RecyclerView _chatsRecyclerView;
         private FloatingActionButton _createChatFloatButton;
         private SimpleSwipeActionView.Options _swipeLeaveActionViewOptions;
         private SimpleSwipeActionView.Options _swipeCloseActionViewOptions;
 
-        private AppCompatActivity SupportActivity => (AppCompatActivity)Activity;
-
-        public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
+        protected override void OnCreate(Bundle savedInstanceState)
         {
-            return inflater.Inflate(Resource.Layout.activity_chat, container, false);
-        }
+            // navigated from start/conversations <-
+            OverridePendingTransition(
+                Resource.Animation.news_enter_left_to_right,
+                Resource.Animation.news_exit_right_to_left);
 
-        public override void OnViewCreated(View view, Bundle savedInstanceState)
-        {
-            base.OnViewCreated(view, savedInstanceState);
+            base.OnCreate(savedInstanceState);
 
-            var toolbar = view.FindViewById<Toolbar>(Resource.Id.toolbar_chat);
-            SupportActivity.SetSupportActionBar(toolbar);
-            HasOptionsMenu = true;
+            SetContentView(Resource.Layout.activity_chat);
 
-            _createChatFloatButton = view.FindViewById<FloatingActionButton>(Resource.Id.fab_create_chat);
-            _chatsRecyclerView = view.FindViewById<RecyclerView>(Resource.Id.rv_chats_list);
+            var toolbar = FindViewById<Toolbar>(Resource.Id.toolbar_chat);
+            SetSupportActionBar(toolbar);
+
+            _createChatFloatButton = FindViewById<FloatingActionButton>(Resource.Id.fab_create_chat);
+            _chatsRecyclerView = FindViewById<RecyclerView>(Resource.Id.rv_chats_list);
 
             InitializeRecyclerView();
 
@@ -53,32 +52,22 @@ namespace Softeq.XToolkit.Chat.Droid.Views
 
             _swipeLeaveActionViewOptions = new SimpleSwipeActionView.Options
             {
-                Width = Activity.ToPixels(80),
-                TextSize = Activity.ToPixels(14),
+                Width = this.ToPixels(80),
+                TextSize = this.ToPixels(14),
                 BackgroundColor = Color.Red
             };
             _swipeCloseActionViewOptions = new SimpleSwipeActionView.Options
             {
-                Width = Activity.ToPixels(80),
-                TextSize = Activity.ToPixels(14),
+                Width = this.ToPixels(80),
+                TextSize = this.ToPixels(14),
                 BackgroundColor = Color.Orange
             };
         }
 
-        //public override void OnCreate(Bundle savedInstanceState)
-        //{
-        //    // navigated from start/conversations <-
-        //    OverridePendingTransition(
-        //    Resource.Animation.news_enter_left_to_right,
-        //    Resource.Animation.news_exit_right_to_left);
-
-        //    base.OnCreate(savedInstanceState);
-        //}
-
-        public override void OnCreateOptionsMenu(IMenu menu, MenuInflater inflater)
+        public override bool OnCreateOptionsMenu(IMenu menu)
         {
-            inflater.Inflate(Resource.Menu.toolbar_chat, menu);
-            base.OnCreateOptionsMenu(menu, inflater);
+            MenuInflater.Inflate(Resource.Menu.toolbar_chat, menu);
+            return base.OnCreateOptionsMenu(menu);
         }
 
         public override bool OnOptionsItemSelected(IMenuItem item)
@@ -91,15 +80,15 @@ namespace Softeq.XToolkit.Chat.Droid.Views
             return base.OnOptionsItemSelected(item);
         }
 
-        //public override void Finish()
-        //{
-        //    base.Finish();
+        public override void Finish()
+        {
+            base.Finish();
 
-        //    // navigate to conversations/create_chat ->
-        //    OverridePendingTransition(
-        //        Resource.Animation.news_enter_right_to_left,
-        //        Resource.Animation.news_exit_left_to_right);
-        //}
+            // navigate to conversations/create_chat ->
+            OverridePendingTransition(
+                Resource.Animation.news_enter_right_to_left,
+                Resource.Animation.news_exit_left_to_right);
+        }
 
         protected override void DoAttachBindings()
         {
@@ -109,12 +98,12 @@ namespace Softeq.XToolkit.Chat.Droid.Views
             {
                 Execute.BeginOnUIThread(() =>
                 {
-                    SupportActivity.SupportActionBar.Title = ViewModel.ConnectionStatusViewModel.ConnectionStatusText;
+                    SupportActionBar.Title = ViewModel.ConnectionStatusViewModel.ConnectionStatusText;
                 });
             }));
         }
 
-        public override void OnDestroy()
+        protected override void OnDestroy()
         {
             _chatsRecyclerView.GetAdapter().Dispose();
 
@@ -124,11 +113,11 @@ namespace Softeq.XToolkit.Chat.Droid.Views
         private void InitializeRecyclerView()
         {
             _chatsRecyclerView.HasFixedSize = true;
-            _chatsRecyclerView.SetLayoutManager(new GuardedLinearLayoutManager(Activity));
+            _chatsRecyclerView.SetLayoutManager(new GuardedLinearLayoutManager(this));
             _chatsRecyclerView.SetAdapter(new ChatObservableRecyclerViewAdapter(ViewModel.Chats,
                 CreateChatViewHolder, _chatsRecyclerView.SmoothScrollToPosition));
 
-            var swipeItemCallback = new SwipeCallback(Activity, _chatsRecyclerView, ConfigureSwipeForViewHolder);
+            var swipeItemCallback = new SwipeCallback(this, _chatsRecyclerView, ConfigureSwipeForViewHolder);
             var swipeItemTouchHelper = new ItemTouchHelper(swipeItemCallback);
             swipeItemTouchHelper.AttachToRecyclerView(_chatsRecyclerView);
         }
