@@ -43,6 +43,8 @@ namespace Softeq.XToolkit.Chat.Droid.Views
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
+            OverridePendingTransition(0, 0);
+
             base.OnCreate(savedInstanceState);
 
             SetContentView(Resource.Layout.activity_conversations);
