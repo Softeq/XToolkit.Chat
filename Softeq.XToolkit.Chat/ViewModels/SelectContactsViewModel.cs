@@ -117,6 +117,8 @@ namespace Softeq.XToolkit.Chat.ViewModels
                 if (IsCreateChat)
                 {
                     await _chatManager.CreateChatAsync(_chatName, selectedContactsIds).ConfigureAwait(false);
+
+                    ChatName = string.Empty;
                 }
                 else if (IsInviteToChat)
                 {
