@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using Softeq.XToolkit.Auth;
 using Softeq.XToolkit.Chat.Manager;
 using Softeq.XToolkit.Chat.Models.Enum;
 using Softeq.XToolkit.Chat.Models.Interfaces;
@@ -21,6 +22,7 @@ namespace Softeq.XToolkit.Chat.ViewModels
         IViewModelParameter<(SelectedContactsAction, IList<string> FilteredUsers, string OpenedChatId)>
     {
         private readonly ChatManager _chatManager;
+        private readonly IAccountService _accountService;
         private readonly IPageNavigationService _pageNavigationService;
         private readonly IChatLocalizedStrings _localizedStrings;
         private readonly IFormatService _formatService;
@@ -33,11 +35,13 @@ namespace Softeq.XToolkit.Chat.ViewModels
 
         public SelectContactsViewModel(
             ChatManager chatManager,
+            IAccountService accountService,
             IPageNavigationService pageNavigationService,
             IChatLocalizedStrings localizedStrings,
             IFormatService formatService)
         {
             _chatManager = chatManager;
+            _accountService = accountService;
             _pageNavigationService = pageNavigationService;
             _localizedStrings = localizedStrings;
             _formatService = formatService;
@@ -90,7 +94,8 @@ namespace Softeq.XToolkit.Chat.ViewModels
             var users = await _chatManager.GetContactsAsync().ConfigureAwait(false);
             if (users != null)
             {
-                var filteredUsers = users.Where(x => !_filteredUsers.Contains(x?.Id)).ToList();
+                var filteredUsers = users.Where(x => x.Id != _accountService.UserId
+                                                && !_filteredUsers.Contains(x?.Id)).ToList();
                 filteredUsers.Apply(x =>
                 {
                     x.IsSelectable = true;
