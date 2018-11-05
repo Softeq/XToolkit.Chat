@@ -28,25 +28,10 @@ namespace Softeq.XToolkit.Chat.Droid.Views
         private TextView _chatMembersCountTextView;
         private Button _addMemberButton;
         private RecyclerView _membersRecyclerView;
-        private bool _isNavigateBack;
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
-            // FIXME:
-            if (ViewModel.IsNavigated)
-            {
-                // navigated from conversations ->
-                OverridePendingTransition(
-                    Resource.Animation.news_enter_right_to_left,
-                    Resource.Animation.news_exit_left_to_right);
-            }
-            else
-            {
-                // navigated from add members <-
-                OverridePendingTransition(
-                    Resource.Animation.news_enter_left_to_right,
-                    Resource.Animation.news_exit_right_to_left);
-            }
+            OverridePendingTransition(0, 0);
 
             base.OnCreate(savedInstanceState);
 
@@ -64,34 +49,6 @@ namespace Softeq.XToolkit.Chat.Droid.Views
             InitializeMembersRecyclerView();
 
             _addMemberButton.SetCommand(ViewModel.AddMembersCommand);
-        }
-
-        public override void OnBackPressed()
-        {
-            _isNavigateBack = true;
-
-            base.OnBackPressed();
-        }
-
-        public override void Finish()
-        {
-            base.Finish();
-
-            // FIXME:
-            if (_isNavigateBack)
-            {
-                // navigate to conversations <-
-                OverridePendingTransition(
-                    Resource.Animation.news_enter_left_to_right,
-                    Resource.Animation.news_exit_right_to_left);
-            }
-            else
-            {
-                // navigate to add members ->
-                OverridePendingTransition(
-                    Resource.Animation.news_enter_right_to_left,
-                    Resource.Animation.news_exit_left_to_right);
-            }
         }
 
         protected override void DoAttachBindings()

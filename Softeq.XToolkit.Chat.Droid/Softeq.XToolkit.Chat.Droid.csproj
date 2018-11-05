@@ -68,7 +68,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Views\ChatsListActivity.cs" />
+    <Compile Include="Views\ChatsListFragment.cs" />
     <Compile Include="Views\ChatDetailsActivity.cs" />
     <Compile Include="Views\ChatMessagesActivity.cs" />
     <Compile Include="Views\SelectContactsActivity.cs" />
@@ -142,10 +142,6 @@
     <AndroidResource Include="Resources\drawable-xxhdpi\conversation_bubble_outcoming.9.png" />
     <AndroidResource Include="Resources\drawable-xxxhdpi\conversation_bubble_incoming.9.png" />
     <AndroidResource Include="Resources\drawable-xxxhdpi\conversation_bubble_outcoming.9.png" />
-    <AndroidResource Include="Resources\anim\news_enter_left_to_right.xml" />
-    <AndroidResource Include="Resources\anim\news_enter_right_to_left.xml" />
-    <AndroidResource Include="Resources\anim\news_exit_left_to_right.xml" />
-    <AndroidResource Include="Resources\anim\news_exit_right_to_left.xml" />
     <AndroidResource Include="Resources\drawable-hdpi\conversation_scroll_down.png" />
     <AndroidResource Include="Resources\drawable-mdpi\conversation_scroll_down.png" />
     <AndroidResource Include="Resources\drawable-xhdpi\conversation_scroll_down.png" />
