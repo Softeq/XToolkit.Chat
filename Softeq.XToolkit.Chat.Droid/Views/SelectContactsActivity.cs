@@ -16,6 +16,7 @@ using Softeq.XToolkit.Chat.Droid.ViewHolders;
 using Softeq.XToolkit.Chat.ViewModels;
 using Softeq.XToolkit.Common.Droid.Converters;
 using Softeq.XToolkit.WhiteLabel.Droid;
+using Softeq.XToolkit.WhiteLabel.Droid.Services;
 using AndroidResource = Android.Resource;
 using Toolbar = Android.Support.V7.Widget.Toolbar;
 
@@ -72,6 +73,8 @@ namespace Softeq.XToolkit.Chat.Droid.Views
             }
             if (item.ItemId == Resource.Id.toolbar_chat_create_action)
             {
+                KeyboardService.HideSoftKeyboard(_chatNameEditTextView);
+
                 ViewModel.AddChatCommand.Execute(null);
                 return true;
             }
