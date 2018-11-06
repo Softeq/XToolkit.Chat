@@ -40,7 +40,7 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
 
             var source = ViewModel.Members.GetTableViewSource((cell, viewModel, index) =>
             {
-                (cell as ChatUserViewCell).BindViewModel(viewModel);
+                (cell as ChatUserViewCell)?.BindViewModel(viewModel);
             }, ChatUserViewCell.Key);
             TableView.Source = source;
             _sourceRef = WeakReferenceEx.Create(source);
@@ -50,7 +50,10 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
         {
             base.DoAttachBindings();
 
-            Bindings.Add(this.SetBinding(() => ViewModel.ChatAvatarUrl, () => _chatDetailsHeaderView.ChatAvatarUrl));
+            Bindings.Add(this.SetBinding(() => ViewModel.ChatAvatarUrl).WhenSourceChanges((() =>
+            {
+                _chatDetailsHeaderView.SetChatAvatar(ViewModel.ChatAvatarUrl);
+            })));
             Bindings.Add(this.SetBinding(() => ViewModel.ChatName, () => _chatDetailsHeaderView.ChatNameField.Text));
             Bindings.Add(this.SetBinding(() => ViewModel.MembersCountText, () => _chatDetailsHeaderView.ChatMembersCount));
         }

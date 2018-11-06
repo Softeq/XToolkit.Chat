@@ -11,9 +11,12 @@ namespace Softeq.XToolkit.Chat.Models
 
         public string ApiUrl => BaseUrl + "/api";
 
-        public ChatConfiguration(string baseUrl)
+        public string BlobUrl { get; }
+
+        public ChatConfiguration(string baseUrl, string blobUrl)
         {
             BaseUrl = baseUrl;
+            BlobUrl = blobUrl;
         }
     }
 }
