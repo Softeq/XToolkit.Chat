@@ -2,10 +2,10 @@
 // http://www.softeq.com
 
 using System.Collections.Generic;
-using Android.App;
 using Android.Graphics;
 using Android.OS;
 using Android.Support.Design.Widget;
+using Android.Support.V7.App;
 using Android.Support.V7.Widget;
 using Android.Support.V7.Widget.Helper;
 using Android.Views;
@@ -18,7 +18,6 @@ using Softeq.XToolkit.Chat.ViewModels;
 using Softeq.XToolkit.Common.Droid.Extensions;
 using Softeq.XToolkit.WhiteLabel.Droid;
 using Softeq.XToolkit.WhiteLabel.Threading;
-using Android.Support.V7.App;
 
 namespace Softeq.XToolkit.Chat.Droid.Views
 {
@@ -65,16 +64,6 @@ namespace Softeq.XToolkit.Chat.Droid.Views
             };
         }
 
-        //public override void OnCreate(Bundle savedInstanceState)
-        //{
-        //    // navigated from start/conversations <-
-        //    OverridePendingTransition(
-        //    Resource.Animation.news_enter_left_to_right,
-        //    Resource.Animation.news_exit_right_to_left);
-
-        //    base.OnCreate(savedInstanceState);
-        //}
-
         public override void OnCreateOptionsMenu(IMenu menu, MenuInflater inflater)
         {
             inflater.Inflate(Resource.Menu.toolbar_chat, menu);
@@ -90,16 +79,6 @@ namespace Softeq.XToolkit.Chat.Droid.Views
             }
             return base.OnOptionsItemSelected(item);
         }
-
-        //public override void Finish()
-        //{
-        //    base.Finish();
-
-        //    // navigate to conversations/create_chat ->
-        //    OverridePendingTransition(
-        //        Resource.Animation.news_enter_right_to_left,
-        //        Resource.Animation.news_exit_left_to_right);
-        //}
 
         protected override void DoAttachBindings()
         {
