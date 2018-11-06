@@ -52,9 +52,9 @@ namespace Softeq.XToolkit.Chat
 
         public SocketConnectionStatus ConnectionStatus => _socketChatAdapter.ConnectionStatus;
 
-        public async Task<ChatSummaryModel> CreateChatAsync(string chatName, IList<string> participantsIds)
+        public async Task<ChatSummaryModel> CreateChatAsync(string chatName, IList<string> participantsIds, string imagePath)
         {
-            var result = await _socketChatAdapter.CreateChatAsync(chatName, participantsIds);
+            var result = await _socketChatAdapter.CreateChatAsync(chatName, participantsIds, imagePath);
             var userId = await GetUserIdAsync().ConfigureAwait(false);
             result.UpdateIsCreatedByMeStatus(userId);
             return result;

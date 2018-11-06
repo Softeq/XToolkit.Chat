@@ -102,7 +102,7 @@ namespace Softeq.XToolkit.Chat.SignalRClient
             }));
         }
 
-        public Task<ChatSummaryModel> CreateChatAsync(string chatName, IList<string> participantsIds)
+        public Task<ChatSummaryModel> CreateChatAsync(string chatName, IList<string> participantsIds, string chatAvatar)
         {
             return CheckConnectionAndSendRequest(new TaskReference<ChatSummaryModel>(async () =>
             {
@@ -111,8 +111,9 @@ namespace Softeq.XToolkit.Chat.SignalRClient
                     AllowedMembers = participantsIds,
                     Type = ChannelTypeDto.Private,
                     Name = chatName,
+                    PhotoUrl = chatAvatar
                 };
-                var dto = await _signalRClient.CreateChannelAsync(createChannelRequest);
+                var dto = await _signalRClient.CreateChannelAsync(createChannelRequest).ConfigureAwait(false);
                 return Mapper.DtoToChatSummary(dto);
             }));
         }
