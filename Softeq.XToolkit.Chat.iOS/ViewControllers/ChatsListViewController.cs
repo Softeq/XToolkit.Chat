@@ -49,7 +49,7 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
             CustomNavigationItem.SetCommand(UIBarButtonSystemItem.Add, ViewModel.CreateChatCommand, false);
 
 
-            LoginButton.SetCommand(ViewModel.LoginCommand);
+            //LoginButton.SetCommand(ViewModel.LoginCommand);
 
             ChatsTableView.RegisterNibForCellReuse(ChatSummaryViewCell.Nib, ChatSummaryViewCell.Key);
             ChatsTableView.RowHeight = 80;
@@ -68,16 +68,16 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
         {
             base.DoAttachBindings();
 
-            Bindings.Add(this.SetBinding(() => ViewModel.UserName).WhenSourceChanges(() =>
-            {
-                var reloginButtonTitle = string.IsNullOrEmpty(ViewModel.UserName)
-                    ? ReLoginButtonText
-                    : string.Format(ReLoginButtonFormattedText, ViewModel.UserName);
-                LoginButton.SetTitle(reloginButtonTitle, UIControlState.Normal);
-            }));
+            //Bindings.Add(this.SetBinding(() => ViewModel.UserName).WhenSourceChanges(() =>
+            //{
+            //    var reloginButtonTitle = string.IsNullOrEmpty(ViewModel.UserName)
+            //        ? ReLoginButtonText
+            //        : string.Format(ReLoginButtonFormattedText, ViewModel.UserName);
+            //    LoginButton.SetTitle(reloginButtonTitle, UIControlState.Normal);
+            //}));
             Bindings.Add(this.SetBinding(() => ViewModel.SelectedChat, () => _sourceRef.Target.SelectedItem, BindingMode.TwoWay));
-            Bindings.Add(this.SetBinding(() => ViewModel.IsReloginButtonVisible, () => LoginButton.Hidden)
-                         .ConvertSourceToTarget(x => !x));
+            //Bindings.Add(this.SetBinding(() => ViewModel.IsReloginButtonVisible, () => LoginButton.Hidden)
+            //.ConvertSourceToTarget(x => !x));
 
             Bindings.Add(this.SetBinding(() => ViewModel.ConnectionStatusViewModel).WhenSourceChanges(() =>
             {

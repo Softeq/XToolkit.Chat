@@ -64,21 +64,21 @@ namespace Softeq.XToolkit.Chat.Droid.Views
             };
         }
 
-        public override void OnCreateOptionsMenu(IMenu menu, MenuInflater inflater)
-        {
-            inflater.Inflate(Resource.Menu.toolbar_chat, menu);
-            base.OnCreateOptionsMenu(menu, inflater);
-        }
+        //public override void OnCreateOptionsMenu(IMenu menu, MenuInflater inflater)
+        //{
+        //    inflater.Inflate(Resource.Menu.toolbar_chat, menu);
+        //    base.OnCreateOptionsMenu(menu, inflater);
+        //}
 
-        public override bool OnOptionsItemSelected(IMenuItem item)
-        {
-            if (item.ItemId == Resource.Id.toolbar_chat_action_login)
-            {
-                ViewModel.LoginCommand.Execute(null);
-                return true;
-            }
-            return base.OnOptionsItemSelected(item);
-        }
+        //public override bool OnOptionsItemSelected(IMenuItem item)
+        //{
+        //    if (item.ItemId == Resource.Id.toolbar_chat_action_login)
+        //    {
+        //        ViewModel.LoginCommand.Execute(null);
+        //        return true;
+        //    }
+        //    return base.OnOptionsItemSelected(item);
+        //}
 
         protected override void DoAttachBindings()
         {

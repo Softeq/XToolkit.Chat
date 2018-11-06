@@ -11,7 +11,6 @@ using Softeq.XToolkit.Chat.Models.Interfaces;
 using Softeq.XToolkit.Common.Collections;
 using Softeq.XToolkit.Common.Command;
 using Softeq.XToolkit.Common.Extensions;
-using Softeq.XToolkit.WhiteLabel;
 using Softeq.XToolkit.WhiteLabel.Mvvm;
 using Softeq.XToolkit.WhiteLabel.Navigation;
 
@@ -24,9 +23,9 @@ namespace Softeq.XToolkit.Chat.ViewModels
         private readonly IChatLocalizedStrings _localizedStrings;
         private readonly ChatManager _chatManager;
 
-        private ISampleChatLoginService _loginService;
-        private string _userName;
-        private bool _isReloginButtonVisible = true;
+        //private ISampleChatLoginService _loginService;
+        //private string _userName;
+        //private bool _isReloginButtonVisible = true;
 
         private List<IDisposable> _subscriptions = new List<IDisposable>();
 
@@ -37,14 +36,14 @@ namespace Softeq.XToolkit.Chat.ViewModels
             ChatManager chatManager,
             ConnectionStatusViewModel connectionStatusViewModel)
         {
-            TryInitLoginService();
+            //TryInitLoginService();
 
             _dialogsService = dialogsService;
             _pageNavigationService = pageNavigationService;
             _localizedStrings = localizedStrings;
             _chatManager = chatManager;
 
-            _userName = _localizedStrings.NotLoggedIn;
+            //_userName = _localizedStrings.NotLoggedIn;
 
             ConnectionStatusViewModel = connectionStatusViewModel;
 
@@ -54,15 +53,15 @@ namespace Softeq.XToolkit.Chat.ViewModels
             LeaveChatCommand = new RelayCommand<ChatSummaryViewModel>((x) => LeaveChatAsync(x).SafeTaskWrapper());
             DeleteChatCommand = new RelayCommand<ChatSummaryViewModel>((x) => DeleteChatAsync(x).SafeTaskWrapper());
 
-            LoginCommand = new RelayCommand(Login);
+            //LoginCommand = new RelayCommand(Login);
 
-            if (_loginService != null && _loginService.IsAuthorized)
-            {
-                UserName = _loginService.Username;
-            }
+            //if (_loginService != null && _loginService.IsAuthorized)
+            //{
+            //    UserName = _loginService.Username;
+            //}
         }
 
-        public ICommand LoginCommand { get; private set; }
+        //public ICommand LoginCommand { get; private set; }
         public ICommand CreateChatCommand { get; }
         public ICommand LeaveChatCommand { get; }
         public ICommand DeleteChatCommand { get; }
@@ -87,21 +86,23 @@ namespace Softeq.XToolkit.Chat.ViewModels
         public string DeleteChatOptionText => _localizedStrings.Close;
         public string LeaveChatOptionText => _localizedStrings.Leave;
 
-        public string UserName
-        {
-            get => _userName;
-            set => Set(ref _userName, value);
-        }
+        //public string UserName
+        //{
+        //    get => _userName;
+        //    set => Set(ref _userName, value);
+        //}
 
-        public bool IsReloginButtonVisible
-        {
-            get => _isReloginButtonVisible;
-            set => Set(ref _isReloginButtonVisible, value);
-        }
+        //public bool IsReloginButtonVisible
+        //{
+        //    get => _isReloginButtonVisible;
+        //    set => Set(ref _isReloginButtonVisible, value);
+        //}
 
         public override void OnAppearing()
         {
             base.OnAppearing();
+
+            _chatManager.ForceReconnect();
 
             _subscriptions.Add(_chatManager.ConnectionStatusChanged.Subscribe(OnConnectionStatusChanged));
             OnConnectionStatusChanged(_chatManager.ConnectionStatus);
@@ -113,19 +114,19 @@ namespace Softeq.XToolkit.Chat.ViewModels
             _subscriptions.Apply(x => x.Dispose());
         }
 
-        private async void Login()
-        {
-            if (_loginService != null)
-            {
-                var username = await _loginService.LoginAsync();
-                if (username != null)
-                {
-                    UserName = username;
-                    Chats.Clear();
-                    _chatManager.ForceReconnect();
-                }
-            }
-        }
+        //private async void Login()
+        //{
+        //    if (_loginService != null)
+        //    {
+        //        var username = await _loginService.LoginAsync();
+        //        if (username != null)
+        //        {
+        //            UserName = username;
+        //            Chats.Clear();
+        //            _chatManager.ForceReconnect();
+        //        }
+        //    }
+        //}
 
         private void CreateChat()
         {
@@ -144,18 +145,18 @@ namespace Softeq.XToolkit.Chat.ViewModels
             return _chatManager.CloseChatAsync(chatViewModel.ChatId);
         }
 
-        private void TryInitLoginService()
-        {
-            if (ServiceLocator.IsRegistered<ISampleChatLoginService>())
-            {
-                _loginService = ServiceLocator.Resolve<ISampleChatLoginService>();
-            }
-            else
-            {
-                UserName = string.Empty;
-                IsReloginButtonVisible = false;
-            }
-        }
+        //private void TryInitLoginService()
+        //{
+        //    if (ServiceLocator.IsRegistered<ISampleChatLoginService>())
+        //    {
+        //        _loginService = ServiceLocator.Resolve<ISampleChatLoginService>();
+        //    }
+        //    else
+        //    {
+        //        UserName = string.Empty;
+        //        IsReloginButtonVisible = false;
+        //    }
+        //}
 
         private void OnConnectionStatusChanged(ConnectionStatus status)
         {
