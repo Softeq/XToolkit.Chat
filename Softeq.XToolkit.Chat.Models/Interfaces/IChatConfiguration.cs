@@ -7,5 +7,6 @@ namespace Softeq.XToolkit.Chat.Models.Interfaces
     {
         string BaseUrl { get; }
         string ApiUrl { get; }
+        string BlobUrl { get; }
     }
 }

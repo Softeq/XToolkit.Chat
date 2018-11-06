@@ -7,7 +7,7 @@ namespace Softeq.XToolkit.Chat.HttpClient.Dtos
 {
     internal class CreateChatDto
     {
-        public string Name { get; set; } = "Scavenger";
+        public string Name { get; set; }
         public string Topic { get; set; }
         public string WelcomeMessage { get; set; }
         public int Type { get; set; } = 1;

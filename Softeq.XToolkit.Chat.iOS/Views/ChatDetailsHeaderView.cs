@@ -1,24 +1,24 @@
 ﻿// Developed by Softeq Development Corporation
 // http://www.softeq.com
 
-using System;
 using System.Windows.Input;
 using CoreGraphics;
+using FFImageLoading;
 using Foundation;
-using UIKit;
 using Softeq.XToolkit.Bindings;
-using Softeq.XToolkit.WhiteLabel.iOS.Helpers;
-using Softeq.XToolkit.WhiteLabel.iOS.Controls;
 using Softeq.XToolkit.Chat.iOS.Extensions;
+using Softeq.XToolkit.WhiteLabel.iOS.Controls;
+using Softeq.XToolkit.WhiteLabel.iOS.Helpers;
+using Softeq.XToolkit.WhiteLabel.Threading;
+using UIKit;
 
 namespace Softeq.XToolkit.Chat.iOS.Views
 {
     public partial class ChatDetailsHeaderView : NotifyingView
     {
-        private bool _isInitialized;
-
-        public ChatDetailsHeaderView(IntPtr handle) : base(handle) { }
-        public ChatDetailsHeaderView(CGRect frame) : base(frame) { }
+        public ChatDetailsHeaderView(CGRect frame) : base(frame)
+        {
+        }
 
         public UITextField ChatNameField => ChatNameTextField;
 
@@ -28,22 +28,9 @@ namespace Softeq.XToolkit.Chat.iOS.Views
             set => MembersCountLabel.Text = value;
         }
 
-        public string ChatAvatarUrl
-        {
-            get => null;
-            set
-            {
-                TryInitAvatarImageView();
-                ChatAvatarImageView.LoadImageAsync("NoPhoto", value);
-            }
-        }
-
         public bool IsEditMode
         {
-            set
-            {
-                ChatNameTextField.Enabled = value;
-            }
+            set => ChatNameTextField.Enabled = value;
         }
 
         public bool IsAddMembersButtonHidden
@@ -62,27 +49,45 @@ namespace Softeq.XToolkit.Chat.iOS.Views
             ChangeChatPhotoButton.SetCommand(command);
         }
 
+        public void SetChatAvatar(string photoUrl)
+        {
+            ChatAvatarImageView.LoadImageAsync("NoPhoto", photoUrl);
+        }
+
+        public void SetEditedChatAvatar(string key)
+        {
+            Execute.BeginOnUIThread(() =>
+            {
+                if (key == null)
+                {
+                    EditedChatAvatarImageView.Hidden = true;
+                }
+                else
+                {
+                    EditedChatAvatarImageView.Hidden = false;
+                    ImageService.Instance
+                        .LoadFile(key)
+                        .DownSampleInDip(95, 95)
+                        .IntoAsync(EditedChatAvatarImageView);
+                }
+            });
+        }
+
         protected override void Initialize()
         {
             base.Initialize();
 
-            ChatNameTextField.ShouldReturn += (textField) =>
+            ChatNameTextField.ShouldReturn += textField =>
             {
                 textField.ResignFirstResponder();
                 return true;
             };
-        }
 
-        private void TryInitAvatarImageView()
-        {
-            if (_isInitialized)
-            {
-                return;
-            }
+            ChatAvatarcontainer.Layer.MasksToBounds = false;
+            ChatAvatarcontainer.Layer.CornerRadius = ChatAvatarcontainer.Bounds.Width / 2;
+            ChatAvatarcontainer.ClipsToBounds = true;
 
-            ChatAvatarImageView.MakeImageViewCircular();
-
-            _isInitialized = true;
+            EditedChatAvatarImageView.Hidden = true;
         }
     }
 }

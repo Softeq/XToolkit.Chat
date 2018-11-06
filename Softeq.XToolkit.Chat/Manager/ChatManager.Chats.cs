@@ -35,9 +35,9 @@ namespace Softeq.XToolkit.Chat.Manager
             return models?.Select(_viewModelFactoryService.ResolveViewModel<ChatSummaryViewModel, ChatSummaryModel>)?.ToList();
         }
 
-        public async Task CreateChatAsync(string chatName, IList<string> participantsIds)
+        public async Task CreateChatAsync(string chatName, IList<string> participantsIds, string imagePath)
         {
-            var chatModel = await _chatService.CreateChatAsync(chatName, participantsIds).ConfigureAwait(false);
+            var chatModel = await _chatService.CreateChatAsync(chatName, participantsIds, imagePath).ConfigureAwait(false);
             if (chatModel != null)
             {
                 TryAddChat(chatModel);

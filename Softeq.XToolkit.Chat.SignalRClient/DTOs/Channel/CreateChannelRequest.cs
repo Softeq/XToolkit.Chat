@@ -2,7 +2,6 @@
 // http://www.softeq.com
 
 using System.Collections.Generic;
-using Softeq.XToolkit.Chat.SignalRClient.DTOs;
 
 namespace Softeq.XToolkit.Chat.SignalRClient.DTOs.Channel
 {
@@ -13,5 +12,6 @@ namespace Softeq.XToolkit.Chat.SignalRClient.DTOs.Channel
         public ChannelTypeDto Type { get; set; }
         public string WelcomeMessage { get; set; }
         public IList<string> AllowedMembers { get; set; }
+        public string PhotoUrl { get; set; }
     }
 }
