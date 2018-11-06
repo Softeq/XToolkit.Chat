@@ -50,5 +50,7 @@ namespace Softeq.XToolkit.Chat.Models.Interfaces
 
         void ForceReconnect();
         void ForceDisconnect();
+
+        void Logout();
     }
 }
