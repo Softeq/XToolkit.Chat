@@ -43,7 +43,11 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
                 _chatDetailsHeaderView.ChatNameField.ResignFirstResponder();
             }));
             
-            _simpleImagePicker = new SimpleImagePicker(this, ViewModel.PermissionsManager, false);
+            _simpleImagePicker = new SimpleImagePicker(this, ViewModel.PermissionsManager, false)
+            {
+                MaxImageWidth = 280,
+                MaxImageHeight = 280,
+            };
 
             _chatDetailsHeaderView = new ChatDetailsHeaderView(new CGRect(0, 0, 200, 220))
             {
@@ -62,12 +66,6 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
                 (cell as ChatUserViewCell)?.BindViewModel(viewModel);
             }, ChatUserViewCell.Key);
             TableView.Source = source;
-
-            _simpleImagePicker = new SimpleImagePicker(this, ViewModel.PermissionsManager, false)
-            {
-                MaxImageWidth = 280,
-                MaxImageHeight = 280,
-            };
         }
 
         public override void ViewWillDisappear(bool animated)
