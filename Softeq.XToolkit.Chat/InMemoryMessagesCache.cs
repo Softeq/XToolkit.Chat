@@ -308,5 +308,10 @@ namespace Softeq.XToolkit.Chat
             }
             return result;
         }
+
+        public void FullCleanUp()
+        {
+            _messages.Clear();
+        }
     }
 }

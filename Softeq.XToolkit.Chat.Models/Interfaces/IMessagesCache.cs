@@ -28,5 +28,7 @@ namespace Softeq.XToolkit.Chat.Models.Interfaces
         Task RemoveMessagesAsync(string chatId);
 
         Task PerformFullUpdate(IList<string> chatIds);
+
+        void FullCleanUp();
     }
 }

@@ -27,33 +27,21 @@
                                 </items>
                             </navigationBar>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="ouP-dJ-4uv">
-                                <rect key="frame" x="0.0" y="88" width="375" height="674"/>
+                                <rect key="frame" x="0.0" y="88" width="375" height="690"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <inset key="separatorInset" minX="80" minY="0.0" maxX="0.0" maxY="0.0"/>
                                 <sections/>
                             </tableView>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="vas-Dt-tPu">
-                                <rect key="frame" x="0.0" y="762" width="375" height="50"/>
-                                <color key="backgroundColor" red="1" green="0.74009874129999997" blue="0.25992838540000002" alpha="0.39966823630136988" colorSpace="calibratedRGB"/>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="50" id="BcG-7A-luE"/>
-                                </constraints>
-                                <color key="tintColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                <state key="normal" title="Login"/>
-                            </button>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
-                            <constraint firstItem="vas-Dt-tPu" firstAttribute="top" secondItem="ouP-dJ-4uv" secondAttribute="bottom" id="Hae-Rz-rLo"/>
                             <constraint firstItem="e3e-4v-EfG" firstAttribute="leading" secondItem="zip-Zx-2dh" secondAttribute="leading" id="RzS-ki-wtA"/>
                             <constraint firstItem="e3e-4v-EfG" firstAttribute="trailing" secondItem="zip-Zx-2dh" secondAttribute="trailing" id="UPx-IO-SFW"/>
-                            <constraint firstItem="vas-Dt-tPu" firstAttribute="leading" secondItem="zip-Zx-2dh" secondAttribute="leading" id="XUN-PC-6VJ"/>
                             <constraint firstItem="ouP-dJ-4uv" firstAttribute="trailing" secondItem="zip-Zx-2dh" secondAttribute="trailing" id="b0i-e6-35V"/>
                             <constraint firstItem="ouP-dJ-4uv" firstAttribute="top" secondItem="e3e-4v-EfG" secondAttribute="bottom" id="b8n-mJ-oal"/>
+                            <constraint firstItem="zip-Zx-2dh" firstAttribute="bottom" secondItem="ouP-dJ-4uv" secondAttribute="bottom" id="g0V-vh-ERa"/>
                             <constraint firstItem="ouP-dJ-4uv" firstAttribute="leading" secondItem="zip-Zx-2dh" secondAttribute="leading" id="kcK-dg-CnR"/>
                             <constraint firstItem="e3e-4v-EfG" firstAttribute="top" secondItem="zip-Zx-2dh" secondAttribute="top" id="mUz-hQ-8sC"/>
-                            <constraint firstAttribute="bottom" secondItem="vas-Dt-tPu" secondAttribute="bottom" id="ogh-YQ-rcx"/>
-                            <constraint firstItem="vas-Dt-tPu" firstAttribute="trailing" secondItem="zip-Zx-2dh" secondAttribute="trailing" id="x3y-tk-uFH"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="zip-Zx-2dh"/>
                     </view>
@@ -61,7 +49,6 @@
                         <outlet property="ChatsTableView" destination="ouP-dJ-4uv" id="W6c-qr-ipj"/>
                         <outlet property="CustomNavigationBar" destination="e3e-4v-EfG" id="9Jz-zP-SOg"/>
                         <outlet property="CustomNavigationItem" destination="icw-VK-o8Y" id="5b0-G4-rmp"/>
-                        <outlet property="LoginButton" destination="vas-Dt-tPu" id="s4R-Ue-rFN"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="5Sf-zj-A8e" userLabel="First Responder" sceneMemberID="firstResponder"/>

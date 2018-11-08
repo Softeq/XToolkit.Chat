@@ -52,5 +52,6 @@ namespace Softeq.XToolkit.Chat.Models.Interfaces
         void ForceDisconnect();
 
         Task EditChatAsync(ChatSummaryModel chatSummary);
+        void Logout();
     }
 }
