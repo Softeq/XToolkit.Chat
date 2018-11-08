@@ -14,7 +14,6 @@ using Softeq.XToolkit.Chat.Models.Interfaces;
 using Softeq.XToolkit.Common.Collections;
 using Softeq.XToolkit.Common.Command;
 using Softeq.XToolkit.Common.Extensions;
-using Softeq.XToolkit.Permissions;
 using Softeq.XToolkit.WhiteLabel.Interfaces;
 using Softeq.XToolkit.WhiteLabel.Mvvm;
 using Softeq.XToolkit.WhiteLabel.Navigation;
@@ -43,10 +42,8 @@ namespace Softeq.XToolkit.Chat.ViewModels
             IPageNavigationService pageNavigationService,
             IChatLocalizedStrings localizedStrings,
             IFormatService formatService,
-            IPermissionsManager permissionsManager,
             IUploadImageService uploadImageService)
         {
-            PermissionsManager = permissionsManager;
             _chatManager = chatManager;
             _accountService = accountService;
             _pageNavigationService = pageNavigationService;
@@ -57,19 +54,14 @@ namespace Softeq.XToolkit.Chat.ViewModels
             _memberSelectedCommand = new RelayCommand(() => RaisePropertyChanged(nameof(ContactsCountText)));
 
             BackCommand = new RelayCommand(_pageNavigationService.GoBack, () => _pageNavigationService.CanGoBack);
-
-            AddChatCommand = new RelayCommand(() => AddChatAsync().SafeTaskWrapper());
         }
 
         public ICommand BackCommand { get; }
 
-        [Obsolete] public ICommand AddChatCommand { get; }
-
         public RelayCommand<Func<(Task<Stream>, string)>> SaveCommand { get; private set; }
 
-        public IPermissionsManager PermissionsManager { get; }
-
         public string Title => IsInviteToChat ? _localizedStrings.InviteUsers : _localizedStrings.CreateGroup;
+
         public string ActionButtonName => IsInviteToChat ? _localizedStrings.Invite : _localizedStrings.Create;
 
         public string ContactsCountText => _formatService.PluralizeWithQuantity(Contacts.Count(x => x.IsSelected),
@@ -130,36 +122,6 @@ namespace Softeq.XToolkit.Chat.ViewModels
             }
 
             RaisePropertyChanged(nameof(ContactsCountText));
-        }
-
-        [Obsolete]
-        private async Task AddChatAsync()
-        {
-            if (IsBusy)
-            {
-                return;
-            }
-
-            IsBusy = true;
-
-            try
-            {
-                var selectedContactsIds = Contacts.Where(x => x.IsSelected).Select(x => x.Id).ToList();
-                if (IsCreateChat)
-                {
-                    await _chatManager.CreateChatAsync(_chatName, selectedContactsIds, null).ConfigureAwait(false);
-                }
-                else if (IsInviteToChat)
-                {
-                    await _chatManager.InviteMembersAsync(_openedChatId, selectedContactsIds).ConfigureAwait(false);
-                }
-
-                BackCommand.Execute(null);
-            }
-            finally
-            {
-                IsBusy = false;
-            }
         }
 
         private async void SaveAsync(Func<(Task<Stream> GetImageTask, string Extension)> getImageFunc)

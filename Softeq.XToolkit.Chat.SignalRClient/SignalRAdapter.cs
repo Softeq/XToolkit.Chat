@@ -185,6 +185,23 @@ namespace Softeq.XToolkit.Chat.SignalRClient
             _canReconnectAutomatically = false;
         }
 
+        public Task EditChatAsync(ChatSummaryModel x)
+        {
+            return CheckConnectionAndSendRequest(new TaskReference(() =>
+            {
+                var request = new UpdateChannelRequest
+                {
+                    ChannelId = x.Id,
+                    Name = x.Name,
+                    PhotoUrl = x.AvatarUrl,
+                    WelcomeMessage = x.WelcomeMessage,
+                    Topic = x.Topic
+                };
+
+                return _signalRClient.UpdateChannelAsync(request);
+            }));
+        }
+
         private void SubscribeToEvents()
         {
             _signalRClient.AccessTokenExpired += () =>

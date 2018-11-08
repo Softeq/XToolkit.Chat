@@ -17,6 +17,7 @@ using Softeq.XToolkit.Chat.Droid.ViewHolders;
 using Softeq.XToolkit.Chat.ViewModels;
 using Softeq.XToolkit.Common.Command;
 using Softeq.XToolkit.Common.Droid.Converters;
+using Softeq.XToolkit.Permissions;
 using Softeq.XToolkit.WhiteLabel;
 using Softeq.XToolkit.WhiteLabel.Droid;
 using Softeq.XToolkit.WhiteLabel.Droid.Controls;
@@ -61,8 +62,11 @@ namespace Softeq.XToolkit.Chat.Droid.Views
 
             InitializeToolbar(toolbar);
             InitializeContactsRecyclerView();
-            
-            _imagePicker = new ImagePicker(ViewModel.PermissionsManager, ServiceLocator.Resolve<IImagePickerService>());
+
+            _imagePicker = new ImagePicker(ServiceLocator.Resolve<IPermissionsManager>(), ServiceLocator.Resolve<IImagePickerService>())
+            {
+                MaxImageWidth = 300
+            };
 
             _chatPhotoImageView.LoadImageAsync("ic_attachment.png", null, new CircleTransformation());
             _chatEditedPhotoImageView.Visibility = ViewStates.Gone;

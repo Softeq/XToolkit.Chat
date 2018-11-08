@@ -20,6 +20,8 @@ namespace Softeq.XToolkit.Chat.Models
         public ChatMessageModel LastMessage { get; set; }
         public IList<string> TypingUsersNames { get; set; }
         public bool AreMoreThanThreeUsersTyping { get; set; }
+        public string Topic { get; set; }
+        public string WelcomeMessage { get; set; }
 
         public void UpdateIsCreatedByMeStatus(string currentUserId)
         {

@@ -93,9 +93,6 @@
     <Compile Include="Controls\ContextMenuComponent.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\AboutResources.txt" />
-  </ItemGroup>
-  <ItemGroup>
     <AndroidResource Include="Resources\values\strings.xml" />
     <AndroidResource Include="Resources\layout\activity_chat_details.xml" />
     <AndroidResource Include="Resources\layout\item_chat.xml" />

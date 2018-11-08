@@ -22,8 +22,6 @@ namespace Softeq.XToolkit.Chat.ViewModels
         private readonly IChatLocalizedStrings _localizedStrings;
         private readonly IFormatService _formatService;
 
-        private ChatSummaryModel _chatSummary;
-
         public ChatSummaryViewModel(
             ISocketChatAdapter chatAdapter,
             IChatLocalizedStrings localizedStrings,
@@ -36,54 +34,65 @@ namespace Softeq.XToolkit.Chat.ViewModels
 
         public ChatSummaryModel Parameter
         {
-            set => _chatSummary = value ?? new ChatSummaryModel();
+            set => ChatSummary = value ?? new ChatSummaryModel();
         }
 
-        public string ChatId => _chatSummary.Id;
-        public string ChatName => _chatSummary.Name;
-        public string LastMessageUsername => _chatSummary.LastMessage?.SenderName;
-        public string LastMessageBody => _chatSummary.LastMessage?.Body;
-        public ChatMessageStatus LastMessageStatus => _chatSummary.LastMessage?.Status ?? ChatMessageStatus.Other;
-        public string LastMessageDateTime => _formatService.ToShortTimeFormat(_chatSummary.LastMessage?.DateTime.LocalDateTime);
+        public ChatSummaryModel ChatSummary { get; set; }
+
+        public string ChatId => ChatSummary.Id;
+        public string ChatName => ChatSummary.Name;
+        public string LastMessageUsername => ChatSummary.LastMessage?.SenderName;
+        public string LastMessageBody => ChatSummary.LastMessage?.Body;
+        public ChatMessageStatus LastMessageStatus => ChatSummary.LastMessage?.Status ?? ChatMessageStatus.Other;
+        public string LastMessageDateTime => _formatService.ToShortTimeFormat(ChatSummary.LastMessage?.DateTime.LocalDateTime);
 
         public int UnreadMessageCount
         {
-            get => _chatSummary.UnreadMessagesCount;
+            get => ChatSummary.UnreadMessagesCount;
             set
             {
-                if (_chatSummary.UnreadMessagesCount != value)
+                if (ChatSummary.UnreadMessagesCount != value)
                 {
-                    _chatSummary.UnreadMessagesCount = value;
+                    ChatSummary.UnreadMessagesCount = value;
                     Execute.BeginOnUIThread(() => RaisePropertyChanged());
                 }
             }
         }
 
-        public string ChatPhotoUrl => _chatSummary.AvatarUrl;
-        public bool IsMuted => _chatSummary.IsMuted;
-        public bool IsCreatedByMe => _chatSummary.IsCreatedByMe;
+        public string ChatPhotoUrl
+        {
+            get => ChatSummary.AvatarUrl;
+            set
+            {
+                ChatSummary.AvatarUrl = value;
+                RaisePropertyChanged();
+            }
+        }
 
-        public DateTimeOffset LastUpdateDate => _chatSummary.LastMessage != null
-                                                            ? _chatSummary.LastMessage.DateTime
-                                                            : _chatSummary.UpdatedDate
-                                                            ?? _chatSummary.CreatedDate;
+        public bool IsMuted => ChatSummary.IsMuted;
+        public bool IsCreatedByMe => ChatSummary.IsCreatedByMe;
+
+        public DateTimeOffset LastUpdateDate => ChatSummary.LastMessage != null
+                                                            ? ChatSummary.LastMessage.DateTime
+                                                            : ChatSummary.UpdatedDate
+                                                            ?? ChatSummary.CreatedDate;
 
         public IList<string> TypingUsersNames
         {
-            get => _chatSummary.TypingUsersNames;
+            get => ChatSummary.TypingUsersNames;
             set
             {
-                _chatSummary.TypingUsersNames = value;
+                ChatSummary.TypingUsersNames = value;
                 RaisePropertyChanged(nameof(TypingUsersNamesText));
             }
         }
 
         public bool AreMoreThanThreeUsersTyping
         {
-            get => _chatSummary.AreMoreThanThreeUsersTyping;
+            get => ChatSummary.AreMoreThanThreeUsersTyping;
             set
             {
-                _chatSummary.AreMoreThanThreeUsersTyping = value;
+                ChatSummary.AreMoreThanThreeUsersTyping = value;
                 RaisePropertyChanged(nameof(TypingUsersNamesText));
             }
         }
@@ -114,7 +123,7 @@ namespace Softeq.XToolkit.Chat.ViewModels
 
         public void UpdateLastMessage(ChatMessageModel newLastMessage)
         {
-            _chatSummary.LastMessage = newLastMessage;
+            ChatSummary.LastMessage = newLastMessage;
             Execute.BeginOnUIThread(() =>
             {
                 RaisePropertyChanged(nameof(LastMessageUsername));

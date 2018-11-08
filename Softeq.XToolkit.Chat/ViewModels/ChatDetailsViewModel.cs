@@ -12,6 +12,10 @@ using Softeq.XToolkit.WhiteLabel.Interfaces;
 using Softeq.XToolkit.WhiteLabel.Mvvm;
 using Softeq.XToolkit.WhiteLabel.Navigation;
 using Softeq.XToolkit.Chat.Models.Interfaces;
+using System;
+using System.Threading.Tasks;
+using System.IO;
+using Softeq.XToolkit.WhiteLabel.Threading;
 
 namespace Softeq.XToolkit.Chat.ViewModels
 {
@@ -19,26 +23,31 @@ namespace Softeq.XToolkit.Chat.ViewModels
     {
         private readonly ChatManager _chatManager;
         private readonly IPageNavigationService _pageNavigationService;
-        private readonly IChatLocalizedStrings _localizedStrings;
         private readonly IFormatService _formatService;
+        private readonly IUploadImageService _uploadImageService;
+
         private ChatSummaryViewModel _chatSummaryViewModel;
 
         public ChatDetailsViewModel(
             ChatManager chatManager,
             IPageNavigationService pageNavigationService,
             IChatLocalizedStrings localizedStrings,
-            IFormatService formatService)
+            IFormatService formatService,
+            IUploadImageService uploadImageService)
         {
             _chatManager = chatManager;
             _pageNavigationService = pageNavigationService;
-            _localizedStrings = localizedStrings;
+            LocalizedStrings = localizedStrings;
             _formatService = formatService;
+            _uploadImageService = uploadImageService;
 
             AddMembersCommand = new RelayCommand(AddMembers);
             BackCommand = new RelayCommand(_pageNavigationService.GoBack, () => _pageNavigationService.CanGoBack);
         }
+        
+        public IChatLocalizedStrings LocalizedStrings { get; }
 
-        public string Title => _localizedStrings.DetailsTitle;
+        public string Title => LocalizedStrings.DetailsTitle;
 
         public ChatSummaryViewModel Parameter { set => _chatSummaryViewModel = value; }
 
@@ -48,15 +57,18 @@ namespace Softeq.XToolkit.Chat.ViewModels
         public string ChatAvatarUrl => _chatSummaryViewModel.ChatPhotoUrl;
         public string ChatName => _chatSummaryViewModel.ChatName;
         public string MembersCountText => _formatService.PluralizeWithQuantity(Members.Count,
-                                                                               _localizedStrings.MembersPlural,
-                                                                               _localizedStrings.MemberSingular);
+                                                                               LocalizedStrings.MembersPlural,
+                                                                               LocalizedStrings.MemberSingular);
 
         public bool IsNavigated { get; private set; }
 
         public ICommand AddMembersCommand { get; }
+
         public ICommand BackCommand { get; }
 
-        public async override void OnAppearing()
+        public IList<CommandAction> MenuActions { get; } = new List<CommandAction>();
+
+        public override async void OnAppearing()
         {
             base.OnAppearing();
 
@@ -81,6 +93,39 @@ namespace Softeq.XToolkit.Chat.ViewModels
             IsNavigated = true;
         }
 
+        public async Task SaveAsync(Func<(Task<Stream> GetImageTask, string Extension)> getImageFunc)
+        {
+            if (IsBusy)
+            {
+                return;
+            }
+
+            IsBusy = true;
+
+            var imageInfo = getImageFunc();
+            var imagePath = default(string);
+
+            using (var image = await imageInfo.GetImageTask.ConfigureAwait(false))
+            {
+                if (image != null)
+                {
+                    imagePath = await _uploadImageService.UploadImageAsync(image, imageInfo.Extension)
+                        .ConfigureAwait(false);
+                }
+            }
+
+            if (imagePath != null)
+            {
+                _chatSummaryViewModel.ChatPhotoUrl = imagePath;
+                await _chatManager.EditChatAsync(_chatSummaryViewModel.ChatSummary).ConfigureAwait(false);
+            }
+
+            Execute.BeginOnUIThread(() =>
+            {
+                IsBusy = false;
+            });
+        }
+        
         private void AddMembers()
         {
             _pageNavigationService.NavigateToViewModel<SelectContactsViewModel,

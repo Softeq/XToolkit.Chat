@@ -12,6 +12,8 @@ using Softeq.XToolkit.Chat.ViewModels;
 using Softeq.XToolkit.Common.Command;
 using Softeq.XToolkit.WhiteLabel.iOS.Extensions;
 using Softeq.XToolkit.WhiteLabel.iOS.ImagePicker;
+using Softeq.XToolkit.WhiteLabel;
+using Softeq.XToolkit.Permissions;
 
 namespace Softeq.XToolkit.Chat.iOS.ViewControllers
 {
@@ -43,7 +45,7 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
                 _chatDetailsHeaderView.ChatNameField.ResignFirstResponder();
             }));
             
-            _simpleImagePicker = new SimpleImagePicker(this, ViewModel.PermissionsManager, false)
+            _simpleImagePicker = new SimpleImagePicker(this, ServiceLocator.Resolve<IPermissionsManager>(), false)
             {
                 MaxImageWidth = 280,
                 MaxImageHeight = 280,
