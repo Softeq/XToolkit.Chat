@@ -340,6 +340,13 @@ namespace Softeq.XToolkit.Chat.SignalRClient
                 {
                     UpdateConnectionStatus(SocketConnectionStatus.Connecting);
                     var client = await _signalRClient.ConnectAsync(accessToken).ConfigureAwait(false);
+
+                    // TODO:
+                    if (client == null)
+                    {
+                        _logger.Error("SignalRAdapter: accessToken is not valid, please relogin");
+                    }
+
                     _saasUserId = client.SaasUserId;
 
                     _isConnected = true;

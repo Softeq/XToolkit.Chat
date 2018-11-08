@@ -19,15 +19,10 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
 {
     public partial class ChatsListViewController : ViewControllerBase<ChatsListViewModel>
     {
-        private const string ReLoginButtonText = "(RE)LOGIN";
-        private const string ReLoginButtonFormattedText = "(RE)LOGIN: {0}";
-
         private WeakReferenceEx<ObservableTableViewSource<ChatSummaryViewModel>> _sourceRef;
         private ConnectionStatusView _customTitleView;
 
-        public ChatsListViewController(IntPtr handle) : base(handle)
-        {
-        }
+        public ChatsListViewController(IntPtr handle) : base(handle) { }
 
         public override void ViewDidLoad()
         {
@@ -48,9 +43,6 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
             CustomNavigationItem.AddTitleView(_customTitleView);
             CustomNavigationItem.SetCommand(UIBarButtonSystemItem.Add, ViewModel.CreateChatCommand, false);
 
-
-            LoginButton.SetCommand(ViewModel.LoginCommand);
-
             ChatsTableView.RegisterNibForCellReuse(ChatSummaryViewCell.Nib, ChatSummaryViewCell.Key);
             ChatsTableView.RowHeight = 80;
             ChatsTableView.TableFooterView = new UIView();
@@ -68,16 +60,7 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
         {
             base.DoAttachBindings();
 
-            Bindings.Add(this.SetBinding(() => ViewModel.UserName).WhenSourceChanges(() =>
-            {
-                var reloginButtonTitle = string.IsNullOrEmpty(ViewModel.UserName)
-                    ? ReLoginButtonText
-                    : string.Format(ReLoginButtonFormattedText, ViewModel.UserName);
-                LoginButton.SetTitle(reloginButtonTitle, UIControlState.Normal);
-            }));
             Bindings.Add(this.SetBinding(() => ViewModel.SelectedChat, () => _sourceRef.Target.SelectedItem, BindingMode.TwoWay));
-            Bindings.Add(this.SetBinding(() => ViewModel.IsReloginButtonVisible, () => LoginButton.Hidden)
-                         .ConvertSourceToTarget(x => !x));
 
             Bindings.Add(this.SetBinding(() => ViewModel.ConnectionStatusViewModel).WhenSourceChanges(() =>
             {

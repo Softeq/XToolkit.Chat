@@ -167,6 +167,13 @@ namespace Softeq.XToolkit.Chat
             return _socketChatAdapter.EditChatAsync(chatSummary);
         }
 
+        public void Logout()
+        {
+            ForceDisconnect();
+
+            _cachedUserId = string.Empty;
+        }
+
         private async Task<string> GetUserIdAsync()
         {
             var result = _cachedUserId;

@@ -47,7 +47,7 @@ namespace Softeq.XToolkit.Chat.Manager
             _chatService = chatService;
             _messagesCache = messagesCache;
             _viewModelFactoryService = viewModelFactoryService;
-            _logger = logManager.GetLogger<Manager.ChatManager>();
+            _logger = logManager.GetLogger<ChatManager>();
 
             _messagesCache.Init(new Common.TaskReference<string, string, DateTimeOffset, IList<ChatMessageModel>>(
                 (chatId, messageFromId, messageFromDateTime) =>
@@ -93,6 +93,15 @@ namespace Softeq.XToolkit.Chat.Manager
         public void ForceReconnect()
         {
             _chatService.ForceReconnect();
+        }
+
+        public void Logout()
+        {
+            _chatService.Logout();
+
+            _messagesCache.FullCleanUp();
+
+            ChatsCollection.Clear();
         }
 
         private void OnConnectionStatusChanged(SocketConnectionStatus connectionStatus)
