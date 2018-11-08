@@ -71,6 +71,11 @@ namespace Softeq.XToolkit.Chat.Manager
             return models?.Select(_viewModelFactoryService.ResolveViewModel<ChatUserViewModel, ChatUserModel>)?.ToList();
         }
 
+        internal Task EditChatAsync(ChatSummaryModel chatSummary)
+        {
+            return _chatService.EditChatAsync(chatSummary);
+        }
+
         private bool TryAddChat(ChatSummaryModel chatSummary)
         {
             return ModifyChatsSafely(() =>

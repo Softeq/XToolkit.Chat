@@ -93,9 +93,6 @@
     <Compile Include="Controls\ContextMenuComponent.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\AboutResources.txt" />
-  </ItemGroup>
-  <ItemGroup>
     <AndroidResource Include="Resources\values\strings.xml" />
     <AndroidResource Include="Resources\layout\activity_chat_details.xml" />
     <AndroidResource Include="Resources\layout\item_chat.xml" />
@@ -194,6 +191,10 @@
     <ProjectReference Include="..\..\XToolkit.WhiteLabel\Softeq.XToolkit.WhiteLabel\Softeq.XToolkit.WhiteLabel.csproj">
       <Project>{690D58CB-A04C-418F-863B-F4ED17775120}</Project>
       <Name>Softeq.XToolkit.WhiteLabel</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\XToolkit\Softeq.XToolkit.Permissions\Softeq.XToolkit.Permissions.csproj">
+      <Project>{424eabdc-dcc0-4616-b603-93582d9a9ad4}</Project>
+      <Name>Softeq.XToolkit.Permissions</Name>
     </ProjectReference>
     <ProjectReference Include="..\Softeq.XToolkit.Chat.Models\Softeq.XToolkit.Chat.Models.csproj">
       <Project>{8CA8A57B-4F07-469A-B2DD-8420483380D7}</Project>

@@ -21,7 +21,9 @@ namespace Softeq.XToolkit.Chat.HttpClient
                 AvatarUrl = dto.PhotoUrl,
                 LastMessage = DtoToChatMessage(dto.LastMessage),
                 CreatedDate = dto.Created,
-                UpdatedDate = dto.Updated
+                UpdatedDate = dto.Updated,
+                WelcomeMessage = dto.WelcomeMessage,
+                Topic = dto.Topic
             };
         }
 
