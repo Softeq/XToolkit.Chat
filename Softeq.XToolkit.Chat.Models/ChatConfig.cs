@@ -5,7 +5,7 @@ using Softeq.XToolkit.Chat.Models.Interfaces;
 
 namespace Softeq.XToolkit.Chat.Models
 {
-    public class ChatConfiguration : IChatConfiguration
+    public class ChatConfig : IChatConfig
     {
         public string BaseUrl { get; }
 
@@ -13,7 +13,7 @@ namespace Softeq.XToolkit.Chat.Models
 
         public string BlobUrl { get; }
 
-        public ChatConfiguration(string baseUrl, string blobUrl)
+        public ChatConfig(string baseUrl, string blobUrl)
         {
             BaseUrl = baseUrl;
             BlobUrl = blobUrl;

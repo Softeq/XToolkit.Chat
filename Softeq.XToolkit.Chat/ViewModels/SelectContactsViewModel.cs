@@ -14,9 +14,11 @@ using Softeq.XToolkit.Chat.Models.Interfaces;
 using Softeq.XToolkit.Common.Collections;
 using Softeq.XToolkit.Common.Command;
 using Softeq.XToolkit.Common.Extensions;
+using Softeq.XToolkit.WhiteLabel;
 using Softeq.XToolkit.WhiteLabel.Interfaces;
 using Softeq.XToolkit.WhiteLabel.Mvvm;
 using Softeq.XToolkit.WhiteLabel.Navigation;
+using Softeq.XToolkit.WhiteLabel.Threading;
 
 namespace Softeq.XToolkit.Chat.ViewModels
 {
@@ -126,6 +128,11 @@ namespace Softeq.XToolkit.Chat.ViewModels
 
         private async void SaveAsync(Func<(Task<Stream> GetImageTask, string Extension)> getImageFunc)
         {
+            if (string.IsNullOrEmpty(ChatName))
+            {
+                return;
+            }
+
             if (IsBusy)
             {
                 return;
@@ -150,8 +157,11 @@ namespace Softeq.XToolkit.Chat.ViewModels
                 var selectedContactsIds = Contacts.Where(x => x.IsSelected).Select(x => x.Id).ToList();
                 if (IsCreateChat)
                 {
-                    await _chatManager.CreateChatAsync(_chatName, selectedContactsIds, imagePath).ConfigureAwait(false);
-                    ChatName = string.Empty;
+                    await _chatManager.CreateChatAsync(ChatName, selectedContactsIds, imagePath).ConfigureAwait(false);
+                    Execute.BeginOnUIThread(() =>
+                    {
+                        ChatName = string.Empty;
+                    });
                 }
                 else if (IsInviteToChat)
                 {
@@ -159,6 +169,10 @@ namespace Softeq.XToolkit.Chat.ViewModels
                 }
 
                 _pageNavigationService.GoBack();
+            }
+            catch (Exception ex)
+            {
+                LogManager.LogError<SelectContactsViewModel>(ex);
             }
             finally
             {

@@ -3,7 +3,7 @@
 
 namespace Softeq.XToolkit.Chat.Models.Interfaces
 {
-    public interface IChatConfiguration
+    public interface IChatConfig
     {
         string BaseUrl { get; }
         string ApiUrl { get; }
