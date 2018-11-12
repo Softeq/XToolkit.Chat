@@ -18,7 +18,7 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
     public partial class SelectContactsViewController : ViewControllerBase<SelectContactsViewModel>
     {
         private ChatDetailsHeaderView _chatDetailsHeaderView;
-        private SimpleImagePicker _simpleImagePicker;
+        //private SimpleImagePicker _simpleImagePicker;
         private string _previewImageKey;
 
         public SelectContactsViewController(IntPtr handle) : base(handle) { }
@@ -29,9 +29,9 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
 
             CustomNavigationItem.SetCommand(UIImage.FromBundle(Styles.BackButtonBundleName), ViewModel.BackCommand, true);
             CustomNavigationItem.SetCommand(
-                ViewModel.ActionButtonName, 
+                ViewModel.ActionButtonName,
                 Styles.NavigationBarTintColor,
-                new RelayCommand(AddChat), 
+                new RelayCommand(AddChat),
                 false);
 
             TableView.AllowsSelection = false;
@@ -42,22 +42,22 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
             {
                 _chatDetailsHeaderView.ChatNameField.ResignFirstResponder();
             }));
-            
-            _simpleImagePicker = new SimpleImagePicker(this, ViewModel.PermissionsManager, false)
-            {
-                MaxImageWidth = 280,
-                MaxImageHeight = 280,
-            };
+
+            //_simpleImagePicker = new SimpleImagePicker(this, ViewModel.PermissionsManager, false)
+            //{
+            //    MaxImageWidth = 280,
+            //    MaxImageHeight = 280,
+            //};
 
             _chatDetailsHeaderView = new ChatDetailsHeaderView(new CGRect(0, 0, 200, 220))
             {
                 IsEditMode = true,
                 IsAddMembersButtonHidden = true
             };
-  
+
             _chatDetailsHeaderView.SetChangeChatPhotoCommand(new RelayCommand(OpenPicker));
             _chatDetailsHeaderView.SetChatAvatar(null);
-            
+
             TableView.TableHeaderView = _chatDetailsHeaderView;
             TableView.TableFooterView = new UIView();
 
@@ -95,33 +95,33 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
                 CustomNavigationItem.Title = ViewModel.Title;
             }));
             Bindings.Add(this.SetBinding(() => ViewModel.ContactsCountText, () => _chatDetailsHeaderView.ChatMembersCount));
-            Bindings.Add(this.SetBinding(() => _simpleImagePicker.ViewModel.ImageCacheKey)
-                .WhenSourceChanges(() =>
-                {
-                    if (string.IsNullOrEmpty(_simpleImagePicker.ViewModel.ImageCacheKey))
-                    {
-                        return;
-                    }
-                    
-                    var key = _simpleImagePicker.ViewModel.ImageCacheKey;
-                    if (key == _previewImageKey)
-                    {
-                        return;
-                    }
+            //Bindings.Add(this.SetBinding(() => _simpleImagePicker.ViewModel.ImageCacheKey)
+            //.WhenSourceChanges(() =>
+            //{
+            //    if (string.IsNullOrEmpty(_simpleImagePicker.ViewModel.ImageCacheKey))
+            //    {
+            //        return;
+            //    }
 
-                    _previewImageKey = key;
-                    _chatDetailsHeaderView.SetEditedChatAvatar(_previewImageKey);
-                }));
+            //    var key = _simpleImagePicker.ViewModel.ImageCacheKey;
+            //    if (key == _previewImageKey)
+            //    {
+            //        return;
+            //    }
+
+            //    _previewImageKey = key;
+            //    _chatDetailsHeaderView.SetEditedChatAvatar(_previewImageKey);
+            //}));
         }
 
         private void OpenPicker()
         {
-            _simpleImagePicker.OpenGalleryAsync();
+            //_simpleImagePicker.OpenGalleryAsync();
         }
 
         private void AddChat()
         {
-            ViewModel.SaveCommand.Execute(_simpleImagePicker.StreamFunc);
+            //ViewModel.SaveCommand.Execute(_simpleImagePicker.StreamFunc);
         }
     }
 }
