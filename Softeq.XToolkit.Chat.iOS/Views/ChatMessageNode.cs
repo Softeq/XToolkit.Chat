@@ -133,13 +133,13 @@ namespace Softeq.XToolkit.Chat.iOS.Views
                 switch (_viewModelRef.Target.Status)
                 {
                     case Models.ChatMessageStatus.Sending:
-                        statusImage = UIImage.FromBundle("MessageSending");
+                        statusImage = UIImage.FromBundle("Chat_MessageSending");
                         break;
                     case Models.ChatMessageStatus.Delivered:
-                        statusImage = UIImage.FromBundle("MessageDelivered");
+                        statusImage = UIImage.FromBundle("Chat_MessageDelivered");
                         break;
                     case Models.ChatMessageStatus.Read:
-                        statusImage = UIImage.FromBundle("MessageRead");
+                        statusImage = UIImage.FromBundle("Chat_MessageRead");
                         break;
                     case Models.ChatMessageStatus.Other:
                         break;
@@ -221,7 +221,7 @@ namespace Softeq.XToolkit.Chat.iOS.Views
                     Children = messageElements.ToArray()
                 });
 
-            var messageBackgroundImageName = _isMyMessage ? "BubbleMine" : "BubbleOther";
+            var messageBackgroundImageName = _isMyMessage ? "Chat_BubbleMine" : "Chat_BubbleOther";
             var messageBackgroundImage = UIImage.FromBundle(messageBackgroundImageName)
                                          ?.CreateResizableImage(new UIEdgeInsets(36, 20, 10, 20));
             var messageBackground = new ASImageNode
