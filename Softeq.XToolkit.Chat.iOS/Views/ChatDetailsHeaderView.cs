@@ -61,9 +61,11 @@ namespace Softeq.XToolkit.Chat.iOS.Views
                 if (key == null)
                 {
                     EditedChatAvatarImageView.Hidden = true;
+                    ChatAvatarImageView.Hidden = false;
                 }
                 else
                 {
+                    ChatAvatarImageView.Hidden = true;
                     EditedChatAvatarImageView.Hidden = false;
                     ImageService.Instance
                         .LoadFile(key)
