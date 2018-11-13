@@ -18,6 +18,8 @@ using Softeq.XToolkit.Chat.ViewModels;
 using Softeq.XToolkit.Common.Droid.Converters;
 using Softeq.XToolkit.WhiteLabel.Droid;
 using Softeq.XToolkit.WhiteLabel.Droid.Controls;
+using Softeq.XToolkit.Common.Command;
+using Softeq.XToolkit.WhiteLabel.Droid.Services;
 
 namespace Softeq.XToolkit.Chat.Droid.Views
 {
@@ -44,7 +46,12 @@ namespace Softeq.XToolkit.Chat.Droid.Views
             _navigationBarView = FindViewById<NavigationBarView>(Resource.Id.activity_chat_create_navigation_bar);
             _navigationBarView.SetLeftButton(ExternalResourceIds.NavigationBarBackButtonIcon, ViewModel.BackCommand);
             _navigationBarView.SetTitle(ViewModel.Title);
-            _navigationBarView.SetRightButton(ViewModel.ActionButtonName, ViewModel.AddChatCommand);
+            _navigationBarView.SetRightButton(ViewModel.ActionButtonName, new RelayCommand(() =>
+            {
+                KeyboardService.HideSoftKeyboard(_chatNameEditTextView);
+
+                ViewModel.AddChatCommand.Execute(null);
+            }));
             _navigationBarView.RightTextButton.SetBackgroundColor(Color.Transparent);
 
             _chatHeaderLayout = FindViewById<RelativeLayout>(Resource.Id.rl_chat_create);
