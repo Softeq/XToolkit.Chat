@@ -15,14 +15,14 @@ using Softeq.XToolkit.Chat.Droid.LayoutManagers;
 using Softeq.XToolkit.Chat.Droid.ViewHolders;
 using Softeq.XToolkit.Chat.ViewModels;
 using Softeq.XToolkit.WhiteLabel.Droid;
-using AndroidResource = Android.Resource;
-using Toolbar = Android.Support.V7.Widget.Toolbar;
+using Softeq.XToolkit.WhiteLabel.Droid.Controls;
 
 namespace Softeq.XToolkit.Chat.Droid.Views
 {
     [Activity(Theme = "@style/ChatTheme")]
     public class ChatDetailsActivity : ActivityBase<ChatDetailsViewModel>
     {
+        private NavigationBarView _navigationBarView;
         private MvxCachedImageView _chatPhotoImageView;
         private TextView _chatNameTextView;
         private TextView _chatMembersCountTextView;
@@ -37,7 +37,9 @@ namespace Softeq.XToolkit.Chat.Droid.Views
 
             SetContentView(Resource.Layout.activity_chat_details);
 
-            var toolbar = FindViewById<Toolbar>(Resource.Id.toolbar_chat_details);
+            _navigationBarView = FindViewById<NavigationBarView>(Resource.Id.activity_chat_details_navigation_bar);
+            _navigationBarView.SetLeftButton(ExternalResourceIds.NavigationBarBackButtonIcon, ViewModel.BackCommand);
+            _navigationBarView.SetTitle(ViewModel.Title);
 
             _chatPhotoImageView = FindViewById<MvxCachedImageView>(Resource.Id.iv_chat_photo);
             _chatNameTextView = FindViewById<TextView>(Resource.Id.tv_chat_name);
@@ -45,7 +47,6 @@ namespace Softeq.XToolkit.Chat.Droid.Views
             _addMemberButton = FindViewById<Button>(Resource.Id.b_chat_add_member);
             _membersRecyclerView = FindViewById<RecyclerView>(Resource.Id.rv_contacts_list);
 
-            InitializeToolbar(toolbar);
             InitializeMembersRecyclerView();
 
             _addMemberButton.SetCommand(ViewModel.AddMembersCommand);
@@ -71,24 +72,6 @@ namespace Softeq.XToolkit.Chat.Droid.Views
             _membersRecyclerView.GetAdapter().Dispose();
 
             base.OnDestroy();
-        }
-
-        public override bool OnOptionsItemSelected(IMenuItem item)
-        {
-            if (item.ItemId == AndroidResource.Id.Home)
-            {
-                OnBackPressed();
-                return true;
-            }
-            return base.OnOptionsItemSelected(item);
-        }
-
-        private void InitializeToolbar(Toolbar toolbar)
-        {
-            SetSupportActionBar(toolbar);
-
-            SupportActionBar.Title = ViewModel.Title;
-            SupportActionBar.SetDisplayHomeAsUpEnabled(true);
         }
 
         private void InitializeMembersRecyclerView()
