@@ -26,7 +26,6 @@
             android:layout_width="44dp"
             android:layout_height="44dp"
             android:visibility="gone"
-            android:src="@drawable/chat_conversation_scroll_down"
             android:scaleType="centerCrop"
             android:background="@android:color/transparent"
             android:layout_marginRight="16dp"
@@ -95,8 +94,7 @@
                 android:layout_marginRight="16dp"
                 android:layout_alignParentRight="true"
                 android:layout_alignParentTop="true"
-                android:background="?attr/selectableItemBackground"
-                android:src="@drawable/chat_ic_close" />
+                android:background="?attr/selectableItemBackground" />
         </RelativeLayout>
         <LinearLayout
             android:id="@+id/ll_conversations_message_input"
@@ -123,7 +121,6 @@
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:background="?attr/selectableItemBackground"
-                android:src="@drawable/chat_ic_attachment"
                 android:clickable="true" />
             <ImageButton
                 android:id="@+id/ib_conversations_send"
@@ -131,7 +128,6 @@
                 android:layout_height="48dp"
                 android:layout_marginLeft="8dp"
                 android:background="?attr/selectableItemBackground"
-                android:src="@drawable/chat_ic_send"
                 android:clickable="true" />
         </LinearLayout>
     </android.support.constraint.ConstraintLayout>

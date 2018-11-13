@@ -111,16 +111,6 @@
     <AndroidResource Include="Resources\drawable-xhdpi\chat_ic_new.png" />
     <AndroidResource Include="Resources\drawable-xxhdpi\chat_ic_new.png" />
     <AndroidResource Include="Resources\drawable-xxxhdpi\chat_ic_new.png" />
-    <AndroidResource Include="Resources\drawable-hdpi\chat_ic_attachment.png" />
-    <AndroidResource Include="Resources\drawable-hdpi\chat_ic_send.png" />
-    <AndroidResource Include="Resources\drawable-mdpi\chat_ic_attachment.png" />
-    <AndroidResource Include="Resources\drawable-mdpi\chat_ic_send.png" />
-    <AndroidResource Include="Resources\drawable-xhdpi\chat_ic_attachment.png" />
-    <AndroidResource Include="Resources\drawable-xhdpi\chat_ic_send.png" />
-    <AndroidResource Include="Resources\drawable-xxhdpi\chat_ic_attachment.png" />
-    <AndroidResource Include="Resources\drawable-xxhdpi\chat_ic_send.png" />
-    <AndroidResource Include="Resources\drawable-xxxhdpi\chat_ic_attachment.png" />
-    <AndroidResource Include="Resources\drawable-xxxhdpi\chat_ic_send.png" />
     <AndroidResource Include="Resources\drawable-hdpi\chat_ic_close.png" />
     <AndroidResource Include="Resources\drawable-mdpi\chat_ic_close.png" />
     <AndroidResource Include="Resources\drawable-xhdpi\chat_ic_close.png" />

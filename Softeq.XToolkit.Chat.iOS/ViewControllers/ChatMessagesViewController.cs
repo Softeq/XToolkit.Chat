@@ -53,7 +53,7 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
 
             CustomNavigationItem.AddTitleView(_customTitleView);
             CustomNavigationItem.SetCommand(UIImage.FromBundle(Styles.BackButtonBundleName), ViewModel.BackCommand, true);
-            CustomNavigationItem.SetCommand(UIBarButtonSystemItem.Bookmarks, ViewModel.ShowInfoCommand, false);
+            CustomNavigationItem.SetCommand(UIImage.FromBundle(Styles.ChatDetailsButtonBundleName), ViewModel.ShowInfoCommand, false);
 
             InitTableViewAsync().SafeTaskWrapper();
 
