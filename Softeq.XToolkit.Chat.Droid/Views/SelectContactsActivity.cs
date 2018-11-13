@@ -2,6 +2,7 @@
 // http://www.softeq.com
 
 using Android.App;
+using Android.Graphics;
 using Android.OS;
 using Android.Support.V7.Widget;
 using Android.Views;
@@ -16,9 +17,7 @@ using Softeq.XToolkit.Chat.Droid.ViewHolders;
 using Softeq.XToolkit.Chat.ViewModels;
 using Softeq.XToolkit.Common.Droid.Converters;
 using Softeq.XToolkit.WhiteLabel.Droid;
-using Softeq.XToolkit.WhiteLabel.Droid.Services;
-using AndroidResource = Android.Resource;
-using Toolbar = Android.Support.V7.Widget.Toolbar;
+using Softeq.XToolkit.WhiteLabel.Droid.Controls;
 
 namespace Softeq.XToolkit.Chat.Droid.Views
 {
@@ -27,6 +26,7 @@ namespace Softeq.XToolkit.Chat.Droid.Views
     {
         private const string TempChatPhotoUrl = "https://cdn.pixabay.com/photo/2015/10/23/17/03/eye-1003315_960_720.jpg";
 
+        private NavigationBarView _navigationBarView;
         private RelativeLayout _chatHeaderLayout;
         private MvxCachedImageView _chatPhotoImageView;
         private EditText _chatNameEditTextView;
@@ -41,7 +41,11 @@ namespace Softeq.XToolkit.Chat.Droid.Views
 
             SetContentView(Resource.Layout.activity_chat_create);
 
-            var toolbar = FindViewById<Toolbar>(Resource.Id.toolbar_chat_create);
+            _navigationBarView = FindViewById<NavigationBarView>(Resource.Id.activity_chat_create_navigation_bar);
+            _navigationBarView.SetLeftButton(ExternalResourceIds.NavigationBarBackButtonIcon, ViewModel.BackCommand);
+            _navigationBarView.SetTitle(ViewModel.Title);
+            _navigationBarView.SetRightButton(ViewModel.ActionButtonName, ViewModel.AddChatCommand);
+            _navigationBarView.RightTextButton.SetBackgroundColor(Color.Transparent);
 
             _chatHeaderLayout = FindViewById<RelativeLayout>(Resource.Id.rl_chat_create);
             _chatPhotoImageView = FindViewById<MvxCachedImageView>(Resource.Id.iv_chat_photo);
@@ -49,44 +53,12 @@ namespace Softeq.XToolkit.Chat.Droid.Views
             _contactsRecyclerView = FindViewById<RecyclerView>(Resource.Id.rv_contacts_list);
             _membersCountTextView = FindViewById<TextView>(Resource.Id.tv_members_count);
 
-            InitializeToolbar(toolbar);
             InitializeContactsRecyclerView();
 
             ImageService.Instance
                         .LoadUrl(TempChatPhotoUrl)
                         .Transform(new CircleTransformation())
                         .IntoAsync(_chatPhotoImageView);
-        }
-
-        public override bool OnCreateOptionsMenu(IMenu menu)
-        {
-            MenuInflater.Inflate(Resource.Menu.chat_toolbar_create_chat, menu);
-            return base.OnCreateOptionsMenu(menu);
-        }
-
-        public override bool OnOptionsItemSelected(IMenuItem item)
-        {
-            if (item.ItemId == AndroidResource.Id.Home)
-            {
-                OnBackPressed();
-                return true;
-            }
-            if (item.ItemId == Resource.Id.toolbar_chat_create_action)
-            {
-                KeyboardService.HideSoftKeyboard(_chatNameEditTextView);
-
-                ViewModel.AddChatCommand.Execute(null);
-                return true;
-            }
-            return base.OnOptionsItemSelected(item);
-        }
-
-        private void InitializeToolbar(Toolbar toolbar)
-        {
-            SetSupportActionBar(toolbar);
-
-            SupportActionBar.Title = string.Empty;
-            SupportActionBar.SetDisplayHomeAsUpEnabled(true);
         }
 
         private void InitializeContactsRecyclerView()
@@ -108,7 +80,6 @@ namespace Softeq.XToolkit.Chat.Droid.Views
         {
             base.DoAttachBindings();
 
-            Bindings.Add(this.SetBinding(() => ViewModel.ActionButtonName, () => SupportActionBar.Title));
             Bindings.Add(this.SetBinding(() => ViewModel.ChatName, () => _chatNameEditTextView.Text, BindingMode.TwoWay));
             Bindings.Add(this.SetBinding(() => ViewModel.ContactsCountText, () => _membersCountTextView.Text));
             Bindings.Add(this.SetBinding(() => ViewModel.IsCreateChat).WhenSourceChanges(() =>

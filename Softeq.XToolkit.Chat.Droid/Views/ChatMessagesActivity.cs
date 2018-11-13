@@ -49,7 +49,7 @@ namespace Softeq.XToolkit.Chat.Droid.Views
             SetContentView(Resource.Layout.activity_chat_conversations);
 
             _navigationBarView = FindViewById<NavigationBarView>(Resource.Id.activity_chat_conversations_navigation_bar);
-            _navigationBarView.SetLeftButton(ExternalResourceIds.NavigationBarBackButtonIcon, new RelayCommand(() => OnBackPressed()));
+            _navigationBarView.SetLeftButton(ExternalResourceIds.NavigationBarBackButtonIcon, ViewModel.BackCommand);
             _navigationBarView.SetRightButton(ExternalResourceIds.NavigationBarDetailsButtonIcon, ViewModel.ShowInfoCommand);
 
             _conversationsRecyclerView = FindViewById<RecyclerView>(Resource.Id.rv_conversations_list);
