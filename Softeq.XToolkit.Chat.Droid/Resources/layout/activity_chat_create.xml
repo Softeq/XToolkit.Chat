@@ -3,15 +3,10 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-    <android.support.design.widget.AppBarLayout
+    <com.softeq.xtoolkit.whitelabel.droid.NavigationBarView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-        <android.support.v7.widget.Toolbar
-            android:id="@+id/toolbar_chat_create"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:background="?attr/colorPrimary" />
-    </android.support.design.widget.AppBarLayout>
+        android:layout_height="56dp"
+        android:id="@+id/activity_chat_create_navigation_bar" />
     <RelativeLayout
         android:id="@+id/rl_chat_create"
         android:layout_width="match_parent"

@@ -5,34 +5,27 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#f5f5f5">
-    <android.support.design.widget.AppBarLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-        <android.support.v7.widget.Toolbar
-            android:id="@+id/toolbar_conversations"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:background="?attr/colorPrimary" />
-    </android.support.design.widget.AppBarLayout>
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
+        <com.softeq.xtoolkit.whitelabel.droid.NavigationBarView
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:id="@+id/activity_chat_conversations_navigation_bar" />
         <android.support.v7.widget.RecyclerView
             android:id="@+id/rv_conversations_list"
             android:layout_width="0dp"
             android:layout_height="0dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toTopOf="@+id/v_conversations_divider" />
-            
+            app:layout_constraintBottom_toTopOf="@+id/v_conversations_divider"
+            app:layout_constraintTop_toBottomOf="@+id/activity_chat_conversations_navigation_bar"/>
         <ImageButton
             android:id="@+id/ib_conversations_scroll_down"
             android:layout_width="44dp"
             android:layout_height="44dp"
             android:visibility="gone"
-            android:src="@drawable/conversation_scroll_down"
             android:scaleType="centerCrop"
             android:background="@android:color/transparent"
             android:layout_marginRight="16dp"
@@ -65,7 +58,7 @@
                 android:layout_alignParentTop="true"
                 android:layout_centerVertical="true"
                 android:layout_marginLeft="16dp"
-                android:background="@drawable/bg_conversation_editing_indicator" />
+                android:background="@drawable/chat_bg_conversation_editing_indicator" />
 
             <TextView
                 android:id="@+id/tv_conversations_editing_message_header"
@@ -101,8 +94,7 @@
                 android:layout_marginRight="16dp"
                 android:layout_alignParentRight="true"
                 android:layout_alignParentTop="true"
-                android:background="?attr/selectableItemBackground"
-                android:src="@drawable/ic_close" />
+                android:background="?attr/selectableItemBackground" />
         </RelativeLayout>
         <LinearLayout
             android:id="@+id/ll_conversations_message_input"
@@ -129,7 +121,6 @@
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:background="?attr/selectableItemBackground"
-                android:src="@drawable/ic_attachment"
                 android:clickable="true" />
             <ImageButton
                 android:id="@+id/ib_conversations_send"
@@ -137,7 +128,6 @@
                 android:layout_height="48dp"
                 android:layout_marginLeft="8dp"
                 android:background="?attr/selectableItemBackground"
-                android:src="@drawable/ic_send"
                 android:clickable="true" />
         </LinearLayout>
     </android.support.constraint.ConstraintLayout>
