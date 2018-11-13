@@ -20,36 +20,36 @@ namespace Softeq.XToolkit.Chat.HttpClient
         private readonly IRestHttpClient _httpClient;
         private readonly ILogger _logger;
         private readonly IJsonSerializer _jsonSerializer;
-        private readonly IChatConfiguration _chatConfiguration;
+        private readonly IChatConfig _chatConfig;
 
         public HttpChatAdapter(
             IRestHttpClient httpClient,
             ILogManager logManager,
             IJsonSerializer jsonSerializer,
-            IChatConfiguration chatConfiguration)
+            IChatConfig chatConfig)
         {
             _httpClient = httpClient;
             _logger = logManager.GetLogger<HttpChatAdapter>();
             _jsonSerializer = jsonSerializer;
-            _chatConfiguration = chatConfiguration;
+            _chatConfig = chatConfig;
         }
 
         public Task<ChatUserModel> GetUserSummaryAsync()
         {
-            var request = new GetUserSummaryRequest(_chatConfiguration.ApiUrl);
+            var request = new GetUserSummaryRequest(_chatConfig.ApiUrl);
             return _httpClient.GetModelAsync<ChatUserModel, ChatUserDto>(request, _logger, Mapper.DtoToChatUser);
         }
 
         public Task<IList<ChatUserModel>> GetChatMembersAsync(string chatId)
         {
-            var request = new GetChatMembersRequest(_chatConfiguration.ApiUrl, chatId);
+            var request = new GetChatMembersRequest(_chatConfig.ApiUrl, chatId);
             return _httpClient.GetModelAsync<IList<ChatUserModel>, IList<ChatUserDto>>(request, _logger, x =>
                                                                                        x.Select(Mapper.DtoToChatUser).ToList());
         }
 
         public Task<bool> CloseChatAsync(string chatId)
         {
-            var request = new PutCloseChatRequest(_chatConfiguration.ApiUrl, chatId);
+            var request = new PutCloseChatRequest(_chatConfig.ApiUrl, chatId);
             return _httpClient.TrySendAsync(request, _logger);
         }
 
@@ -59,13 +59,13 @@ namespace Softeq.XToolkit.Chat.HttpClient
             {
                 AllowedMembers = participantsIds.ToList(),
             };
-            var request = new PostCreateChatRequest(_chatConfiguration.ApiUrl, _jsonSerializer, dto);
+            var request = new PostCreateChatRequest(_chatConfig.ApiUrl, _jsonSerializer, dto);
             return _httpClient.GetModelAsync<ChatSummaryModel, ChatSummaryDto>(request, _logger, Mapper.DtoToChatSummary);
         }
 
         public async Task<IList<ChatSummaryModel>> GetChatsHeadersAsync()
         {
-            var request = new GetChatsListRequest(_chatConfiguration.ApiUrl);
+            var request = new GetChatsListRequest(_chatConfig.ApiUrl);
             var result = await _httpClient.GetModelOrExceptionAsync<IList<ChatSummaryModel>, IList<ChatSummaryDto>>(request, _logger,
                                                                                                                     x => x.Select(Mapper.DtoToChatSummary).ToList())
                                           .ConfigureAwait(false);
@@ -77,7 +77,7 @@ namespace Softeq.XToolkit.Chat.HttpClient
                                                                          DateTimeOffset? messageFromDateTime = null,
                                                                          int? count = null)
         {
-            var request = new GetOlderMessagesRequest(_chatConfiguration.ApiUrl, chatId, messageFromId, messageFromDateTime, count);
+            var request = new GetOlderMessagesRequest(_chatConfig.ApiUrl, chatId, messageFromId, messageFromDateTime, count);
             var result = await _httpClient.GetPagingModelAsync<ChatMessageModel, ChatMessageDto>(request, _logger, Mapper.DtoToChatMessage)
                                           .ConfigureAwait(false);
             return result?.Data;
@@ -85,7 +85,7 @@ namespace Softeq.XToolkit.Chat.HttpClient
 
         public async Task<IList<ChatMessageModel>> GetLatestMessagesAsync(string chatId)
         {
-            var request = new GetLatestMessagesRequest(_chatConfiguration.ApiUrl, chatId);
+            var request = new GetLatestMessagesRequest(_chatConfig.ApiUrl, chatId);
             var response = await _httpClient.GetPagingModelAsync<ChatMessageModel, ChatMessageDto>(request, _logger, Mapper.DtoToChatMessage)
                                             .ConfigureAwait(false);
             return response?.Data;
@@ -96,7 +96,7 @@ namespace Softeq.XToolkit.Chat.HttpClient
                                                                         DateTimeOffset messageFromDateTime,
                                                                         int? count = null)
         {
-            var request = new GetMessagesRequest(_chatConfiguration.ApiUrl, chatId, messageFromId, messageFromDateTime, count);
+            var request = new GetMessagesRequest(_chatConfig.ApiUrl, chatId, messageFromId, messageFromDateTime, count);
             var response = await _httpClient.GetPagingModelAsync<ChatMessageModel, ChatMessageDto>(request, _logger, Mapper.DtoToChatMessage)
                                             .ConfigureAwait(false);
             return response?.Data;
@@ -104,7 +104,7 @@ namespace Softeq.XToolkit.Chat.HttpClient
 
         public async Task<IList<ChatMessageModel>> GetAllMessagesAsync(string chatId)
         {
-            var request = new GetMessagesRequest(_chatConfiguration.ApiUrl, chatId);
+            var request = new GetMessagesRequest(_chatConfig.ApiUrl, chatId);
             var response = await _httpClient.GetPagingModelAsync<ChatMessageModel, ChatMessageDto>(request, _logger, Mapper.DtoToChatMessage)
                                             .ConfigureAwait(false);
             return response?.Data;
@@ -112,19 +112,19 @@ namespace Softeq.XToolkit.Chat.HttpClient
 
         public async Task MarkMessageAsReadAsync(string chatId, string messageId)
         {
-            var request = new PostMarkAsReadRequest(_chatConfiguration.ApiUrl, chatId, messageId);
+            var request = new PostMarkAsReadRequest(_chatConfig.ApiUrl, chatId, messageId);
             await _httpClient.TrySendAsync(request, _logger).ConfigureAwait(false);
         }
 
         public Task<ChatMessageModel> SendMessageAsync(string chatId, string messageBody)
         {
-            var request = new PostSendMessageRequest(_chatConfiguration.ApiUrl, chatId, _jsonSerializer, new SendMessageDto { Body = messageBody });
+            var request = new PostSendMessageRequest(_chatConfig.ApiUrl, chatId, _jsonSerializer, new SendMessageDto { Body = messageBody });
             return _httpClient.GetModelAsync<ChatMessageModel, ChatMessageDto>(request, _logger, Mapper.DtoToChatMessage);
         }
 
         public Task<IList<ChatUserModel>> GetContactsAsync()
         {
-            var request = new GetMembersRequest(_chatConfiguration.ApiUrl);
+            var request = new GetMembersRequest(_chatConfig.ApiUrl);
             return _httpClient.GetModelAsync<IList<ChatUserModel>, IList<ChatUserDto>>(request, _logger,
                                             x => x.Where(y => y.AvatarUrl != null || !string.IsNullOrEmpty(y.UserName))
                                             .Select(Mapper.DtoToChatUser)

@@ -8,11 +8,7 @@
     <Folder Include="Interfaces\" />
     <Folder Include="Enum\" />
   </ItemGroup>
-  <ItemGroup>
-    <Compile Remove="ConnectionStatus.cs" />
-    <Compile Remove="ChatConfig.cs" />
-    <Compile Remove="Interfaces\ChatConfiguration.cs" />
-  </ItemGroup>
+
   <ItemGroup>
     <ProjectReference Include="..\..\XToolkit\Softeq.XToolkit.Common\Softeq.XToolkit.Common.csproj" />
   </ItemGroup>
