@@ -54,12 +54,20 @@ namespace Softeq.XToolkit.Chat.Droid.Views
 
             _conversationsRecyclerView = FindViewById<RecyclerView>(Resource.Id.rv_conversations_list);
             _messageEditText = FindViewById<EditText>(Resource.Id.et_conversations_message);
-            _addAttachmentButton = FindViewById<ImageButton>(Resource.Id.ib_conversations_add_attachment);
-            _sendButton = FindViewById<ImageButton>(Resource.Id.ib_conversations_send);
             _editingMessageLayout = FindViewById<RelativeLayout>(Resource.Id.rl_conversations_editing_message);
             _editingMessageBodyTextView = FindViewById<TextView>(Resource.Id.tv_editing_message_body);
             _editingMessageCloseButton = FindViewById<ImageButton>(Resource.Id.ib_conversations_editing_message_close);
+            _editingMessageCloseButton.SetImageResource(ExternalResourceIds.EditingCloseButtonIcon);
+
             _scrollDownImageButton = FindViewById<ImageButton>(Resource.Id.ib_conversations_scroll_down);
+            _scrollDownImageButton.SetImageResource(ExternalResourceIds.ScrollDownButtonIcon);
+
+            _addAttachmentButton = FindViewById<ImageButton>(Resource.Id.ib_conversations_add_attachment);
+            _addAttachmentButton.SetImageResource(ExternalResourceIds.AddAttachmentButtonIcon);
+
+            _sendButton = FindViewById<ImageButton>(Resource.Id.ib_conversations_send);
+            _sendButton.SetImageResource(ExternalResourceIds.SendMessageButtonIcon);
+
 
             InitializeConversationsRecyclerView();
 
