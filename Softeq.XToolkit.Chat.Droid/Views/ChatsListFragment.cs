@@ -32,7 +32,7 @@ namespace Softeq.XToolkit.Chat.Droid.Views
 
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
-            return inflater.Inflate(Resource.Layout.chat_activity_chats_list, container, false);
+            return inflater.Inflate(Resource.Layout.activity_chat_list, container, false);
         }
 
         public override void OnViewCreated(View view, Bundle savedInstanceState)
@@ -98,7 +98,7 @@ namespace Softeq.XToolkit.Chat.Droid.Views
 
         private BindableViewHolder<ChatSummaryViewModel> CreateChatViewHolder((ViewGroup parent, int viewType) options)
         {
-            var itemView = LayoutInflater.From(options.parent.Context).Inflate(Resource.Layout.chat_item_chat, options.parent, false);
+            var itemView = LayoutInflater.From(options.parent.Context).Inflate(Resource.Layout.item_chat_list, options.parent, false);
             return new ChatViewHolder(itemView, selectedViewModel => ViewModel.SelectedChat = selectedViewModel);
         }
 

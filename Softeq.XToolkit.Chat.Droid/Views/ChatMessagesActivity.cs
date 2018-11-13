@@ -47,7 +47,7 @@ namespace Softeq.XToolkit.Chat.Droid.Views
 
             base.OnCreate(savedInstanceState);
 
-            SetContentView(Resource.Layout.chat_activity_conversations);
+            SetContentView(Resource.Layout.activity_chat_conversations);
 
             var toolbar = FindViewById<Toolbar>(Resource.Id.toolbar_conversations);
 

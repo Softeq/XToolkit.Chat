@@ -66,13 +66,13 @@ namespace Softeq.XToolkit.Chat.Droid.Adapters
             {
                 case InfoMessageViewType:
                     return new ConversationInfoViewHolder(LayoutInflater.From(parent.Context)
-                        .Inflate(Resource.Layout.chat_item_conversation_info, parent, false), CreateHeaderModel);
+                        .Inflate(Resource.Layout.item_chat_conversation_info, parent, false), CreateHeaderModel);
                 case InComingMessageViewType:
                     return new ConversationViewHolder(LayoutInflater.From(parent.Context)
-                        .Inflate(Resource.Layout.chat_item_conversation_incoming, parent, false), true, _contextMenuComponent);
+                        .Inflate(Resource.Layout.item_chat_conversation_incoming, parent, false), true, _contextMenuComponent);
                 case OutComingMessageViewType:
                     return new ConversationViewHolder(LayoutInflater.From(parent.Context)
-                        .Inflate(Resource.Layout.chat_item_conversation_outcoming, parent, false), false, _contextMenuComponent);
+                        .Inflate(Resource.Layout.item_chat_conversation_outcoming, parent, false), false, _contextMenuComponent);
                 default:
                     throw new InvalidEnumArgumentException(nameof(viewType), viewType, typeof(int));
             }

@@ -96,14 +96,14 @@
     <None Include="Resources\AboutResources.txt" />
   </ItemGroup>
   <ItemGroup>
-    <AndroidResource Include="Resources\layout\chat_activity_chat_details.xml" />
-    <AndroidResource Include="Resources\layout\chat_item_chat.xml" />
-    <AndroidResource Include="Resources\layout\chat_activity_chats_list.xml" />
-    <AndroidResource Include="Resources\layout\chat_item_contact.xml" />
-    <AndroidResource Include="Resources\layout\chat_item_conversation_incoming.xml" />
-    <AndroidResource Include="Resources\layout\chat_item_conversation_info.xml" />
-    <AndroidResource Include="Resources\layout\chat_item_conversation_outcoming.xml" />
-    <AndroidResource Include="Resources\layout\chat_activity_chat_create.xml" />
+    <AndroidResource Include="Resources\layout\activity_chat_details.xml" />
+    <AndroidResource Include="Resources\layout\item_chat_list.xml" />
+    <AndroidResource Include="Resources\layout\activity_chat_list.xml" />
+    <AndroidResource Include="Resources\layout\item_chat_contact.xml" />
+    <AndroidResource Include="Resources\layout\item_chat_conversation_incoming.xml" />
+    <AndroidResource Include="Resources\layout\item_chat_conversation_info.xml" />
+    <AndroidResource Include="Resources\layout\item_chat_conversation_outcoming.xml" />
+    <AndroidResource Include="Resources\layout\activity_chat_create.xml" />
     <AndroidResource Include="Resources\values\themes.xml" />
     <AndroidResource Include="Resources\menu\chat_toolbar_conversations.xml" />
     <AndroidResource Include="Resources\drawable-hdpi\chat_ic_new.png" />
@@ -159,7 +159,7 @@
     <AndroidResource Include="Resources\drawable-xxxhdpi\chat_ic_delivered.png" />
     <AndroidResource Include="Resources\drawable-xxxhdpi\chat_ic_read.png" />
     <AndroidResource Include="Resources\drawable-xxxhdpi\chat_ic_sent.png" />
-    <AndroidResource Include="Resources\layout\chat_activity_conversations.xml" />
+    <AndroidResource Include="Resources\layout\activity_chat_conversations.xml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Views\" />
