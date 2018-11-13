@@ -153,13 +153,13 @@ namespace Softeq.XToolkit.Chat.Droid.ViewHolders
             switch (status)
             {
                 case ChatMessageStatus.Sending:
-                    statusImageResourceId = Resource.Drawable.ic_sent;
+                    statusImageResourceId = Resource.Drawable.chat_ic_sent;
                     break;
                 case ChatMessageStatus.Delivered:
-                    statusImageResourceId = Resource.Drawable.ic_delivered;
+                    statusImageResourceId = Resource.Drawable.chat_ic_delivered;
                     break;
                 case ChatMessageStatus.Read:
-                    statusImageResourceId = Resource.Drawable.ic_read;
+                    statusImageResourceId = Resource.Drawable.chat_ic_read;
                     break;
                 case ChatMessageStatus.Other:
                     MessageStatusView.Visibility = ViewStates.Gone;

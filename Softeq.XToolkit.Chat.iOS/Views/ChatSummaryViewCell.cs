@@ -54,7 +54,7 @@ namespace Softeq.XToolkit.Chat.iOS.Views
             _bindings.Add(this.SetBinding(() => _viewModelRef.Target.LastMessageBody, () => MessageBodyLabel.Text));
             _bindings.Add(this.SetBinding(() => _viewModelRef.Target.ChatPhotoUrl).WhenSourceChanges(() =>
             {
-                SenderPhotoImageView.LoadImageAsync("NoPhoto", _viewModelRef.Target.ChatPhotoUrl);
+                SenderPhotoImageView.LoadImageAsync("Chat_NoPhoto", _viewModelRef.Target.ChatPhotoUrl);
             }));
             //_bindings.Add(this.SetBinding(() => _viewModelRef.Target.LastMessageStatus).WhenSourceChanges(() =>
             //{

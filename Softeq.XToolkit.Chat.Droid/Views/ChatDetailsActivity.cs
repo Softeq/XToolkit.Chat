@@ -101,7 +101,7 @@ namespace Softeq.XToolkit.Chat.Droid.Views
                 x =>
                 {
                     var itemView = LayoutInflater.From(x.Item1.Context)
-                                                 .Inflate(Resource.Layout.item_contact, x.Item1, false);
+                                                 .Inflate(Resource.Layout.item_chat_contact, x.Item1, false);
 
                     var viewHolder = new ChatUserViewHolder(itemView);
                     viewHolder.ContactSwitch.Visibility = ViewStates.Gone;

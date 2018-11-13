@@ -47,7 +47,7 @@ namespace Softeq.XToolkit.Chat.Droid.Views
 
             base.OnCreate(savedInstanceState);
 
-            SetContentView(Resource.Layout.activity_conversations);
+            SetContentView(Resource.Layout.activity_chat_conversations);
 
             var toolbar = FindViewById<Toolbar>(Resource.Id.toolbar_conversations);
 
@@ -175,7 +175,7 @@ namespace Softeq.XToolkit.Chat.Droid.Views
 
         public override bool OnCreateOptionsMenu(IMenu menu)
         {
-            MenuInflater.Inflate(Resource.Menu.toolbar_conversations, menu);
+            MenuInflater.Inflate(Resource.Menu.chat_toolbar_conversations, menu);
             return base.OnCreateOptionsMenu(menu);
         }
 

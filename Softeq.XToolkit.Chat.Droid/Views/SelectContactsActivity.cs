@@ -60,7 +60,7 @@ namespace Softeq.XToolkit.Chat.Droid.Views
 
         public override bool OnCreateOptionsMenu(IMenu menu)
         {
-            MenuInflater.Inflate(Resource.Menu.toolbar_create_chat, menu);
+            MenuInflater.Inflate(Resource.Menu.chat_toolbar_create_chat, menu);
             return base.OnCreateOptionsMenu(menu);
         }
 
@@ -99,7 +99,7 @@ namespace Softeq.XToolkit.Chat.Droid.Views
                 x =>
                 {
                     var itemView = LayoutInflater.From(x.Item1.Context)
-                                                 .Inflate(Resource.Layout.item_contact, x.Item1, false);
+                                                 .Inflate(Resource.Layout.item_chat_contact, x.Item1, false);
                     return new ChatUserViewHolder(itemView);
                 }));
         }

@@ -42,7 +42,7 @@ namespace Softeq.XToolkit.Chat.iOS.Views
             _bindings.Add(this.SetBinding(() => _viewModelRef.Target.Username, () => UsernameLabel.Text));
             _bindings.Add(this.SetBinding(() => _viewModelRef.Target.PhotoUrl).WhenSourceChanges(() =>
             {
-                PhotoImageView.LoadImageAsync("NoPhoto", _viewModelRef.Target.PhotoUrl);
+                PhotoImageView.LoadImageAsync("Chat_NoPhoto", _viewModelRef.Target.PhotoUrl);
             }));
             _bindings.Add(this.SetBinding(() => _viewModelRef.Target.IsSelected, () => IsSelectedSwitch.On, BindingMode.TwoWay));
             _bindings.Add(this.SetBinding(() => _viewModelRef.Target.IsSelectable, () => IsSelectedSwitch.Hidden)
