@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using Android.Graphics;
 using Android.OS;
 using Android.Support.Design.Widget;
-using Android.Support.V7.App;
 using Android.Support.V7.Widget;
 using Android.Support.V7.Widget.Helper;
 using Android.Views;
@@ -17,18 +16,18 @@ using Softeq.XToolkit.Chat.Droid.ViewHolders;
 using Softeq.XToolkit.Chat.ViewModels;
 using Softeq.XToolkit.Common.Droid.Extensions;
 using Softeq.XToolkit.WhiteLabel.Droid;
+using Softeq.XToolkit.WhiteLabel.Droid.Controls;
 using Softeq.XToolkit.WhiteLabel.Threading;
 
 namespace Softeq.XToolkit.Chat.Droid.Views
 {
     public class ChatsListFragment : FragmentBase<ChatsListViewModel>
     {
+        private NavigationBarView _navigationBarView;
         private RecyclerView _chatsRecyclerView;
         private FloatingActionButton _createChatFloatButton;
         private SimpleSwipeActionView.Options _swipeLeaveActionViewOptions;
         private SimpleSwipeActionView.Options _swipeCloseActionViewOptions;
-
-        private AppCompatActivity SupportActivity => (AppCompatActivity)Activity;
 
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
@@ -39,9 +38,7 @@ namespace Softeq.XToolkit.Chat.Droid.Views
         {
             base.OnViewCreated(view, savedInstanceState);
 
-            var toolbar = view.FindViewById<Toolbar>(Resource.Id.toolbar_chat);
-            SupportActivity.SetSupportActionBar(toolbar);
-            HasOptionsMenu = true;
+            _navigationBarView = view.FindViewById<NavigationBarView>(Resource.Id.fragment_chats_navigation_bar);
 
             _createChatFloatButton = view.FindViewById<FloatingActionButton>(Resource.Id.fab_create_chat);
             _chatsRecyclerView = view.FindViewById<RecyclerView>(Resource.Id.rv_chats_list);
@@ -72,7 +69,7 @@ namespace Softeq.XToolkit.Chat.Droid.Views
             {
                 Execute.BeginOnUIThread(() =>
                 {
-                    SupportActivity.SupportActionBar.Title = ViewModel.ConnectionStatusViewModel.ConnectionStatusText;
+                    _navigationBarView.SetTitle(ViewModel.ConnectionStatusViewModel.ConnectionStatusText);
                 });
             }));
         }

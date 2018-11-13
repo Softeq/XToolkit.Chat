@@ -91,6 +91,7 @@
     <Compile Include="Adapters\GroupedObservableRecyclerViewAdapter.cs" />
     <Compile Include="ItemTouchCallbacks\SwipeCallback.cs" />
     <Compile Include="Controls\ContextMenuComponent.cs" />
+    <Compile Include="ExternalResourceIds.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\AboutResources.txt" />
