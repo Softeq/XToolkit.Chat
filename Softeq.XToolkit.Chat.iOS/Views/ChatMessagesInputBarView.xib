@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+﻿<?xml version="1.0" encoding="UTF-8"?>
 <document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="14113" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="retina5_9" orientation="portrait">
         <adaptation id="fullscreen"/>
@@ -63,7 +63,7 @@
                                         <constraint firstAttribute="height" constant="27" id="pBr-GX-tJY"/>
                                     </constraints>
                                     <fontDescription key="fontDescription" type="system" pointSize="6"/>
-                                    <state key="normal" image="Close"/>
+                                    <state key="normal" image="Chat_Close"/>
                                 </button>
                                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="pgj-G0-bNs">
                                     <rect key="frame" x="12" y="8" width="4" height="40"/>
@@ -109,7 +109,7 @@
                                         <constraint firstAttribute="height" constant="44" id="59L-6h-6NQ"/>
                                         <constraint firstAttribute="width" constant="55" id="wAB-IY-PfK"/>
                                     </constraints>
-                                    <state key="normal" image="SendMessage"/>
+                                    <state key="normal" image="Chat_SendMessage"/>
                                 </button>
                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="EJd-F6-2H6">
                                     <rect key="frame" x="287" y="1.3333333333333428" width="53" height="44"/>
@@ -117,7 +117,7 @@
                                         <constraint firstAttribute="height" constant="44" id="8Im-ie-X44"/>
                                         <constraint firstAttribute="width" constant="53" id="hzk-7m-Jji"/>
                                     </constraints>
-                                    <state key="normal" image="AttachImage"/>
+                                    <state key="normal" image="Chat_AttachImage"/>
                                 </button>
                                 <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" scrollEnabled="NO" textAlignment="natural" translatesAutoresizingMaskIntoConstraints="NO" id="t37-g8-Ml7">
                                     <rect key="frame" x="8" y="1" width="271" height="36.333333333333336"/>
@@ -178,8 +178,8 @@
         </view>
     </objects>
     <resources>
-        <image name="AttachImage" width="32" height="26"/>
-        <image name="Close" width="8" height="8"/>
-        <image name="SendMessage" width="25" height="23"/>
+        <image name="Chat_AttachImage" width="32" height="26"/>
+        <image name="Chat_Close" width="8" height="8"/>
+        <image name="Chat_SendMessage" width="25" height="23"/>
     </resources>
 </document>
