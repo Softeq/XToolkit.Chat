@@ -20,7 +20,6 @@ using Softeq.XToolkit.Permissions;
 using Softeq.XToolkit.WhiteLabel;
 using Softeq.XToolkit.WhiteLabel.Droid;
 using Softeq.XToolkit.WhiteLabel.Droid.Controls;
-using Softeq.XToolkit.WhiteLabel.Mvvm;
 using Softeq.XToolkit.WhiteLabel.Threading;
 
 namespace Softeq.XToolkit.Chat.Droid.Views
@@ -38,34 +37,6 @@ namespace Softeq.XToolkit.Chat.Droid.Views
         private Button _changeChatPhotoButton;
         private ImagePicker _imagePicker;
         private string _previewImageKey;
-        private ToolbarMenuComponent _toolbarMenuComponent;
-
-        public override bool OnCreateOptionsMenu(IMenu menu)
-        {
-            return RebuildMenu(menu);
-        }
-
-        public override bool OnPrepareOptionsMenu(IMenu menu)
-        {
-            return RebuildMenu(menu);
-        }
-
-        public override bool OnOptionsItemSelected(IMenuItem item)
-        {
-            var handled = _toolbarMenuComponent.HandleClick(item);
-            if (handled)
-            {
-                return true;
-            }
-            
-            if (item.ItemId == AndroidResource.Id.Home)
-            {
-                OnBackPressed();
-                return true;
-            }
-
-            return base.OnOptionsItemSelected(item);
-        }
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -78,6 +49,7 @@ namespace Softeq.XToolkit.Chat.Droid.Views
             _navigationBarView = FindViewById<NavigationBarView>(Resource.Id.activity_chat_details_navigation_bar);
             _navigationBarView.SetLeftButton(ExternalResourceIds.NavigationBarBackButtonIcon, ViewModel.BackCommand);
             _navigationBarView.SetTitle(ViewModel.Title);
+            _navigationBarView.SetRightButton(ViewModel.LocalizedStrings.Save, new RelayCommand(() => OnSaveClick()));
 
             _chatPhotoImageView = FindViewById<MvxCachedImageView>(Resource.Id.iv_chat_photo);
 
@@ -100,16 +72,6 @@ namespace Softeq.XToolkit.Chat.Droid.Views
             {
                 MaxImageWidth = 300
             };
-            
-            _toolbarMenuComponent = new ToolbarMenuComponent();
-            
-            ViewModel.MenuActions.Clear();
-            ViewModel.MenuActions.Add(new CommandAction
-            {
-                Title = ViewModel.LocalizedStrings.Save,
-                CommandActionStyle = CommandActionStyle.Destructive,
-                Command = new RelayCommand(OnSaveClick)
-            });
         }
 
         protected override void DoAttachBindings()
@@ -176,23 +138,13 @@ namespace Softeq.XToolkit.Chat.Droid.Views
             _imagePicker.OpenGallery();
         }
 
-        private bool RebuildMenu(IMenu menu)
-        {
-            if (_previewImageKey != null)
-            {
-                _toolbarMenuComponent.BuildMenu(ViewModel.MenuActions, menu);
-            }
-
-            return base.OnCreateOptionsMenu(menu);
-        }
-
         private async void OnSaveClick()
         {
             await ViewModel.SaveAsync(_imagePicker.GetStreamFunc()).ConfigureAwait(false);
-            Execute.BeginOnUIThread(() => 
+            Execute.BeginOnUIThread(() =>
             {
                 _previewImageKey = null;
-                InvalidateOptionsMenu();
+                _navigationBarView.RightTextButton.Visibility = ViewStates.Gone;
             });
         }
     }
