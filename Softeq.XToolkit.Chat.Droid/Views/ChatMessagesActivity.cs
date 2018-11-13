@@ -4,7 +4,6 @@
 using Android.App;
 using Android.OS;
 using Android.Support.V7.Widget;
-using Android.Views;
 using Android.Widget;
 using Softeq.XToolkit.Bindings;
 using Softeq.XToolkit.Chat.Droid.Adapters;
@@ -16,17 +15,17 @@ using Softeq.XToolkit.Chat.ViewModels;
 using Softeq.XToolkit.Common.Command;
 using Softeq.XToolkit.Common.Droid.Converters;
 using Softeq.XToolkit.WhiteLabel.Droid;
+using Softeq.XToolkit.WhiteLabel.Droid.Controls;
 using Softeq.XToolkit.WhiteLabel.Droid.Services;
 using Softeq.XToolkit.WhiteLabel.Threading;
-using AndroidResource = Android.Resource;
 using Messenger = Softeq.XToolkit.WhiteLabel.Messenger.Messenger;
-using Toolbar = Android.Support.V7.Widget.Toolbar;
 
 namespace Softeq.XToolkit.Chat.Droid.Views
 {
     [Activity(Theme = "@style/ChatTheme")]
     public class ChatMessagesActivity : ActivityBase<ChatMessagesViewModel>
     {
+        private NavigationBarView _navigationBarView;
         private RecyclerView _conversationsRecyclerView;
         private ConversationsObservableRecyclerViewAdapter _conversationsAdapter;
         private EditText _messageEditText;
@@ -49,7 +48,9 @@ namespace Softeq.XToolkit.Chat.Droid.Views
 
             SetContentView(Resource.Layout.activity_chat_conversations);
 
-            var toolbar = FindViewById<Toolbar>(Resource.Id.toolbar_conversations);
+            _navigationBarView = FindViewById<NavigationBarView>(Resource.Id.activity_chat_conversations_navigation_bar);
+            _navigationBarView.SetLeftButton(ExternalResourceIds.NavigationBarBackButtonIcon, new RelayCommand(() => OnBackPressed()));
+            _navigationBarView.SetRightButton(ExternalResourceIds.NavigationBarDetailsButtonIcon, ViewModel.ShowInfoCommand);
 
             _conversationsRecyclerView = FindViewById<RecyclerView>(Resource.Id.rv_conversations_list);
             _messageEditText = FindViewById<EditText>(Resource.Id.et_conversations_message);
@@ -60,7 +61,6 @@ namespace Softeq.XToolkit.Chat.Droid.Views
             _editingMessageCloseButton = FindViewById<ImageButton>(Resource.Id.ib_conversations_editing_message_close);
             _scrollDownImageButton = FindViewById<ImageButton>(Resource.Id.ib_conversations_scroll_down);
 
-            InitializeToolbar(toolbar);
             InitializeConversationsRecyclerView();
 
             _contextMenuComponent = new ContextMenuComponent(ViewModel.MessageCommandActions);
@@ -124,7 +124,7 @@ namespace Softeq.XToolkit.Chat.Droid.Views
             {
                 Execute.BeginOnUIThread(() =>
                 {
-                    SupportActionBar.Title = ViewModel.ConnectionStatusViewModel.ConnectionStatusText;
+                    _navigationBarView.SetTitle(ViewModel.ConnectionStatusViewModel.ConnectionStatusText);
                 });
             }));
             Bindings.Add(this.SetBinding(() => ViewModel.MessageToSendBody, () => _messageEditText.Text, BindingMode.TwoWay));
@@ -171,34 +171,6 @@ namespace Softeq.XToolkit.Chat.Droid.Views
             {
                 _conversationsRecyclerView.ScrollToPosition(lastPosition);
             });
-        }
-
-        public override bool OnCreateOptionsMenu(IMenu menu)
-        {
-            MenuInflater.Inflate(Resource.Menu.chat_toolbar_conversations, menu);
-            return base.OnCreateOptionsMenu(menu);
-        }
-
-        public override bool OnOptionsItemSelected(IMenuItem item)
-        {
-            if (item.ItemId == AndroidResource.Id.Home)
-            {
-                OnBackPressed();
-                return true;
-            }
-            if (item.ItemId == Resource.Id.action_details)
-            {
-                ViewModel.ShowInfoCommand.Execute(null);
-                return true;
-            }
-            return base.OnOptionsItemSelected(item);
-        }
-
-        private void InitializeToolbar(Toolbar toolbar)
-        {
-            SetSupportActionBar(toolbar);
-
-            SupportActionBar.SetDisplayHomeAsUpEnabled(true);
         }
 
         private void InitializeConversationsRecyclerView()
