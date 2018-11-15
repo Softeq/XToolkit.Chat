@@ -121,6 +121,7 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
 
         private void AddChat()
         {
+            ViewModel.AddChatCommand.Execute(null);
             //ViewModel.SaveCommand.Execute(_simpleImagePicker.StreamFunc);
         }
     }

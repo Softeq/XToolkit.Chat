@@ -154,7 +154,7 @@ namespace Softeq.XToolkit.Chat.ViewModels
                     await _chatManager.InviteMembersAsync(_openedChatId, selectedContactsIds).ConfigureAwait(false);
                 }
 
-                BackCommand.Execute(null);
+                _pageNavigationService.GoBack();
             }
             finally
             {
