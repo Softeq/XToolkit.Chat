@@ -6,12 +6,12 @@ using System.Linq;
 using System.Windows.Input;
 using Softeq.XToolkit.Chat.Manager;
 using Softeq.XToolkit.Chat.Models.Enum;
+using Softeq.XToolkit.Chat.Models.Interfaces;
 using Softeq.XToolkit.Common.Collections;
 using Softeq.XToolkit.Common.Command;
 using Softeq.XToolkit.WhiteLabel.Interfaces;
 using Softeq.XToolkit.WhiteLabel.Mvvm;
 using Softeq.XToolkit.WhiteLabel.Navigation;
-using Softeq.XToolkit.Chat.Models.Interfaces;
 
 namespace Softeq.XToolkit.Chat.ViewModels
 {
@@ -47,15 +47,14 @@ namespace Softeq.XToolkit.Chat.ViewModels
             set => _chatSummaryViewModel = value;
         }
 
-        public ObservableRangeCollection<ChatUserViewModel> Members { get; }
-            = new ObservableRangeCollection<ChatUserViewModel>();
+        public ObservableRangeCollection<ChatUserViewModel> Members { get; } = new ObservableRangeCollection<ChatUserViewModel>();
 
         public string ChatAvatarUrl => _chatSummaryViewModel.ChatPhotoUrl;
         public string ChatName => _chatSummaryViewModel.ChatName;
 
         public string MembersCountText => _formatService.PluralizeWithQuantity(Members.Count,
-            _localizedStrings.MembersPlural,
-            _localizedStrings.MemberSingular);
+                                                                               _localizedStrings.MembersPlural,
+                                                                               _localizedStrings.MemberSingular);
 
         public bool IsNavigated { get; private set; }
 
