@@ -82,9 +82,9 @@ namespace Softeq.XToolkit.Chat.ViewModels
             IsNavigated = false;
         }
 
-        public bool IsMemberRemovable(int index)
+        public bool IsMemberRemovable(int memberPosition)
         {
-            return Members[index].Id != _chatSummaryViewModel.CreatorId;
+            return Members[memberPosition].Id != _chatSummaryViewModel.CreatorId;
         }
 
         public override void OnNavigated()
