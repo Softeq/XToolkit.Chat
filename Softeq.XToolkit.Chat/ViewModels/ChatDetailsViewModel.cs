@@ -36,27 +36,35 @@ namespace Softeq.XToolkit.Chat.ViewModels
 
             AddMembersCommand = new RelayCommand(AddMembers);
             BackCommand = new RelayCommand(_pageNavigationService.GoBack, () => _pageNavigationService.CanGoBack);
+            RemoveMemberAtCommand = new RelayCommand<int>(RemoveMemberAt);
         }
 
         public string Title => _localizedStrings.DetailsTitle;
+        public string RemoveLocalizedString => _localizedStrings.Remove;
 
-        public ChatSummaryViewModel Parameter { set => _chatSummaryViewModel = value; }
+        public ChatSummaryViewModel Parameter
+        {
+            set => _chatSummaryViewModel = value;
+        }
 
         public ObservableRangeCollection<ChatUserViewModel> Members { get; }
-                = new ObservableRangeCollection<ChatUserViewModel>();
+            = new ObservableRangeCollection<ChatUserViewModel>();
 
         public string ChatAvatarUrl => _chatSummaryViewModel.ChatPhotoUrl;
         public string ChatName => _chatSummaryViewModel.ChatName;
+
         public string MembersCountText => _formatService.PluralizeWithQuantity(Members.Count,
-                                                                               _localizedStrings.MembersPlural,
-                                                                               _localizedStrings.MemberSingular);
+            _localizedStrings.MembersPlural,
+            _localizedStrings.MemberSingular);
 
         public bool IsNavigated { get; private set; }
 
         public ICommand AddMembersCommand { get; }
         public ICommand BackCommand { get; }
+        public RelayCommand<int> RemoveMemberAtCommand { get; }
+        public bool IsEditAvailable => _chatSummaryViewModel.IsCreatedByMe;
 
-        public async override void OnAppearing()
+        public override async void OnAppearing()
         {
             base.OnAppearing();
 
@@ -74,11 +82,22 @@ namespace Softeq.XToolkit.Chat.ViewModels
             IsNavigated = false;
         }
 
+        public bool IsMemberRemovable(int index)
+        {
+            return Members[index].Id != _chatSummaryViewModel.CreatorId;
+        }
+
         public override void OnNavigated()
         {
             base.OnNavigated();
 
             IsNavigated = true;
+        }
+
+        private void RemoveMemberAt(int index)
+        {
+            Members.RemoveAt(index);
+            RaisePropertyChanged(nameof(MembersCountText));
         }
 
         private void AddMembers()

@@ -36,5 +36,7 @@ namespace Softeq.XToolkit.Chat
 
         public string Today => "Today";
         public string Yesterday => "Yesterday";
+
+        public string Remove => "Remove";
     }
 }

@@ -1,9 +1,12 @@
 ﻿// Developed by Softeq Development Corporation
 // http://www.softeq.com
 
+using System.Collections.Generic;
 using Android.App;
+using Android.Graphics;
 using Android.OS;
 using Android.Support.V7.Widget;
+using Android.Support.V7.Widget.Helper;
 using Android.Views;
 using Android.Widget;
 using FFImageLoading;
@@ -11,9 +14,11 @@ using FFImageLoading.Cross;
 using FFImageLoading.Transformations;
 using Softeq.XToolkit.Bindings;
 using Softeq.XToolkit.Chat.Droid.Adapters;
+using Softeq.XToolkit.Chat.Droid.ItemTouchCallbacks;
 using Softeq.XToolkit.Chat.Droid.LayoutManagers;
 using Softeq.XToolkit.Chat.Droid.ViewHolders;
 using Softeq.XToolkit.Chat.ViewModels;
+using Softeq.XToolkit.Common.Droid.Extensions;
 using Softeq.XToolkit.WhiteLabel.Droid;
 using Softeq.XToolkit.WhiteLabel.Droid.Controls;
 
@@ -76,6 +81,10 @@ namespace Softeq.XToolkit.Chat.Droid.Views
 
         private void InitializeMembersRecyclerView()
         {
+            var swipeItemCallback = new SwipeCallback(this, _membersRecyclerView, ConfigureSwipeForViewHolder);
+            var swipeItemTouchHelper = new ItemTouchHelper(swipeItemCallback);
+            swipeItemTouchHelper.AttachToRecyclerView(_membersRecyclerView);
+            
             _membersRecyclerView.HasFixedSize = true;
             _membersRecyclerView.SetLayoutManager(new GuardedLinearLayoutManager(this));
             _membersRecyclerView.AddItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.Vertical));
@@ -90,6 +99,25 @@ namespace Softeq.XToolkit.Chat.Droid.Views
                     viewHolder.ContactSwitch.Visibility = ViewStates.Gone;
                     return viewHolder;
                 }));
+        }
+
+        private void ConfigureSwipeForViewHolder(RecyclerView.ViewHolder viewHolder, int position,
+            ICollection<SwipeCallback.ISwipeActionView> actions)
+        {
+            if (_viewModel.IsEditAvailable && !_viewModel.IsMemberRemovable(position))
+            {
+                return;
+            }
+
+            var swipeLeaveActionViewOptions = new SimpleSwipeActionView.Options
+            {
+                Width = this.ToPixels(80),
+                TextSize = this.ToPixels(14),
+                BackgroundColor = Color.Red
+            };
+            
+            actions.Add(new SimpleSwipeActionView(ViewModel.RemoveLocalizedString, swipeLeaveActionViewOptions,
+                pos => { ViewModel.RemoveMemberAtCommand.Execute(pos); }));
         }
     }
 }
