@@ -9,9 +9,9 @@ using Android.Widget;
 using FFImageLoading;
 using FFImageLoading.Cross;
 using FFImageLoading.Transformations;
+using FFImageLoading.Work;
 using Softeq.XToolkit.Bindings;
 using Softeq.XToolkit.Chat.Droid.Adapters;
-using Softeq.XToolkit.Chat.Droid.Extensions;
 using Softeq.XToolkit.Chat.Droid.LayoutManagers;
 using Softeq.XToolkit.Chat.Droid.ViewHolders;
 using Softeq.XToolkit.Chat.ViewModels;
@@ -20,6 +20,7 @@ using Softeq.XToolkit.Permissions;
 using Softeq.XToolkit.WhiteLabel;
 using Softeq.XToolkit.WhiteLabel.Droid;
 using Softeq.XToolkit.WhiteLabel.Droid.Controls;
+using Softeq.XToolkit.WhiteLabel.Droid.Shared.Extensions;
 using Softeq.XToolkit.WhiteLabel.Threading;
 
 namespace Softeq.XToolkit.Chat.Droid.Views
@@ -82,7 +83,11 @@ namespace Softeq.XToolkit.Chat.Droid.Views
             Bindings.Add(this.SetBinding(() => ViewModel.MembersCountText, () => _chatMembersCountTextView.Text));
             Bindings.Add(this.SetBinding(() => ViewModel.ChatAvatarUrl).WhenSourceChanges(() =>
             {
-                _chatPhotoImageView.LoadImageAsync("ic_attachment.png", ViewModel.ChatAvatarUrl, new CircleTransformation());
+                _chatPhotoImageView.LoadImageWithTextPlaceholder(
+                    ViewModel.ChatAvatarUrl,
+                    ViewModel.ChatName,
+                    ExternalResourceIds.ChatAvatarStyles,
+                    (TaskParameter x) => x.Transform(new CircleTransformation()));
             }));
             Bindings.Add(this.SetBinding(() => _imagePicker.ViewModel.ImageCacheKey)
                 .WhenSourceChanges(() =>

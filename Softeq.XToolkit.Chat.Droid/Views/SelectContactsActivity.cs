@@ -22,7 +22,6 @@ using Softeq.XToolkit.Permissions;
 using Softeq.XToolkit.WhiteLabel;
 using Softeq.XToolkit.WhiteLabel.Droid;
 using Softeq.XToolkit.WhiteLabel.Droid.Controls;
-using Softeq.XToolkit.Common.Command;
 using Softeq.XToolkit.WhiteLabel.Droid.Services;
 using Softeq.XToolkit.WhiteLabel.Threading;
 
@@ -77,12 +76,10 @@ namespace Softeq.XToolkit.Chat.Droid.Views
                 MaxImageWidth = 300
             };
 
-            _chatPhotoImageView.LoadImageAsync("ic_attachment.png", null, new CircleTransformation());
+            _chatPhotoImageView.SetImageResource(ExternalResourceIds.ChatGroupNoAvatarIcon);
             _chatEditedPhotoImageView.Visibility = ViewStates.Gone;
         }
 
-            
-            
         protected override void DoAttachBindings()
         {
             base.DoAttachBindings();
@@ -102,7 +99,7 @@ namespace Softeq.XToolkit.Chat.Droid.Views
                     {
                         return;
                     }
-                    
+
                     _previewImageKey = key;
 
                     Execute.BeginOnUIThread(() =>
