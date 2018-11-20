@@ -9,19 +9,17 @@ using Softeq.XToolkit.Chat.Models.Enum;
 using Softeq.XToolkit.Chat.Models.Interfaces;
 using Softeq.XToolkit.Common.Collections;
 using Softeq.XToolkit.Common.Command;
-using Softeq.XToolkit.WhiteLabel.Interfaces;
 using Softeq.XToolkit.WhiteLabel.Mvvm;
 using Softeq.XToolkit.WhiteLabel.Navigation;
 
 namespace Softeq.XToolkit.Chat.ViewModels
 {
-    public class ChatDetailsViewModel : ViewModelBase, IViewModelParameter<ChatSummaryViewModel>
+    public class ChatDetailsViewModel : ViewModelBase
     {
         private readonly ChatManager _chatManager;
         private readonly IPageNavigationService _pageNavigationService;
         private readonly IChatLocalizedStrings _localizedStrings;
         private readonly IFormatService _formatService;
-        private ChatSummaryViewModel _chatSummaryViewModel;
 
         public ChatDetailsViewModel(
             ChatManager chatManager,
@@ -42,15 +40,12 @@ namespace Softeq.XToolkit.Chat.ViewModels
         public string Title => _localizedStrings.DetailsTitle;
         public string RemoveLocalizedString => _localizedStrings.Remove;
 
-        public ChatSummaryViewModel Parameter
-        {
-            set => _chatSummaryViewModel = value;
-        }
+        public ChatSummaryViewModel ChatSummaryViewModel { get; set; }
 
         public ObservableRangeCollection<ChatUserViewModel> Members { get; } = new ObservableRangeCollection<ChatUserViewModel>();
 
-        public string ChatAvatarUrl => _chatSummaryViewModel.ChatPhotoUrl;
-        public string ChatName => _chatSummaryViewModel.ChatName;
+        public string ChatAvatarUrl => ChatSummaryViewModel.ChatPhotoUrl;
+        public string ChatName => ChatSummaryViewModel.ChatName;
 
         public string MembersCountText => _formatService.PluralizeWithQuantity(Members.Count,
                                                                                _localizedStrings.MembersPlural,
@@ -61,7 +56,6 @@ namespace Softeq.XToolkit.Chat.ViewModels
         public ICommand AddMembersCommand { get; }
         public ICommand BackCommand { get; }
         public RelayCommand<int> RemoveMemberAtCommand { get; }
-        public bool IsEditAvailable => _chatSummaryViewModel.IsCreatedByMe;
 
         public override async void OnAppearing()
         {
@@ -69,7 +63,7 @@ namespace Softeq.XToolkit.Chat.ViewModels
 
             Members.Clear();
 
-            var members = await _chatManager.GetChatMembersAsync(_chatSummaryViewModel.ChatId);
+            var members = await _chatManager.GetChatMembersAsync(ChatSummaryViewModel.ChatId);
             Members.AddRange(members);
             RaisePropertyChanged(nameof(MembersCountText));
         }
@@ -83,7 +77,12 @@ namespace Softeq.XToolkit.Chat.ViewModels
 
         public bool IsMemberRemovable(int memberPosition)
         {
-            return Members[memberPosition].Id != _chatSummaryViewModel.CreatorId;
+            if (ChatSummaryViewModel.IsCreatedByMe)
+            {
+                return Members[memberPosition].Id != ChatSummaryViewModel.CreatorId;
+            }
+
+            return false;
         }
 
         public override void OnNavigated()
@@ -103,7 +102,7 @@ namespace Softeq.XToolkit.Chat.ViewModels
         {
             _pageNavigationService.NavigateToViewModel<SelectContactsViewModel,
                 (SelectedContactsAction, IList<string> FilteredUsers, string OpenedChatId)>(
-                (SelectedContactsAction.InviteToChat, Members.Select(x => x.Id).ToList(), _chatSummaryViewModel.ChatId));
+                (SelectedContactsAction.InviteToChat, Members.Select(x => x.Id).ToList(), ChatSummaryViewModel.ChatId));
         }
     }
 }

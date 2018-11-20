@@ -72,7 +72,7 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
 
             public override UITableViewRowAction[] EditActionsForRow(UITableView tableView, NSIndexPath indexPath)
             {
-                if (_viewModel.IsEditAvailable && !_viewModel.IsMemberRemovable((int) indexPath.Item))
+                if (!_viewModel.IsMemberRemovable((int) indexPath.Item))
                 {
                     return new UITableViewRowAction[0];
                 }

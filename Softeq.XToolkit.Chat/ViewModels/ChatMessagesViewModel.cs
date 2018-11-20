@@ -179,7 +179,7 @@ namespace Softeq.XToolkit.Chat.ViewModels
 
         private void ShowInfo()
         {
-            _pageNavigationService.NavigateToViewModel<ChatDetailsViewModel, ChatSummaryViewModel>(_chatSummaryViewModel);
+            _pageNavigationService.For<ChatDetailsViewModel>().WithParam(x => x.ChatSummaryViewModel, _chatSummaryViewModel).Navigate();
         }
 
         private void AttachImage()

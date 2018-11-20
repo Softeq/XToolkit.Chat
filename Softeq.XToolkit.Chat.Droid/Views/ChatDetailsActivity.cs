@@ -104,7 +104,7 @@ namespace Softeq.XToolkit.Chat.Droid.Views
         private void ConfigureSwipeForViewHolder(RecyclerView.ViewHolder viewHolder, int position,
             ICollection<SwipeCallback.ISwipeActionView> actions)
         {
-            if (_viewModel.IsEditAvailable && !_viewModel.IsMemberRemovable(position))
+            if (!_viewModel.IsMemberRemovable(position))
             {
                 return;
             }
