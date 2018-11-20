@@ -6,15 +6,16 @@ using Android.Graphics;
 using Android.Graphics.Drawables;
 using Android.Views;
 using Android.Widget;
-using FFImageLoading;
 using FFImageLoading.Cross;
 using FFImageLoading.Transformations;
+using FFImageLoading.Work;
 using Softeq.XToolkit.Bindings;
 using Softeq.XToolkit.Chat.Models;
 using Softeq.XToolkit.Chat.ViewModels;
 using Softeq.XToolkit.Common;
 using Softeq.XToolkit.Common.Command;
 using Softeq.XToolkit.Common.Droid.Converters;
+using Softeq.XToolkit.WhiteLabel.Droid.Shared.Extensions;
 
 namespace Softeq.XToolkit.Chat.Droid.ViewHolders
 {
@@ -67,10 +68,11 @@ namespace Softeq.XToolkit.Chat.Droid.ViewHolders
                     return;
                 }
 
-                ImageService.Instance
-                            .LoadUrl(_viewModelRef.Target.ChatPhotoUrl)
-                            .Transform(new CircleTransformation())
-                            .IntoAsync(ChatPhotoImageView);
+                ChatPhotoImageView.LoadImageWithTextPlaceholder(
+                    _viewModelRef.Target.ChatPhotoUrl,
+                    _viewModelRef.Target.ChatName,
+                    ExternalResourceIds.ChatAvatarStyles,
+                    (TaskParameter x) => x.Transform(new CircleTransformation()));
             }));
 
             Bindings.Add(this.SetBinding(() => _viewModelRef.Target.UnreadMessageCount).WhenSourceChanges(() =>

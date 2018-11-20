@@ -3,12 +3,13 @@
 
 using Android.Views;
 using Android.Widget;
-using FFImageLoading;
-using FFImageLoading.Transformations;
 using FFImageLoading.Cross;
+using FFImageLoading.Transformations;
+using FFImageLoading.Work;
 using Softeq.XToolkit.Bindings;
-using Softeq.XToolkit.Common;
 using Softeq.XToolkit.Chat.ViewModels;
+using Softeq.XToolkit.Common;
+using Softeq.XToolkit.WhiteLabel.Droid.Shared.Extensions;
 
 namespace Softeq.XToolkit.Chat.Droid.ViewHolders
 {
@@ -35,10 +36,11 @@ namespace Softeq.XToolkit.Chat.Droid.ViewHolders
             Bindings.Add(this.SetBinding(() => _viewModelRef.Target.IsSelected, () => ContactSwitch.Checked, BindingMode.TwoWay));
             Bindings.Add(this.SetBinding(() => _viewModelRef.Target.PhotoUrl).WhenSourceChanges(() =>
             {
-                ImageService.Instance
-                            .LoadUrl(_viewModelRef.Target.PhotoUrl)
-                            .Transform(new CircleTransformation())
-                            .IntoAsync(ContactPhotoImageView);
+                ContactPhotoImageView.LoadImageWithTextPlaceholder(
+                    _viewModelRef.Target.PhotoUrl,
+                    _viewModelRef.Target.Username,
+                    ExternalResourceIds.ChatAvatarStyles,
+                    (TaskParameter x) => x.Transform(new CircleTransformation()));
             }));
         }
     }

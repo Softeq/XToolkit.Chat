@@ -8,12 +8,14 @@ using Android.Widget;
 using FFImageLoading;
 using FFImageLoading.Cross;
 using FFImageLoading.Transformations;
+using FFImageLoading.Work;
 using Softeq.XToolkit.Bindings;
 using Softeq.XToolkit.Chat.Droid.Controls;
 using Softeq.XToolkit.Chat.Models;
 using Softeq.XToolkit.Chat.ViewModels;
 using Softeq.XToolkit.Common;
 using Softeq.XToolkit.Common.WeakSubscription;
+using Softeq.XToolkit.WhiteLabel.Droid.Shared.Extensions;
 using Softeq.XToolkit.WhiteLabel.Threading;
 using PopupMenu = Android.Support.V7.Widget.PopupMenu;
 
@@ -90,14 +92,13 @@ namespace Softeq.XToolkit.Chat.Droid.ViewHolders
                                      .IntoAsync(AttachmentImageView);
             }
 
-            if (_isIncomingMessageViewType &&
-                SenderPhotoImageView != null &&
-                !string.IsNullOrEmpty(_viewModelRef.Target.SenderPhotoUrl))
+            if (_isIncomingMessageViewType && SenderPhotoImageView != null)
             {
-                ImageService.Instance
-                            .LoadUrl(_viewModelRef.Target.SenderPhotoUrl)
-                            .Transform(new CircleTransformation())
-                            .IntoAsync(SenderPhotoImageView);
+                SenderPhotoImageView.LoadImageWithTextPlaceholder(
+                    _viewModelRef.Target.SenderPhotoUrl,
+                    _viewModelRef.Target.SenderName,
+                    ExternalResourceIds.ChatAvatarStyles,
+                    (TaskParameter x) => x.Transform(new CircleTransformation()));
             }
 
             if (!_isIncomingMessageViewType && MessageStatusView != null)
