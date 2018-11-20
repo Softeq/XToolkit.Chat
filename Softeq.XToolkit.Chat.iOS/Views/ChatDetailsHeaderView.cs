@@ -7,6 +7,7 @@ using FFImageLoading;
 using Softeq.XToolkit.Bindings;
 using Softeq.XToolkit.Chat.iOS.Extensions;
 using Softeq.XToolkit.WhiteLabel.iOS.Controls;
+using Softeq.XToolkit.WhiteLabel.iOS.Extensions;
 using Softeq.XToolkit.WhiteLabel.Threading;
 using UIKit;
 
@@ -49,7 +50,7 @@ namespace Softeq.XToolkit.Chat.iOS.Views
 
         public void SetChatAvatar(string photoUrl)
         {
-            ChatAvatarImageView.LoadImageAsync("Chat_NoPhoto", photoUrl);
+            ChatAvatarImageView.LoadImageAsync(Styles.ChatGroupNoAvatarBundleName, photoUrl);
         }
 
         public void SetEditedChatAvatar(string key)

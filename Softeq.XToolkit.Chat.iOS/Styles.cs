@@ -2,6 +2,7 @@
 // http://www.softeq.com
 
 using UIKit;
+using static Softeq.XToolkit.WhiteLabel.iOS.Shared.AvatarImageHelpers;
 
 namespace Softeq.XToolkit.Chat.iOS
 {
@@ -13,5 +14,8 @@ namespace Softeq.XToolkit.Chat.iOS
         public static UIColor NavigationBarTintColor { get; set; } = UIColor.FromRGB(62, 218, 215);
         public static string BackButtonBundleName { get; set; }
         public static string ChatDetailsButtonBundleName { get; set; }
+        public static string ChatGroupNoAvatarBundleName { get; set; }
+
+        public static AvatarStyles AvatarStyles { get; set; }
     }
 }

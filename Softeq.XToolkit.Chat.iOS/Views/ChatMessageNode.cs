@@ -68,9 +68,12 @@ namespace Softeq.XToolkit.Chat.iOS.Views
             };
             _avatarImageNode.ContentMode = UIViewContentMode.ScaleAspectFit;
             _avatarImageNode.Hidden = _isMyMessage;
-            if (!string.IsNullOrEmpty(_viewModelRef.Target?.SenderPhotoUrl) && !_isMyMessage)
+            if (!_isMyMessage)
             {
-                _avatarImageNode.LoadImageAsync(_viewModelRef.Target.SenderPhotoUrl).SafeTaskWrapper();
+                _avatarImageNode.LoadImageWithTextPlaceholder(
+                    _viewModelRef.Target.SenderPhotoUrl,
+                    _viewModelRef.Target.SenderName,
+                    Styles.AvatarStyles);
             }
 
             _attachmentImageNode.ContentMode = UIViewContentMode.ScaleAspectFit;

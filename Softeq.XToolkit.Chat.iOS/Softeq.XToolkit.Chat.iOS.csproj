@@ -62,6 +62,9 @@
     <PackageReference Include="Xamarin.FFImageLoading">
       <Version>2.4.3.840</Version>
     </PackageReference>
+    <PackageReference Include="Xamarin.FFImageLoading.Transformations">
+      <Version>2.4.3.840</Version>
+    </PackageReference>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="ViewControllers\" />

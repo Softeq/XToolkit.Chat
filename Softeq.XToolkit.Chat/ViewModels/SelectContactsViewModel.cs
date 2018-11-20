@@ -128,7 +128,7 @@ namespace Softeq.XToolkit.Chat.ViewModels
 
         private async void SaveAsync(Func<(Task<Stream> GetImageTask, string Extension)> getImageFunc)
         {
-            if (string.IsNullOrEmpty(ChatName))
+            if (IsCreateChat && string.IsNullOrEmpty(ChatName))
             {
                 return;
             }

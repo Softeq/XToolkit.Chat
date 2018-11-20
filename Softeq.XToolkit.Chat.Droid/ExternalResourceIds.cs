@@ -1,4 +1,6 @@
-﻿namespace Softeq.XToolkit.Chat.Droid
+﻿using Softeq.XToolkit.WhiteLabel.Droid.Shared;
+
+namespace Softeq.XToolkit.Chat.Droid
 {
     public static class ExternalResourceIds
     {
@@ -13,5 +15,8 @@
         public static int MessageStatusSentIcon { get; set; } = Resource.Drawable.chat_ic_sent;
         public static int MessageStatusDeliveredIcon { get; set; } = Resource.Drawable.chat_ic_delivered;
         public static int MessageStatusReadIcon { get; set; } = Resource.Drawable.chat_ic_read;
+
+        public static AvatarPlaceholderDrawable.AvatarStyles ChatAvatarStyles { get; set; }
+        public static int ChatGroupNoAvatarIcon { get; set; }
     }
 }
