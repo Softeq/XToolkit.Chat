@@ -1,9 +1,8 @@
 ﻿// Developed by Softeq Development Corporation
 // http://www.softeq.com
 
-using System.Drawing;
-using Softeq.XToolkit.WhiteLabel.iOS.Extensions;
 using UIKit;
+using static Softeq.XToolkit.WhiteLabel.iOS.Shared.AvatarImageHelpers;
 
 namespace Softeq.XToolkit.Chat.iOS
 {
@@ -17,6 +16,6 @@ namespace Softeq.XToolkit.Chat.iOS
         public static string ChatDetailsButtonBundleName { get; set; }
         public static string ChatGroupNoAvatarBundleName { get; set; }
 
-        public static MvxCachedImageViewExtensions.AvatarStyles AvatarStyles { get; set; }
+        public static AvatarStyles AvatarStyles { get; set; }
     }
 }

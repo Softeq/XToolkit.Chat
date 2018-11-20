@@ -7,6 +7,7 @@ using FFImageLoading;
 using Softeq.XToolkit.WhiteLabel.iOS.Shared;
 using Softeq.XToolkit.WhiteLabel.Threading;
 using static Softeq.XToolkit.WhiteLabel.iOS.Extensions.MvxCachedImageViewExtensions;
+using static Softeq.XToolkit.WhiteLabel.iOS.Shared.AvatarImageHelpers;
 
 namespace Softeq.XToolkit.Chat.iOS.Extensions
 {
@@ -40,13 +41,12 @@ namespace Softeq.XToolkit.Chat.iOS.Extensions
         {
             Execute.BeginOnUIThread(() =>
             {
-                imageView.Image = AvatarImageHelpers.CreateAvatarWithTextPlaceholder(
-                    styles.Size, name, styles.Font, styles.TextColor, styles.BackgroundHexColors);
+                imageView.Image = CreateAvatarWithTextPlaceholder(name, styles);
             });
 
             var expr = ImageService.Instance
                 .LoadUrl(url)
-                .DownSampleInDip(styles.Size.Width, styles.Size.Height);
+                .DownSampleInDip((int)styles.Size.Width, (int)styles.Size.Height);
 
             try
             {
