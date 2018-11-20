@@ -2,14 +2,16 @@
 // http://www.softeq.com
 
 using System;
-using Foundation;
-using UIKit;
 using System.Collections.Generic;
+using FFImageLoading.Transformations;
+using FFImageLoading.Work;
+using Foundation;
 using Softeq.XToolkit.Bindings;
-using Softeq.XToolkit.Common;
-using Softeq.XToolkit.WhiteLabel.iOS.Extensions;
-using Softeq.XToolkit.Common.Extensions;
 using Softeq.XToolkit.Chat.ViewModels;
+using Softeq.XToolkit.Common;
+using Softeq.XToolkit.Common.Extensions;
+using Softeq.XToolkit.WhiteLabel.iOS.Extensions;
+using UIKit;
 
 namespace Softeq.XToolkit.Chat.iOS.Views
 {
@@ -42,7 +44,11 @@ namespace Softeq.XToolkit.Chat.iOS.Views
             _bindings.Add(this.SetBinding(() => _viewModelRef.Target.Username, () => UsernameLabel.Text));
             _bindings.Add(this.SetBinding(() => _viewModelRef.Target.PhotoUrl).WhenSourceChanges(() =>
             {
-                PhotoImageView.LoadImageAsync("Chat_NoPhoto", _viewModelRef.Target.PhotoUrl);
+                PhotoImageView.LoadImageWithTextPlaceholder(
+                    _viewModelRef.Target.PhotoUrl,
+                    _viewModelRef.Target.Username,
+                    Styles.AvatarStyles,
+                    (TaskParameter x) => x.Transform(new CircleTransformation()));
             }));
             _bindings.Add(this.SetBinding(() => _viewModelRef.Target.IsSelected, () => IsSelectedSwitch.On, BindingMode.TwoWay));
             _bindings.Add(this.SetBinding(() => _viewModelRef.Target.IsSelectable, () => IsSelectedSwitch.Hidden)
