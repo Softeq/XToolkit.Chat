@@ -73,7 +73,7 @@ namespace Softeq.XToolkit.Chat.iOS.Views
                 _avatarImageNode.LoadImageWithTextPlaceholder(
                     _viewModelRef.Target.SenderPhotoUrl,
                     _viewModelRef.Target.SenderName,
-                    Styles.AvatarStyles);
+                    StyleHelper.Style.AvatarStyles);
             }
 
             _attachmentImageNode.ContentMode = UIViewContentMode.ScaleAspectFit;

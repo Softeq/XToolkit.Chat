@@ -35,7 +35,7 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
             base.ViewDidLoad();
 
             // Setup brand color for NavigationBar buttons
-            CustomNavigationBar.TintColor = Styles.NavigationBarTintColor;
+            CustomNavigationBar.TintColor = StyleHelper.Style.NavigationBarTintColor;
 
             _customTitleView = new ConnectionStatusView(CGRect.Empty);
 

@@ -29,11 +29,14 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
         {
             base.ViewDidLoad();
 
-            CustomNavigationItem.SetCommand(UIImage.FromBundle(Styles.BackButtonBundleName), ViewModel.BackCommand, true);
             CustomNavigationItem.SetCommand(
-                ViewModel.ActionButtonName, 
-                Styles.NavigationBarTintColor,
-                new RelayCommand(AddChat), 
+                UIImage.FromBundle(StyleHelper.Style.BackButtonBundleName),
+                ViewModel.BackCommand,
+                true);
+            CustomNavigationItem.SetCommand(
+                ViewModel.ActionButtonName,
+                StyleHelper.Style.NavigationBarTintColor,
+                new RelayCommand(AddChat),
                 false);
 
             TableView.AllowsSelection = false;
@@ -44,7 +47,7 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
             {
                 _chatDetailsHeaderView.ChatNameField.ResignFirstResponder();
             }));
-            
+
             _simpleImagePicker = new SimpleImagePicker(this, ServiceLocator.Resolve<IPermissionsManager>(), false)
             {
                 MaxImageWidth = 280,
@@ -56,10 +59,10 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
                 IsEditMode = true,
                 IsAddMembersButtonHidden = true
             };
-  
+
             _chatDetailsHeaderView.SetChangeChatPhotoCommand(new RelayCommand(OpenPicker));
             _chatDetailsHeaderView.SetChatAvatar(null);
-            
+
             TableView.TableHeaderView = _chatDetailsHeaderView;
             TableView.TableFooterView = new UIView();
 
@@ -104,7 +107,7 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
                     {
                         return;
                     }
-                    
+
                     var key = _simpleImagePicker.ViewModel.ImageCacheKey;
                     if (key == _previewImageKey)
                     {

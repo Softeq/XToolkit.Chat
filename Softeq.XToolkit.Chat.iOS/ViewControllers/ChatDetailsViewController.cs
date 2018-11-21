@@ -33,7 +33,10 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
             base.ViewDidLoad();
 
             CustomNavigationItem.Title = ViewModel.Title;
-            CustomNavigationItem.SetCommand(UIImage.FromBundle(Styles.BackButtonBundleName), ViewModel.BackCommand, true);
+            CustomNavigationItem.SetCommand(
+                UIImage.FromBundle(StyleHelper.Style.BackButtonBundleName),
+                ViewModel.BackCommand,
+                true);
 
             TableView.RegisterNibForCellReuse(ChatUserViewCell.Nib, ChatUserViewCell.Key);
             TableView.RowHeight = 80;
@@ -85,7 +88,7 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
                     }
 
                     _previewImageKey = key;
-                    Execute.BeginOnUIThread(() => 
+                    Execute.BeginOnUIThread(() =>
                     {
                         _chatDetailsHeaderView.SetEditedChatAvatar(_previewImageKey);
                         CustomNavigationItem.SetCommand(
@@ -102,7 +105,7 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
         private async void SaveAsync()
         {
             await ViewModel.SaveAsync(_simpleImagePicker.StreamFunc).ConfigureAwait(false);
-            Execute.BeginOnUIThread(() => 
+            Execute.BeginOnUIThread(() =>
             {
                 CustomNavigationItem.SetRightBarButtonItem(null, true);
             });

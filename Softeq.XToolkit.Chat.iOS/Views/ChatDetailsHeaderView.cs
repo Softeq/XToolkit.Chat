@@ -50,7 +50,7 @@ namespace Softeq.XToolkit.Chat.iOS.Views
 
         public void SetChatAvatar(string photoUrl)
         {
-            ChatAvatarImageView.LoadImageAsync(Styles.ChatGroupNoAvatarBundleName, photoUrl);
+            ChatAvatarImageView.LoadImageAsync(StyleHelper.Style.ChatGroupNoAvatarBundleName, photoUrl);
         }
 
         public void SetEditedChatAvatar(string key)
