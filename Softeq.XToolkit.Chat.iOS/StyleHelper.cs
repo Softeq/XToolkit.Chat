@@ -10,12 +10,12 @@ namespace Softeq.XToolkit.Chat.iOS
 {
     internal static class StyleHelper
     {
-        private static readonly Lazy<IChatIosStyles> StyleLazy = ServiceLocator.LazyResolve<IChatIosStyles>();
+        private static readonly Lazy<IChatIosStyle> StyleLazy = ServiceLocator.LazyResolve<IChatIosStyle>();
 
-        public static IChatIosStyles Style => StyleLazy.Value;
+        public static IChatIosStyle Style => StyleLazy.Value;
     }
 
-    public interface IChatIosStyles
+    public interface IChatIosStyle
     {
         UIColor NavigationBarTintColor { get; }
         string BackButtonBundleName { get; }
