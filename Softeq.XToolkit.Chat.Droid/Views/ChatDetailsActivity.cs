@@ -48,7 +48,7 @@ namespace Softeq.XToolkit.Chat.Droid.Views
             SetContentView(Resource.Layout.activity_chat_details);
 
             _navigationBarView = FindViewById<NavigationBarView>(Resource.Id.activity_chat_details_navigation_bar);
-            _navigationBarView.SetLeftButton(ExternalResourceIds.NavigationBarBackButtonIcon, ViewModel.BackCommand);
+            _navigationBarView.SetLeftButton(StyleHelper.Style.NavigationBarBackButtonIcon, ViewModel.BackCommand);
             _navigationBarView.SetTitle(ViewModel.Title);
             _navigationBarView.SetRightButton(ViewModel.LocalizedStrings.Save, new RelayCommand(() => OnSaveClick()));
 
@@ -86,7 +86,7 @@ namespace Softeq.XToolkit.Chat.Droid.Views
                 _chatPhotoImageView.LoadImageWithTextPlaceholder(
                     ViewModel.ChatAvatarUrl,
                     ViewModel.ChatName,
-                    ExternalResourceIds.ChatAvatarStyles,
+                    StyleHelper.Style.ChatAvatarStyles,
                     (TaskParameter x) => x.Transform(new CircleTransformation()));
             }));
             Bindings.Add(this.SetBinding(() => _imagePicker.ViewModel.ImageCacheKey)
