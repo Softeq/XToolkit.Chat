@@ -71,7 +71,7 @@ namespace Softeq.XToolkit.Chat.Droid.ViewHolders
                 ChatPhotoImageView.LoadImageWithTextPlaceholder(
                     _viewModelRef.Target.ChatPhotoUrl,
                     _viewModelRef.Target.ChatName,
-                    ExternalResourceIds.ChatAvatarStyles,
+                    StyleHelper.Style.ChatAvatarStyles,
                     (TaskParameter x) => x.Transform(new CircleTransformation()));
             }));
 

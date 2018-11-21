@@ -12,7 +12,6 @@ using FFImageLoading.Cross;
 using FFImageLoading.Transformations;
 using Softeq.XToolkit.Bindings;
 using Softeq.XToolkit.Chat.Droid.Adapters;
-using Softeq.XToolkit.Chat.Droid.Extensions;
 using Softeq.XToolkit.Chat.Droid.LayoutManagers;
 using Softeq.XToolkit.Chat.Droid.ViewHolders;
 using Softeq.XToolkit.Chat.ViewModels;
@@ -50,7 +49,7 @@ namespace Softeq.XToolkit.Chat.Droid.Views
             SetContentView(Resource.Layout.activity_chat_create);
 
             _navigationBarView = FindViewById<NavigationBarView>(Resource.Id.activity_chat_create_navigation_bar);
-            _navigationBarView.SetLeftButton(ExternalResourceIds.NavigationBarBackButtonIcon, ViewModel.BackCommand);
+            _navigationBarView.SetLeftButton(StyleHelper.Style.NavigationBarBackButtonIcon, ViewModel.BackCommand);
             _navigationBarView.SetTitle(ViewModel.Title);
             _navigationBarView.SetRightButton(ViewModel.ActionButtonName, new RelayCommand(() =>
             {
@@ -76,7 +75,7 @@ namespace Softeq.XToolkit.Chat.Droid.Views
                 MaxImageWidth = 300
             };
 
-            _chatPhotoImageView.SetImageResource(ExternalResourceIds.ChatGroupNoAvatarIcon);
+            _chatPhotoImageView.SetImageResource(StyleHelper.Style.ChatGroupNoAvatarIcon);
             _chatEditedPhotoImageView.Visibility = ViewStates.Gone;
         }
 

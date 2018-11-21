@@ -49,24 +49,24 @@ namespace Softeq.XToolkit.Chat.Droid.Views
             SetContentView(Resource.Layout.activity_chat_conversations);
 
             _navigationBarView = FindViewById<NavigationBarView>(Resource.Id.activity_chat_conversations_navigation_bar);
-            _navigationBarView.SetLeftButton(ExternalResourceIds.NavigationBarBackButtonIcon, ViewModel.BackCommand);
-            _navigationBarView.SetRightButton(ExternalResourceIds.NavigationBarDetailsButtonIcon, ViewModel.ShowInfoCommand);
+            _navigationBarView.SetLeftButton(StyleHelper.Style.NavigationBarBackButtonIcon, ViewModel.BackCommand);
+            _navigationBarView.SetRightButton(StyleHelper.Style.NavigationBarDetailsButtonIcon, ViewModel.ShowInfoCommand);
 
             _conversationsRecyclerView = FindViewById<RecyclerView>(Resource.Id.rv_conversations_list);
             _messageEditText = FindViewById<EditText>(Resource.Id.et_conversations_message);
             _editingMessageLayout = FindViewById<RelativeLayout>(Resource.Id.rl_conversations_editing_message);
             _editingMessageBodyTextView = FindViewById<TextView>(Resource.Id.tv_editing_message_body);
             _editingMessageCloseButton = FindViewById<ImageButton>(Resource.Id.ib_conversations_editing_message_close);
-            _editingMessageCloseButton.SetImageResource(ExternalResourceIds.EditingCloseButtonIcon);
+            _editingMessageCloseButton.SetImageResource(StyleHelper.Style.EditingCloseButtonIcon);
 
             _scrollDownImageButton = FindViewById<ImageButton>(Resource.Id.ib_conversations_scroll_down);
-            _scrollDownImageButton.SetImageResource(ExternalResourceIds.ScrollDownButtonIcon);
+            _scrollDownImageButton.SetImageResource(StyleHelper.Style.ScrollDownButtonIcon);
 
             _addAttachmentButton = FindViewById<ImageButton>(Resource.Id.ib_conversations_add_attachment);
-            _addAttachmentButton.SetImageResource(ExternalResourceIds.AddAttachmentButtonIcon);
+            _addAttachmentButton.SetImageResource(StyleHelper.Style.AddAttachmentButtonIcon);
 
             _sendButton = FindViewById<ImageButton>(Resource.Id.ib_conversations_send);
-            _sendButton.SetImageResource(ExternalResourceIds.SendMessageButtonIcon);
+            _sendButton.SetImageResource(StyleHelper.Style.SendMessageButtonIcon);
 
 
             InitializeConversationsRecyclerView();

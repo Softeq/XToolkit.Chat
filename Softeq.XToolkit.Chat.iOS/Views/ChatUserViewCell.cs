@@ -47,7 +47,7 @@ namespace Softeq.XToolkit.Chat.iOS.Views
                 PhotoImageView.LoadImageWithTextPlaceholder(
                     _viewModelRef.Target.PhotoUrl,
                     _viewModelRef.Target.Username,
-                    Styles.AvatarStyles,
+                    StyleHelper.Style.AvatarStyles,
                     (TaskParameter x) => x.Transform(new CircleTransformation()));
             }));
             _bindings.Add(this.SetBinding(() => _viewModelRef.Target.IsSelected, () => IsSelectedSwitch.On, BindingMode.TwoWay));

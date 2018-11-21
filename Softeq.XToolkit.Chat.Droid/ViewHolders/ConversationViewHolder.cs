@@ -97,7 +97,7 @@ namespace Softeq.XToolkit.Chat.Droid.ViewHolders
                 SenderPhotoImageView.LoadImageWithTextPlaceholder(
                     _viewModelRef.Target.SenderPhotoUrl,
                     _viewModelRef.Target.SenderName,
-                    ExternalResourceIds.ChatAvatarStyles,
+                    StyleHelper.Style.ChatAvatarStyles,
                     (TaskParameter x) => x.Transform(new CircleTransformation()));
             }
 
@@ -154,13 +154,13 @@ namespace Softeq.XToolkit.Chat.Droid.ViewHolders
             switch (status)
             {
                 case ChatMessageStatus.Sending:
-                    statusImageResourceId = ExternalResourceIds.MessageStatusSentIcon;
+                    statusImageResourceId = StyleHelper.Style.MessageStatusSentIcon;
                     break;
                 case ChatMessageStatus.Delivered:
-                    statusImageResourceId = ExternalResourceIds.MessageStatusDeliveredIcon;
+                    statusImageResourceId = StyleHelper.Style.MessageStatusDeliveredIcon;
                     break;
                 case ChatMessageStatus.Read:
-                    statusImageResourceId = ExternalResourceIds.MessageStatusReadIcon;
+                    statusImageResourceId = StyleHelper.Style.MessageStatusReadIcon;
                     break;
                 case ChatMessageStatus.Other:
                     MessageStatusView.Visibility = ViewStates.Gone;

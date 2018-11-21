@@ -57,7 +57,7 @@ namespace Softeq.XToolkit.Chat.iOS.Views
                 SenderPhotoImageView.LoadImageWithTextPlaceholder(
                     _viewModelRef.Target.ChatPhotoUrl,
                     _viewModelRef.Target.ChatName,
-                    Styles.AvatarStyles);
+                    StyleHelper.Style.AvatarStyles);
             }));
             //_bindings.Add(this.SetBinding(() => _viewModelRef.Target.LastMessageStatus).WhenSourceChanges(() =>
             //{

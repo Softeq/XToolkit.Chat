@@ -39,7 +39,7 @@ namespace Softeq.XToolkit.Chat.Droid.ViewHolders
                 ContactPhotoImageView.LoadImageWithTextPlaceholder(
                     _viewModelRef.Target.PhotoUrl,
                     _viewModelRef.Target.Username,
-                    ExternalResourceIds.ChatAvatarStyles,
+                    StyleHelper.Style.ChatAvatarStyles,
                     (TaskParameter x) => x.Transform(new CircleTransformation()));
             }));
         }

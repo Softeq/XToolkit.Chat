@@ -52,8 +52,14 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
             _customTitleView = new ConnectionStatusView(CGRect.Empty);
 
             CustomNavigationItem.AddTitleView(_customTitleView);
-            CustomNavigationItem.SetCommand(UIImage.FromBundle(Styles.BackButtonBundleName), ViewModel.BackCommand, true);
-            CustomNavigationItem.SetCommand(UIImage.FromBundle(Styles.ChatDetailsButtonBundleName), ViewModel.ShowInfoCommand, false);
+            CustomNavigationItem.SetCommand(
+                UIImage.FromBundle(StyleHelper.Style.BackButtonBundleName),
+                ViewModel.BackCommand,
+                true);
+            CustomNavigationItem.SetCommand(
+                UIImage.FromBundle(StyleHelper.Style.ChatDetailsButtonBundleName),
+                ViewModel.ShowInfoCommand,
+                false);
 
             InitTableViewAsync().SafeTaskWrapper();
 

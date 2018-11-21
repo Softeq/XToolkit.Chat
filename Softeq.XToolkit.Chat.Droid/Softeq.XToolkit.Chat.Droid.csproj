@@ -68,6 +68,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="StyleHelper.cs" />
     <Compile Include="Views\ChatsListFragment.cs" />
     <Compile Include="Views\ChatDetailsActivity.cs" />
     <Compile Include="Views\ChatMessagesActivity.cs" />
@@ -91,7 +92,6 @@
     <Compile Include="Adapters\GroupedObservableRecyclerViewAdapter.cs" />
     <Compile Include="ItemTouchCallbacks\SwipeCallback.cs" />
     <Compile Include="Controls\ContextMenuComponent.cs" />
-    <Compile Include="ExternalResourceIds.cs" />
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\layout\activity_chat_details.xml" />
