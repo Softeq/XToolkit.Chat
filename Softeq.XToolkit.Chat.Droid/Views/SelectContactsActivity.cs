@@ -26,7 +26,7 @@ using Softeq.XToolkit.WhiteLabel.Threading;
 
 namespace Softeq.XToolkit.Chat.Droid.Views
 {
-    [Activity(Theme = "@style/ChatTheme")]
+    [Activity]
     public class SelectContactsActivity : ActivityBase<SelectContactsViewModel>
     {
         private NavigationBarView _navigationBarView;
@@ -43,6 +43,8 @@ namespace Softeq.XToolkit.Chat.Droid.Views
         protected override void OnCreate(Bundle savedInstanceState)
         {
             OverridePendingTransition(0, 0);
+
+            SetTheme(StyleHelper.Style.CommonActivityStyle);
 
             base.OnCreate(savedInstanceState);
 

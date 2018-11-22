@@ -1,5 +1,0 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
-<!--TODO: Localize this-->
-<menu xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
-  <item android:id="@+id/toolbar_chat_create_action" android:title="Done" app:showAsAction="always|withText" />
-</menu>

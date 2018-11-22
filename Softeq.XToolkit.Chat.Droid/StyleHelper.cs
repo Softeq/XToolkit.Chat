@@ -28,12 +28,15 @@ namespace Softeq.XToolkit.Chat.Droid
         int MessageStatusDeliveredIcon { get; }
         int MessageStatusReadIcon { get; }
 
+        int CommonActivityStyle { get; }
+
         AvatarPlaceholderDrawable.AvatarStyles ChatAvatarStyles { get; }
         int ChatGroupNoAvatarIcon { get; }
     }
 
     public abstract class ChatDroidStyleBase : IChatDroidStyle
     {
+        public int CommonActivityStyle { get; } = Resource.Style.ChatTheme;
         public int EditingCloseButtonIcon { get; } = Resource.Drawable.chat_ic_close;
         public int ScrollDownButtonIcon { get; } = Resource.Drawable.chat_conversation_scroll_down;
         public int MessageStatusSentIcon { get; } = Resource.Drawable.chat_ic_sent;
