@@ -44,9 +44,10 @@ namespace Softeq.XToolkit.Chat.Droid.Views
         {
             OverridePendingTransition(0, 0);
 
+            SetTheme(StyleHelper.Style.CommonActivityStyle);
+
             base.OnCreate(savedInstanceState);
 
-            SetTheme(StyleHelper.Style.CommonActivityStyle);
             SetContentView(Resource.Layout.activity_chat_create);
 
             _navigationBarView = FindViewById<NavigationBarView>(Resource.Id.activity_chat_create_navigation_bar);

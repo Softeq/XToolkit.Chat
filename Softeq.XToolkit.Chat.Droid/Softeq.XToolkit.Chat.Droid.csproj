@@ -120,6 +120,8 @@
     <AndroidResource Include="Resources\drawable\chat_ic_read.xml" />
     <AndroidResource Include="Resources\drawable\chat_ic_delivered.xml" />
     <AndroidResource Include="Resources\drawable\chat_ic_new.xml" />
+    <AndroidResource Include="Resources\drawable\chat_conversation_scroll_down.xml" />
+    <AndroidResource Include="Resources\drawable\chat_ic_close.xml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Views\" />
