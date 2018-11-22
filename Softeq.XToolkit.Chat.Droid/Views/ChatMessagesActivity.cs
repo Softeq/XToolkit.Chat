@@ -22,7 +22,7 @@ using Messenger = Softeq.XToolkit.WhiteLabel.Messenger.Messenger;
 
 namespace Softeq.XToolkit.Chat.Droid.Views
 {
-    [Activity(Theme = "@style/ChatTheme")]
+    [Activity]
     public class ChatMessagesActivity : ActivityBase<ChatMessagesViewModel>
     {
         private NavigationBarView _navigationBarView;
@@ -43,6 +43,8 @@ namespace Softeq.XToolkit.Chat.Droid.Views
         protected override void OnCreate(Bundle savedInstanceState)
         {
             OverridePendingTransition(0, 0);
+
+            SetTheme(StyleHelper.Style.CommonActivityStyle);
 
             base.OnCreate(savedInstanceState);
 
