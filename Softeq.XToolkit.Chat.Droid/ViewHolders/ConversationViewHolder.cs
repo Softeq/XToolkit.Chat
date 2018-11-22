@@ -88,8 +88,15 @@ namespace Softeq.XToolkit.Chat.Droid.ViewHolders
 
             if (_viewModelRef.Target.HasAttachment)
             {
+                AttachmentImageView.Visibility = ViewStates.Visible;
                 ImageService.Instance.LoadUrl(_viewModelRef.Target.AttachmentImageUrl)
-                                     .IntoAsync(AttachmentImageView);
+                            .DownSampleInDip(90, 90)
+                            .IntoAsync(AttachmentImageView);
+            }
+            else
+            {
+                AttachmentImageView.Visibility = ViewStates.Gone;
+                AttachmentImageView.SetImageDrawable(null);
             }
 
             if (_isIncomingMessageViewType && SenderPhotoImageView != null)

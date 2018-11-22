@@ -64,7 +64,6 @@ namespace Softeq.XToolkit.Chat.ViewModels
 
             BackCommand = new RelayCommand(_pageNavigationService.GoBack, () => _pageNavigationService.CanGoBack);
             SendCommand = new RelayCommand<GenericEventArgs<Func<(Task<Stream>, string)>>>(SendMessageAsync);
-            AttachImageCommand = new RelayCommand(AttachImage);
             CancelEditingMessageModeCommand = new RelayCommand(CancelEditingMessageMode);
             ShowInfoCommand = new RelayCommand(ShowInfo);
             LoadOlderMessagesCommand = new RelayCommand(() => LoadOlderMessagesAsync().SafeTaskWrapper());
@@ -181,11 +180,6 @@ namespace Softeq.XToolkit.Chat.ViewModels
         private void ShowInfo()
         {
             _pageNavigationService.NavigateToViewModel<ChatDetailsViewModel, ChatSummaryViewModel>(_chatSummaryViewModel);
-        }
-
-        private void AttachImage()
-        {
-            //_chatManager.LoadOlderMessagesAsync().SafeTaskWrapper();
         }
 
         private void ClearMessages()
