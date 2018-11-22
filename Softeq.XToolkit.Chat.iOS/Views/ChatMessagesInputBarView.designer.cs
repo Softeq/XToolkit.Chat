@@ -13,7 +13,16 @@ namespace Softeq.XToolkit.Chat.iOS.Views
 	partial class ChatMessagesInputBarView
 	{
 		[Outlet]
+		FFImageLoading.Cross.MvxCachedImageView AttachedImageView { get; set; }
+
+		[Outlet]
 		UIKit.UIButton AttachImageButton { get; set; }
+
+		[Outlet]
+		UIKit.UIView EditImageContainer { get; set; }
+
+		[Outlet]
+		UIKit.NSLayoutConstraint EditImageContainerHeightConstraint { get; set; }
 
 		[Outlet]
 		UIKit.UIButton EditingCloseButton { get; set; }
@@ -43,16 +52,34 @@ namespace Softeq.XToolkit.Chat.iOS.Views
 		UIKit.UIView InputViewContainer { get; set; }
 
 		[Outlet]
-		UIKit.UIView InputViewTopBorder { get; set; }
+		UIKit.UIButton RemoveAttachButton { get; set; }
 
 		[Outlet]
 		UIKit.UIButton SendButton { get; set; }
+
+		[Outlet]
+		UIKit.UIButton TakePhotoButton { get; set; }
 		
 		void ReleaseDesignerOutlets ()
 		{
+			if (AttachedImageView != null) {
+				AttachedImageView.Dispose ();
+				AttachedImageView = null;
+			}
+
 			if (AttachImageButton != null) {
 				AttachImageButton.Dispose ();
 				AttachImageButton = null;
+			}
+
+			if (EditImageContainer != null) {
+				EditImageContainer.Dispose ();
+				EditImageContainer = null;
+			}
+
+			if (EditImageContainerHeightConstraint != null) {
+				EditImageContainerHeightConstraint.Dispose ();
+				EditImageContainerHeightConstraint = null;
 			}
 
 			if (EditingCloseButton != null) {
@@ -100,14 +127,19 @@ namespace Softeq.XToolkit.Chat.iOS.Views
 				InputViewContainer = null;
 			}
 
-			if (InputViewTopBorder != null) {
-				InputViewTopBorder.Dispose ();
-				InputViewTopBorder = null;
+			if (RemoveAttachButton != null) {
+				RemoveAttachButton.Dispose ();
+				RemoveAttachButton = null;
 			}
 
 			if (SendButton != null) {
 				SendButton.Dispose ();
 				SendButton = null;
+			}
+
+			if (TakePhotoButton != null) {
+				TakePhotoButton.Dispose ();
+				TakePhotoButton = null;
 			}
 		}
 	}

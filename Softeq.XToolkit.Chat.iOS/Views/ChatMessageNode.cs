@@ -78,7 +78,7 @@ namespace Softeq.XToolkit.Chat.iOS.Views
 
             _attachmentImageNode.ContentMode = UIViewContentMode.ScaleAspectFit;
             _attachmentImageNode.Hidden = _viewModelRef.Target == null || !_viewModelRef.Target.HasAttachment;
-            _attachmentImageNode.ImageModificationBlock = image => image.MakeImageWithRoundedCorners(30);
+            _attachmentImageNode.ImageModificationBlock = image => image.MakeImageWithRoundedCorners(12);
             if (_viewModelRef.Target != null && _viewModelRef.Target.HasAttachment && _attachmentImageNode.Image == null)
             {
                 _attachmentImageNode.LoadImageAsync(_viewModelRef.Target.AttachmentImageUrl).ContinueWith((arg) =>
@@ -132,7 +132,7 @@ namespace Softeq.XToolkit.Chat.iOS.Views
                     return;
                 }
                 var statusImage = default(UIImage);
-                // TODO: refactoring
+                //TODO VPY: need refactor this
                 switch (_viewModelRef.Target.Status)
                 {
                     case Models.ChatMessageStatus.Sending:

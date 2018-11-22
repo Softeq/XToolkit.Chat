@@ -23,6 +23,7 @@ namespace Softeq.XToolkit.Chat.Manager
         private readonly IChatService _chatService;
         private readonly IMessagesCache _messagesCache;
         private readonly IViewModelFactoryService _viewModelFactoryService;
+        private readonly IUploadImageService _uploadImageService;
         private readonly ILogger _logger;
 
         private readonly List<IDisposable> _subscriptions = new List<IDisposable>();
@@ -42,11 +43,13 @@ namespace Softeq.XToolkit.Chat.Manager
             IChatService chatService,
             IMessagesCache messagesCache,
             IViewModelFactoryService viewModelFactoryService,
-            ILogManager logManager)
+            ILogManager logManager,
+            IUploadImageService uploadImageService)
         {
             _chatService = chatService;
             _messagesCache = messagesCache;
             _viewModelFactoryService = viewModelFactoryService;
+            _uploadImageService = uploadImageService;
             _logger = logManager.GetLogger<ChatManager>();
 
             _messagesCache.Init(new Common.TaskReference<string, string, DateTimeOffset, IList<ChatMessageModel>>(
