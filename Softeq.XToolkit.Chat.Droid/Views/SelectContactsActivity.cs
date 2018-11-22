@@ -26,7 +26,7 @@ using Softeq.XToolkit.WhiteLabel.Threading;
 
 namespace Softeq.XToolkit.Chat.Droid.Views
 {
-    [Activity(Theme = "@style/ChatTheme")]
+    [Activity]
     public class SelectContactsActivity : ActivityBase<SelectContactsViewModel>
     {
         private NavigationBarView _navigationBarView;
@@ -46,6 +46,7 @@ namespace Softeq.XToolkit.Chat.Droid.Views
 
             base.OnCreate(savedInstanceState);
 
+            SetTheme(StyleHelper.Style.CommonActivityStyle);
             SetContentView(Resource.Layout.activity_chat_create);
 
             _navigationBarView = FindViewById<NavigationBarView>(Resource.Id.activity_chat_create_navigation_bar);
