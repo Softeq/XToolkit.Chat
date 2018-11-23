@@ -18,9 +18,16 @@ namespace Softeq.XToolkit.Chat.iOS
     public interface IChatIosStyle
     {
         UIColor NavigationBarTintColor { get; }
+        UIColor ButtonTintColor { get; }
+
         string BackButtonBundleName { get; }
         string ChatDetailsButtonBundleName { get; }
         string ChatGroupNoAvatarBundleName { get; }
+        string TakePhotoBundleName { get; }
+        string SendBundleName { get; }
+        string AddImageBundleName { get; }
+        string RemoveAttachBundleName { get; }
+        string CloseButtonImageBoundleName { get; }
 
         AvatarImageHelpers.AvatarStyles AvatarStyles { get; }
     }

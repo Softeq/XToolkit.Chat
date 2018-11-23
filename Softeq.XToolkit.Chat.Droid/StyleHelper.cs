@@ -19,10 +19,12 @@ namespace Softeq.XToolkit.Chat.Droid
         int NavigationBarBackButtonIcon { get; }
         int NavigationBarDetailsButtonIcon { get; }
 
+        int TakeAttachmentButtonIcon { get; }
         int AddAttachmentButtonIcon { get; }
         int SendMessageButtonIcon { get; }
         int EditingCloseButtonIcon { get; }
         int ScrollDownButtonIcon { get; }
+        int RemoveImageButtonIcon { get; }
 
         int MessageStatusSentIcon { get; }
         int MessageStatusDeliveredIcon { get; }
@@ -46,8 +48,10 @@ namespace Softeq.XToolkit.Chat.Droid
         public abstract int NavigationBarBackButtonIcon { get; }
         public abstract int NavigationBarDetailsButtonIcon { get; }
         public abstract int AddAttachmentButtonIcon { get; }
+        public abstract int TakeAttachmentButtonIcon { get; }
         public abstract int SendMessageButtonIcon { get; }
         public abstract AvatarPlaceholderDrawable.AvatarStyles ChatAvatarStyles { get; }
         public abstract int ChatGroupNoAvatarIcon { get; }
+        public abstract int RemoveImageButtonIcon { get; }
     }
 }

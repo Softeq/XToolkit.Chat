@@ -131,14 +131,15 @@ namespace Softeq.XToolkit.Chat.SignalRClient
             }));
         }
 
-        public Task<ChatMessageModel> SendMessageAsync(string chatId, string messageBody)
+        public Task<ChatMessageModel> SendMessageAsync(string chatId, string messageBody, string imageUrl)
         {
             return CheckConnectionAndSendRequest(new TaskReference<ChatMessageModel>(async () =>
             {
                 var createMessageRequest = new CreateMessageRequest
                 {
                     ChannelId = new Guid(chatId),
-                    Body = messageBody
+                    Body = messageBody,
+                    ImageUrl = imageUrl
                 };
                 var dto = await _signalRClient.CreateMessageAsync(createMessageRequest);
                 return Mapper.DtoToChatMessage(dto);
@@ -341,7 +342,7 @@ namespace Softeq.XToolkit.Chat.SignalRClient
                     UpdateConnectionStatus(SocketConnectionStatus.Connecting);
                     var client = await _signalRClient.ConnectAsync(accessToken).ConfigureAwait(false);
 
-                    // TODO:
+                    //TODO: review this
                     if (client == null)
                     {
                         _logger.Error("SignalRAdapter: accessToken is not valid, please relogin");

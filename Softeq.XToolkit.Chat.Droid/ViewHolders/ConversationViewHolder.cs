@@ -17,6 +17,7 @@ using Softeq.XToolkit.Common;
 using Softeq.XToolkit.Common.WeakSubscription;
 using Softeq.XToolkit.WhiteLabel.Droid.Shared.Extensions;
 using Softeq.XToolkit.WhiteLabel.Threading;
+using Softeq.XToolkit.WhiteLabel.ViewModels;
 using PopupMenu = Android.Support.V7.Widget.PopupMenu;
 
 namespace Softeq.XToolkit.Chat.Droid.ViewHolders
@@ -42,6 +43,7 @@ namespace Softeq.XToolkit.Chat.Droid.ViewHolders
             MessageBodyTextView = itemView.FindViewById<TextView>(Resource.Id.tv_message_body);
             MessageDateTimeTextView = itemView.FindViewById<TextView>(Resource.Id.tv_message_date_time);
             AttachmentImageView = itemView.FindViewById<MvxCachedImageView>(Resource.Id.iv_message_attachment);
+            AttachmentImageView.Click += OnMessageImageClicked;
 
             // setup ViewHolder for in/outcoming messages
 
@@ -88,8 +90,15 @@ namespace Softeq.XToolkit.Chat.Droid.ViewHolders
 
             if (_viewModelRef.Target.HasAttachment)
             {
+                AttachmentImageView.Visibility = ViewStates.Visible;
                 ImageService.Instance.LoadUrl(_viewModelRef.Target.AttachmentImageUrl)
-                                     .IntoAsync(AttachmentImageView);
+                            .DownSampleInDip(90, 90)
+                            .IntoAsync(AttachmentImageView);
+            }
+            else
+            {
+                AttachmentImageView.Visibility = ViewStates.Gone;
+                AttachmentImageView.SetImageDrawable(null);
             }
 
             if (_isIncomingMessageViewType && SenderPhotoImageView != null)
@@ -169,6 +178,16 @@ namespace Softeq.XToolkit.Chat.Droid.ViewHolders
             }
 
             MessageStatusView.SetImageResource(statusImageResourceId);
+        }
+
+        private void OnMessageImageClicked(object sender, EventArgs e)
+        {
+            var options = new FullScreenImageOptions
+            {
+                ImageUrl = _viewModelRef.Target?.Model?.ImageUrl,
+                DroidCloseButtonImageResId = Resource.Drawable.core_ic_close
+            };
+            _viewModelRef.Target?.ShowImage(options);
         }
     }
 }

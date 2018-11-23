@@ -41,7 +41,7 @@ namespace Softeq.XToolkit.Chat.Models.Interfaces
         Task<IList<ChatMessageModel>> GetAllMessagesAsync(string chatId);
 
         Task MarkMessageAsReadAsync(string chatId, string messageId);
-        Task<ChatMessageModel> SendMessageAsync(string chatId, string messageBody);
+        Task<ChatMessageModel> SendMessageAsync(string chatId, string messageBody, string imageUrl);
         Task EditMessageAsync(string messageId, string messageBody);
         Task DeleteMessageAsync(string chatId, string messageId);
 

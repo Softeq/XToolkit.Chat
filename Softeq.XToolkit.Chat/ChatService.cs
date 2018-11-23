@@ -124,9 +124,9 @@ namespace Softeq.XToolkit.Chat
             return _httpChatAdapter.MarkMessageAsReadAsync(chatId, messageId);
         }
 
-        public async Task<ChatMessageModel> SendMessageAsync(string chatId, string messageBody)
+        public async Task<ChatMessageModel> SendMessageAsync(string chatId, string messageBody, string imageUrl)
         {
-            var result = await _socketChatAdapter.SendMessageAsync(chatId, messageBody);
+            var result = await _socketChatAdapter.SendMessageAsync(chatId, messageBody, imageUrl);
             var userId = await GetUserIdAsync().ConfigureAwait(false);
             result?.UpdateIsMineStatus(userId);
             return result;

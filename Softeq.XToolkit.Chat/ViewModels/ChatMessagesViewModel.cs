@@ -18,6 +18,7 @@ using Softeq.XToolkit.WhiteLabel.Interfaces;
 using Softeq.XToolkit.WhiteLabel.Mvvm;
 using Softeq.XToolkit.WhiteLabel.Navigation;
 using Softeq.XToolkit.Chat.Models.Interfaces;
+using System.IO;
 
 namespace Softeq.XToolkit.Chat.ViewModels
 {
@@ -62,8 +63,7 @@ namespace Softeq.XToolkit.Chat.ViewModels
             ConnectionStatusViewModel = connectionStatusViewModel;
 
             BackCommand = new RelayCommand(_pageNavigationService.GoBack, () => _pageNavigationService.CanGoBack);
-            SendCommand = new RelayCommand(SendMessageAsync);
-            AttachImageCommand = new RelayCommand(AttachImage);
+            SendCommand = new RelayCommand<GenericEventArgs<Func<(Task<Stream>, string)>>>(SendMessageAsync);
             CancelEditingMessageModeCommand = new RelayCommand(CancelEditingMessageMode);
             ShowInfoCommand = new RelayCommand(ShowInfo);
             LoadOlderMessagesCommand = new RelayCommand(() => LoadOlderMessagesAsync().SafeTaskWrapper());
@@ -96,7 +96,7 @@ namespace Softeq.XToolkit.Chat.ViewModels
         public bool IsInEditMessageMode { get; private set; }
 
         public ICommand BackCommand { get; }
-        public ICommand SendCommand { get; }
+        public RelayCommand<GenericEventArgs<Func<(Task<Stream>, string)>>> SendCommand { get; }
         public ICommand AttachImageCommand { get; }
         public ICommand CancelEditingMessageModeCommand { get; }
         public ICommand ShowInfoCommand { get; }
@@ -182,11 +182,6 @@ namespace Softeq.XToolkit.Chat.ViewModels
             _pageNavigationService.NavigateToViewModel<ChatDetailsViewModel, ChatSummaryViewModel>(_chatSummaryViewModel);
         }
 
-        private void AttachImage()
-        {
-            //_chatManager.LoadOlderMessagesAsync().SafeTaskWrapper();
-        }
-
         private void ClearMessages()
         {
             _areLatestMessagesLoaded = false;
@@ -269,13 +264,14 @@ namespace Softeq.XToolkit.Chat.ViewModels
             Messages.RemoveAllFromGroups(messagesToDelete);
         }
 
-        private async void SendMessageAsync()
+        private async void SendMessageAsync(GenericEventArgs<Func<(Task<Stream>, string)>> e)
         {
             var newMessageBody = MessageToSendBody?.Trim();
             if (string.IsNullOrEmpty(newMessageBody))
             {
                 return;
             }
+
             MessageToSendBody = string.Empty;
 
             if (IsInEditMessageMode && _messageBeingEdited != null)
@@ -286,7 +282,7 @@ namespace Softeq.XToolkit.Chat.ViewModels
             }
             else
             {
-                await _chatManager.SendMessageAsync(_chatSummaryViewModel.ChatId, newMessageBody).ConfigureAwait(false);
+                await _chatManager.SendMessageAsync(_chatSummaryViewModel.ChatId, newMessageBody, e.Value).ConfigureAwait(false);
             }
         }
 

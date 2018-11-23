@@ -33,7 +33,7 @@ namespace Softeq.XToolkit.Chat.iOS.Extensions
             }
         }
 
-        // TODO:
+        //TODO VPY: code duplication
         public static async void LoadImageWithTextPlaceholder(this ASImageNode imageView,
             string url,
             string name,

@@ -18,12 +18,13 @@ using Softeq.XToolkit.Common.Extensions;
 using Softeq.XToolkit.WhiteLabel;
 using Softeq.XToolkit.WhiteLabel.Interfaces;
 using Softeq.XToolkit.WhiteLabel.iOS;
+using Softeq.XToolkit.WhiteLabel.iOS.Extensions;
 using Softeq.XToolkit.WhiteLabel.Threading;
 using UIKit;
-using Softeq.XToolkit.WhiteLabel.iOS.Extensions;
 
 namespace Softeq.XToolkit.Chat.iOS.ViewControllers
 {
+    //TODO VPY: hard refactoring needed
     public partial class ChatMessagesViewController : ViewControllerBase<ChatMessagesViewModel>
     {
         private const int DefaultScrollDownBottomConstraintValue = 8;
@@ -66,11 +67,14 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
             _contextMenuComponent = new ContextMenuComponent();
             _contextMenuComponent.AddCommand(ContextMenuActions.Edit, ViewModel.MessageCommandActions[0]);
             _contextMenuComponent.AddCommand(ContextMenuActions.Delete, ViewModel.MessageCommandActions[1]);
+
             UIMenuController.SharedMenuController.MenuItems = _contextMenuComponent.BuildMenuItems();
             UIMenuController.SharedMenuController.Update();
 
-            InputBar.Send.SetCommand(ViewModel.SendCommand);
-            InputBar.AttachImage.SetCommand(ViewModel.AttachImageCommand);
+            InputBar.ViewDidLoad(this);
+
+            InputBar.SetCommandWithArgs(nameof(InputBar.SendRaised), ViewModel.SendCommand);
+
             InputBar.EditingClose.SetCommand(ViewModel.CancelEditingMessageModeCommand);
 
             ScrollToBottomButton.SetCommand(new RelayCommand(() => ScrollToBottom(true)));
@@ -236,7 +240,6 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
         {
             var deltaHeight = newSize.Height - oldSize.Height;
 
-            // TODO: simplify
             if (!_isAutoScrollToBottomEnabled && _shouldUpdateTableViewContentOffset && deltaHeight > MinCellHeight)
             {
                 _shouldUpdateTableViewContentOffset = false;
@@ -251,6 +254,7 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
         {
             TableViewScrollChanged(scrollPosition);
         }
+       
         private void TableViewScrollChanged(nfloat scrollViewOffsetY)
         {
             var isAutoScrollAvailable = scrollViewOffsetY < TableNode.View.Frame.Height;

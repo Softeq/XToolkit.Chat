@@ -14,10 +14,10 @@ using Softeq.XToolkit.Chat.iOS.Extensions;
 using Softeq.XToolkit.Chat.iOS.Controls;
 using Softeq.XToolkit.Chat.ViewModels;
 using Softeq.XToolkit.Common;
-using Softeq.XToolkit.Common.Extensions;
 using Softeq.XToolkit.Common.iOS.Helpers;
 using Softeq.XToolkit.WhiteLabel.iOS.Helpers;
 using Softeq.XToolkit.WhiteLabel.Threading;
+using Softeq.XToolkit.WhiteLabel.ViewModels;
 
 namespace Softeq.XToolkit.Chat.iOS.Views
 {
@@ -78,7 +78,7 @@ namespace Softeq.XToolkit.Chat.iOS.Views
 
             _attachmentImageNode.ContentMode = UIViewContentMode.ScaleAspectFit;
             _attachmentImageNode.Hidden = _viewModelRef.Target == null || !_viewModelRef.Target.HasAttachment;
-            _attachmentImageNode.ImageModificationBlock = image => image.MakeImageWithRoundedCorners(30);
+            _attachmentImageNode.ImageModificationBlock = image => image.MakeImageWithRoundedCorners(12);
             if (_viewModelRef.Target != null && _viewModelRef.Target.HasAttachment && _attachmentImageNode.Image == null)
             {
                 _attachmentImageNode.LoadImageAsync(_viewModelRef.Target.AttachmentImageUrl).ContinueWith((arg) =>
@@ -132,7 +132,7 @@ namespace Softeq.XToolkit.Chat.iOS.Views
                     return;
                 }
                 var statusImage = default(UIImage);
-                // TODO: refactoring
+                //TODO VPY: need refactor this
                 switch (_viewModelRef.Target.Status)
                 {
                     case Models.ChatMessageStatus.Sending:
@@ -308,7 +308,13 @@ namespace Softeq.XToolkit.Chat.iOS.Views
         [Export("OnAttachmentTapped")]
         private void OnAttachmentTapped()
         {
-            _viewModelRef.Target?.OpenImage();
+            var options = new FullScreenImageOptions
+            {
+                CloseButtonTintColor = Common.iOS.Extensions.UIColorExtensions.ToHex(StyleHelper.Style.ButtonTintColor),
+                ImageUrl = _viewModelRef.Target?.AttachmentImageUrl,
+                IosCloseButtonImageBoundleName = StyleHelper.Style.CloseButtonImageBoundleName
+            };
+            _viewModelRef.Target?.ShowImage(options);
         }
     }
 }
