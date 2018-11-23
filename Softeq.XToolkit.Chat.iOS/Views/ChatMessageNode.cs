@@ -310,7 +310,7 @@ namespace Softeq.XToolkit.Chat.iOS.Views
         {
             var options = new FullScreenImageOptions
             {
-                CloseButtonTintColor = Common.iOS.Extensions.UIColorExtensions.UIColorToHex(StyleHelper.Style.ButtonTintColor),
+                CloseButtonTintColor = Common.iOS.Extensions.UIColorExtensions.ToHex(StyleHelper.Style.ButtonTintColor),
                 ImageUrl = _viewModelRef.Target?.AttachmentImageUrl,
                 IosCloseButtonImageBoundleName = StyleHelper.Style.CloseButtonImageBoundleName
             };
