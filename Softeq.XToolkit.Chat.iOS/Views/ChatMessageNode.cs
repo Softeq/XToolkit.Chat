@@ -14,10 +14,10 @@ using Softeq.XToolkit.Chat.iOS.Extensions;
 using Softeq.XToolkit.Chat.iOS.Controls;
 using Softeq.XToolkit.Chat.ViewModels;
 using Softeq.XToolkit.Common;
-using Softeq.XToolkit.Common.Extensions;
 using Softeq.XToolkit.Common.iOS.Helpers;
 using Softeq.XToolkit.WhiteLabel.iOS.Helpers;
 using Softeq.XToolkit.WhiteLabel.Threading;
+using Softeq.XToolkit.WhiteLabel.ViewModels;
 
 namespace Softeq.XToolkit.Chat.iOS.Views
 {
@@ -308,7 +308,13 @@ namespace Softeq.XToolkit.Chat.iOS.Views
         [Export("OnAttachmentTapped")]
         private void OnAttachmentTapped()
         {
-            _viewModelRef.Target?.OpenImage();
+            var options = new FullScreenImageOptions
+            {
+                CloseButtonTintColor = Common.iOS.Extensions.UIColorExtensions.UIColorToHex(StyleHelper.Style.ButtonTintColor),
+                ImageUrl = _viewModelRef.Target?.AttachmentImageUrl,
+                IosCloseButtonImageBoundleName = StyleHelper.Style.CloseButtonImageBoundleName
+            };
+            _viewModelRef.Target?.ShowImage(options);
         }
     }
 }

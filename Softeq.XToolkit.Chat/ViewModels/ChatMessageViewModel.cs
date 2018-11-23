@@ -89,9 +89,9 @@ namespace Softeq.XToolkit.Chat.ViewModels
 
         public override int GetHashCode() => Model == null ? 0 : Model.GetHashCode();
 
-        public void ShowImage()
+        public void ShowImage(FullScreenImageOptions options)
         {
-            _dialogsService.ShowForViewModel<FullScreenImageViewModel, string>(AttachmentImageUrl);
+            _dialogsService.ShowForViewModel<FullScreenImageViewModel, FullScreenImageOptions>(options);
         }
 
         private void UpdateMessageModel(ChatMessageModel chatMessageModel)

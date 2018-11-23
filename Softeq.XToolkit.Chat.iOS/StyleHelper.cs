@@ -27,6 +27,7 @@ namespace Softeq.XToolkit.Chat.iOS
         string SendBundleName { get; }
         string AddImageBundleName { get; }
         string RemoveAttachBundleName { get; }
+        string CloseButtonImageBoundleName { get; }
 
         AvatarImageHelpers.AvatarStyles AvatarStyles { get; }
     }

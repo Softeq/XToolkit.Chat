@@ -17,6 +17,7 @@ using Softeq.XToolkit.Common;
 using Softeq.XToolkit.Common.WeakSubscription;
 using Softeq.XToolkit.WhiteLabel.Droid.Shared.Extensions;
 using Softeq.XToolkit.WhiteLabel.Threading;
+using Softeq.XToolkit.WhiteLabel.ViewModels;
 using PopupMenu = Android.Support.V7.Widget.PopupMenu;
 
 namespace Softeq.XToolkit.Chat.Droid.ViewHolders
@@ -181,7 +182,12 @@ namespace Softeq.XToolkit.Chat.Droid.ViewHolders
 
         private void OnMessageImageClicked(object sender, EventArgs e)
         {
-            _viewModelRef.Target?.ShowImage();
+            var options = new FullScreenImageOptions
+            {
+                ImageUrl = _viewModelRef.Target?.Model?.ImageUrl,
+                DroidCloseButtonImageResId = Resource.Drawable.core_ic_close
+            };
+            _viewModelRef.Target?.ShowImage(options);
         }
     }
 }
