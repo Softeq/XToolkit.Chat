@@ -42,6 +42,7 @@ namespace Softeq.XToolkit.Chat.Droid.ViewHolders
             MessageBodyTextView = itemView.FindViewById<TextView>(Resource.Id.tv_message_body);
             MessageDateTimeTextView = itemView.FindViewById<TextView>(Resource.Id.tv_message_date_time);
             AttachmentImageView = itemView.FindViewById<MvxCachedImageView>(Resource.Id.iv_message_attachment);
+            AttachmentImageView.Click += OnMessageImageClicked;
 
             // setup ViewHolder for in/outcoming messages
 
@@ -176,6 +177,11 @@ namespace Softeq.XToolkit.Chat.Droid.ViewHolders
             }
 
             MessageStatusView.SetImageResource(statusImageResourceId);
+        }
+
+        private void OnMessageImageClicked(object sender, EventArgs e)
+        {
+            _viewModelRef.Target?.ShowImage();
         }
     }
 }
