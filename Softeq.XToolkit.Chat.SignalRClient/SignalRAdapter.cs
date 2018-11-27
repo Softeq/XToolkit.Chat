@@ -60,7 +60,6 @@ namespace Softeq.XToolkit.Chat.SignalRClient
 
             SubscribeToEvents();
 
-            internetConnectionManager.StartTracking();
             internetConnectionManager.NetworkConnectionChanged += OnNetworkConnectionChanged;
 
             ConnectIfNotConnectedAsync().SafeTaskWrapper();
