@@ -19,6 +19,8 @@ namespace Softeq.XToolkit.Chat.iOS
     {
         UIColor NavigationBarTintColor { get; }
         UIColor ButtonTintColor { get; }
+        
+        AvatarImageHelpers.AvatarStyles AvatarStyles { get; }
 
         string BackButtonBundleName { get; }
         string ChatDetailsButtonBundleName { get; }
@@ -28,7 +30,11 @@ namespace Softeq.XToolkit.Chat.iOS
         string AddImageBundleName { get; }
         string RemoveAttachBundleName { get; }
         string CloseButtonImageBoundleName { get; }
-
-        AvatarImageHelpers.AvatarStyles AvatarStyles { get; }
+        string MessageSendingBoundleName { get; }
+        string MessageDeliveredBoundleName { get; }
+        string MessageReadBoundleName { get; }
+        string BubbleMineBoundleName { get; }
+        string BubbleOtherBoundleName { get; }
+        string ScrollDownBoundleName { get; }
     }
 }
