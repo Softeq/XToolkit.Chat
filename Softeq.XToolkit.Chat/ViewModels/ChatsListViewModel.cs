@@ -60,7 +60,7 @@ namespace Softeq.XToolkit.Chat.ViewModels
                 RaisePropertyChanged();
                 if (value != null)
                 {
-                    _pageNavigationService.NavigateToViewModel<ChatMessagesViewModel, ChatSummaryViewModel>(value);
+                    _pageNavigationService.For<ChatMessagesViewModel>().WithParam(x => x.Parameter, value).Navigate();
                 }
             }
         }
@@ -88,9 +88,9 @@ namespace Softeq.XToolkit.Chat.ViewModels
 
         private void CreateChat()
         {
-            _pageNavigationService.NavigateToViewModel<SelectContactsViewModel,
-                (SelectedContactsAction, IList<string> FilteredUsers, string OpenedChatId)>(
-                (SelectedContactsAction.CreateChat, null, null));
+            _pageNavigationService.For<SelectContactsViewModel>()
+                .WithParam(x => x.SelectedContactsAction, SelectedContactsAction.CreateChat)
+                .Navigate();
         }
 
         private Task LeaveChatAsync(ChatSummaryViewModel chatViewModel)
