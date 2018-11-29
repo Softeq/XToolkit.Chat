@@ -17,7 +17,7 @@
         android:layout_alignLeft="@+id/ll_message_container"
         android:layout_alignRight="@+id/ll_message_container"
         android:layout_alignTop="@+id/ll_message_container"
-        android:background="@drawable/chat_conversation_bubble_incoming" />
+        android:id="@+id/item_chat_conversation_bg" />
     <LinearLayout
         android:id="@+id/ll_message_container"
         android:orientation="vertical"

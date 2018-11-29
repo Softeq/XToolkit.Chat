@@ -34,6 +34,9 @@ namespace Softeq.XToolkit.Chat.Droid
 
         AvatarPlaceholderDrawable.AvatarStyles ChatAvatarStyles { get; }
         int ChatGroupNoAvatarIcon { get; }
+
+        int IncommingMessageBg { get; }
+        int OutcomingMessageBg { get; }
     }
 
     public abstract class ChatDroidStyleBase : IChatDroidStyle
@@ -53,5 +56,8 @@ namespace Softeq.XToolkit.Chat.Droid
         public abstract AvatarPlaceholderDrawable.AvatarStyles ChatAvatarStyles { get; }
         public abstract int ChatGroupNoAvatarIcon { get; }
         public abstract int RemoveImageButtonIcon { get; }
+
+        public abstract int IncommingMessageBg { get; }
+        public abstract int OutcomingMessageBg { get; }
     }
 }
