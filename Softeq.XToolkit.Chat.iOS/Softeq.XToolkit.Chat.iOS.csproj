@@ -125,6 +125,10 @@
     <Compile Include="Controls\ContextMenuComponent.cs" />
     <Compile Include="Controls\ContextMenuActions.cs" />
     <Compile Include="StyleHelper.cs" />
+    <Compile Include="ViewControllers\AddContactsViewController.cs" />
+    <Compile Include="ViewControllers\AddContactsViewController.designer.cs">
+      <DependentUpon>AddContactsViewController.cs</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <InterfaceDefinition Include="ViewControllers\ChatDetailsStoryboard.storyboard" />
@@ -137,6 +141,7 @@
     <InterfaceDefinition Include="Views\MessagesDateHeaderViewCell.xib" />
     <InterfaceDefinition Include="Views\ConnectionStatusView.xib" />
     <InterfaceDefinition Include="Views\ChatMessagesInputBarView.xib" />
+    <InterfaceDefinition Include="ViewControllers\AddContactsStoryboard.storyboard" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\XToolkit\Softeq.XToolkit.Permissions\Softeq.XToolkit.Permissions.csproj">

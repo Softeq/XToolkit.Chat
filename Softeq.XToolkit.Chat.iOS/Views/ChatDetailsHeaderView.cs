@@ -32,11 +32,11 @@ namespace Softeq.XToolkit.Chat.iOS.Views
             set => ChatNameTextField.Enabled = value;
         }
 
-        public bool IsAddMembersButtonHidden
-        {
-            get => AddMembersButton.Hidden;
-            set => AddMembersButton.Hidden = value;
-        }
+        //public bool IsAddMembersButtonHidden
+        //{
+        //    get => AddMembersButton.Hidden;
+        //    set => AddMembersButton.Hidden = value;
+        //}
 
         public void SetAddMembersCommand(ICommand command)
         {

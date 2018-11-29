@@ -56,11 +56,11 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
 
             _chatDetailsHeaderView = new ChatDetailsHeaderView(new CGRect(0, 0, 200, 220))
             {
-                IsEditMode = true,
-                IsAddMembersButtonHidden = true
+                IsEditMode = true
             };
 
             _chatDetailsHeaderView.SetChangeChatPhotoCommand(new RelayCommand(OpenPicker));
+            _chatDetailsHeaderView.SetAddMembersCommand(ViewModel.AddMembersCommand);
             _chatDetailsHeaderView.SetChatAvatar(null);
 
             TableView.TableHeaderView = _chatDetailsHeaderView;
