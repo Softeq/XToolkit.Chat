@@ -1,20 +1,29 @@
 ﻿// Developed by Softeq Development Corporation
 // http://www.softeq.com
 
+using Softeq.XToolkit.RemoteData;
 using Softeq.XToolkit.RemoteData.HttpClient;
 
 namespace Softeq.XToolkit.Chat.HttpClient.Requests
 {
     internal class GetMembersRequest : BaseRestRequest
     {
-        private readonly string _apiUrl;
-
-        public GetMembersRequest(string apiUrl)
+        public GetMembersRequest(
+            string apiUrl,
+            string nameFilter,
+            int pageNumber,
+            int pageSize)
         {
-            _apiUrl = apiUrl;
+            var queryParams = new QueryStringBuilder()
+                .AddParam("pageNumber", pageNumber.ToString())
+                .AddParam("pageSize", pageSize.ToString())
+                .AddParam("nameFilter", nameFilter)
+                .Build();
+
+            EndpointUrl = $"{apiUrl}/member/{queryParams}";
         }
 
-        public override string EndpointUrl => $"{_apiUrl}/member";
+        public override string EndpointUrl { get; }
 
         public override bool UseOriginalEndpoint => true;
     }

@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Softeq.XToolkit.Chat.Models.Enum;
+using Softeq.XToolkit.Common.Models;
 
 namespace Softeq.XToolkit.Chat.Models.Interfaces
 {
@@ -45,7 +46,7 @@ namespace Softeq.XToolkit.Chat.Models.Interfaces
         Task EditMessageAsync(string messageId, string messageBody);
         Task DeleteMessageAsync(string chatId, string messageId);
 
-        Task<IList<ChatUserModel>> GetContactsAsync();
+        Task<PagingModel<ChatUserModel>> GetContactsAsync(string nameFilter, int pageNumber, int pageSize);
         Task<IList<ChatUserModel>> GetChatMembersAsync(string chatId);
 
         void ForceReconnect();
