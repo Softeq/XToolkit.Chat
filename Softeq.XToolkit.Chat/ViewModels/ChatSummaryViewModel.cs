@@ -37,6 +37,7 @@ namespace Softeq.XToolkit.Chat.ViewModels
         public ChatSummaryModel Parameter
         {
             set => _chatSummary = value ?? new ChatSummaryModel();
+            get => _chatSummary;
         }
 
         public string ChatId => _chatSummary.Id;

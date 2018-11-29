@@ -79,6 +79,7 @@ namespace Softeq.XToolkit.Chat.ViewModels
                 // TODO: affected by different ways of register ViewModel on each platform
                 ClearMessages();
             }
+            get { return _chatSummaryViewModel; }
         }
 
         public ConnectionStatusViewModel ConnectionStatusViewModel { get; }
@@ -179,7 +180,7 @@ namespace Softeq.XToolkit.Chat.ViewModels
 
         private void ShowInfo()
         {
-            _pageNavigationService.For<ChatDetailsViewModel>().WithParam(x => x.ChatSummaryViewModel, _chatSummaryViewModel).Navigate();
+            _pageNavigationService.For<ChatDetailsViewModel>().WithParam(x => x.Summary, _chatSummaryViewModel.Parameter).Navigate();
         }
 
         private void AttachImage()

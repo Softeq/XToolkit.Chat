@@ -61,12 +61,12 @@ namespace Softeq.XToolkit.Chat.Droid.Views
         {
             base.DoAttachBindings();
 
-            Bindings.Add(this.SetBinding(() => ViewModel.ChatName, () => _chatNameTextView.Text));
+            Bindings.Add(this.SetBinding(() => ViewModel.Summary.Name, () => _chatNameTextView.Text));
             Bindings.Add(this.SetBinding(() => ViewModel.MembersCountText, () => _chatMembersCountTextView.Text));
-            Bindings.Add(this.SetBinding(() => ViewModel.ChatAvatarUrl).WhenSourceChanges(() =>
+            Bindings.Add(this.SetBinding(() => ViewModel.Summary.AvatarUrl).WhenSourceChanges(() =>
             {
                 ImageService.Instance
-                        .LoadUrl(ViewModel.ChatAvatarUrl)
+                        .LoadUrl(ViewModel.Summary.AvatarUrl)
                         .Transform(new CircleTransformation())
                         .IntoAsync(_chatPhotoImageView);
             }));
@@ -104,7 +104,7 @@ namespace Softeq.XToolkit.Chat.Droid.Views
         private void ConfigureSwipeForViewHolder(RecyclerView.ViewHolder viewHolder, int position,
             ICollection<SwipeCallback.ISwipeActionView> actions)
         {
-            if (!_viewModel.IsMemberRemovable(position))
+            if (ViewModel.IsMemberRemovable(position))
             {
                 return;
             }

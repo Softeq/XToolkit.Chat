@@ -18,6 +18,7 @@ namespace Softeq.XToolkit.Chat.ViewModels
         public ChatUserModel Parameter
         {
             set => _model = value;
+            get => _model;
         }
 
         public string Id => _model.SaasUserId;

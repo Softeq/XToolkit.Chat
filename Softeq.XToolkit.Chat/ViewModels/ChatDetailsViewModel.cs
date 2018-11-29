@@ -1,10 +1,10 @@
 ﻿// Developed by Softeq Development Corporation
 // http://www.softeq.com
 
-using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Input;
 using Softeq.XToolkit.Chat.Manager;
+using Softeq.XToolkit.Chat.Models;
 using Softeq.XToolkit.Chat.Models.Enum;
 using Softeq.XToolkit.Chat.Models.Interfaces;
 using Softeq.XToolkit.Common.Collections;
@@ -40,18 +40,13 @@ namespace Softeq.XToolkit.Chat.ViewModels
         public string Title => _localizedStrings.DetailsTitle;
         public string RemoveLocalizedString => _localizedStrings.Remove;
 
-        public ChatSummaryViewModel ChatSummaryViewModel { get; set; }
+        public ChatSummaryModel Summary { get; set; }
 
         public ObservableRangeCollection<ChatUserViewModel> Members { get; } = new ObservableRangeCollection<ChatUserViewModel>();
 
-        public string ChatAvatarUrl => ChatSummaryViewModel.ChatPhotoUrl;
-        public string ChatName => ChatSummaryViewModel.ChatName;
-
         public string MembersCountText => _formatService.PluralizeWithQuantity(Members.Count,
-                                                                               _localizedStrings.MembersPlural,
-                                                                               _localizedStrings.MemberSingular);
-
-        public bool IsNavigated { get; private set; }
+            _localizedStrings.MembersPlural,
+            _localizedStrings.MemberSingular);
 
         public ICommand AddMembersCommand { get; }
         public ICommand BackCommand { get; }
@@ -63,33 +58,19 @@ namespace Softeq.XToolkit.Chat.ViewModels
 
             Members.Clear();
 
-            var members = await _chatManager.GetChatMembersAsync(ChatSummaryViewModel.ChatId);
+            var members = await _chatManager.GetChatMembersAsync(Summary.Id);
             Members.AddRange(members);
             RaisePropertyChanged(nameof(MembersCountText));
         }
 
-        public override void OnDisappearing()
-        {
-            base.OnDisappearing();
-
-            IsNavigated = false;
-        }
-
         public bool IsMemberRemovable(int memberPosition)
         {
-            if (ChatSummaryViewModel.IsCreatedByMe)
+            if (Summary.IsCreatedByMe)
             {
-                return Members[memberPosition].Id != ChatSummaryViewModel.CreatorId;
+                return Members[memberPosition].Id != Summary.CreatorId;
             }
 
             return false;
-        }
-
-        public override void OnNavigated()
-        {
-            base.OnNavigated();
-
-            IsNavigated = true;
         }
 
         private void RemoveMemberAt(int index)
@@ -100,9 +81,12 @@ namespace Softeq.XToolkit.Chat.ViewModels
 
         private void AddMembers()
         {
-            _pageNavigationService.NavigateToViewModel<SelectContactsViewModel,
-                (SelectedContactsAction, IList<string> FilteredUsers, string OpenedChatId)>(
-                (SelectedContactsAction.InviteToChat, Members.Select(x => x.Id).ToList(), ChatSummaryViewModel.ChatId));
+            //TODO: Yauhen Sampir should be passed only chatId and action, users should be loaded from service
+            _pageNavigationService.For<SelectContactsViewModel>()
+                .WithParam(x => x.SelectedContactsAction, SelectedContactsAction.InviteToChat)
+                .WithParam(x => x.FilteredUsers, Members.Select(x => x.Id).ToList())
+                .WithParam(x => x.OpenedChatId, Summary.Id)
+                .Navigate();
         }
     }
 }

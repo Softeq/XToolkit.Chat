@@ -3,10 +3,10 @@
 
 using System;
 using Softeq.XToolkit.Chat.Models;
+using Softeq.XToolkit.Chat.Models.Interfaces;
 using Softeq.XToolkit.WhiteLabel.Interfaces;
 using Softeq.XToolkit.WhiteLabel.Mvvm;
 using Softeq.XToolkit.WhiteLabel.Threading;
-using Softeq.XToolkit.Chat.Models.Interfaces;
 
 namespace Softeq.XToolkit.Chat.ViewModels
 {
@@ -19,9 +19,11 @@ namespace Softeq.XToolkit.Chat.ViewModels
             _formatService = formatService;
         }
 
+        //TODO Yauhen Sampir: Remove Parameter and navigate with parameter exactly on Model with execution Method UpdateMessageModel() if needed
         public ChatMessageModel Parameter
         {
             set => UpdateMessageModel(value);
+            get => null;
         }
 
         public ChatMessageModel Model { get; private set; }
