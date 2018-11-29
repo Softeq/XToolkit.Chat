@@ -26,7 +26,11 @@ namespace Softeq.XToolkit.Chat.Models.Interfaces
 
         Task MarkMessageAsReadAsync(string chatId, string messageId);
 
-        Task<PagingModel<ChatUserModel>> GetContactsAsync(string nameFilter, int pageSize, int pageNumber);
         Task<IList<ChatUserModel>> GetChatMembersAsync(string chatId);
+        
+        Task<PagingModel<ChatUserModel>> GetContactsAsync(string nameFilter, int pageSize, int pageNumber);
+        
+        Task<PagingModel<ChatUserModel>> GetMembersForInviteAsync(string chatId,
+            string nameFilter, int pageSize, int pageNumber);
     }
 }

@@ -46,8 +46,12 @@ namespace Softeq.XToolkit.Chat.Models.Interfaces
         Task EditMessageAsync(string messageId, string messageBody);
         Task DeleteMessageAsync(string chatId, string messageId);
 
-        Task<PagingModel<ChatUserModel>> GetContactsAsync(string nameFilter, int pageNumber, int pageSize);
         Task<IList<ChatUserModel>> GetChatMembersAsync(string chatId);
+        
+        Task<PagingModel<ChatUserModel>> GetContactsAsync(string nameFilter, int pageNumber, int pageSize);
+        
+        Task<PagingModel<ChatUserModel>> GetMembersForInviteAsync(string chatId,
+            string nameFilter, int pageNumber, int pageSize);
 
         void ForceReconnect();
         void ForceDisconnect();

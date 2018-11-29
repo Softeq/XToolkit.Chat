@@ -148,6 +148,11 @@ namespace Softeq.XToolkit.Chat
             return _httpChatAdapter.GetContactsAsync(nameFilter, pageNumber, pageSize);
         }
 
+        public Task<PagingModel<ChatUserModel>> GetMembersForInviteAsync(string chatId, string nameFilter, int pageNumber, int pageSize)
+        {
+            return _httpChatAdapter.GetMembersForInviteAsync(chatId, nameFilter, pageNumber, pageSize);
+        }
+
         public Task<IList<ChatUserModel>> GetChatMembersAsync(string chatId)
         {
             return _httpChatAdapter.GetChatMembersAsync(chatId);
