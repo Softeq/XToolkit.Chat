@@ -133,7 +133,7 @@ namespace Softeq.XToolkit.Chat.HttpClient
                 : Mapper.PagedMembersDtoToPagingModel(result);
         }
 
-        public async Task<PagingModel<ChatUserModel>> GetMembersForInviteAsync(string chatId, string nameFilter, int pageSize, int pageNumber)
+        public async Task<PagingModel<ChatUserModel>> GetContactsForInviteAsync(string chatId, string nameFilter, int pageSize, int pageNumber)
         {
             var request = new GetMembersForInviteRequest(_chatConfig.ApiUrl, chatId, nameFilter, pageSize, pageNumber);
             var result = await _httpClient.TrySendAndDeserializeAsync<PagedMembersDto>(request, _logger).ConfigureAwait(false);

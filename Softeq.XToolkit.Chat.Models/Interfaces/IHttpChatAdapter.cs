@@ -30,7 +30,7 @@ namespace Softeq.XToolkit.Chat.Models.Interfaces
         
         Task<PagingModel<ChatUserModel>> GetContactsAsync(string nameFilter, int pageSize, int pageNumber);
         
-        Task<PagingModel<ChatUserModel>> GetMembersForInviteAsync(string chatId,
+        Task<PagingModel<ChatUserModel>> GetContactsForInviteAsync(string chatId,
             string nameFilter, int pageSize, int pageNumber);
     }
 }

@@ -157,7 +157,7 @@ namespace Softeq.XToolkit.Chat.HttpClient
             throw new NotImplementedException();
         }
 
-        public Task<PagingModel<ChatUserModel>> GetMembersForInviteAsync(string chatId, string nameFilter, int pageSize, int pageNumber)
+        public Task<PagingModel<ChatUserModel>> GetContactsForInviteAsync(string chatId, string nameFilter, int pageSize, int pageNumber)
         {
             throw new NotImplementedException();
         }
