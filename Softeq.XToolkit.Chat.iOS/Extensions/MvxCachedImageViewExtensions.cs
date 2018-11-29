@@ -46,7 +46,7 @@ namespace Softeq.XToolkit.Chat.iOS.Extensions
 
             var expr = ImageService.Instance
                 .LoadUrl(url)
-                .DownSampleInDip((int)styles.Size.Width, (int)styles.Size.Height);
+                .DownSampleInDip(styles.Size.Width, styles.Size.Height);
 
             try
             {

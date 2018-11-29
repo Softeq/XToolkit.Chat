@@ -45,6 +45,13 @@ namespace Softeq.XToolkit.Chat.Droid.ViewHolders
             AttachmentImageView = itemView.FindViewById<MvxCachedImageView>(Resource.Id.iv_message_attachment);
             AttachmentImageView.Click += OnMessageImageClicked;
 
+            var resourceId = _isIncomingMessageViewType
+                ? StyleHelper.Style.IncommingMessageBg
+                : StyleHelper.Style.OutcomingMessageBg;
+
+            var imageBg = itemView.FindViewById<ImageView>(Resource.Id.item_chat_conversation_bg);
+            imageBg.SetBackgroundResource(resourceId);
+
             // setup ViewHolder for in/outcoming messages
 
             if (_isIncomingMessageViewType)

@@ -105,16 +105,6 @@
     <AndroidResource Include="Resources\values\themes.xml" />
     <AndroidResource Include="Resources\drawable\chat_bg_conversation_editing_indicator.xml" />
     <AndroidResource Include="Resources\values\colors.xml" />
-    <AndroidResource Include="Resources\drawable-hdpi\chat_conversation_bubble_incoming.9.png" />
-    <AndroidResource Include="Resources\drawable-hdpi\chat_conversation_bubble_outcoming.9.png" />
-    <AndroidResource Include="Resources\drawable-mdpi\chat_conversation_bubble_incoming.9.png" />
-    <AndroidResource Include="Resources\drawable-mdpi\chat_conversation_bubble_outcoming.9.png" />
-    <AndroidResource Include="Resources\drawable-xhdpi\chat_conversation_bubble_incoming.9.png" />
-    <AndroidResource Include="Resources\drawable-xhdpi\chat_conversation_bubble_outcoming.9.png" />
-    <AndroidResource Include="Resources\drawable-xxhdpi\chat_conversation_bubble_incoming.9.png" />
-    <AndroidResource Include="Resources\drawable-xxhdpi\chat_conversation_bubble_outcoming.9.png" />
-    <AndroidResource Include="Resources\drawable-xxxhdpi\chat_conversation_bubble_incoming.9.png" />
-    <AndroidResource Include="Resources\drawable-xxxhdpi\chat_conversation_bubble_outcoming.9.png" />
     <AndroidResource Include="Resources\layout\activity_chat_conversations.xml" />
     <AndroidResource Include="Resources\drawable\chat_ic_sent.xml" />
     <AndroidResource Include="Resources\drawable\chat_ic_read.xml" />
