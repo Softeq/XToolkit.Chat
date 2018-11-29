@@ -59,10 +59,20 @@ namespace Softeq.XToolkit.Chat.Manager
             return _chatService.InviteMembersAsync(chatId, participantsIds);
         }
 
-        public async Task<IList<ChatUserViewModel>> GetContactsAsync()
+        public async Task<IList<ChatUserViewModel>> GetContactsAsync(string nameFilter, int pageNumber, int pageSize)
         {
-            var models = await _chatService.GetContactsAsync().ConfigureAwait(false);
-            return models?.Select(_viewModelFactoryService.ResolveViewModel<ChatUserViewModel, ChatUserModel>)?.ToList();
+            var models = await _chatService.GetContactsAsync(nameFilter, pageNumber, pageSize).ConfigureAwait(false);
+
+            // TODO YP: what about put to cache, after that create VM on target VM, not this?
+            
+            if (models == null)
+            {
+                return new List<ChatUserViewModel>();
+            }
+            
+            return models.Data
+                .Select(_viewModelFactoryService.ResolveViewModel<ChatUserViewModel, ChatUserModel>)
+                .ToList();
         }
 
         public async Task<IList<ChatUserViewModel>> GetChatMembersAsync(string chatId)
@@ -80,13 +90,13 @@ namespace Softeq.XToolkit.Chat.Manager
         {
             return ModifyChatsSafely(() =>
             {
-                if (chatSummary == null || Enumerable.Any<ChatSummaryViewModel>(ChatsCollection, x => x.ChatId == chatSummary.Id))
+                if (chatSummary == null || ChatsCollection.Any(x => x.ChatId == chatSummary.Id))
                 {
                     return false;
                 }
                 var viewModel = _viewModelFactoryService.ResolveViewModel<ChatSummaryViewModel, ChatSummaryModel>(chatSummary);
                 ChatsCollection.Insert(0, viewModel);
-                CollectionSorter.Sort<ChatSummaryViewModel>(ChatsCollection, (x, y) => y.LastUpdateDate.CompareTo(x.LastUpdateDate));
+                ChatsCollection.Sort((x, y) => y.LastUpdateDate.CompareTo(x.LastUpdateDate));
                 return true;
             });
         }
@@ -95,7 +105,7 @@ namespace Softeq.XToolkit.Chat.Manager
         {
             ModifyChatsSafely(() =>
             {
-                var chatSummary = Enumerable.FirstOrDefault<ChatSummaryViewModel>(ChatsCollection, x => x.ChatId == chatId);
+                var chatSummary = ChatsCollection.FirstOrDefault(x => x.ChatId == chatId);
                 if (chatSummary != null)
                 {
                     ChatsCollection.Remove(chatSummary);

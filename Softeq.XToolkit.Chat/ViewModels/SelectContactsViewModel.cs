@@ -16,6 +16,7 @@ using Softeq.XToolkit.Common.Command;
 using Softeq.XToolkit.Common.Extensions;
 using Softeq.XToolkit.WhiteLabel;
 using Softeq.XToolkit.WhiteLabel.Interfaces;
+using Softeq.XToolkit.WhiteLabel.Model;
 using Softeq.XToolkit.WhiteLabel.Mvvm;
 using Softeq.XToolkit.WhiteLabel.Navigation;
 using Softeq.XToolkit.WhiteLabel.Threading;
@@ -32,6 +33,7 @@ namespace Softeq.XToolkit.Chat.ViewModels
         private readonly ICommand _memberSelectedCommand;
         private readonly IPageNavigationService _pageNavigationService;
         private readonly IUploadImageService _uploadImageService;
+        private readonly IDialogsService _dialogsService;
         private string _chatName;
         private IList<string> _filteredUsers = new List<string>();
         private string _openedChatId;
@@ -44,7 +46,8 @@ namespace Softeq.XToolkit.Chat.ViewModels
             IPageNavigationService pageNavigationService,
             IChatLocalizedStrings localizedStrings,
             IFormatService formatService,
-            IUploadImageService uploadImageService)
+            IUploadImageService uploadImageService,
+            IDialogsService dialogsService)
         {
             _chatManager = chatManager;
             _accountService = accountService;
@@ -52,13 +55,16 @@ namespace Softeq.XToolkit.Chat.ViewModels
             _localizedStrings = localizedStrings;
             _formatService = formatService;
             _uploadImageService = uploadImageService;
-
+            _dialogsService = dialogsService;
             _memberSelectedCommand = new RelayCommand(() => RaisePropertyChanged(nameof(ContactsCountText)));
 
             BackCommand = new RelayCommand(_pageNavigationService.GoBack, () => _pageNavigationService.CanGoBack);
+            AddMembersCommand = new RelayCommand(OpenDialogForAddMembers);
         }
 
         public ICommand BackCommand { get; }
+
+        public ICommand AddMembersCommand { get; }
 
         public RelayCommand<Func<(Task<Stream>, string)>> SaveCommand { get; private set; }
 
@@ -108,22 +114,37 @@ namespace Softeq.XToolkit.Chat.ViewModels
         {
             base.OnAppearing();
 
-            Contacts.Clear();
+            //Contacts.Clear();
 
-            var users = await _chatManager.GetContactsAsync().ConfigureAwait(false);
-            if (users != null)
+            //var users = await _chatManager.GetContactsAsync("", 1, 20).ConfigureAwait(false);
+            //if (users != null)
+            //{
+            //    var filteredUsers = users.Where(x => x.Id != _accountService.UserId
+            //                                         && !_filteredUsers.Contains(x?.Id)).ToList();
+            //    filteredUsers.Apply(x =>
+            //    {
+            //        x.IsSelectable = true;
+            //        x.SetSelectionCommand(_memberSelectedCommand);
+            //    });
+            //    Contacts.AddRange(filteredUsers);
+            //}
+
+            //RaisePropertyChanged(nameof(ContactsCountText));
+        }
+
+        private async void OpenDialogForAddMembers()
+        {
+            var result = await _dialogsService.ShowForViewModel<AddContactsViewModel>(new OpenDialogOptions
             {
-                var filteredUsers = users.Where(x => x.Id != _accountService.UserId
-                                                     && !_filteredUsers.Contains(x?.Id)).ToList();
-                filteredUsers.Apply(x =>
-                {
-                    x.IsSelectable = true;
-                    x.SetSelectionCommand(_memberSelectedCommand);
-                });
-                Contacts.AddRange(filteredUsers);
-            }
+                ShouldShowBackgroundOverlay = false
+            });
 
-            RaisePropertyChanged(nameof(ContactsCountText));
+            if (result != null)
+            {
+                Contacts.AddRange(result.SelectedContacts);
+
+                RaisePropertyChanged(nameof(ContactsCountText));
+            }
         }
 
         private async void SaveAsync(Func<(Task<Stream> GetImageTask, string Extension)> getImageFunc)
