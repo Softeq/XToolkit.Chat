@@ -133,6 +133,7 @@
     <Compile Include="Views\SelectedMemberViewCell.designer.cs">
       <DependentUpon>SelectedMemberViewCell.cs</DependentUpon>
     </Compile>
+    <Compile Include="Views\CheckBoxView.cs" />
   </ItemGroup>
   <ItemGroup>
     <InterfaceDefinition Include="ViewControllers\ChatDetailsStoryboard.storyboard" />

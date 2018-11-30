@@ -2,9 +2,7 @@
 // http://www.softeq.com
 
 using System;
-using System.Windows.Input;
 using FFImageLoading.Transformations;
-using Foundation;
 using Softeq.XToolkit.Bindings;
 using Softeq.XToolkit.Chat.ViewModels;
 using Softeq.XToolkit.Common.Command;
@@ -15,8 +13,10 @@ namespace Softeq.XToolkit.Chat.iOS.Views
 {
     public partial class SelectedMemberViewCell : UICollectionViewCell
     {
-        public static readonly NSString Key = new NSString(nameof(SelectedMemberViewCell));
+        public static readonly string Key = nameof(SelectedMemberViewCell);
         public static readonly UINib Nib;
+
+        private ChatUserViewModel _memberViewModel;
 
         protected SelectedMemberViewCell(IntPtr handle) : base(handle) { }
 
@@ -25,15 +25,23 @@ namespace Softeq.XToolkit.Chat.iOS.Views
             Nib = UINib.FromName(Key, null);
         }
 
-        public void Bind(ChatUserViewModel memberViewModel, ICommand removeCommand)
+        public void BindCell(ChatUserViewModel memberViewModel)
         {
-            //RemoveMemberBtn.SetCommand((RelayCommand<ChatUserViewModel>)removeCommand);
+            _memberViewModel = memberViewModel;
 
-            //MemberPhotoImageView.LoadImageWithTextPlaceholder(
-            //memberViewModel.PhotoUrl,
-            //memberViewModel.Username,
-            //StyleHelper.Style.AvatarStyles,
-            //x => x.Transform(new CircleTransformation()));
+            RemoveMemberBtn.SetBackgroundImage(UIImage.FromBundle(StyleHelper.Style.RemoveAttachBundleName), UIControlState.Normal);
+            RemoveMemberBtn.SetCommand(new RelayCommand(() =>
+            {
+                _memberViewModel.IsSelected = false;
+            }));
+
+            MemberNameLabel.Text = _memberViewModel.Username;
+
+            MemberPhotoImageView.LoadImageWithTextPlaceholder(
+                _memberViewModel.PhotoUrl,
+                _memberViewModel.Username,
+                StyleHelper.Style.AvatarStyles,
+                x => x.Transform(new CircleTransformation()));
         }
     }
 }

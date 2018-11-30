@@ -13,6 +13,9 @@ namespace Softeq.XToolkit.Chat.iOS.Views
 	partial class SelectedMemberViewCell
 	{
 		[Outlet]
+		UIKit.UILabel MemberNameLabel { get; set; }
+
+		[Outlet]
 		UIKit.UIImageView MemberPhotoImageView { get; set; }
 
 		[Outlet]
@@ -28,6 +31,11 @@ namespace Softeq.XToolkit.Chat.iOS.Views
 			if (RemoveMemberBtn != null) {
 				RemoveMemberBtn.Dispose ();
 				RemoveMemberBtn = null;
+			}
+
+			if (MemberNameLabel != null) {
+				MemberNameLabel.Dispose ();
+				MemberNameLabel = null;
 			}
 		}
 	}

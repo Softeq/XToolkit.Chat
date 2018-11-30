@@ -14,12 +14,13 @@ namespace Softeq.XToolkit.Chat.ViewModels
     public class AddContactsViewModel : DialogViewModelBase
     {
         private const int SearchDelayMs = 2000;
+        private const string InitialMemberSearchQuery = "";
 
         private readonly ChatManager _chatManager;
         private readonly ICommand _memberSelectedCommand;
 
-        private string _userNameSearchQuery;
         private CancellationTokenSource _lastSearchCancelSource = new CancellationTokenSource();
+        private string _userNameSearchQuery;
         private bool _hasSelectedItems;
 
         public AddContactsViewModel(
@@ -27,30 +28,19 @@ namespace Softeq.XToolkit.Chat.ViewModels
             IChatLocalizedStrings chatLocalizedStrings)
         {
             _chatManager = chatManager;
+            Resources = chatLocalizedStrings;
 
             _memberSelectedCommand = new RelayCommand<ChatUserViewModel>(SwitchSelectedMember);
-
             SearchMemberCommand = new RelayCommand<string>(DoSearch);
-
-            CancelCommand = new RelayCommand(() =>
-            {
-                DialogComponent.CloseCommand.Execute(false);
-            });
-
-            DoneCommand = new RelayCommand(() =>
-            {
-                DialogComponent.CloseCommand.Execute(true);
-            });
-
-            RemoveSelectedMemberCommand = _memberSelectedCommand; // TODO:
-
-            Resources = chatLocalizedStrings;
+            CancelCommand = new RelayCommand(() => DialogComponent.CloseCommand.Execute(false));
+            DoneCommand = new RelayCommand(() => DialogComponent.CloseCommand.Execute(true));
         }
 
         public ICommand CancelCommand { get; }
         public ICommand SearchMemberCommand { get; }
         public ICommand DoneCommand { get; }
         public ICommand RemoveSelectedMemberCommand { get; }
+
         public IChatLocalizedStrings Resources { get; }
 
         public string UserNameSearchQuery
@@ -80,7 +70,7 @@ namespace Softeq.XToolkit.Chat.ViewModels
         {
             base.OnAppearing();
 
-            await LoadMembersAsync("");
+            await LoadMembersAsync(InitialMemberSearchQuery);
         }
 
         private async void DoSearch(string query)
@@ -104,7 +94,7 @@ namespace Softeq.XToolkit.Chat.ViewModels
         {
             FoundContacts.Clear();
 
-            var users = await _chatManager.GetContactsAsync(query, 1, 20000).ConfigureAwait(false);
+            var users = await _chatManager.GetContactsAsync(query, 1, 20000).ConfigureAwait(false); // FIXME:
             if (users != null)
             {
                 var selectedUserIds = SelectedContacts.Select(x => x.Id).ToList();
@@ -131,7 +121,7 @@ namespace Softeq.XToolkit.Chat.ViewModels
                     SelectedContacts.Remove(viewModel);
                 }
             }
-            
+
             HasSelectedItems = SelectedContacts.Count > 0;
         }
     }

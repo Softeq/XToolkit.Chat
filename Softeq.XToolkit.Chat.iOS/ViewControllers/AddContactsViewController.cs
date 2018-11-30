@@ -33,15 +33,30 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
             ResetSelectedRow();
         }
 
+        protected override void DoAttachBindings()
+        {
+            base.DoAttachBindings();
+
+            Bindings.Add(this.SetBinding(() => ViewModel.HasSelectedItems).WhenSourceChanges(() =>
+            {
+                SelectedMembersCollectionView.Hidden = !ViewModel.HasSelectedItems;
+                //SelectedMembersCollectionViewHeightConstaint.Constant = ViewModel.HasSelectedItems ? 80 : 0;
+            }));
+        }
+
         private void InitNavigationBar()
         {
+            CustomNavigationBarItem.Title = ViewModel.Resources.AddMembers;
+
+            CustomNavigationBar.ShadowImage = new UIImage();
+
             CustomNavigationBarItem.SetCommand(
-                UIImage.FromBundle(StyleHelper.Style.CloseButtonImageBoundleName),
+                UIImage.FromBundle(StyleHelper.Style.BackButtonBundleName),
                 ViewModel.CancelCommand,
                 true);
 
             CustomNavigationBarItem.SetCommand(
-                "Done",
+                ViewModel.Resources.Done,
                 StyleHelper.Style.NavigationBarTintColor,
                 ViewModel.DoneCommand,
                 false);
@@ -49,6 +64,7 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
 
         private void InitSearchBar()
         {
+            TableViewSearchBar.Placeholder = ViewModel.Resources.Search;
             TableViewSearchBar.TextChanged += (sender, e) =>
             {
                 ViewModel.UserNameSearchQuery = e.SearchText;
@@ -57,20 +73,22 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
 
         private void InitSearchMembersTableView()
         {
-            TableView.AllowsSelection = false;
+            TableView.RowHeight = 50;
             TableView.RegisterNibForCellReuse(ChatUserViewCell.Nib, ChatUserViewCell.Key);
-            TableView.RowHeight = 80;
-            TableView.KeyboardDismissMode = UIScrollViewKeyboardDismissMode.Interactive;
             TableView.TableFooterView = new UIView();
 
-            var source = ViewModel.FoundContacts.GetTableViewSource((cell, viewModel, index) =>
+            var source = new ObservableTableViewSource<ChatUserViewModel>
+            {
+                DataSource = ViewModel.FoundContacts,
+                BindCellDelegate = (cell, viewModel, index) =>
                 {
                     if (cell is ChatUserViewCell memberCell)
                     {
                         memberCell.BindViewModel(viewModel);
                     }
                 },
-                ChatUserViewCell.Key);
+                ReuseId = ChatUserViewCell.Key
+            };
 
             TableView.Source = source;
         }
@@ -79,13 +97,15 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
         {
             SelectedMembersCollectionView.RegisterNibForCell(SelectedMemberViewCell.Nib, SelectedMemberViewCell.Key);
 
-            var source = ViewModel.SelectedContacts.GetCollectionViewSource<ChatUserViewModel, SelectedMemberViewCell>(
-                (cell, viewModel, index) =>
+            var source = new ObservableCollectionViewSource<ChatUserViewModel, SelectedMemberViewCell>
+            {
+                DataSource = ViewModel.SelectedContacts,
+                BindCellDelegate = (cell, viewModel, index) =>
                 {
-                    cell.Bind(viewModel, ViewModel.RemoveSelectedMemberCommand);
+                    cell.BindCell(viewModel);
                 },
-                null,
-                SelectedMemberViewCell.Key.ToString());
+                ReuseId = SelectedMemberViewCell.Key
+            };
 
             SelectedMembersCollectionView.Source = source;
         }

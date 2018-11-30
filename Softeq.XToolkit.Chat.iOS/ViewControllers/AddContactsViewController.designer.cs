@@ -22,6 +22,9 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
 		UIKit.UICollectionView SelectedMembersCollectionView { get; set; }
 
 		[Outlet]
+		UIKit.NSLayoutConstraint SelectedMembersCollectionViewHeightConstaint { get; set; }
+
+		[Outlet]
 		UIKit.UITableView TableView { get; set; }
 
 		[Outlet]
@@ -52,6 +55,11 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
 			if (TableViewSearchBar != null) {
 				TableViewSearchBar.Dispose ();
 				TableViewSearchBar = null;
+			}
+
+			if (SelectedMembersCollectionViewHeightConstaint != null) {
+				SelectedMembersCollectionViewHeightConstaint.Dispose ();
+				SelectedMembersCollectionViewHeightConstaint = null;
 			}
 		}
 	}
