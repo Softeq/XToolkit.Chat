@@ -3,6 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Softeq.XToolkit.Chat.Manager;
+using Softeq.XToolkit.Chat.Models.Interfaces;
 using Softeq.XToolkit.Common.Collections;
 using Softeq.XToolkit.Common.Command;
 using Softeq.XToolkit.Common.Extensions;
@@ -19,9 +20,11 @@ namespace Softeq.XToolkit.Chat.ViewModels
 
         private string _userNameSearchQuery;
         private CancellationTokenSource _lastSearchCancelSource = new CancellationTokenSource();
+        private bool _hasSelectedItems;
 
         public AddContactsViewModel(
-            ChatManager chatManager)
+            ChatManager chatManager,
+            IChatLocalizedStrings chatLocalizedStrings)
         {
             _chatManager = chatManager;
 
@@ -40,12 +43,15 @@ namespace Softeq.XToolkit.Chat.ViewModels
             });
 
             RemoveSelectedMemberCommand = _memberSelectedCommand; // TODO:
+
+            Resources = chatLocalizedStrings;
         }
 
         public ICommand CancelCommand { get; }
         public ICommand SearchMemberCommand { get; }
         public ICommand DoneCommand { get; }
         public ICommand RemoveSelectedMemberCommand { get; }
+        public IChatLocalizedStrings Resources { get; }
 
         public string UserNameSearchQuery
         {
@@ -63,6 +69,12 @@ namespace Softeq.XToolkit.Chat.ViewModels
 
         public ObservableRangeCollection<ChatUserViewModel> FoundContacts { get; } =
             new ObservableRangeCollection<ChatUserViewModel>();
+
+        public bool HasSelectedItems
+        {
+            get => _hasSelectedItems;
+            set => Set(ref _hasSelectedItems, value);
+        }
 
         public override async void OnAppearing()
         {
@@ -92,7 +104,7 @@ namespace Softeq.XToolkit.Chat.ViewModels
         {
             FoundContacts.Clear();
 
-            var users = await _chatManager.GetContactsAsync(query, 1, 20).ConfigureAwait(false);
+            var users = await _chatManager.GetContactsAsync(query, 1, 20000).ConfigureAwait(false);
             if (users != null)
             {
                 var selectedUserIds = SelectedContacts.Select(x => x.Id).ToList();
@@ -119,6 +131,8 @@ namespace Softeq.XToolkit.Chat.ViewModels
                     SelectedContacts.Remove(viewModel);
                 }
             }
+            
+            HasSelectedItems = SelectedContacts.Count > 0;
         }
     }
 }

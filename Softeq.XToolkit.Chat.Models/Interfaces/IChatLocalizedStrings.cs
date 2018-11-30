@@ -35,5 +35,8 @@ namespace Softeq.XToolkit.Chat.Models.Interfaces
         string Today { get; }
         string Yesterday { get; }
         string Save { get; }
+        string AddMembers { get; }
+        string Done { get; }
+        string Search { get; }
     }
 }

@@ -37,5 +37,8 @@ namespace Softeq.XToolkit.Chat
         public string Today => "Today";
         public string Yesterday => "Yesterday";
         public string Save => "Save";
+        public string AddMembers => "Add members";
+        public string Done => "Done";
+        public string Search => "Search";
     }
 }

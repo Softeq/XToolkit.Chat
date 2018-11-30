@@ -39,6 +39,7 @@ namespace Softeq.XToolkit.Chat.Droid.Views
         private ImagePicker _imagePicker;
         private string _previewImageKey;
         private Button _changeChatPhotoButton;
+        private Button _addMembers;
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -79,6 +80,9 @@ namespace Softeq.XToolkit.Chat.Droid.Views
 
             _chatPhotoImageView.SetImageResource(StyleHelper.Style.ChatGroupNoAvatarIcon);
             _chatEditedPhotoImageView.Visibility = ViewStates.Gone;
+            _addMembers = FindViewById<Button>(Resource.Id.activity_chat_create_add_member);
+            _addMembers.Text = ViewModel.AddMembersText;
+            _addMembers.SetCommand(ViewModel.AddMembersCommand);
         }
 
         protected override void DoAttachBindings()

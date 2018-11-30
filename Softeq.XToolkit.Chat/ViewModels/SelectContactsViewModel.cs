@@ -89,6 +89,8 @@ namespace Softeq.XToolkit.Chat.ViewModels
 
         public bool IsInviteToChat => _selectedContactsAction == SelectedContactsAction.InviteToChat;
 
+        public string AddMembersText => _localizedStrings.AddMembers;
+        
         public (SelectedContactsAction, IList<string> FilteredUsers, string OpenedChatId) Parameter
         {
             set
