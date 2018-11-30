@@ -78,6 +78,7 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
             InputBar.EditingClose.SetCommand(ViewModel.CancelEditingMessageModeCommand);
 
             ScrollToBottomButton.SetCommand(new RelayCommand(() => ScrollToBottom(true)));
+            ScrollToBottomButton.SetBackgroundImage(UIImage.FromBundle(StyleHelper.Style.ScrollDownBoundleName), UIControlState.Normal);
         }
 
         public override void ViewWillAppear(bool animated)

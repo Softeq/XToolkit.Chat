@@ -16,24 +16,27 @@ namespace Softeq.XToolkit.Chat.Droid
 
     public interface IChatDroidStyle
     {
+        AvatarPlaceholderDrawable.AvatarStyles ChatAvatarStyles { get; }
+
         int NavigationBarBackButtonIcon { get; }
         int NavigationBarDetailsButtonIcon { get; }
-
         int TakeAttachmentButtonIcon { get; }
         int AddAttachmentButtonIcon { get; }
         int SendMessageButtonIcon { get; }
         int EditingCloseButtonIcon { get; }
         int ScrollDownButtonIcon { get; }
         int RemoveImageButtonIcon { get; }
-
         int MessageStatusSentIcon { get; }
         int MessageStatusDeliveredIcon { get; }
         int MessageStatusReadIcon { get; }
-
         int CommonActivityStyle { get; }
-
-        AvatarPlaceholderDrawable.AvatarStyles ChatAvatarStyles { get; }
         int ChatGroupNoAvatarIcon { get; }
+        int IncommingMessageBg { get; }
+        int OutcomingMessageBg { get; }
+        int ContentColor { get; }
+        int UnderlinedBg { get; }
+        int CheckedIcon { get; }
+        int UnCheckedIcon { get; }
     }
 
     public abstract class ChatDroidStyleBase : IChatDroidStyle
@@ -53,5 +56,11 @@ namespace Softeq.XToolkit.Chat.Droid
         public abstract AvatarPlaceholderDrawable.AvatarStyles ChatAvatarStyles { get; }
         public abstract int ChatGroupNoAvatarIcon { get; }
         public abstract int RemoveImageButtonIcon { get; }
+        public abstract int IncommingMessageBg { get; }
+        public abstract int OutcomingMessageBg { get; }
+        public abstract int ContentColor { get; }
+        public abstract int UnderlinedBg { get; }
+        public abstract int CheckedIcon { get; }
+        public abstract int UnCheckedIcon { get; }
     }
 }

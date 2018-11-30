@@ -16,6 +16,7 @@ namespace Softeq.XToolkit.Chat.Droid
             containerBuilder.RegisterType<ChatMessagesViewModel>().InstancePerLifetimeScope();
             containerBuilder.RegisterType<ChatDetailsViewModel>().InstancePerLifetimeScope();
             containerBuilder.RegisterType<SelectContactsViewModel>().InstancePerLifetimeScope();
+            containerBuilder.RegisterType<SelectMembersViewModel>().InstancePerDependency();
         }
     }
 }
