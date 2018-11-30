@@ -129,6 +129,10 @@
     <Compile Include="ViewControllers\AddContactsViewController.designer.cs">
       <DependentUpon>AddContactsViewController.cs</DependentUpon>
     </Compile>
+    <Compile Include="Views\SelectedMemberViewCell.cs" />
+    <Compile Include="Views\SelectedMemberViewCell.designer.cs">
+      <DependentUpon>SelectedMemberViewCell.cs</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <InterfaceDefinition Include="ViewControllers\ChatDetailsStoryboard.storyboard" />
@@ -142,6 +146,7 @@
     <InterfaceDefinition Include="Views\ConnectionStatusView.xib" />
     <InterfaceDefinition Include="Views\ChatMessagesInputBarView.xib" />
     <InterfaceDefinition Include="ViewControllers\AddContactsStoryboard.storyboard" />
+    <InterfaceDefinition Include="Views\SelectedMemberViewCell.xib" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\XToolkit\Softeq.XToolkit.Permissions\Softeq.XToolkit.Permissions.csproj">

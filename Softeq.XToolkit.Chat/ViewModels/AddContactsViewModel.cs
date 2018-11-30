@@ -25,20 +25,7 @@ namespace Softeq.XToolkit.Chat.ViewModels
         {
             _chatManager = chatManager;
 
-            _memberSelectedCommand = new RelayCommand<ChatUserViewModel>(vm =>
-            {
-                if (vm.IsSelected)
-                {
-                    SelectedContacts.Add(vm);
-                }
-                else
-                {
-                    if (SelectedContacts.Contains(vm))
-                    {
-                        SelectedContacts.Remove(vm);
-                    }
-                }
-            });
+            _memberSelectedCommand = new RelayCommand<ChatUserViewModel>(SwitchSelectedMember);
 
             SearchMemberCommand = new RelayCommand<string>(DoSearch);
 
@@ -51,11 +38,14 @@ namespace Softeq.XToolkit.Chat.ViewModels
             {
                 DialogComponent.CloseCommand.Execute(true);
             });
+
+            RemoveSelectedMemberCommand = _memberSelectedCommand; // TODO:
         }
 
         public ICommand CancelCommand { get; }
         public ICommand SearchMemberCommand { get; }
         public ICommand DoneCommand { get; }
+        public ICommand RemoveSelectedMemberCommand { get; }
 
         public string UserNameSearchQuery
         {
@@ -113,6 +103,21 @@ namespace Softeq.XToolkit.Chat.ViewModels
                     x.SetSelectionCommand(_memberSelectedCommand);
                 });
                 FoundContacts.AddRange(filteredUsers);
+            }
+        }
+
+        private void SwitchSelectedMember(ChatUserViewModel viewModel)
+        {
+            if (viewModel.IsSelected)
+            {
+                SelectedContacts.Add(viewModel);
+            }
+            else
+            {
+                if (SelectedContacts.Contains(viewModel))
+                {
+                    SelectedContacts.Remove(viewModel);
+                }
             }
         }
     }

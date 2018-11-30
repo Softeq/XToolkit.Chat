@@ -19,6 +19,9 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
 		UIKit.UINavigationItem CustomNavigationBarItem { get; set; }
 
 		[Outlet]
+		UIKit.UICollectionView SelectedMembersCollectionView { get; set; }
+
+		[Outlet]
 		UIKit.UITableView TableView { get; set; }
 
 		[Outlet]
@@ -31,6 +34,16 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
 				CustomNavigationBar = null;
 			}
 
+			if (CustomNavigationBarItem != null) {
+				CustomNavigationBarItem.Dispose ();
+				CustomNavigationBarItem = null;
+			}
+
+			if (SelectedMembersCollectionView != null) {
+				SelectedMembersCollectionView.Dispose ();
+				SelectedMembersCollectionView = null;
+			}
+
 			if (TableView != null) {
 				TableView.Dispose ();
 				TableView = null;
@@ -39,11 +52,6 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
 			if (TableViewSearchBar != null) {
 				TableViewSearchBar.Dispose ();
 				TableViewSearchBar = null;
-			}
-
-			if (CustomNavigationBarItem != null) {
-				CustomNavigationBarItem.Dispose ();
-				CustomNavigationBarItem = null;
 			}
 		}
 	}

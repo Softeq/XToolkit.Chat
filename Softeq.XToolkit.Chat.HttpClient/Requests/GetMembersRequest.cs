@@ -20,7 +20,7 @@ namespace Softeq.XToolkit.Chat.HttpClient.Requests
                 .AddParam("nameFilter", nameFilter)
                 .Build();
 
-            EndpointUrl = $"{apiUrl}/member/{queryParams}";
+            EndpointUrl = $"{apiUrl}/member{queryParams}";
         }
 
         public override string EndpointUrl { get; }
