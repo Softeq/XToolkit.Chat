@@ -7,9 +7,9 @@ using FFImageLoading.Transformations;
 using FFImageLoading.Work;
 using Foundation;
 using Softeq.XToolkit.Bindings;
+using Softeq.XToolkit.Bindings.Extensions;
 using Softeq.XToolkit.Chat.ViewModels;
 using Softeq.XToolkit.Common;
-using Softeq.XToolkit.Common.Extensions;
 using Softeq.XToolkit.WhiteLabel.iOS.Extensions;
 using UIKit;
 
@@ -38,8 +38,7 @@ namespace Softeq.XToolkit.Chat.iOS.Views
         {
             _viewModelRef = WeakReferenceEx.Create(viewModel);
 
-            _bindings.Apply(x => x.Detach());
-            _bindings.Clear();
+            _bindings.DetachAllAndClear();
 
             _bindings.Add(this.SetBinding(() => _viewModelRef.Target.Username, () => UsernameLabel.Text));
             _bindings.Add(this.SetBinding(() => _viewModelRef.Target.PhotoUrl).WhenSourceChanges(() =>
@@ -50,9 +49,9 @@ namespace Softeq.XToolkit.Chat.iOS.Views
                     StyleHelper.Style.AvatarStyles,
                     (TaskParameter x) => x.Transform(new CircleTransformation()));
             }));
-            _bindings.Add(this.SetBinding(() => _viewModelRef.Target.IsSelected, () => IsSelectedSwitch.On, BindingMode.TwoWay));
-            _bindings.Add(this.SetBinding(() => _viewModelRef.Target.IsSelectable, () => IsSelectedSwitch.Hidden)
-                          .ConvertSourceToTarget(x => !x));
+            _bindings.Add(this.SetBinding(() => _viewModelRef.Target.IsSelected, () => CheckBoxButton.Selected, BindingMode.TwoWay));
+            _bindings.Add(this.SetBinding(() => _viewModelRef.Target.IsSelectable, () => CheckBoxButton.Hidden)
+                .ConvertSourceToTarget(x => !x));
         }
     }
 }

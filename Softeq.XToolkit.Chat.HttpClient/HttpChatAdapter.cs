@@ -10,6 +10,7 @@ using Softeq.XToolkit.Chat.HttpClient.Requests;
 using Softeq.XToolkit.Chat.Models;
 using Softeq.XToolkit.Chat.Models.Interfaces;
 using Softeq.XToolkit.Common.Interfaces;
+using Softeq.XToolkit.Common.Models;
 using Softeq.XToolkit.RemoteData;
 using Softeq.XToolkit.RemoteData.HttpClient;
 
@@ -122,13 +123,24 @@ namespace Softeq.XToolkit.Chat.HttpClient
             return _httpClient.GetModelAsync<ChatMessageModel, ChatMessageDto>(request, _logger, Mapper.DtoToChatMessage);
         }
 
-        public Task<IList<ChatUserModel>> GetContactsAsync()
+        public async Task<PagingModel<ChatUserModel>> GetContactsAsync(string nameFilter, int pageSize, int pageNumber)
         {
-            var request = new GetMembersRequest(_chatConfig.ApiUrl);
-            return _httpClient.GetModelAsync<IList<ChatUserModel>, IList<ChatUserDto>>(request, _logger,
-                                            x => x.Where(y => y.AvatarUrl != null || !string.IsNullOrEmpty(y.UserName))
-                                            .Select(Mapper.DtoToChatUser)
-                                            .ToList());
+            var request = new GetMembersRequest(_chatConfig.ApiUrl, nameFilter, pageSize, pageNumber);
+            var result = await _httpClient.TrySendAndDeserializeAsync<PagedMembersDto>(request, _logger).ConfigureAwait(false);
+
+            return result == null
+                ? null
+                : Mapper.PagedMembersDtoToPagingModel(result);
+        }
+
+        public async Task<PagingModel<ChatUserModel>> GetContactsForInviteAsync(string chatId, string nameFilter, int pageSize, int pageNumber)
+        {
+            var request = new GetMembersForInviteRequest(_chatConfig.ApiUrl, chatId, nameFilter, pageSize, pageNumber);
+            var result = await _httpClient.TrySendAndDeserializeAsync<PagedMembersDto>(request, _logger).ConfigureAwait(false);
+
+            return result == null
+                ? null
+                : Mapper.PagedMembersDtoToPagingModel(result);
         }
     }
 }

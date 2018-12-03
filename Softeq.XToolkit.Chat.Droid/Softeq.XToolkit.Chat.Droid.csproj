@@ -13,7 +13,6 @@
     <AndroidResgenClass>Resource</AndroidResgenClass>
     <MonoAndroidResourcePrefix>Resources</MonoAndroidResourcePrefix>
     <MonoAndroidAssetsPrefix>Assets</MonoAndroidAssetsPrefix>
-    <AndroidUseLatestPlatformSdk>false</AndroidUseLatestPlatformSdk>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -92,6 +91,9 @@
     <Compile Include="Adapters\GroupedObservableRecyclerViewAdapter.cs" />
     <Compile Include="ItemTouchCallbacks\SwipeCallback.cs" />
     <Compile Include="Controls\ContextMenuComponent.cs" />
+    <Compile Include="Views\AddContactsDialogFragment.cs" />
+    <Compile Include="ViewHolders\SelectedContactViewHolder.cs" />
+    <Compile Include="ViewHolders\FilteredItemViewHolder.cs" />
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\layout\activity_chat_details.xml" />
@@ -112,6 +114,9 @@
     <AndroidResource Include="Resources\drawable\chat_ic_new.xml" />
     <AndroidResource Include="Resources\drawable\chat_conversation_scroll_down.xml" />
     <AndroidResource Include="Resources\drawable\chat_ic_close.xml" />
+    <AndroidResource Include="Resources\layout\dialog_select_members.xml" />
+    <AndroidResource Include="Resources\layout\view_holder_member.xml" />
+    <AndroidResource Include="Resources\layout\view_holder_member_filter_item.xml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Views\" />

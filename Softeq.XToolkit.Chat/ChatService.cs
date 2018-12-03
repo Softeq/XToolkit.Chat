@@ -12,6 +12,7 @@ using Softeq.XToolkit.Chat.Models.Enum;
 using Softeq.XToolkit.Chat.Models.Interfaces;
 using Softeq.XToolkit.Common.Extensions;
 using Softeq.XToolkit.Common.Interfaces;
+using Softeq.XToolkit.Common.Models;
 
 namespace Softeq.XToolkit.Chat
 {
@@ -142,9 +143,14 @@ namespace Softeq.XToolkit.Chat
             return _socketChatAdapter.DeleteMessageAsync(chatId, messageId);
         }
 
-        public Task<IList<ChatUserModel>> GetContactsAsync()
+        public Task<PagingModel<ChatUserModel>> GetContactsAsync(string nameFilter, int pageNumber, int pageSize)
         {
-            return _httpChatAdapter.GetContactsAsync();
+            return _httpChatAdapter.GetContactsAsync(nameFilter, pageNumber, pageSize);
+        }
+
+        public Task<PagingModel<ChatUserModel>> GetContactsForInviteAsync(string chatId, string nameFilter, int pageNumber, int pageSize)
+        {
+            return _httpChatAdapter.GetContactsForInviteAsync(chatId, nameFilter, pageNumber, pageSize);
         }
 
         public Task<IList<ChatUserModel>> GetChatMembersAsync(string chatId)

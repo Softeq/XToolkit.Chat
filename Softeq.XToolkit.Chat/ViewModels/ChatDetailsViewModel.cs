@@ -1,20 +1,24 @@
 ﻿// Developed by Softeq Development Corporation
 // http://www.softeq.com
 
+using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows.Input;
 using Softeq.XToolkit.Chat.Manager;
 using Softeq.XToolkit.Chat.Models.Enum;
+using Softeq.XToolkit.Chat.Models.Interfaces;
+using Softeq.XToolkit.Chat.Strategies.Search;
 using Softeq.XToolkit.Common.Collections;
 using Softeq.XToolkit.Common.Command;
+using Softeq.XToolkit.Common.Extensions;
+using Softeq.XToolkit.WhiteLabel;
 using Softeq.XToolkit.WhiteLabel.Interfaces;
+using Softeq.XToolkit.WhiteLabel.Model;
 using Softeq.XToolkit.WhiteLabel.Mvvm;
 using Softeq.XToolkit.WhiteLabel.Navigation;
-using Softeq.XToolkit.Chat.Models.Interfaces;
-using System;
-using System.Threading.Tasks;
-using System.IO;
 using Softeq.XToolkit.WhiteLabel.Threading;
 
 namespace Softeq.XToolkit.Chat.ViewModels
@@ -25,7 +29,9 @@ namespace Softeq.XToolkit.Chat.ViewModels
         private readonly IPageNavigationService _pageNavigationService;
         private readonly IFormatService _formatService;
         private readonly IUploadImageService _uploadImageService;
-
+        private readonly IDialogsService _dialogsService;
+        private readonly IChatService _chatService;
+        private readonly IViewModelFactoryService _viewModelFactoryService;
         private ChatSummaryViewModel _chatSummaryViewModel;
 
         public ChatDetailsViewModel(
@@ -33,18 +39,24 @@ namespace Softeq.XToolkit.Chat.ViewModels
             IPageNavigationService pageNavigationService,
             IChatLocalizedStrings localizedStrings,
             IFormatService formatService,
-            IUploadImageService uploadImageService)
+            IUploadImageService uploadImageService,
+            IDialogsService dialogsService,
+            IChatService chatService,
+            IViewModelFactoryService viewModelFactoryService)
         {
             _chatManager = chatManager;
             _pageNavigationService = pageNavigationService;
             LocalizedStrings = localizedStrings;
             _formatService = formatService;
             _uploadImageService = uploadImageService;
+            _dialogsService = dialogsService;
+            _chatService = chatService;
+            _viewModelFactoryService = viewModelFactoryService;
 
             AddMembersCommand = new RelayCommand(AddMembers);
             BackCommand = new RelayCommand(_pageNavigationService.GoBack, () => _pageNavigationService.CanGoBack);
         }
-        
+
         public IChatLocalizedStrings LocalizedStrings { get; }
 
         public string Title => LocalizedStrings.DetailsTitle;
@@ -125,12 +137,39 @@ namespace Softeq.XToolkit.Chat.ViewModels
                 IsBusy = false;
             });
         }
-        
-        private void AddMembers()
+
+        private async void AddMembers()
         {
-            _pageNavigationService.NavigateToViewModel<SelectContactsViewModel,
-                (SelectedContactsAction, IList<string> FilteredUsers, string OpenedChatId)>(
-                (SelectedContactsAction.InviteToChat, Members.Select(x => x.Id).ToList(), _chatSummaryViewModel.ChatId));
+            var result = await _dialogsService.ShowForViewModel<AddContactsViewModel, AddContactParameters>(
+                new AddContactParameters
+                {
+                    SelectedContacts = Members,
+                    SelectionType = SelectedContactsAction.InviteToChat,
+                    SearchStrategy = new InviteSearchContactsStrategy(_chatService, _viewModelFactoryService, _chatSummaryViewModel.ChatId)
+                },
+                new OpenDialogOptions
+                {
+                    ShouldShowBackgroundOverlay = false
+                });
+
+            if (result != null)
+            {
+                result.SelectedContacts.Apply(x => x.IsSelectable = false);
+                Members.AddRange(result.SelectedContacts);
+
+                RaisePropertyChanged(nameof(MembersCountText));
+
+                var contactsForInvite = Members.Where(x => x.IsSelected).Select(x => x.Id).ToList();
+
+                try
+                {
+                    await _chatManager.InviteMembersAsync(_chatSummaryViewModel.ChatId, contactsForInvite);
+                }
+                catch (Exception ex)
+                {
+                    LogManager.LogError<ChatDetailsViewModel>(ex);
+                }
+            }
         }
     }
 }

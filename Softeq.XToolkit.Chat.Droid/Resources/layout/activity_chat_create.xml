@@ -69,6 +69,17 @@
         </LinearLayout>
 
     </RelativeLayout>
+    
+    <Button
+        android:id="@+id/activity_chat_create_add_member"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="16dp"
+        android:paddingLeft="8dp"
+        android:paddingRight="8dp"
+        android:background="?attr/selectableItemBackground"
+        android:textColor="@color/chat_brand_color" />
+    
     <android.support.v7.widget.RecyclerView
         android:id="@+id/rv_contacts_list"
         android:layout_width="match_parent"

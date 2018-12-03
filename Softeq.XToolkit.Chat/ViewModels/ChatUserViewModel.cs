@@ -31,7 +31,7 @@ namespace Softeq.XToolkit.Chat.ViewModels
             {
                 if (Set(ref _isSelected, value))
                 {
-                    _selectionCommand?.Execute(null);
+                    _selectionCommand?.Execute(this);
                 }
             }
         }
