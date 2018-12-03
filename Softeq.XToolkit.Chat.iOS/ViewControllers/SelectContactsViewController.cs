@@ -54,7 +54,7 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
                 MaxImageHeight = 280,
             };
 
-            _chatDetailsHeaderView = new ChatDetailsHeaderView(new CGRect(0, 0, 200, 240))
+            _chatDetailsHeaderView = new ChatDetailsHeaderView(new CGRect(0, 0, 200, 250))
             {
                 IsEditMode = true
             };

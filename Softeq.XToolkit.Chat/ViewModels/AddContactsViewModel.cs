@@ -6,8 +6,9 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
-using Softeq.XToolkit.Chat.Manager;
+using Softeq.XToolkit.Chat.Models.Enum;
 using Softeq.XToolkit.Chat.Models.Interfaces;
+using Softeq.XToolkit.Chat.Strategies.Search;
 using Softeq.XToolkit.Common.Collections;
 using Softeq.XToolkit.Common.Command;
 using Softeq.XToolkit.Common.Extensions;
@@ -19,15 +20,10 @@ namespace Softeq.XToolkit.Chat.ViewModels
     public class AddContactParameters
     {
         public IReadOnlyList<ChatUserViewModel> SelectedContacts { get; set; }
-        public AdditionType Type { get; set; }
+        public SelectedContactsAction SelectionType { get; set; }
+        public ISearchContactsStrategy SearchStrategy { get; set; }
     }
-
-    public enum AdditionType
-    {
-        Add,
-        Invite
-    }
-
+    
     public class AddContactsViewModel : DialogViewModelBase, IViewModelParameter<AddContactParameters>
     {
         private const int SearchDelayMs = 2000;
@@ -35,20 +31,16 @@ namespace Softeq.XToolkit.Chat.ViewModels
         private const int DefaultSearchResultsPageNumber = 1;
         private const int DefaultSearchResultsPageSize = 20000;
 
-        private readonly ChatManager _chatManager;
         private readonly ICommand _contactSelectedCommand;
 
-        private CancellationTokenSource _lastSearchCancelSource;
         private string _contactNameSearchQuery;
+        private ISearchContactsStrategy _searchContactsStrategy;
+        private CancellationTokenSource _lastSearchCancelSource = new CancellationTokenSource();
+        private IReadOnlyList<ChatUserViewModel> _excludedContacts = new List<ChatUserViewModel>();
 
-        public AddContactsViewModel(
-            ChatManager chatManager,
-            IChatLocalizedStrings chatLocalizedStrings)
+        public AddContactsViewModel(IChatLocalizedStrings chatLocalizedStrings)
         {
-            _chatManager = chatManager;
             Resources = chatLocalizedStrings;
-
-            _lastSearchCancelSource = new CancellationTokenSource();
 
             _contactSelectedCommand = new RelayCommand<ChatUserViewModel>(SwitchSelectedContact);
             SearchContactCommand = new RelayCommand<string>(DoSearch);
@@ -66,11 +58,12 @@ namespace Softeq.XToolkit.Chat.ViewModels
         {
             set
             {
-                ApplySelectionCommand(value.SelectedContacts);
-                SelectedContacts.AddRange(value.SelectedContacts);
-                RaisePropertyChanged(nameof(HasSelectedContacts));
+                _excludedContacts = value.SelectedContacts;
+                _searchContactsStrategy = value.SearchStrategy;
 
-                Title = value.Type == AdditionType.Add ? Resources.AddMembers : Resources.InviteUsers;
+                Title = value.SelectionType == SelectedContactsAction.CreateChat
+                    ? Resources.AddMembers
+                    : Resources.InviteUsers;
             }
         }
 
@@ -123,13 +116,14 @@ namespace Softeq.XToolkit.Chat.ViewModels
         {
             FoundContacts.Clear();
 
-            var contacts = await _chatManager.GetContactsAsync(query,
+            var contacts = await _searchContactsStrategy.Search(query,
                 DefaultSearchResultsPageNumber,
                 DefaultSearchResultsPageSize).ConfigureAwait(false);
 
             if (contacts != null)
             {
                 var filteredContacts = contacts.Where(x => !SelectedContacts
+                    .Concat(_excludedContacts)
                     .Select(c => c.Id)
                     .Contains(x.Id)
                 ).ToList();
@@ -139,11 +133,11 @@ namespace Softeq.XToolkit.Chat.ViewModels
             }
         }
 
-        private void ApplySelectionCommand(IEnumerable<ChatUserViewModel> contacts)
+        private void ApplySelectionCommand(IEnumerable<ChatUserViewModel> contacts, bool isSelectable = true)
         {
             contacts.Apply(x =>
             {
-                x.IsSelectable = true;
+                x.IsSelectable = isSelectable;
                 x.SetSelectionCommand(_contactSelectedCommand);
             });
         }

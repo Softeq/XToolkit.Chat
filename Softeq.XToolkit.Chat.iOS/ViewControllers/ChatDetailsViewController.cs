@@ -39,7 +39,7 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
                 true);
 
             TableView.RegisterNibForCellReuse(ChatUserViewCell.Nib, ChatUserViewCell.Key);
-            TableView.RowHeight = 80;
+            TableView.RowHeight = 50;
 
             _chatDetailsHeaderView = new ChatDetailsHeaderView(new CGRect(0, 0, 200, 250));
             _chatDetailsHeaderView.IsEditMode = false;

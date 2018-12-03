@@ -11,6 +11,7 @@ using Softeq.XToolkit.Auth;
 using Softeq.XToolkit.Chat.Manager;
 using Softeq.XToolkit.Chat.Models.Enum;
 using Softeq.XToolkit.Chat.Models.Interfaces;
+using Softeq.XToolkit.Chat.Strategies.Search;
 using Softeq.XToolkit.Common.Collections;
 using Softeq.XToolkit.Common.Command;
 using Softeq.XToolkit.Common.Extensions;
@@ -23,6 +24,7 @@ using Softeq.XToolkit.WhiteLabel.Threading;
 
 namespace Softeq.XToolkit.Chat.ViewModels
 {
+    // TODO YP: clean up this ViewModel (remove navigationwith params, create/invite checks) 
     public class SelectContactsViewModel : ViewModelBase,
         IViewModelParameter<(SelectedContactsAction, IList<string> FilteredUsers, string OpenedChatId)>
     {
@@ -68,8 +70,9 @@ namespace Softeq.XToolkit.Chat.ViewModels
 
         public RelayCommand<Func<(Task<Stream>, string)>> SaveCommand { get; private set; }
 
-        public string Title => IsInviteToChat ? _localizedStrings.InviteUsers : _localizedStrings.CreateGroup;
+        public string Title => _localizedStrings.CreateGroup; //IsInviteToChat ? _localizedStrings.InviteUsers : _localizedStrings.CreateGroup;
 
+        [Obsolete]
         public string ActionButtonName => IsInviteToChat ? _localizedStrings.Invite : _localizedStrings.Create;
 
         public string ContactsCountText => _formatService.PluralizeWithQuantity(Contacts.Count(x => x.IsSelected),
@@ -85,12 +88,15 @@ namespace Softeq.XToolkit.Chat.ViewModels
             set => Set(ref _chatName, value);
         }
 
+        [Obsolete]
         public bool IsCreateChat => _selectedContactsAction == SelectedContactsAction.CreateChat;
 
+        [Obsolete]
         public bool IsInviteToChat => _selectedContactsAction == SelectedContactsAction.InviteToChat;
 
         public string AddMembersText => _localizedStrings.AddMembers;
 
+        [Obsolete]
         public (SelectedContactsAction, IList<string> FilteredUsers, string OpenedChatId) Parameter
         {
             set
@@ -112,35 +118,14 @@ namespace Softeq.XToolkit.Chat.ViewModels
             SaveCommand = new RelayCommand<Func<(Task<Stream>, string)>>(SaveAsync);
         }
 
-        public override async void OnAppearing()
-        {
-            base.OnAppearing();
-
-            //Contacts.Clear();
-
-            //var users = await _chatManager.GetContactsAsync("", 1, 20).ConfigureAwait(false);
-            //if (users != null)
-            //{
-            //    var filteredUsers = users.Where(x => x.Id != _accountService.UserId
-            //                                         && !_filteredUsers.Contains(x?.Id)).ToList();
-            //    filteredUsers.Apply(x =>
-            //    {
-            //        x.IsSelectable = true;
-            //        x.SetSelectionCommand(_memberSelectedCommand);
-            //    });
-            //    Contacts.AddRange(filteredUsers);
-            //}
-
-            //RaisePropertyChanged(nameof(ContactsCountText));
-        }
-
         private async void OpenDialogForAddMembers()
         {
             var result = await _dialogsService.ShowForViewModel<AddContactsViewModel, AddContactParameters>(
                 new AddContactParameters
                 {
-                    SelectedContacts = Contacts.Where(x => x.IsSelected).ToList(),
-                    Type = AdditionType.Add
+                    SelectedContacts = Contacts,
+                    SelectionType = SelectedContactsAction.CreateChat,
+                    SearchStrategy = new CreateChatSearchContactsStrategy(_chatManager)
                 },
                 new OpenDialogOptions
                 {
@@ -151,7 +136,7 @@ namespace Softeq.XToolkit.Chat.ViewModels
             {
                 var contacts = result.SelectedContacts;
                 contacts.Apply(x => x.SetSelectionCommand(_memberSelectedCommand));
-                Contacts.ReplaceRange(contacts);
+                Contacts.AddRange(contacts);
 
                 RaisePropertyChanged(nameof(ContactsCountText));
             }
@@ -159,7 +144,8 @@ namespace Softeq.XToolkit.Chat.ViewModels
 
         private async void SaveAsync(Func<(Task<Stream> GetImageTask, string Extension)> getImageFunc)
         {
-            if (IsCreateChat && string.IsNullOrEmpty(ChatName))
+            // IsCreateChat && 
+            if (string.IsNullOrEmpty(ChatName))
             {
                 return;
             }
@@ -186,18 +172,18 @@ namespace Softeq.XToolkit.Chat.ViewModels
             try
             {
                 var selectedContactsIds = Contacts.Where(x => x.IsSelected).Select(x => x.Id).ToList();
-                if (IsCreateChat)
+                //if (IsCreateChat)
+                //{
+                await _chatManager.CreateChatAsync(ChatName, selectedContactsIds, imagePath).ConfigureAwait(false);
+                Execute.BeginOnUIThread(() =>
                 {
-                    await _chatManager.CreateChatAsync(ChatName, selectedContactsIds, imagePath).ConfigureAwait(false);
-                    Execute.BeginOnUIThread(() =>
-                    {
-                        ChatName = string.Empty;
-                    });
-                }
-                else if (IsInviteToChat)
-                {
-                    await _chatManager.InviteMembersAsync(_openedChatId, selectedContactsIds).ConfigureAwait(false);
-                }
+                    ChatName = string.Empty;
+                });
+                //}
+                //else if (IsInviteToChat)
+                //{
+                //    await _chatManager.InviteMembersAsync(_openedChatId, selectedContactsIds).ConfigureAwait(false);
+                //}
 
                 _pageNavigationService.GoBack();
             }
