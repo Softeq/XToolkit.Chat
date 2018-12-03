@@ -88,10 +88,10 @@ namespace Softeq.XToolkit.Chat.Droid.Views
         {
             base.DoAttachBindings();
 
-            this.SetBinding(() => ViewModel.UserNameSearchQuery, () => _editText.Text, BindingMode.TwoWay);
-            this.SetBinding(() => ViewModel.HasSelectedItems).WhenSourceChanges(() =>
+            this.SetBinding(() => ViewModel.ContactNameSearchQuery, () => _editText.Text, BindingMode.TwoWay);
+            this.SetBinding(() => ViewModel.HasSelectedContacts).WhenSourceChanges(() =>
             {
-                _addedMembers.Visibility = ViewModel.HasSelectedItems
+                _addedMembers.Visibility = ViewModel.HasSelectedContacts
                     ? ViewStates.Visible
                     : ViewStates.Gone;
             });

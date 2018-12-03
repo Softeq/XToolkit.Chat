@@ -14,6 +14,9 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
 {
     public partial class AddContactsViewController : ViewControllerBase<AddContactsViewModel>
     {
+        private const float DefaultSelectedMembersCollectionTopConstraint = 20;
+        private const float DefaultFoundMembersCellHeight = 50;
+
         public AddContactsViewController(IntPtr handle) : base(handle) { }
 
         public override void ViewDidLoad()
@@ -37,16 +40,22 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
         {
             base.DoAttachBindings();
 
-            Bindings.Add(this.SetBinding(() => ViewModel.HasSelectedItems).WhenSourceChanges(() =>
+            Bindings.Add(this.SetBinding(() => ViewModel.HasSelectedContacts).WhenSourceChanges(() =>
             {
-                SelectedMembersCollectionView.Hidden = !ViewModel.HasSelectedItems;
-                //SelectedMembersCollectionViewHeightConstaint.Constant = ViewModel.HasSelectedItems ? 80 : 0;
+                UIView.Animate(0.5, () =>
+                {
+                    SelectedMembersCollectionView.Hidden = !ViewModel.HasSelectedContacts;
+                    SelectedMembersCollectionViewTopConstraint.Constant = ViewModel.HasSelectedContacts
+                        ? DefaultSelectedMembersCollectionTopConstraint + SelectedMembersCollectionView.Frame.Height
+                        : DefaultSelectedMembersCollectionTopConstraint;
+                    SelectedMembersCollectionView.LayoutIfNeeded();
+                });
             }));
         }
 
         private void InitNavigationBar()
         {
-            CustomNavigationBarItem.Title = ViewModel.Resources.AddMembers;
+            CustomNavigationBarItem.Title = ViewModel.Title;
 
             CustomNavigationBar.ShadowImage = new UIImage();
 
@@ -67,13 +76,13 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
             TableViewSearchBar.Placeholder = ViewModel.Resources.Search;
             TableViewSearchBar.TextChanged += (sender, e) =>
             {
-                ViewModel.UserNameSearchQuery = e.SearchText;
+                ViewModel.ContactNameSearchQuery = e.SearchText;
             };
         }
 
         private void InitSearchMembersTableView()
         {
-            TableView.RowHeight = 50;
+            TableView.RowHeight = DefaultFoundMembersCellHeight;
             TableView.RegisterNibForCellReuse(ChatUserViewCell.Nib, ChatUserViewCell.Key);
             TableView.TableFooterView = new UIView();
 

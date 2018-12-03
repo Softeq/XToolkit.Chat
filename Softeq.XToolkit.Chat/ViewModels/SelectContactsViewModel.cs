@@ -90,7 +90,7 @@ namespace Softeq.XToolkit.Chat.ViewModels
         public bool IsInviteToChat => _selectedContactsAction == SelectedContactsAction.InviteToChat;
 
         public string AddMembersText => _localizedStrings.AddMembers;
-        
+
         public (SelectedContactsAction, IList<string> FilteredUsers, string OpenedChatId) Parameter
         {
             set
@@ -136,14 +136,22 @@ namespace Softeq.XToolkit.Chat.ViewModels
 
         private async void OpenDialogForAddMembers()
         {
-            var result = await _dialogsService.ShowForViewModel<AddContactsViewModel>(new OpenDialogOptions
-            {
-                ShouldShowBackgroundOverlay = false
-            });
+            var result = await _dialogsService.ShowForViewModel<AddContactsViewModel, AddContactParameters>(
+                new AddContactParameters
+                {
+                    SelectedContacts = Contacts.Where(x => x.IsSelected).ToList(),
+                    Type = AdditionType.Add
+                },
+                new OpenDialogOptions
+                {
+                    ShouldShowBackgroundOverlay = false
+                });
 
             if (result != null)
             {
-                Contacts.AddRange(result.SelectedContacts);
+                var contacts = result.SelectedContacts;
+                contacts.Apply(x => x.SetSelectionCommand(_memberSelectedCommand));
+                Contacts.ReplaceRange(contacts);
 
                 RaisePropertyChanged(nameof(ContactsCountText));
             }

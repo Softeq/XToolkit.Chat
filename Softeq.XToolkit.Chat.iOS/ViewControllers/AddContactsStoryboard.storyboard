@@ -18,15 +18,8 @@
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <searchBar contentMode="redraw" searchBarStyle="minimal" translatesAutoresizingMaskIntoConstraints="NO" id="1cZ-TV-smg">
-                                <rect key="frame" x="0.0" y="64" width="375" height="56"/>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="56" id="G7B-mP-8Li"/>
-                                </constraints>
-                                <textInputTraits key="textInputTraits"/>
-                            </searchBar>
                             <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="nvm-mz-k7g">
-                                <rect key="frame" x="0.0" y="120" width="375" height="80"/>
+                                <rect key="frame" x="0.0" y="40" width="375" height="80"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="80" id="C3d-JZ-BB9"/>
@@ -35,14 +28,28 @@
                                     <size key="itemSize" width="50" height="70"/>
                                     <size key="headerReferenceSize" width="0.0" height="0.0"/>
                                     <size key="footerReferenceSize" width="0.0" height="0.0"/>
-                                    <inset key="sectionInset" minX="16" minY="5" maxX="16" maxY="0.0"/>
+                                    <inset key="sectionInset" minX="8" minY="5" maxX="8" maxY="0.0"/>
                                 </collectionViewFlowLayout>
                                 <cells/>
                             </collectionView>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" allowsSelection="NO" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="an6-aD-F8r">
-                                <rect key="frame" x="0.0" y="200" width="375" height="467"/>
+                                <rect key="frame" x="0.0" y="120" width="375" height="547"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                             </tableView>
+                            <searchBar contentMode="redraw" searchBarStyle="minimal" translatesAutoresizingMaskIntoConstraints="NO" id="1cZ-TV-smg">
+                                <rect key="frame" x="0.0" y="64" width="375" height="56"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="56" id="G7B-mP-8Li"/>
+                                </constraints>
+                                <textInputTraits key="textInputTraits"/>
+                            </searchBar>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="uD0-ye-tTR">
+                                <rect key="frame" x="0.0" y="120" width="375" height="0.5"/>
+                                <color key="backgroundColor" red="0.46274509800000002" green="0.46274509800000002" blue="0.46274509800000002" alpha="1" colorSpace="calibratedRGB"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="0.5" id="Mak-5c-GfQ"/>
+                                </constraints>
+                            </view>
                             <navigationBar contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="D22-7T-QtJ">
                                 <rect key="frame" x="0.0" y="20" width="375" height="44"/>
                                 <constraints>
@@ -59,12 +66,15 @@
                             <constraint firstItem="nvm-mz-k7g" firstAttribute="leading" secondItem="9s2-VM-wWl" secondAttribute="leading" id="Bij-0s-6fc"/>
                             <constraint firstItem="D22-7T-QtJ" firstAttribute="trailing" secondItem="9s2-VM-wWl" secondAttribute="trailing" id="LgI-Hg-AmG"/>
                             <constraint firstItem="D22-7T-QtJ" firstAttribute="leading" secondItem="9s2-VM-wWl" secondAttribute="leading" id="MFA-Ll-WsZ"/>
+                            <constraint firstItem="uD0-ye-tTR" firstAttribute="trailing" secondItem="1cZ-TV-smg" secondAttribute="trailing" id="MaW-AG-wtj"/>
                             <constraint firstItem="9s2-VM-wWl" firstAttribute="trailing" secondItem="an6-aD-F8r" secondAttribute="trailing" id="Nb1-4z-hxf"/>
+                            <constraint firstItem="uD0-ye-tTR" firstAttribute="leading" secondItem="1cZ-TV-smg" secondAttribute="leading" id="SOD-lV-xNW"/>
                             <constraint firstItem="an6-aD-F8r" firstAttribute="leading" secondItem="9s2-VM-wWl" secondAttribute="leading" id="Twd-KH-gHE"/>
-                            <constraint firstItem="nvm-mz-k7g" firstAttribute="top" secondItem="1cZ-TV-smg" secondAttribute="bottom" id="Vko-df-hMe"/>
+                            <constraint firstItem="nvm-mz-k7g" firstAttribute="top" secondItem="9s2-VM-wWl" secondAttribute="top" constant="20" id="Vko-df-hMe"/>
                             <constraint firstItem="1cZ-TV-smg" firstAttribute="top" secondItem="D22-7T-QtJ" secondAttribute="bottom" id="Wz0-CU-3Pm"/>
                             <constraint firstItem="an6-aD-F8r" firstAttribute="top" secondItem="nvm-mz-k7g" secondAttribute="bottom" id="hTU-Wl-l04"/>
                             <constraint firstItem="nvm-mz-k7g" firstAttribute="trailing" secondItem="9s2-VM-wWl" secondAttribute="trailing" id="hdz-3X-Zyy"/>
+                            <constraint firstItem="uD0-ye-tTR" firstAttribute="top" secondItem="1cZ-TV-smg" secondAttribute="bottom" id="mLo-wD-X0L"/>
                             <constraint firstItem="1cZ-TV-smg" firstAttribute="leading" secondItem="9s2-VM-wWl" secondAttribute="leading" id="n57-vN-2kc"/>
                             <constraint firstItem="1cZ-TV-smg" firstAttribute="trailing" secondItem="9s2-VM-wWl" secondAttribute="trailing" id="slH-B7-pLI"/>
                             <constraint firstItem="D22-7T-QtJ" firstAttribute="top" secondItem="9s2-VM-wWl" secondAttribute="top" id="vNe-Si-moD"/>
@@ -75,7 +85,7 @@
                         <outlet property="CustomNavigationBar" destination="D22-7T-QtJ" id="mVM-Nf-q09"/>
                         <outlet property="CustomNavigationBarItem" destination="hbe-ad-hc1" id="p7S-w9-t25"/>
                         <outlet property="SelectedMembersCollectionView" destination="nvm-mz-k7g" id="rPd-Dj-tRu"/>
-                        <outlet property="SelectedMembersCollectionViewHeightConstaint" destination="C3d-JZ-BB9" id="wid-QM-3Xc"/>
+                        <outlet property="SelectedMembersCollectionViewTopConstraint" destination="Vko-df-hMe" id="wbE-ru-m6P"/>
                         <outlet property="TableView" destination="an6-aD-F8r" id="vbY-EG-x3v"/>
                         <outlet property="TableViewSearchBar" destination="1cZ-TV-smg" id="XSe-wj-NbN"/>
                     </connections>

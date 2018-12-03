@@ -41,7 +41,7 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
 
             TableView.AllowsSelection = false;
             TableView.RegisterNibForCellReuse(ChatUserViewCell.Nib, ChatUserViewCell.Key);
-            TableView.RowHeight = 80;
+            TableView.RowHeight = 50;
             TableView.KeyboardDismissMode = UIScrollViewKeyboardDismissMode.Interactive;
             TableView.AddGestureRecognizer(new UITapGestureRecognizer(() =>
             {
@@ -54,7 +54,7 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
                 MaxImageHeight = 280,
             };
 
-            _chatDetailsHeaderView = new ChatDetailsHeaderView(new CGRect(0, 0, 200, 220))
+            _chatDetailsHeaderView = new ChatDetailsHeaderView(new CGRect(0, 0, 200, 240))
             {
                 IsEditMode = true
             };

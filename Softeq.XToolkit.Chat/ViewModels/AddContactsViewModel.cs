@@ -1,3 +1,7 @@
+// Developed by Softeq Development Corporation
+// http://www.softeq.com
+
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -7,21 +11,35 @@ using Softeq.XToolkit.Chat.Models.Interfaces;
 using Softeq.XToolkit.Common.Collections;
 using Softeq.XToolkit.Common.Command;
 using Softeq.XToolkit.Common.Extensions;
+using Softeq.XToolkit.WhiteLabel.Interfaces;
 using Softeq.XToolkit.WhiteLabel.Mvvm;
 
 namespace Softeq.XToolkit.Chat.ViewModels
 {
-    public class AddContactsViewModel : DialogViewModelBase
+    public class AddContactParameters
+    {
+        public IReadOnlyList<ChatUserViewModel> SelectedContacts { get; set; }
+        public AdditionType Type { get; set; }
+    }
+
+    public enum AdditionType
+    {
+        Add,
+        Invite
+    }
+
+    public class AddContactsViewModel : DialogViewModelBase, IViewModelParameter<AddContactParameters>
     {
         private const int SearchDelayMs = 2000;
-        private const string InitialMemberSearchQuery = "";
+        private const string InitialContactSearchQuery = "";
+        private const int DefaultSearchResultsPageNumber = 1;
+        private const int DefaultSearchResultsPageSize = 20000;
 
         private readonly ChatManager _chatManager;
-        private readonly ICommand _memberSelectedCommand;
+        private readonly ICommand _contactSelectedCommand;
 
-        private CancellationTokenSource _lastSearchCancelSource = new CancellationTokenSource();
-        private string _userNameSearchQuery;
-        private bool _hasSelectedItems;
+        private CancellationTokenSource _lastSearchCancelSource;
+        private string _contactNameSearchQuery;
 
         public AddContactsViewModel(
             ChatManager chatManager,
@@ -30,27 +48,42 @@ namespace Softeq.XToolkit.Chat.ViewModels
             _chatManager = chatManager;
             Resources = chatLocalizedStrings;
 
-            _memberSelectedCommand = new RelayCommand<ChatUserViewModel>(SwitchSelectedMember);
-            SearchMemberCommand = new RelayCommand<string>(DoSearch);
+            _lastSearchCancelSource = new CancellationTokenSource();
+
+            _contactSelectedCommand = new RelayCommand<ChatUserViewModel>(SwitchSelectedContact);
+            SearchContactCommand = new RelayCommand<string>(DoSearch);
             CancelCommand = new RelayCommand(() => DialogComponent.CloseCommand.Execute(false));
             DoneCommand = new RelayCommand(() => DialogComponent.CloseCommand.Execute(true));
         }
 
+        public ICommand SearchContactCommand { get; }
         public ICommand CancelCommand { get; }
-        public ICommand SearchMemberCommand { get; }
         public ICommand DoneCommand { get; }
-        public ICommand RemoveSelectedMemberCommand { get; }
 
         public IChatLocalizedStrings Resources { get; }
 
-        public string UserNameSearchQuery
+        public AddContactParameters Parameter
         {
-            get => _userNameSearchQuery;
             set
             {
-                Set(ref _userNameSearchQuery, value);
+                ApplySelectionCommand(value.SelectedContacts);
+                SelectedContacts.AddRange(value.SelectedContacts);
+                RaisePropertyChanged(nameof(HasSelectedContacts));
 
-                SearchMemberCommand.Execute(value);
+                Title = value.Type == AdditionType.Add ? Resources.AddMembers : Resources.InviteUsers;
+            }
+        }
+
+        public string Title { get; private set; }
+
+        public string ContactNameSearchQuery
+        {
+            get => _contactNameSearchQuery;
+            set
+            {
+                Set(ref _contactNameSearchQuery, value);
+
+                SearchContactCommand.Execute(value);
             }
         }
 
@@ -60,17 +93,13 @@ namespace Softeq.XToolkit.Chat.ViewModels
         public ObservableRangeCollection<ChatUserViewModel> FoundContacts { get; } =
             new ObservableRangeCollection<ChatUserViewModel>();
 
-        public bool HasSelectedItems
-        {
-            get => _hasSelectedItems;
-            set => Set(ref _hasSelectedItems, value);
-        }
+        public bool HasSelectedContacts => SelectedContacts.Count > 0;
 
         public override async void OnAppearing()
         {
             base.OnAppearing();
 
-            await LoadMembersAsync(InitialMemberSearchQuery);
+            await LoadContactsAsync(InitialContactSearchQuery);
         }
 
         private async void DoSearch(string query)
@@ -82,7 +111,7 @@ namespace Softeq.XToolkit.Chat.ViewModels
             {
                 await Task.Delay(SearchDelayMs, _lastSearchCancelSource.Token);
 
-                await LoadMembersAsync(query);
+                await LoadContactsAsync(query);
             }
             catch (TaskCanceledException)
             {
@@ -90,25 +119,36 @@ namespace Softeq.XToolkit.Chat.ViewModels
             }
         }
 
-        private async Task LoadMembersAsync(string query)
+        private async Task LoadContactsAsync(string query)
         {
             FoundContacts.Clear();
 
-            var users = await _chatManager.GetContactsAsync(query, 1, 20000).ConfigureAwait(false); // FIXME:
-            if (users != null)
+            var contacts = await _chatManager.GetContactsAsync(query,
+                DefaultSearchResultsPageNumber,
+                DefaultSearchResultsPageSize).ConfigureAwait(false);
+
+            if (contacts != null)
             {
-                var selectedUserIds = SelectedContacts.Select(x => x.Id).ToList();
-                var filteredUsers = users.Where(x => !selectedUserIds.Contains(x.Id)).ToList();
-                filteredUsers.Apply(x =>
-                {
-                    x.IsSelectable = true;
-                    x.SetSelectionCommand(_memberSelectedCommand);
-                });
-                FoundContacts.AddRange(filteredUsers);
+                var filteredContacts = contacts.Where(x => !SelectedContacts
+                    .Select(c => c.Id)
+                    .Contains(x.Id)
+                ).ToList();
+
+                ApplySelectionCommand(filteredContacts);
+                FoundContacts.AddRange(filteredContacts);
             }
         }
 
-        private void SwitchSelectedMember(ChatUserViewModel viewModel)
+        private void ApplySelectionCommand(IEnumerable<ChatUserViewModel> contacts)
+        {
+            contacts.Apply(x =>
+            {
+                x.IsSelectable = true;
+                x.SetSelectionCommand(_contactSelectedCommand);
+            });
+        }
+
+        private void SwitchSelectedContact(ChatUserViewModel viewModel)
         {
             if (viewModel.IsSelected)
             {
@@ -122,7 +162,7 @@ namespace Softeq.XToolkit.Chat.ViewModels
                 }
             }
 
-            HasSelectedItems = SelectedContacts.Count > 0;
+            RaisePropertyChanged(nameof(HasSelectedContacts));
         }
     }
 }
