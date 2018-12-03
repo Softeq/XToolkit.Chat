@@ -1,18 +1,17 @@
-﻿using System;
+﻿// Developed by Softeq Development Corporation
+// http://www.softeq.com
+
 using Android.OS;
 using Android.Support.V7.Widget;
 using Android.Views;
 using Android.Widget;
-using FFImageLoading.Transformations;
-using FFImageLoading.Views;
-using FFImageLoading.Work;
 using Softeq.XToolkit.Bindings;
 using Softeq.XToolkit.Bindings.Droid;
+using Softeq.XToolkit.Chat.Droid.ViewHolders;
 using Softeq.XToolkit.Chat.ViewModels;
 using Softeq.XToolkit.Common.Command;
 using Softeq.XToolkit.WhiteLabel.Droid.Controls;
 using Softeq.XToolkit.WhiteLabel.Droid.Dialogs;
-using Softeq.XToolkit.WhiteLabel.Droid.Shared.Extensions;
 
 namespace Softeq.XToolkit.Chat.Droid.Views
 {
@@ -41,7 +40,7 @@ namespace Softeq.XToolkit.Chat.Droid.Views
             _navigationBarView = View.FindViewById<NavigationBarView>(Resource.Id.dialog_select_members_nav_bar);
             _navigationBarView.SetLeftButton(StyleHelper.Style.NavigationBarBackButtonIcon, new RelayCommand(Close));
             _navigationBarView.SetRightButton(ViewModel.Resources.Done, ViewModel.DoneCommand);
-            _navigationBarView.SetTitle(ViewModel.Resources.AddMembers);
+            _navigationBarView.SetTitle(ViewModel.Title);
             _navigationBarView.SetBackground(StyleHelper.Style.ContentColor);
 
             var searchContainer = View.FindViewById<View>(Resource.Id.dialog_select_members_serch_container);
@@ -49,7 +48,7 @@ namespace Softeq.XToolkit.Chat.Droid.Views
 
             _editText = View.FindViewById<EditText>(Resource.Id.dialog_select_members_serch_text);
             _editText.Hint = ViewModel.Resources.Search;
-            
+
             _addedMembers = View.FindViewById<RecyclerView>(Resource.Id.dialog_select_members_added_members);
             _addedMembers.SetLayoutManager(new LinearLayoutManager(Context, LinearLayoutManager.Horizontal, false));
             _selectedAdapter = new ObservableRecyclerViewAdapter<ChatUserViewModel>(
@@ -61,9 +60,9 @@ namespace Softeq.XToolkit.Chat.Droid.Views
                 },
                 (holder, i, item) =>
                 {
-                    var viewHolder = (SelectedContactViewHolder) holder;
+                    var viewHolder = (SelectedContactViewHolder)holder;
                     viewHolder.Bind(item);
-                }); 
+                });
             _addedMembers.SetAdapter(_selectedAdapter);
 
             _filteredMembers = View.FindViewById<RecyclerView>(Resource.Id.dialog_select_members_filtered_members);
@@ -78,7 +77,7 @@ namespace Softeq.XToolkit.Chat.Droid.Views
                 },
                 (holder, i, item) =>
                 {
-                    var viewHolder = (FilteredItemViewHolder) holder;
+                    var viewHolder = (FilteredItemViewHolder)holder;
                     viewHolder.Bind(item);
                 });
             _filteredMembers.SetAdapter(_filteredAdapter);
@@ -100,7 +99,7 @@ namespace Softeq.XToolkit.Chat.Droid.Views
         public override void OnDestroy()
         {
             base.OnDestroy();
-            
+
             _filteredAdapter.Dispose();
             _selectedAdapter.Dispose();
         }
@@ -108,82 +107,6 @@ namespace Softeq.XToolkit.Chat.Droid.Views
         private void Close()
         {
             ViewModel.DialogComponent.CloseCommand.Execute(false);
-        }
-        
-        private class SelectedContactViewHolder : RecyclerView.ViewHolder
-        {
-            private readonly ImageViewAsync _avatar;
-            private readonly ImageButton _removeButton;
-            private readonly TextView _textView;
-            private ChatUserViewModel _viewModel;
-            
-            public SelectedContactViewHolder(View itemView) : base(itemView)
-            {
-                _avatar = itemView.FindViewById<ImageViewAsync>(Resource.Id.view_holder_member_avatar);
-                _removeButton = itemView.FindViewById<ImageButton>(Resource.Id.view_holder_member_remove);
-                _removeButton.SetImageResource(StyleHelper.Style.RemoveImageButtonIcon);
-                _removeButton.SetBackgroundResource(Android.Resource.Color.Transparent);
-                _removeButton.Click += RemoveButtonOnClick;
-                _textView = itemView.FindViewById<TextView>(Resource.Id.view_holder_member_name);
-            }
-
-            private void RemoveButtonOnClick(object sender, EventArgs e)
-            {
-                _viewModel.IsSelected = false;
-            }
-
-            public void Bind(ChatUserViewModel viewModel)
-            {
-                _viewModel = viewModel;
-                _avatar.LoadImageWithTextPlaceholder(
-                    viewModel.PhotoUrl, 
-                    viewModel.Username,
-                    StyleHelper.Style.ChatAvatarStyles,
-                    x => x.Transform(new CircleTransformation()));
-                _textView.Text = viewModel.Username;
-            }
-        }
-
-        private class FilteredItemViewHolder : RecyclerView.ViewHolder
-        {
-            private readonly ImageViewAsync _avatar;
-            private readonly ImageView _imageView;
-            private readonly TextView _textView;
-            private readonly View _view;
-            private Binding _selectedBinding;
-            private ChatUserViewModel _viewModel;
-
-            public FilteredItemViewHolder(View itemView) : base(itemView)
-            {
-                _imageView = itemView.FindViewById<ImageView>(Resource.Id.view_holder_member_filter_item_indicator);
-                _avatar = itemView.FindViewById<ImageViewAsync>(Resource.Id.view_holder_member_filter_item_avatar);
-                _textView = itemView.FindViewById<TextView>(Resource.Id.view_holder_member_filter_item_title);
-                _view = itemView;
-                _view.Click += ViewOnClick;
-            }
-
-            private void ViewOnClick(object sender, EventArgs e)
-            {
-                _viewModel.IsSelected = !_viewModel.IsSelected;
-            }
-
-            public void Bind(ChatUserViewModel viewModel)
-            {
-                _viewModel = viewModel;
-                _avatar.LoadImageWithTextPlaceholder(
-                    viewModel.PhotoUrl, 
-                    viewModel.Username, 
-                    StyleHelper.Style.ChatAvatarStyles,
-                    x => x.Transform(new CircleTransformation()));
-                _textView.Text = viewModel.Username;
-                
-                _selectedBinding?.Detach();
-                _selectedBinding = this.SetBinding(() => _viewModel.IsSelected).WhenSourceChanges(() =>
-                {
-                    var resId = _viewModel.IsSelected ? StyleHelper.Style.CheckedIcon : StyleHelper.Style.UnCheckedIcon;
-                    _imageView.SetImageResource(resId);
-                });
-            }
         }
     }
 }

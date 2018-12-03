@@ -92,6 +92,8 @@
     <Compile Include="ItemTouchCallbacks\SwipeCallback.cs" />
     <Compile Include="Controls\ContextMenuComponent.cs" />
     <Compile Include="Views\AddContactsDialogFragment.cs" />
+    <Compile Include="ViewHolders\SelectedContactViewHolder.cs" />
+    <Compile Include="ViewHolders\FilteredItemViewHolder.cs" />
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\layout\activity_chat_details.xml" />
