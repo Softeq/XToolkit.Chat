@@ -8,22 +8,23 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Softeq.XToolkit.Chat.Manager;
+using Softeq.XToolkit.Chat.Models;
 using Softeq.XToolkit.Chat.Models.Enum;
 using Softeq.XToolkit.Chat.Models.Interfaces;
-using Softeq.XToolkit.Chat.Strategies.Search;
 using Softeq.XToolkit.Common.Collections;
 using Softeq.XToolkit.Common.Command;
+using Softeq.XToolkit.WhiteLabel.Mvvm;
+using Softeq.XToolkit.WhiteLabel.Navigation;
+using Softeq.XToolkit.Chat.Strategies.Search;
 using Softeq.XToolkit.Common.Extensions;
 using Softeq.XToolkit.WhiteLabel;
 using Softeq.XToolkit.WhiteLabel.Interfaces;
 using Softeq.XToolkit.WhiteLabel.Model;
-using Softeq.XToolkit.WhiteLabel.Mvvm;
-using Softeq.XToolkit.WhiteLabel.Navigation;
 using Softeq.XToolkit.WhiteLabel.Threading;
 
 namespace Softeq.XToolkit.Chat.ViewModels
 {
-    public class ChatDetailsViewModel : ViewModelBase, IViewModelParameter<ChatSummaryViewModel>
+    public class ChatDetailsViewModel : ViewModelBase
     {
         private readonly ChatManager _chatManager;
         private readonly IPageNavigationService _pageNavigationService;
@@ -32,7 +33,6 @@ namespace Softeq.XToolkit.Chat.ViewModels
         private readonly IDialogsService _dialogsService;
         private readonly IChatService _chatService;
         private readonly IViewModelFactoryService _viewModelFactoryService;
-        private ChatSummaryViewModel _chatSummaryViewModel;
 
         public ChatDetailsViewModel(
             ChatManager chatManager,
@@ -55,28 +55,22 @@ namespace Softeq.XToolkit.Chat.ViewModels
 
             AddMembersCommand = new RelayCommand(AddMembers);
             BackCommand = new RelayCommand(_pageNavigationService.GoBack, () => _pageNavigationService.CanGoBack);
+            RemoveMemberAtCommand = new RelayCommand<int>(RemoveMemberAt);
         }
 
+        public ChatSummaryModel Summary { get; set; }
         public IChatLocalizedStrings LocalizedStrings { get; }
 
-        public string Title => LocalizedStrings.DetailsTitle;
-
-        public ChatSummaryViewModel Parameter { set => _chatSummaryViewModel = value; }
-
         public ObservableRangeCollection<ChatUserViewModel> Members { get; }
-                = new ObservableRangeCollection<ChatUserViewModel>();
+            = new ObservableRangeCollection<ChatUserViewModel>();
 
-        public string ChatAvatarUrl => _chatSummaryViewModel.ChatPhotoUrl;
-        public string ChatName => _chatSummaryViewModel.ChatName;
         public string MembersCountText => _formatService.PluralizeWithQuantity(Members.Count,
-                                                                               LocalizedStrings.MembersPlural,
-                                                                               LocalizedStrings.MemberSingular);
-
-        public bool IsNavigated { get; private set; }
+            LocalizedStrings.MembersPlural, LocalizedStrings.MemberSingular);
 
         public ICommand AddMembersCommand { get; }
 
         public ICommand BackCommand { get; }
+        public RelayCommand<int> RemoveMemberAtCommand { get; }
 
         public IList<CommandAction> MenuActions { get; } = new List<CommandAction>();
 
@@ -86,23 +80,28 @@ namespace Softeq.XToolkit.Chat.ViewModels
 
             Members.Clear();
 
-            var members = await _chatManager.GetChatMembersAsync(_chatSummaryViewModel.ChatId);
+            var members = await _chatManager.GetChatMembersAsync(Summary.Id);
             Members.AddRange(members);
             RaisePropertyChanged(nameof(MembersCountText));
         }
 
-        public override void OnDisappearing()
+        public bool IsMemberRemovable(int memberPosition)
         {
-            base.OnDisappearing();
+            if (Summary.IsCreatedByMe)
+            {
+                return Members[memberPosition].Id != Summary.CreatorId;
+            }
 
-            IsNavigated = false;
+            return false;
         }
 
-        public override void OnNavigated()
+        private void RemoveMemberAt(int index)
         {
-            base.OnNavigated();
+            Members.RemoveAt(index);
 
-            IsNavigated = true;
+            //TODO YP: send request to the server, wait backend impl.
+
+            RaisePropertyChanged(nameof(MembersCountText));
         }
 
         public async Task SaveAsync(Func<(Task<Stream> GetImageTask, string Extension)> getImageFunc)
@@ -128,8 +127,10 @@ namespace Softeq.XToolkit.Chat.ViewModels
 
             if (imagePath != null)
             {
-                _chatSummaryViewModel.ChatPhotoUrl = imagePath;
-                await _chatManager.EditChatAsync(_chatSummaryViewModel.ChatSummary).ConfigureAwait(false);
+                Summary.AvatarUrl = imagePath;
+                RaisePropertyChanged(nameof(Summary.AvatarUrl));
+
+                await _chatManager.EditChatAsync(Summary).ConfigureAwait(false);
             }
 
             Execute.BeginOnUIThread(() =>
@@ -145,7 +146,8 @@ namespace Softeq.XToolkit.Chat.ViewModels
                 {
                     SelectedContacts = Members,
                     SelectionType = SelectedContactsAction.InviteToChat,
-                    SearchStrategy = new InviteSearchContactsStrategy(_chatService, _viewModelFactoryService, _chatSummaryViewModel.ChatId)
+                    SearchStrategy = new InviteSearchContactsStrategy(_chatService,
+                        _viewModelFactoryService, Summary.Id)
                 },
                 new OpenDialogOptions
                 {
@@ -163,7 +165,7 @@ namespace Softeq.XToolkit.Chat.ViewModels
 
                 try
                 {
-                    await _chatManager.InviteMembersAsync(_chatSummaryViewModel.ChatId, contactsForInvite);
+                    await _chatManager.InviteMembersAsync(Summary.Id, contactsForInvite);
                 }
                 catch (Exception ex)
                 {

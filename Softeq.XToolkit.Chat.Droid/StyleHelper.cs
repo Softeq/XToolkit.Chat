@@ -3,7 +3,7 @@
 
 using System;
 using Softeq.XToolkit.WhiteLabel;
-using Softeq.XToolkit.WhiteLabel.Droid.Shared;
+using Softeq.XToolkit.WhiteLabel.Droid.Controls;
 
 namespace Softeq.XToolkit.Chat.Droid
 {
@@ -31,7 +31,7 @@ namespace Softeq.XToolkit.Chat.Droid
         int MessageStatusReadIcon { get; }
         int CommonActivityStyle { get; }
         int ChatGroupNoAvatarIcon { get; }
-        int IncommingMessageBg { get; }
+        int IncomingMessageBg { get; }
         int OutcomingMessageBg { get; }
         int ContentColor { get; }
         int UnderlinedBg { get; }
@@ -56,7 +56,7 @@ namespace Softeq.XToolkit.Chat.Droid
         public abstract AvatarPlaceholderDrawable.AvatarStyles ChatAvatarStyles { get; }
         public abstract int ChatGroupNoAvatarIcon { get; }
         public abstract int RemoveImageButtonIcon { get; }
-        public abstract int IncommingMessageBg { get; }
+        public abstract int IncomingMessageBg { get; }
         public abstract int OutcomingMessageBg { get; }
         public abstract int ContentColor { get; }
         public abstract int UnderlinedBg { get; }

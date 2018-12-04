@@ -3,16 +3,18 @@
 
 using System;
 using Softeq.XToolkit.Chat.Models;
+using Softeq.XToolkit.Chat.Models.Interfaces;
 using Softeq.XToolkit.WhiteLabel.Interfaces;
 using Softeq.XToolkit.WhiteLabel.Mvvm;
 using Softeq.XToolkit.WhiteLabel.Threading;
-using Softeq.XToolkit.Chat.Models.Interfaces;
 using Softeq.XToolkit.WhiteLabel.Navigation;
 using Softeq.XToolkit.WhiteLabel.ViewModels;
 
 namespace Softeq.XToolkit.Chat.ViewModels
 {
-    public class ChatMessageViewModel : ObservableObject, IViewModelParameter<ChatMessageModel>, IEquatable<ChatMessageViewModel>
+    public class ChatMessageViewModel : ObservableObject,
+        IViewModelParameter<ChatMessageModel>,
+        IEquatable<ChatMessageViewModel>
     {
         private readonly IFormatService _formatService;
         private readonly IDialogsService _dialogsService;
@@ -25,8 +27,10 @@ namespace Softeq.XToolkit.Chat.ViewModels
             _dialogsService = dialogsService;
         }
 
+        //TODO Yauhen Sampir: Remove Parameter and navigate with parameter exactly on Model with execution Method UpdateMessageModel() if needed
         public ChatMessageModel Parameter
         {
+            get => null;
             set => UpdateMessageModel(value);
         }
 

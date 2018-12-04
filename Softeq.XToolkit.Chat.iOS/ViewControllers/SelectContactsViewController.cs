@@ -89,16 +89,6 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
             base.DoAttachBindings();
 
             Bindings.Add(this.SetBinding(() => ViewModel.ChatName, () => _chatDetailsHeaderView.ChatNameField.Text, BindingMode.TwoWay));
-            Bindings.Add(this.SetBinding(() => ViewModel.IsInviteToChat).WhenSourceChanges(() =>
-            {
-                if (ViewModel.IsInviteToChat)
-                {
-                    _chatDetailsHeaderView.RemoveFromSuperview();
-                    TableView.TableHeaderView = new UIView();
-                }
-
-                CustomNavigationItem.Title = ViewModel.Title;
-            }));
             Bindings.Add(this.SetBinding(() => ViewModel.ContactsCountText, () => _chatDetailsHeaderView.ChatMembersCount));
             Bindings.Add(this.SetBinding(() => _simpleImagePicker.ViewModel.ImageCacheKey)
                 .WhenSourceChanges(() =>

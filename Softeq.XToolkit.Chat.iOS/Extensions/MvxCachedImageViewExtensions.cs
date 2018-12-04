@@ -4,10 +4,9 @@
 using System.Threading.Tasks;
 using AsyncDisplayKitBindings;
 using FFImageLoading;
-using Softeq.XToolkit.WhiteLabel.iOS.Shared;
 using Softeq.XToolkit.WhiteLabel.Threading;
 using static Softeq.XToolkit.WhiteLabel.iOS.Extensions.MvxCachedImageViewExtensions;
-using static Softeq.XToolkit.WhiteLabel.iOS.Shared.AvatarImageHelpers;
+using static Softeq.XToolkit.WhiteLabel.iOS.Helpers.AvatarImageHelpers;
 
 namespace Softeq.XToolkit.Chat.iOS.Extensions
 {

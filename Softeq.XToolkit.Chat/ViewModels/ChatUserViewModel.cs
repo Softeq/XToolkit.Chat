@@ -17,6 +17,7 @@ namespace Softeq.XToolkit.Chat.ViewModels
 
         public ChatUserModel Parameter
         {
+            get => _model;
             set => _model = value;
         }
 

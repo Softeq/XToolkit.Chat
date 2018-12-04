@@ -3,7 +3,7 @@
 
 using System;
 using Softeq.XToolkit.WhiteLabel;
-using Softeq.XToolkit.WhiteLabel.iOS.Shared;
+using Softeq.XToolkit.WhiteLabel.iOS.Helpers;
 using UIKit;
 
 namespace Softeq.XToolkit.Chat.iOS

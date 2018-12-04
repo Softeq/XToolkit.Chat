@@ -23,7 +23,7 @@ namespace Softeq.XToolkit.Chat.ViewModels
         public SelectedContactsAction SelectionType { get; set; }
         public ISearchContactsStrategy SearchStrategy { get; set; }
     }
-    
+
     public class AddContactsViewModel : DialogViewModelBase, IViewModelParameter<AddContactParameters>
     {
         private const int SearchDelayMs = 2000;
@@ -56,6 +56,7 @@ namespace Softeq.XToolkit.Chat.ViewModels
 
         public AddContactParameters Parameter
         {
+            get => null;
             set
             {
                 _excludedContacts = value.SelectedContacts;
