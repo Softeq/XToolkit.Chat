@@ -21,8 +21,7 @@ using Softeq.XToolkit.WhiteLabel.Navigation;
 
 namespace Softeq.XToolkit.Chat.ViewModels
 {
-    public class SelectContactsViewModel : ViewModelBase,
-        IViewModelParameter<(SelectedContactsAction, IList<string> FilteredUsers, string OpenedChatId)>
+    public class SelectContactsViewModel : ViewModelBase
     {
         private readonly IAccountService _accountService;
         private readonly ChatManager _chatManager;
@@ -32,10 +31,6 @@ namespace Softeq.XToolkit.Chat.ViewModels
         private readonly IPageNavigationService _pageNavigationService;
         private readonly IUploadImageService _uploadImageService;
         private string _chatName;
-        private IList<string> _filteredUsers = new List<string>();
-        private string _openedChatId;
-
-        private SelectedContactsAction _selectedContactsAction;
 
         public SelectContactsViewModel(
             ChatManager chatManager,
@@ -85,23 +80,15 @@ namespace Softeq.XToolkit.Chat.ViewModels
             set => Set(ref _chatName, value);
         }
 
-        public bool IsCreateChat => _selectedContactsAction == SelectedContactsAction.CreateChat;
+        public bool IsCreateChat => SelectedContactsAction == SelectedContactsAction.CreateChat;
 
-        public bool IsInviteToChat => _selectedContactsAction == SelectedContactsAction.InviteToChat;
+        public bool IsInviteToChat => SelectedContactsAction == SelectedContactsAction.InviteToChat;
 
-        public (SelectedContactsAction, IList<string> FilteredUsers, string OpenedChatId) Parameter
-        {
-            set
-            {
-                _selectedContactsAction = value.Item1;
-                _filteredUsers = value.FilteredUsers ?? new List<string>();
-                _openedChatId = value.OpenedChatId;
+        public SelectedContactsAction SelectedContactsAction { get; set; }
 
-                RaisePropertyChanged(nameof(ActionButtonName));
-                RaisePropertyChanged(nameof(IsCreateChat));
-                RaisePropertyChanged(nameof(IsInviteToChat));
-            }
-        }
+        public IList<string> FilteredUsers { get; set; } = new List<string>();
+        
+        public string OpenedChatId { get; set; }
 
         public override void OnInitialize()
         {
@@ -120,7 +107,7 @@ namespace Softeq.XToolkit.Chat.ViewModels
             if (users != null)
             {
                 var filteredUsers = users.Where(x => x.Id != _accountService.UserId
-                                                     && !_filteredUsers.Contains(x?.Id)).ToList();
+                                                     && !FilteredUsers.Contains(x?.Id)).ToList();
                 filteredUsers.Apply(x =>
                 {
                     x.IsSelectable = true;
@@ -151,10 +138,10 @@ namespace Softeq.XToolkit.Chat.ViewModels
                 }
                 else if (IsInviteToChat)
                 {
-                    await _chatManager.InviteMembersAsync(_openedChatId, selectedContactsIds).ConfigureAwait(false);
+                    await _chatManager.InviteMembersAsync(OpenedChatId, selectedContactsIds).ConfigureAwait(false);
                 }
 
-                BackCommand.Execute(null);
+                _pageNavigationService.GoBack();
             }
             finally
             {
@@ -193,7 +180,7 @@ namespace Softeq.XToolkit.Chat.ViewModels
                 }
                 else if (IsInviteToChat)
                 {
-                    await _chatManager.InviteMembersAsync(_openedChatId, selectedContactsIds).ConfigureAwait(false);
+                    await _chatManager.InviteMembersAsync(OpenedChatId, selectedContactsIds).ConfigureAwait(false);
                 }
 
                 _pageNavigationService.GoBack();

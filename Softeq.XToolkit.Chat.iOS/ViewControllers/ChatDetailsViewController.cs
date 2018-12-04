@@ -4,6 +4,7 @@
 using System;
 using UIKit;
 using CoreGraphics;
+using Foundation;
 using Softeq.XToolkit.WhiteLabel.iOS;
 using Softeq.XToolkit.Chat.iOS.Views;
 using Softeq.XToolkit.Bindings;
@@ -43,6 +44,8 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
                 (cell as ChatUserViewCell)?.BindViewModel(viewModel);
             }, ChatUserViewCell.Key);
             TableView.Source = source;
+            TableView.Delegate = new ParticipantsTableViewDelegate(ViewModel);
+
             _sourceRef = WeakReferenceEx.Create(source);
         }
 
@@ -50,13 +53,37 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
         {
             base.DoAttachBindings();
 
-            Bindings.Add(this.SetBinding(() => ViewModel.ChatAvatarUrl).WhenSourceChanges((() =>
+            Bindings.Add(this.SetBinding(() => ViewModel.Summary.AvatarUrl).WhenSourceChanges((() =>
             {
-                _chatDetailsHeaderView.SetChatAvatar(ViewModel.ChatAvatarUrl);
+                _chatDetailsHeaderView.SetChatAvatar(ViewModel.Summary.AvatarUrl);
             })));
-            Bindings.Add(this.SetBinding(() => ViewModel.ChatName, () => _chatDetailsHeaderView.ChatNameField.Text));
+            Bindings.Add(this.SetBinding(() => ViewModel.Summary.Name, () => _chatDetailsHeaderView.ChatNameField.Text));
             Bindings.Add(this.SetBinding(() => ViewModel.MembersCountText, () => _chatDetailsHeaderView.ChatMembersCount));
+        }
+
+        private class ParticipantsTableViewDelegate : UITableViewDelegate
+        {
+            private readonly ChatDetailsViewModel _viewModel;
+
+            public ParticipantsTableViewDelegate(ChatDetailsViewModel viewModel)
+            {
+                _viewModel = viewModel;
+            }
+
+            public override UITableViewRowAction[] EditActionsForRow(UITableView tableView, NSIndexPath indexPath)
+            {
+                if (!_viewModel.IsMemberRemovable((int) indexPath.Item))
+                {
+                    return new UITableViewRowAction[0];
+                }
+
+                var remove = UITableViewRowAction.Create(
+                    UITableViewRowActionStyle.Default,
+                    _viewModel.RemoveLocalizedString,
+                    (row, index) => _viewModel.RemoveMemberAtCommand.Execute((int) indexPath.Item));
+
+                return new[] {remove};
+            }
         }
     }
 }
-
