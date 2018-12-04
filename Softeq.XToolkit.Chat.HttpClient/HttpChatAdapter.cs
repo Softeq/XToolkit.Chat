@@ -126,7 +126,7 @@ namespace Softeq.XToolkit.Chat.HttpClient
         public async Task<PagingModel<ChatUserModel>> GetContactsAsync(string nameFilter, int pageSize, int pageNumber)
         {
             var request = new GetMembersRequest(_chatConfig.ApiUrl, nameFilter, pageSize, pageNumber);
-            var result = await _httpClient.TrySendAndDeserializeAsync<PagedMembersDto>(request, _logger).ConfigureAwait(false);
+            var result = await _httpClient.TrySendAndDeserializeAsync<PagingModelDto<ChatUserDto>>(request, _logger).ConfigureAwait(false);
 
             return result == null
                 ? null
@@ -136,7 +136,7 @@ namespace Softeq.XToolkit.Chat.HttpClient
         public async Task<PagingModel<ChatUserModel>> GetContactsForInviteAsync(string chatId, string nameFilter, int pageSize, int pageNumber)
         {
             var request = new GetMembersForInviteRequest(_chatConfig.ApiUrl, chatId, nameFilter, pageSize, pageNumber);
-            var result = await _httpClient.TrySendAndDeserializeAsync<PagedMembersDto>(request, _logger).ConfigureAwait(false);
+            var result = await _httpClient.TrySendAndDeserializeAsync<PagingModelDto<ChatUserDto>>(request, _logger).ConfigureAwait(false);
 
             return result == null
                 ? null

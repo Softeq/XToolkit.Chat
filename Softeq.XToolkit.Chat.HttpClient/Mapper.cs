@@ -6,6 +6,7 @@ using Softeq.XToolkit.Chat.Models;
 using System.ComponentModel;
 using System.Linq;
 using Softeq.XToolkit.Common.Models;
+using Softeq.XToolkit.RemoteData;
 
 namespace Softeq.XToolkit.Chat.HttpClient
 {
@@ -73,9 +74,9 @@ namespace Softeq.XToolkit.Chat.HttpClient
             }
         }
         
-        public static PagingModel<ChatUserModel> PagedMembersDtoToPagingModel(PagedMembersDto dto)
+        public static PagingModel<ChatUserModel> PagedMembersDtoToPagingModel(PagingModelDto<ChatUserDto> dto)
         {
-            if (dto == null)
+            if (dto?.Items == null)
             {
                 return null;
             }
@@ -89,8 +90,8 @@ namespace Softeq.XToolkit.Chat.HttpClient
             {
                 Page = dto.PageNumber,
                 Data = items,
-                TotalNumberOfPages = -1, // TODO YP: Because there isn't consistency between dtos
-                TotalNumberOfRecords = dto.TotalRows,
+                TotalNumberOfPages = dto.TotalNumberOfPages,
+                TotalNumberOfRecords = dto.TotalNumberOfRecords,
                 PageSize = dto.PageSize
             };
         }
