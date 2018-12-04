@@ -15,7 +15,7 @@ using Softeq.XToolkit.Chat.ViewModels;
 using Softeq.XToolkit.Common;
 using Softeq.XToolkit.Common.Command;
 using Softeq.XToolkit.Common.Droid.Converters;
-using Softeq.XToolkit.WhiteLabel.Droid.Shared.Extensions;
+using Softeq.XToolkit.WhiteLabel.Droid.Extensions;
 
 namespace Softeq.XToolkit.Chat.Droid.ViewHolders
 {

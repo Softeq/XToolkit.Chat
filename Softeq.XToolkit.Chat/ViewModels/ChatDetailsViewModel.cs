@@ -61,7 +61,11 @@ namespace Softeq.XToolkit.Chat.ViewModels
 
         public string Title => LocalizedStrings.DetailsTitle;
 
-        public ChatSummaryViewModel Parameter { set => _chatSummaryViewModel = value; }
+        public ChatSummaryViewModel Parameter
+        {
+            get => null;
+            set => _chatSummaryViewModel = value;
+        }
 
         public ObservableRangeCollection<ChatUserViewModel> Members { get; }
                 = new ObservableRangeCollection<ChatUserViewModel>();
@@ -71,8 +75,6 @@ namespace Softeq.XToolkit.Chat.ViewModels
         public string MembersCountText => _formatService.PluralizeWithQuantity(Members.Count,
                                                                                LocalizedStrings.MembersPlural,
                                                                                LocalizedStrings.MemberSingular);
-
-        public bool IsNavigated { get; private set; }
 
         public ICommand AddMembersCommand { get; }
 
@@ -89,20 +91,6 @@ namespace Softeq.XToolkit.Chat.ViewModels
             var members = await _chatManager.GetChatMembersAsync(_chatSummaryViewModel.ChatId);
             Members.AddRange(members);
             RaisePropertyChanged(nameof(MembersCountText));
-        }
-
-        public override void OnDisappearing()
-        {
-            base.OnDisappearing();
-
-            IsNavigated = false;
-        }
-
-        public override void OnNavigated()
-        {
-            base.OnNavigated();
-
-            IsNavigated = true;
         }
 
         public async Task SaveAsync(Func<(Task<Stream> GetImageTask, string Extension)> getImageFunc)

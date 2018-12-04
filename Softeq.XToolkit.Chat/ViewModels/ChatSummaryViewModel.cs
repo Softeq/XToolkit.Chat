@@ -12,7 +12,9 @@ using Softeq.XToolkit.WhiteLabel.Threading;
 
 namespace Softeq.XToolkit.Chat.ViewModels
 {
-    public class ChatSummaryViewModel : ViewModelBase, IViewModelParameter<ChatSummaryModel>, IEquatable<ChatSummaryViewModel>
+    public class ChatSummaryViewModel : ViewModelBase,
+        IViewModelParameter<ChatSummaryModel>,
+        IEquatable<ChatSummaryViewModel>
     {
         private const string TypingUsersDelimiter = ",";
         private const string SpaceDelimiter = " ";
@@ -34,6 +36,7 @@ namespace Softeq.XToolkit.Chat.ViewModels
 
         public ChatSummaryModel Parameter
         {
+            get => null;
             set => ChatSummary = value ?? new ChatSummaryModel();
         }
 

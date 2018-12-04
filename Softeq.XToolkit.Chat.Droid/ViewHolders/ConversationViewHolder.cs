@@ -15,7 +15,7 @@ using Softeq.XToolkit.Chat.Models;
 using Softeq.XToolkit.Chat.ViewModels;
 using Softeq.XToolkit.Common;
 using Softeq.XToolkit.Common.WeakSubscription;
-using Softeq.XToolkit.WhiteLabel.Droid.Shared.Extensions;
+using Softeq.XToolkit.WhiteLabel.Droid.Extensions;
 using Softeq.XToolkit.WhiteLabel.Threading;
 using Softeq.XToolkit.WhiteLabel.ViewModels;
 using PopupMenu = Android.Support.V7.Widget.PopupMenu;
@@ -46,7 +46,7 @@ namespace Softeq.XToolkit.Chat.Droid.ViewHolders
             AttachmentImageView.Click += OnMessageImageClicked;
 
             var resourceId = _isIncomingMessageViewType
-                ? StyleHelper.Style.IncommingMessageBg
+                ? StyleHelper.Style.IncomingMessageBg
                 : StyleHelper.Style.OutcomingMessageBg;
 
             var imageBg = itemView.FindViewById<ImageView>(Resource.Id.item_chat_conversation_bg);

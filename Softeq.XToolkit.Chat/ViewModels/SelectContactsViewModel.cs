@@ -24,7 +24,7 @@ using Softeq.XToolkit.WhiteLabel.Threading;
 
 namespace Softeq.XToolkit.Chat.ViewModels
 {
-    // TODO YP: clean up this ViewModel (remove navigationwith params, create/invite checks) 
+    // TODO YP: clean up this ViewModel (remove navigation with params, create/invite checks) 
     public class SelectContactsViewModel : ViewModelBase,
         IViewModelParameter<(SelectedContactsAction, IList<string> FilteredUsers, string OpenedChatId)>
     {
@@ -99,6 +99,7 @@ namespace Softeq.XToolkit.Chat.ViewModels
         [Obsolete]
         public (SelectedContactsAction, IList<string> FilteredUsers, string OpenedChatId) Parameter
         {
+            get => (0, null, null);
             set
             {
                 _selectedContactsAction = value.Item1;

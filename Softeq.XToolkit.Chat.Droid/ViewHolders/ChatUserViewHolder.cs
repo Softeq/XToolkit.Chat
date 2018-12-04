@@ -9,7 +9,7 @@ using FFImageLoading.Work;
 using Softeq.XToolkit.Bindings;
 using Softeq.XToolkit.Chat.ViewModels;
 using Softeq.XToolkit.Common;
-using Softeq.XToolkit.WhiteLabel.Droid.Shared.Extensions;
+using Softeq.XToolkit.WhiteLabel.Droid.Extensions;
 
 namespace Softeq.XToolkit.Chat.Droid.ViewHolders
 {

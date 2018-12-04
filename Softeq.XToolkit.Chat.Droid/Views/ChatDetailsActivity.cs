@@ -20,7 +20,7 @@ using Softeq.XToolkit.Permissions;
 using Softeq.XToolkit.WhiteLabel;
 using Softeq.XToolkit.WhiteLabel.Droid;
 using Softeq.XToolkit.WhiteLabel.Droid.Controls;
-using Softeq.XToolkit.WhiteLabel.Droid.Shared.Extensions;
+using Softeq.XToolkit.WhiteLabel.Droid.Extensions;
 using Softeq.XToolkit.WhiteLabel.Threading;
 
 namespace Softeq.XToolkit.Chat.Droid.Views
