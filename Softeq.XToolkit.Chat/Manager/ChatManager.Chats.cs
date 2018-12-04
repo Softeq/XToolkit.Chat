@@ -62,9 +62,6 @@ namespace Softeq.XToolkit.Chat.Manager
         public async Task<IList<ChatUserViewModel>> GetContactsAsync(string nameFilter, int pageNumber, int pageSize)
         {
             var models = await _chatService.GetContactsAsync(nameFilter, pageNumber, pageSize).ConfigureAwait(false);
-
-            // TODO YP: what about put to cache, after that create VM on target VM, not this?
-            
             if (models == null)
             {
                 return new List<ChatUserViewModel>();

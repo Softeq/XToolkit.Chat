@@ -16,7 +16,6 @@ using Softeq.XToolkit.Chat.Droid.LayoutManagers;
 using Softeq.XToolkit.Chat.Droid.ViewHolders;
 using Softeq.XToolkit.Chat.ViewModels;
 using Softeq.XToolkit.Common.Command;
-using Softeq.XToolkit.Common.Droid.Converters;
 using Softeq.XToolkit.Permissions;
 using Softeq.XToolkit.WhiteLabel;
 using Softeq.XToolkit.WhiteLabel.Droid;
@@ -83,6 +82,8 @@ namespace Softeq.XToolkit.Chat.Droid.Views
             _addMembers = FindViewById<Button>(Resource.Id.activity_chat_create_add_member);
             _addMembers.Text = ViewModel.AddMembersText;
             _addMembers.SetCommand(ViewModel.AddMembersCommand);
+
+            _chatHeaderLayout.Visibility = ViewStates.Visible;
         }
 
         protected override void DoAttachBindings()
@@ -92,10 +93,6 @@ namespace Softeq.XToolkit.Chat.Droid.Views
             Bindings.Add(this.SetBinding(() => ViewModel.ActionButtonName, () => SupportActionBar.Title));
             Bindings.Add(this.SetBinding(() => ViewModel.ChatName, () => _chatNameEditTextView.Text, BindingMode.TwoWay));
             Bindings.Add(this.SetBinding(() => ViewModel.ContactsCountText, () => _membersCountTextView.Text));
-            Bindings.Add(this.SetBinding(() => ViewModel.IsCreateChat).WhenSourceChanges(() =>
-            {
-                _chatHeaderLayout.Visibility = BoolToViewStateConverter.ConvertGone(ViewModel.IsCreateChat);
-            }));
             Bindings.Add(this.SetBinding(() => _imagePicker.ViewModel.ImageCacheKey)
                 .WhenSourceChanges(() =>
                 {

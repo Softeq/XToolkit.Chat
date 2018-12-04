@@ -62,7 +62,7 @@ namespace Softeq.XToolkit.Chat.ViewModels
 
         public ChatSummaryViewModel Parameter
         {
-            get => null;
+            get => _chatSummaryViewModel;
             set
             {
                 _chatSummaryViewModel = value;
@@ -176,9 +176,15 @@ namespace Softeq.XToolkit.Chat.ViewModels
 
         private void ShowInfo()
         {
-            //_pageNavigationService.NavigateToViewModel<ChatDetailsViewModel, ChatSummaryViewModel>(_chatSummaryViewModel);
             _pageNavigationService.For<ChatDetailsViewModel>()
-                .WithParam(x => x.Parameter, _chatSummaryViewModel)
+                .WithParam(x => x.Summary, _chatSummaryViewModel.Parameter)
+                .Navigate();
+        }
+
+        private void AttachImage()
+        {
+            _pageNavigationService.For<ChatDetailsViewModel>()
+                .WithParam(x => x.Summary, _chatSummaryViewModel.Parameter)
                 .Navigate();
         }
 

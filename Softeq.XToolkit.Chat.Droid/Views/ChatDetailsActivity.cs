@@ -1,20 +1,24 @@
 ﻿// Developed by Softeq Development Corporation
 // http://www.softeq.com
 
+using System.Collections.Generic;
 using Android.App;
+using Android.Graphics;
 using Android.OS;
 using Android.Support.V7.Widget;
+using Android.Support.V7.Widget.Helper;
 using Android.Views;
 using Android.Widget;
 using FFImageLoading;
 using FFImageLoading.Cross;
 using FFImageLoading.Transformations;
-using FFImageLoading.Work;
 using Softeq.XToolkit.Bindings;
 using Softeq.XToolkit.Chat.Droid.Adapters;
+using Softeq.XToolkit.Chat.Droid.ItemTouchCallbacks;
 using Softeq.XToolkit.Chat.Droid.LayoutManagers;
 using Softeq.XToolkit.Chat.Droid.ViewHolders;
 using Softeq.XToolkit.Chat.ViewModels;
+using Softeq.XToolkit.Common.Droid.Extensions;
 using Softeq.XToolkit.Common.Command;
 using Softeq.XToolkit.Permissions;
 using Softeq.XToolkit.WhiteLabel;
@@ -51,7 +55,7 @@ namespace Softeq.XToolkit.Chat.Droid.Views
 
             _navigationBarView = FindViewById<NavigationBarView>(Resource.Id.activity_chat_details_navigation_bar);
             _navigationBarView.SetLeftButton(StyleHelper.Style.NavigationBarBackButtonIcon, ViewModel.BackCommand);
-            _navigationBarView.SetTitle(ViewModel.Title);
+            _navigationBarView.SetTitle(ViewModel.LocalizedStrings.DetailsTitle);
             _navigationBarView.SetRightButton(ViewModel.LocalizedStrings.Save, new RelayCommand(() => OnSaveClick()));
 
             _chatPhotoImageView = FindViewById<MvxCachedImageView>(Resource.Id.iv_chat_photo);
@@ -71,7 +75,10 @@ namespace Softeq.XToolkit.Chat.Droid.Views
 
             _addMemberButton.SetCommand(ViewModel.AddMembersCommand);
 
-            _imagePicker = new ImagePicker(ServiceLocator.Resolve<IPermissionsManager>(), ServiceLocator.Resolve<IImagePickerService>())
+            // TODO YP: remove ServiceLocator
+            _imagePicker = new ImagePicker(
+                ServiceLocator.Resolve<IPermissionsManager>(),
+                ServiceLocator.Resolve<IImagePickerService>())
             {
                 MaxImageWidth = 300
             };
@@ -81,15 +88,15 @@ namespace Softeq.XToolkit.Chat.Droid.Views
         {
             base.DoAttachBindings();
 
-            Bindings.Add(this.SetBinding(() => ViewModel.ChatName, () => _chatNameTextView.Text));
+            Bindings.Add(this.SetBinding(() => ViewModel.Summary.Name, () => _chatNameTextView.Text));
             Bindings.Add(this.SetBinding(() => ViewModel.MembersCountText, () => _chatMembersCountTextView.Text));
-            Bindings.Add(this.SetBinding(() => ViewModel.ChatAvatarUrl).WhenSourceChanges(() =>
+            Bindings.Add(this.SetBinding(() => ViewModel.Summary.AvatarUrl).WhenSourceChanges(() =>
             {
                 _chatPhotoImageView.LoadImageWithTextPlaceholder(
-                    ViewModel.ChatAvatarUrl,
-                    ViewModel.ChatName,
+                    ViewModel.Summary.AvatarUrl,
+                    ViewModel.Summary.Name,
                     StyleHelper.Style.ChatAvatarStyles,
-                    (TaskParameter x) => x.Transform(new CircleTransformation()));
+                    x => x.Transform(new CircleTransformation()));
             }));
             Bindings.Add(this.SetBinding(() => _imagePicker.ViewModel.ImageCacheKey)
                 .WhenSourceChanges(() =>
@@ -124,6 +131,10 @@ namespace Softeq.XToolkit.Chat.Droid.Views
 
         private void InitializeMembersRecyclerView()
         {
+            var swipeItemCallback = new SwipeCallback(this, _membersRecyclerView, ConfigureSwipeForViewHolder);
+            var swipeItemTouchHelper = new ItemTouchHelper(swipeItemCallback);
+            swipeItemTouchHelper.AttachToRecyclerView(_membersRecyclerView);
+            
             _membersRecyclerView.HasFixedSize = true;
             _membersRecyclerView.SetLayoutManager(new GuardedLinearLayoutManager(this));
             _membersRecyclerView.AddItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.Vertical));
@@ -137,6 +148,29 @@ namespace Softeq.XToolkit.Chat.Droid.Views
                     var viewHolder = new ChatUserViewHolder(itemView);
                     viewHolder.ContactSwitch.Visibility = ViewStates.Gone;
                     return viewHolder;
+                }));
+        }
+
+        private void ConfigureSwipeForViewHolder(RecyclerView.ViewHolder viewHolder, int position,
+            ICollection<SwipeCallback.ISwipeActionView> actions)
+        {
+            if (ViewModel.IsMemberRemovable(position))
+            {
+                return;
+            }
+
+            var swipeLeaveActionViewOptions = new SimpleSwipeActionView.Options
+            {
+                Width = this.ToPixels(80),
+                TextSize = this.ToPixels(14),
+                BackgroundColor = Color.Red
+            };
+
+            actions.Add(new SimpleSwipeActionView(ViewModel.LocalizedStrings.Remove,
+                swipeLeaveActionViewOptions,
+                pos =>
+                {
+                    ViewModel.RemoveMemberAtCommand.Execute(pos);
                 }));
         }
 
