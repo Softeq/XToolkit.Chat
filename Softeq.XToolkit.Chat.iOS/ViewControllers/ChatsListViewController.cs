@@ -26,12 +26,6 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
 
         public override void ViewDidLoad()
         {
-            if (ViewModel == null)
-            {
-                var viewModel = ServiceLocator.Resolve<ChatsListViewModel>();
-                SetExistingViewModel(viewModel);
-            }
-
             base.ViewDidLoad();
 
             // Setup brand color for NavigationBar buttons

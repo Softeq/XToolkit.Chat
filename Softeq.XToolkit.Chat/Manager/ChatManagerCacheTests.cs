@@ -16,7 +16,7 @@ namespace Softeq.XToolkit.Chat.Manager
     {
         public static void UpdateCollectionTest()
         {
-            var viewModelFactoryService = ServiceLocator.Resolve<IViewModelFactoryService>();
+            var viewModelFactoryService = Dependencies.ServiceLocator.Resolve<IViewModelFactoryService>();
 
             var col1 = new ObservableRangeCollection<ChatMessageViewModel>
             {
