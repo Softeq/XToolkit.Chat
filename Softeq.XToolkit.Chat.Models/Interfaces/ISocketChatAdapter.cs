@@ -28,11 +28,13 @@ namespace Softeq.XToolkit.Chat.Models.Interfaces
         Task LeaveChatAsync(string chatId);
         Task InviteMembersAsync(string chatId, IList<string> participantsIds);
 
-        Task<ChatMessageModel> SendMessageAsync(string chatId, string messageBody);
+        Task<ChatMessageModel> SendMessageAsync(string chatId, string messageBody, string imageUrl);
         Task EditMessageAsync(string messageId, string newBody);
         Task DeleteMessageAsync(string channelId, string messageId);
 
         void ForceReconnect();
         void ForceDisconnect();
+
+        Task EditChatAsync(ChatSummaryModel chatSummary);
     }
 }

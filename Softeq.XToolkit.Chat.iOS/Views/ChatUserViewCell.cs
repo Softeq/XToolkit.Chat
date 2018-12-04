@@ -2,14 +2,15 @@
 // http://www.softeq.com
 
 using System;
-using Foundation;
-using UIKit;
 using System.Collections.Generic;
+using FFImageLoading.Transformations;
+using Foundation;
 using Softeq.XToolkit.Bindings;
+using Softeq.XToolkit.Bindings.Extensions;
+using Softeq.XToolkit.Chat.ViewModels;
 using Softeq.XToolkit.Common;
 using Softeq.XToolkit.WhiteLabel.iOS.Extensions;
-using Softeq.XToolkit.Common.Extensions;
-using Softeq.XToolkit.Chat.ViewModels;
+using UIKit;
 
 namespace Softeq.XToolkit.Chat.iOS.Views
 {
@@ -18,7 +19,7 @@ namespace Softeq.XToolkit.Chat.iOS.Views
         public static readonly NSString Key = new NSString(nameof(ChatUserViewCell));
         public static readonly UINib Nib;
 
-        List<Binding> _bindings = new List<Binding>();
+        private readonly List<Binding> _bindings = new List<Binding>();
 
         private WeakReferenceEx<ChatUserViewModel> _viewModelRef;
 
@@ -36,17 +37,20 @@ namespace Softeq.XToolkit.Chat.iOS.Views
         {
             _viewModelRef = WeakReferenceEx.Create(viewModel);
 
-            _bindings.Apply(x => x.Detach());
-            _bindings.Clear();
+            _bindings.DetachAllAndClear();
 
             _bindings.Add(this.SetBinding(() => _viewModelRef.Target.Username, () => UsernameLabel.Text));
             _bindings.Add(this.SetBinding(() => _viewModelRef.Target.PhotoUrl).WhenSourceChanges(() =>
             {
-                PhotoImageView.LoadImageAsync("Chat_NoPhoto", _viewModelRef.Target.PhotoUrl);
+                PhotoImageView.LoadImageWithTextPlaceholder(
+                    _viewModelRef.Target.PhotoUrl,
+                    _viewModelRef.Target.Username,
+                    StyleHelper.Style.AvatarStyles,
+                    x => x.Transform(new CircleTransformation()));
             }));
-            _bindings.Add(this.SetBinding(() => _viewModelRef.Target.IsSelected, () => IsSelectedSwitch.On, BindingMode.TwoWay));
-            _bindings.Add(this.SetBinding(() => _viewModelRef.Target.IsSelectable, () => IsSelectedSwitch.Hidden)
-                          .ConvertSourceToTarget(x => !x));
+            _bindings.Add(this.SetBinding(() => _viewModelRef.Target.IsSelected, () => CheckBoxButton.Selected, BindingMode.TwoWay));
+            _bindings.Add(this.SetBinding(() => _viewModelRef.Target.IsSelectable, () => CheckBoxButton.Hidden)
+                .ConvertSourceToTarget(x => !x));
         }
     }
 }

@@ -226,11 +226,11 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
                 {
                     newBottomOffset = 0;
                 }
-                // TODO: edit -> add multilines -> close keyboard -> editing close (offset on footer == multiline height)
+                //TODO: edit -> add multilines -> close keyboard -> editing close (offset on footer == multiline height)
 
                 UpdateTableViewContentOffsetY(newBottomOffset);
             }
-            // TODO: when keyboard open InputBarHeight sometimes without EditingHeight (because got before bind IsInEditMessageMode)
+            //TODO: when keyboard open InputBarHeight sometimes without EditingHeight (because got before bind IsInEditMessageMode)
             //       reproduce: edit -> close keyboard -> editing close -> start editing (need remove offset to bottom)
             //       check CalculateOffsetForShowKeyboard
             //else

@@ -50,17 +50,16 @@ namespace Softeq.XToolkit.Chat.SignalRClient
                               IRestHttpClient httpClient,
                               ILogManager logManager,
                               IInternetConnectionManager internetConnectionManager,
-                              IChatConfiguration chatConfiguration)
+                              IChatConfig chatConfig)
         {
             _accountService = accountService;
             _refreshTokenService = refreshTokenService;
             _httpClient = httpClient;
             _logger = logManager.GetLogger<SignalRAdapter>();
-            _signalRClient = new SignalRClient(chatConfiguration.BaseUrl);
+            _signalRClient = new SignalRClient(chatConfig.BaseUrl);
 
             SubscribeToEvents();
 
-            internetConnectionManager.StartTracking();
             internetConnectionManager.NetworkConnectionChanged += OnNetworkConnectionChanged;
 
             ConnectIfNotConnectedAsync().SafeTaskWrapper();
@@ -131,14 +130,15 @@ namespace Softeq.XToolkit.Chat.SignalRClient
             }));
         }
 
-        public Task<ChatMessageModel> SendMessageAsync(string chatId, string messageBody)
+        public Task<ChatMessageModel> SendMessageAsync(string chatId, string messageBody, string imageUrl)
         {
             return CheckConnectionAndSendRequest(new TaskReference<ChatMessageModel>(async () =>
             {
                 var createMessageRequest = new CreateMessageRequest
                 {
                     ChannelId = new Guid(chatId),
-                    Body = messageBody
+                    Body = messageBody,
+                    ImageUrl = imageUrl
                 };
                 var dto = await _signalRClient.CreateMessageAsync(createMessageRequest);
                 return Mapper.DtoToChatMessage(dto);
@@ -183,6 +183,23 @@ namespace Softeq.XToolkit.Chat.SignalRClient
             _signalRClient.Disconnect().SafeTaskWrapper();
             _isConnected = false;
             _canReconnectAutomatically = false;
+        }
+
+        public Task EditChatAsync(ChatSummaryModel x)
+        {
+            return CheckConnectionAndSendRequest(new TaskReference(() =>
+            {
+                var request = new UpdateChannelRequest
+                {
+                    ChannelId = x.Id,
+                    Name = x.Name,
+                    PhotoUrl = x.AvatarUrl,
+                    WelcomeMessage = x.WelcomeMessage,
+                    Topic = x.Topic
+                };
+
+                return _signalRClient.UpdateChannelAsync(request);
+            }));
         }
 
         private void SubscribeToEvents()
@@ -324,7 +341,7 @@ namespace Softeq.XToolkit.Chat.SignalRClient
                     UpdateConnectionStatus(SocketConnectionStatus.Connecting);
                     var client = await _signalRClient.ConnectAsync(accessToken).ConfigureAwait(false);
 
-                    // TODO:
+                    //TODO: review this
                     if (client == null)
                     {
                         _logger.Error("SignalRAdapter: accessToken is not valid, please relogin");

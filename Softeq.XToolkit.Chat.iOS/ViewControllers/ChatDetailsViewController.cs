@@ -12,6 +12,11 @@ using Softeq.XToolkit.Common;
 using Softeq.XToolkit.Bindings.iOS;
 using Softeq.XToolkit.Chat.ViewModels;
 using Softeq.XToolkit.WhiteLabel.iOS.Extensions;
+using Softeq.XToolkit.WhiteLabel.iOS.ImagePicker;
+using Softeq.XToolkit.WhiteLabel;
+using Softeq.XToolkit.Permissions;
+using Softeq.XToolkit.Common.Command;
+using Softeq.XToolkit.WhiteLabel.Threading;
 
 namespace Softeq.XToolkit.Chat.iOS.ViewControllers
 {
@@ -19,6 +24,8 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
     {
         private ChatDetailsHeaderView _chatDetailsHeaderView;
         private WeakReferenceEx<ObservableTableViewSource<ChatUserViewModel>> _sourceRef;
+        private SimpleImagePicker _simpleImagePicker;
+        private string _previewImageKey;
 
         public ChatDetailsViewController(IntPtr handle) : base(handle) { }
 
@@ -26,15 +33,19 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
         {
             base.ViewDidLoad();
 
-            CustomNavigationItem.Title = ViewModel.Title;
-            CustomNavigationItem.SetCommand(UIImage.FromBundle(Styles.BackButtonBundleName), ViewModel.BackCommand, true);
+            CustomNavigationItem.Title = ViewModel.LocalizedStrings.DetailsTitle;
+            CustomNavigationItem.SetCommand(
+                UIImage.FromBundle(StyleHelper.Style.BackButtonBundleName),
+                ViewModel.BackCommand,
+                true);
 
             TableView.RegisterNibForCellReuse(ChatUserViewCell.Nib, ChatUserViewCell.Key);
-            TableView.RowHeight = 80;
+            TableView.RowHeight = 50;
 
             _chatDetailsHeaderView = new ChatDetailsHeaderView(new CGRect(0, 0, 200, 250));
             _chatDetailsHeaderView.IsEditMode = false;
             _chatDetailsHeaderView.SetAddMembersCommand(ViewModel.AddMembersCommand);
+            _chatDetailsHeaderView.SetChangeChatPhotoCommand(new RelayCommand(OpenPicker));
 
             TableView.TableHeaderView = _chatDetailsHeaderView;
             TableView.TableFooterView = new UIView();
@@ -47,6 +58,12 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
             TableView.Delegate = new ParticipantsTableViewDelegate(ViewModel);
 
             _sourceRef = WeakReferenceEx.Create(source);
+
+            _simpleImagePicker = new SimpleImagePicker(this, ServiceLocator.Resolve<IPermissionsManager>(), false)
+            {
+                MaxImageWidth = 280,
+                MaxImageHeight = 280
+            };
         }
 
         protected override void DoAttachBindings()
@@ -59,6 +76,42 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
             })));
             Bindings.Add(this.SetBinding(() => ViewModel.Summary.Name, () => _chatDetailsHeaderView.ChatNameField.Text));
             Bindings.Add(this.SetBinding(() => ViewModel.MembersCountText, () => _chatDetailsHeaderView.ChatMembersCount));
+            Bindings.Add(this.SetBinding(() => _simpleImagePicker.ViewModel.ImageCacheKey)
+                .WhenSourceChanges(() =>
+                {
+                    if (string.IsNullOrEmpty(_simpleImagePicker.ViewModel.ImageCacheKey))
+                    {
+                        return;
+                    }
+
+                    var key = _simpleImagePicker.ViewModel.ImageCacheKey;
+                    if (key == _previewImageKey)
+                    {
+                        return;
+                    }
+
+                    _previewImageKey = key;
+                    Execute.BeginOnUIThread(() =>
+                    {
+                        _chatDetailsHeaderView.SetEditedChatAvatar(_previewImageKey);
+                        CustomNavigationItem.SetCommand(
+                            ViewModel.LocalizedStrings.Save, UIColor.Black, new RelayCommand(SaveAsync), false);
+                    });
+                }));
+        }
+
+        private void OpenPicker()
+        {
+            _simpleImagePicker.OpenGalleryAsync();
+        }
+
+        private async void SaveAsync()
+        {
+            await ViewModel.SaveAsync(_simpleImagePicker.StreamFunc).ConfigureAwait(false);
+            Execute.BeginOnUIThread(() =>
+            {
+                CustomNavigationItem.SetRightBarButtonItem(null, true);
+            });
         }
 
         private class ParticipantsTableViewDelegate : UITableViewDelegate
@@ -72,17 +125,17 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
 
             public override UITableViewRowAction[] EditActionsForRow(UITableView tableView, NSIndexPath indexPath)
             {
-                if (!_viewModel.IsMemberRemovable((int) indexPath.Item))
+                if (!_viewModel.IsMemberRemovable((int)indexPath.Item))
                 {
                     return new UITableViewRowAction[0];
                 }
 
                 var remove = UITableViewRowAction.Create(
                     UITableViewRowActionStyle.Default,
-                    _viewModel.RemoveLocalizedString,
-                    (row, index) => _viewModel.RemoveMemberAtCommand.Execute((int) indexPath.Item));
+                    _viewModel.LocalizedStrings.Remove,
+                    (row, index) => _viewModel.RemoveMemberAtCommand.Execute((int)indexPath.Item));
 
-                return new[] {remove};
+                return new[] { remove };
             }
         }
     }
