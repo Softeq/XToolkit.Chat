@@ -2,6 +2,19 @@
 
 Cross-platform implementation of chat for Android and iOS.
 
+## Platforms
+
+- Android
+- iOS
+
+## Components
+
+- Xamarin.Android chat UI
+- Xamarin.iOS chat UI
+- SignalR client
+- HTTP client
+- Common chat logic
+
 ## About
 
 This project is maintained by Softeq Development Corp.
