@@ -33,7 +33,7 @@ namespace Softeq.XToolkit.Chat.ViewModels
         private readonly IDialogsService _dialogsService;
         private readonly IChatService _chatService;
         private readonly IViewModelFactoryService _viewModelFactoryService;
-        
+
         public ChatDetailsViewModel(
             ChatManager chatManager,
             IPageNavigationService pageNavigationService,
@@ -98,9 +98,12 @@ namespace Softeq.XToolkit.Chat.ViewModels
         private void RemoveMemberAt(int index)
         {
             Members.RemoveAt(index);
+
+            //TODO YP: send request to the server, wait backend impl.
+
             RaisePropertyChanged(nameof(MembersCountText));
         }
-        
+
         public async Task SaveAsync(Func<(Task<Stream> GetImageTask, string Extension)> getImageFunc)
         {
             if (IsBusy)
@@ -126,7 +129,7 @@ namespace Softeq.XToolkit.Chat.ViewModels
             {
                 Summary.AvatarUrl = imagePath;
                 RaisePropertyChanged(nameof(Summary.AvatarUrl));
-                
+
                 await _chatManager.EditChatAsync(Summary).ConfigureAwait(false);
             }
 

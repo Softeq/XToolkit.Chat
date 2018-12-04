@@ -33,7 +33,7 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
         {
             base.ViewDidLoad();
 
-            CustomNavigationItem.Title = ViewModel.Title;
+            CustomNavigationItem.Title = ViewModel.LocalizedStrings.DetailsTitle;
             CustomNavigationItem.SetCommand(
                 UIImage.FromBundle(StyleHelper.Style.BackButtonBundleName),
                 ViewModel.BackCommand,
@@ -125,17 +125,17 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
 
             public override UITableViewRowAction[] EditActionsForRow(UITableView tableView, NSIndexPath indexPath)
             {
-                if (!_viewModel.IsMemberRemovable((int) indexPath.Item))
+                if (!_viewModel.IsMemberRemovable((int)indexPath.Item))
                 {
                     return new UITableViewRowAction[0];
                 }
 
                 var remove = UITableViewRowAction.Create(
                     UITableViewRowActionStyle.Default,
-                    _viewModel.RemoveLocalizedString,
-                    (row, index) => _viewModel.RemoveMemberAtCommand.Execute((int) indexPath.Item));
+                    _viewModel.LocalizedStrings.Remove,
+                    (row, index) => _viewModel.RemoveMemberAtCommand.Execute((int)indexPath.Item));
 
-                return new[] {remove};
+                return new[] { remove };
             }
         }
     }
