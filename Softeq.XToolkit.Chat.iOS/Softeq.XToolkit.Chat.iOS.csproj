@@ -62,6 +62,9 @@
     <PackageReference Include="Xamarin.FFImageLoading">
       <Version>2.4.3.840</Version>
     </PackageReference>
+    <PackageReference Include="Xamarin.FFImageLoading.Transformations">
+      <Version>2.4.3.840</Version>
+    </PackageReference>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="ViewControllers\" />
@@ -121,7 +124,16 @@
     <Compile Include="ViewControllers\ChatMessagesViewController.InputAndKeyboard.cs" />
     <Compile Include="Controls\ContextMenuComponent.cs" />
     <Compile Include="Controls\ContextMenuActions.cs" />
-    <Compile Include="Styles.cs" />
+    <Compile Include="StyleHelper.cs" />
+    <Compile Include="ViewControllers\AddContactsViewController.cs" />
+    <Compile Include="ViewControllers\AddContactsViewController.designer.cs">
+      <DependentUpon>AddContactsViewController.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Views\SelectedMemberViewCell.cs" />
+    <Compile Include="Views\SelectedMemberViewCell.designer.cs">
+      <DependentUpon>SelectedMemberViewCell.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Views\CheckBoxView.cs" />
   </ItemGroup>
   <ItemGroup>
     <InterfaceDefinition Include="ViewControllers\ChatDetailsStoryboard.storyboard" />
@@ -134,6 +146,8 @@
     <InterfaceDefinition Include="Views\MessagesDateHeaderViewCell.xib" />
     <InterfaceDefinition Include="Views\ConnectionStatusView.xib" />
     <InterfaceDefinition Include="Views\ChatMessagesInputBarView.xib" />
+    <InterfaceDefinition Include="ViewControllers\AddContactsStoryboard.storyboard" />
+    <InterfaceDefinition Include="Views\SelectedMemberViewCell.xib" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\XToolkit\Softeq.XToolkit.Permissions\Softeq.XToolkit.Permissions.csproj">

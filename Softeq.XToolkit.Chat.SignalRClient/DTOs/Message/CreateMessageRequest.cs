@@ -11,5 +11,6 @@ namespace Softeq.XToolkit.Chat.SignalRClient.DTOs.Message
         public string SaasUserId { get; set; }
         public Guid ChannelId { get; set; }
         public string Body { get; set; }
+        public string ImageUrl { get; set; }
     }
 }

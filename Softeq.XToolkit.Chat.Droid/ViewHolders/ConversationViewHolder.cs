@@ -8,13 +8,16 @@ using Android.Widget;
 using FFImageLoading;
 using FFImageLoading.Cross;
 using FFImageLoading.Transformations;
+using FFImageLoading.Work;
 using Softeq.XToolkit.Bindings;
 using Softeq.XToolkit.Chat.Droid.Controls;
 using Softeq.XToolkit.Chat.Models;
 using Softeq.XToolkit.Chat.ViewModels;
 using Softeq.XToolkit.Common;
 using Softeq.XToolkit.Common.WeakSubscription;
+using Softeq.XToolkit.WhiteLabel.Droid.Extensions;
 using Softeq.XToolkit.WhiteLabel.Threading;
+using Softeq.XToolkit.WhiteLabel.ViewModels;
 using PopupMenu = Android.Support.V7.Widget.PopupMenu;
 
 namespace Softeq.XToolkit.Chat.Droid.ViewHolders
@@ -40,6 +43,14 @@ namespace Softeq.XToolkit.Chat.Droid.ViewHolders
             MessageBodyTextView = itemView.FindViewById<TextView>(Resource.Id.tv_message_body);
             MessageDateTimeTextView = itemView.FindViewById<TextView>(Resource.Id.tv_message_date_time);
             AttachmentImageView = itemView.FindViewById<MvxCachedImageView>(Resource.Id.iv_message_attachment);
+            AttachmentImageView.Click += OnMessageImageClicked;
+
+            var resourceId = _isIncomingMessageViewType
+                ? StyleHelper.Style.IncomingMessageBg
+                : StyleHelper.Style.OutcomingMessageBg;
+
+            var imageBg = itemView.FindViewById<ImageView>(Resource.Id.item_chat_conversation_bg);
+            imageBg.SetBackgroundResource(resourceId);
 
             // setup ViewHolder for in/outcoming messages
 
@@ -86,18 +97,24 @@ namespace Softeq.XToolkit.Chat.Droid.ViewHolders
 
             if (_viewModelRef.Target.HasAttachment)
             {
+                AttachmentImageView.Visibility = ViewStates.Visible;
                 ImageService.Instance.LoadUrl(_viewModelRef.Target.AttachmentImageUrl)
-                                     .IntoAsync(AttachmentImageView);
+                            .DownSampleInDip(90, 90)
+                            .IntoAsync(AttachmentImageView);
+            }
+            else
+            {
+                AttachmentImageView.Visibility = ViewStates.Gone;
+                AttachmentImageView.SetImageDrawable(null);
             }
 
-            if (_isIncomingMessageViewType &&
-                SenderPhotoImageView != null &&
-                !string.IsNullOrEmpty(_viewModelRef.Target.SenderPhotoUrl))
+            if (_isIncomingMessageViewType && SenderPhotoImageView != null)
             {
-                ImageService.Instance
-                            .LoadUrl(_viewModelRef.Target.SenderPhotoUrl)
-                            .Transform(new CircleTransformation())
-                            .IntoAsync(SenderPhotoImageView);
+                SenderPhotoImageView.LoadImageWithTextPlaceholder(
+                    _viewModelRef.Target.SenderPhotoUrl,
+                    _viewModelRef.Target.SenderName,
+                    StyleHelper.Style.ChatAvatarStyles,
+                    (TaskParameter x) => x.Transform(new CircleTransformation()));
             }
 
             if (!_isIncomingMessageViewType && MessageStatusView != null)
@@ -153,13 +170,13 @@ namespace Softeq.XToolkit.Chat.Droid.ViewHolders
             switch (status)
             {
                 case ChatMessageStatus.Sending:
-                    statusImageResourceId = ExternalResourceIds.MessageStatusSentIcon;
+                    statusImageResourceId = StyleHelper.Style.MessageStatusSentIcon;
                     break;
                 case ChatMessageStatus.Delivered:
-                    statusImageResourceId = ExternalResourceIds.MessageStatusDeliveredIcon;
+                    statusImageResourceId = StyleHelper.Style.MessageStatusDeliveredIcon;
                     break;
                 case ChatMessageStatus.Read:
-                    statusImageResourceId = ExternalResourceIds.MessageStatusReadIcon;
+                    statusImageResourceId = StyleHelper.Style.MessageStatusReadIcon;
                     break;
                 case ChatMessageStatus.Other:
                     MessageStatusView.Visibility = ViewStates.Gone;
@@ -168,6 +185,16 @@ namespace Softeq.XToolkit.Chat.Droid.ViewHolders
             }
 
             MessageStatusView.SetImageResource(statusImageResourceId);
+        }
+
+        private void OnMessageImageClicked(object sender, EventArgs e)
+        {
+            var options = new FullScreenImageOptions
+            {
+                ImageUrl = _viewModelRef.Target?.Model?.ImageUrl,
+                DroidCloseButtonImageResId = Resource.Drawable.core_ic_close
+            };
+            _viewModelRef.Target?.ShowImage(options);
         }
     }
 }

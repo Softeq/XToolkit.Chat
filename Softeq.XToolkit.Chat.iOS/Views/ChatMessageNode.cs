@@ -14,10 +14,10 @@ using Softeq.XToolkit.Chat.iOS.Extensions;
 using Softeq.XToolkit.Chat.iOS.Controls;
 using Softeq.XToolkit.Chat.ViewModels;
 using Softeq.XToolkit.Common;
-using Softeq.XToolkit.Common.Extensions;
 using Softeq.XToolkit.Common.iOS.Helpers;
 using Softeq.XToolkit.WhiteLabel.iOS.Helpers;
 using Softeq.XToolkit.WhiteLabel.Threading;
+using Softeq.XToolkit.WhiteLabel.ViewModels;
 
 namespace Softeq.XToolkit.Chat.iOS.Views
 {
@@ -68,14 +68,17 @@ namespace Softeq.XToolkit.Chat.iOS.Views
             };
             _avatarImageNode.ContentMode = UIViewContentMode.ScaleAspectFit;
             _avatarImageNode.Hidden = _isMyMessage;
-            if (!string.IsNullOrEmpty(_viewModelRef.Target?.SenderPhotoUrl) && !_isMyMessage)
+            if (!_isMyMessage)
             {
-                _avatarImageNode.LoadImageAsync(_viewModelRef.Target.SenderPhotoUrl).SafeTaskWrapper();
+                _avatarImageNode.LoadImageWithTextPlaceholder(
+                    _viewModelRef.Target.SenderPhotoUrl,
+                    _viewModelRef.Target.SenderName,
+                    StyleHelper.Style.AvatarStyles);
             }
 
             _attachmentImageNode.ContentMode = UIViewContentMode.ScaleAspectFit;
             _attachmentImageNode.Hidden = _viewModelRef.Target == null || !_viewModelRef.Target.HasAttachment;
-            _attachmentImageNode.ImageModificationBlock = image => image.MakeImageWithRoundedCorners(30);
+            _attachmentImageNode.ImageModificationBlock = image => image.MakeImageWithRoundedCorners(12);
             if (_viewModelRef.Target != null && _viewModelRef.Target.HasAttachment && _attachmentImageNode.Image == null)
             {
                 _attachmentImageNode.LoadImageAsync(_viewModelRef.Target.AttachmentImageUrl).ContinueWith((arg) =>
@@ -129,17 +132,17 @@ namespace Softeq.XToolkit.Chat.iOS.Views
                     return;
                 }
                 var statusImage = default(UIImage);
-                // TODO: refactoring
+                //TODO VPY: need refactor this
                 switch (_viewModelRef.Target.Status)
                 {
                     case Models.ChatMessageStatus.Sending:
-                        statusImage = UIImage.FromBundle("Chat_MessageSending");
+                        statusImage = UIImage.FromBundle(StyleHelper.Style.MessageSendingBoundleName);
                         break;
                     case Models.ChatMessageStatus.Delivered:
-                        statusImage = UIImage.FromBundle("Chat_MessageDelivered");
+                        statusImage = UIImage.FromBundle(StyleHelper.Style.MessageDeliveredBoundleName);
                         break;
                     case Models.ChatMessageStatus.Read:
-                        statusImage = UIImage.FromBundle("Chat_MessageRead");
+                        statusImage = UIImage.FromBundle(StyleHelper.Style.MessageReadBoundleName);
                         break;
                     case Models.ChatMessageStatus.Other:
                         break;
@@ -221,7 +224,7 @@ namespace Softeq.XToolkit.Chat.iOS.Views
                     Children = messageElements.ToArray()
                 });
 
-            var messageBackgroundImageName = _isMyMessage ? "Chat_BubbleMine" : "Chat_BubbleOther";
+            var messageBackgroundImageName = _isMyMessage ? StyleHelper.Style.BubbleMineBoundleName : StyleHelper.Style.BubbleOtherBoundleName;
             var messageBackgroundImage = UIImage.FromBundle(messageBackgroundImageName)
                                          ?.CreateResizableImage(new UIEdgeInsets(36, 20, 10, 20));
             var messageBackground = new ASImageNode
@@ -305,7 +308,13 @@ namespace Softeq.XToolkit.Chat.iOS.Views
         [Export("OnAttachmentTapped")]
         private void OnAttachmentTapped()
         {
-            _viewModelRef.Target?.OpenImage();
+            var options = new FullScreenImageOptions
+            {
+                CloseButtonTintColor = Common.iOS.Extensions.UIColorExtensions.ToHex(StyleHelper.Style.ButtonTintColor),
+                ImageUrl = _viewModelRef.Target?.AttachmentImageUrl,
+                IosCloseButtonImageBoundleName = StyleHelper.Style.CloseButtonImageBoundleName
+            };
+            _viewModelRef.Target?.ShowImage(options);
         }
     }
 }

@@ -7,6 +7,7 @@ using FFImageLoading;
 using Softeq.XToolkit.Bindings;
 using Softeq.XToolkit.Chat.iOS.Extensions;
 using Softeq.XToolkit.WhiteLabel.iOS.Controls;
+using Softeq.XToolkit.WhiteLabel.iOS.Extensions;
 using Softeq.XToolkit.WhiteLabel.Threading;
 using UIKit;
 
@@ -31,11 +32,11 @@ namespace Softeq.XToolkit.Chat.iOS.Views
             set => ChatNameTextField.Enabled = value;
         }
 
-        public bool IsAddMembersButtonHidden
-        {
-            get => AddMembersButton.Hidden;
-            set => AddMembersButton.Hidden = value;
-        }
+        //public bool IsAddMembersButtonHidden
+        //{
+        //    get => AddMembersButton.Hidden;
+        //    set => AddMembersButton.Hidden = value;
+        //}
 
         public void SetAddMembersCommand(ICommand command)
         {
@@ -49,7 +50,7 @@ namespace Softeq.XToolkit.Chat.iOS.Views
 
         public void SetChatAvatar(string photoUrl)
         {
-            ChatAvatarImageView.LoadImageAsync("Chat_NoPhoto", photoUrl);
+            ChatAvatarImageView.LoadImageAsync(StyleHelper.Style.ChatGroupNoAvatarBundleName, photoUrl);
         }
 
         public void SetEditedChatAvatar(string key)
@@ -59,9 +60,11 @@ namespace Softeq.XToolkit.Chat.iOS.Views
                 if (key == null)
                 {
                     EditedChatAvatarImageView.Hidden = true;
+                    ChatAvatarImageView.Hidden = false;
                 }
                 else
                 {
+                    ChatAvatarImageView.Hidden = true;
                     EditedChatAvatarImageView.Hidden = false;
                     ImageService.Instance
                         .LoadFile(key)

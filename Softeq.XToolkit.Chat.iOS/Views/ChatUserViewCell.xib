@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="14113" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="14460.31" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
     <device id="retina4_7" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14088"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14460.20"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
@@ -18,35 +18,40 @@
                 <rect key="frame" x="0.0" y="0.0" width="320" height="43.5"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
-                    <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="tfO-N1-VNn" customClass="MvxCachedImageView">
-                        <rect key="frame" x="10" y="0.0" width="45" height="44"/>
+                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="WrG-Rd-JiI" customClass="CheckBoxView">
+                        <rect key="frame" x="16" y="9" width="22" height="22"/>
                         <constraints>
-                            <constraint firstAttribute="width" constant="45" id="I9J-cR-hyR"/>
+                            <constraint firstAttribute="height" constant="22" id="IXN-s7-lhE"/>
+                            <constraint firstAttribute="width" constant="22" id="mjs-WU-rdP"/>
+                        </constraints>
+                    </button>
+                    <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="tfO-N1-VNn" customClass="MvxCachedImageView">
+                        <rect key="frame" x="54" y="0.0" width="40" height="40"/>
+                        <constraints>
+                            <constraint firstAttribute="width" constant="40" id="I9J-cR-hyR"/>
+                            <constraint firstAttribute="height" constant="40" id="vqu-75-VaU"/>
                         </constraints>
                     </imageView>
                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="NZS-6w-7LB">
-                        <rect key="frame" x="63" y="12" width="191" height="21"/>
+                        <rect key="frame" x="102" y="9.5" width="42" height="21"/>
                         <fontDescription key="fontDescription" type="system" pointSize="17"/>
                         <nil key="textColor"/>
                         <nil key="highlightedColor"/>
                     </label>
-                    <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="pnF-SI-aPY">
-                        <rect key="frame" x="262" y="7" width="51" height="31"/>
-                    </switch>
                 </subviews>
                 <constraints>
+                    <constraint firstItem="WrG-Rd-JiI" firstAttribute="leading" secondItem="YTl-1W-gDM" secondAttribute="leading" constant="16" id="BRx-pa-EPf"/>
                     <constraint firstAttribute="bottom" secondItem="tfO-N1-VNn" secondAttribute="bottom" id="EOw-I7-MPf"/>
-                    <constraint firstAttribute="trailing" secondItem="pnF-SI-aPY" secondAttribute="trailing" constant="9" id="ErG-o8-u8h"/>
+                    <constraint firstItem="tfO-N1-VNn" firstAttribute="leading" secondItem="WrG-Rd-JiI" secondAttribute="trailing" constant="16" id="JLY-xd-Wbk"/>
                     <constraint firstItem="NZS-6w-7LB" firstAttribute="leading" secondItem="tfO-N1-VNn" secondAttribute="trailing" constant="8" id="KpX-2F-hhz"/>
-                    <constraint firstItem="pnF-SI-aPY" firstAttribute="leading" secondItem="NZS-6w-7LB" secondAttribute="trailing" constant="8" id="L2N-OU-Bvy"/>
                     <constraint firstItem="NZS-6w-7LB" firstAttribute="centerY" secondItem="YTl-1W-gDM" secondAttribute="centerY" id="YpM-4l-HcQ"/>
-                    <constraint firstItem="tfO-N1-VNn" firstAttribute="leading" secondItem="YTl-1W-gDM" secondAttribute="leading" constant="10" id="jjq-pa-mbo"/>
+                    <constraint firstItem="WrG-Rd-JiI" firstAttribute="centerY" secondItem="YTl-1W-gDM" secondAttribute="centerY" id="aYz-oj-LZj"/>
+                    <constraint firstItem="tfO-N1-VNn" firstAttribute="centerY" secondItem="YTl-1W-gDM" secondAttribute="centerY" id="j3D-jP-QyI"/>
                     <constraint firstItem="tfO-N1-VNn" firstAttribute="top" secondItem="YTl-1W-gDM" secondAttribute="top" id="rd2-NY-T75"/>
-                    <constraint firstItem="pnF-SI-aPY" firstAttribute="centerY" secondItem="YTl-1W-gDM" secondAttribute="centerY" id="vAf-e4-snM"/>
                 </constraints>
             </tableViewCellContentView>
             <connections>
-                <outlet property="IsSelectedSwitch" destination="pnF-SI-aPY" id="WEE-oh-vHo"/>
+                <outlet property="CheckBoxButton" destination="WrG-Rd-JiI" id="ykH-ep-Qoo"/>
                 <outlet property="PhotoImageView" destination="tfO-N1-VNn" id="bgf-x4-O0a"/>
                 <outlet property="UsernameLabel" destination="NZS-6w-7LB" id="tr0-pU-rwu"/>
             </connections>

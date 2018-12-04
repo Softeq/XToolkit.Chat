@@ -17,6 +17,7 @@ namespace Softeq.XToolkit.Chat.HttpClient.Dtos
         public string CreatorSaasUserId { get; set; }
         public string Description { get; set; }
         public string WelcomeMessage { get; set; }
+        public string Topic { get; set; }
         public ChannelTypeDto Type { get; set; }
         public ChatMessageDto LastMessage { get; set; }
         public string PhotoUrl { get; set; }

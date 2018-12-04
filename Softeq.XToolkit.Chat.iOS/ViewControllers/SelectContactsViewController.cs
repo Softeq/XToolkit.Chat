@@ -12,13 +12,15 @@ using Softeq.XToolkit.Chat.ViewModels;
 using Softeq.XToolkit.Common.Command;
 using Softeq.XToolkit.WhiteLabel.iOS.Extensions;
 using Softeq.XToolkit.WhiteLabel.iOS.ImagePicker;
+using Softeq.XToolkit.WhiteLabel;
+using Softeq.XToolkit.Permissions;
 
 namespace Softeq.XToolkit.Chat.iOS.ViewControllers
 {
     public partial class SelectContactsViewController : ViewControllerBase<SelectContactsViewModel>
     {
         private ChatDetailsHeaderView _chatDetailsHeaderView;
-        //private SimpleImagePicker _simpleImagePicker;
+        private SimpleImagePicker _simpleImagePicker;
         private string _previewImageKey;
 
         public SelectContactsViewController(IntPtr handle) : base(handle) { }
@@ -27,35 +29,38 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
         {
             base.ViewDidLoad();
 
-            CustomNavigationItem.SetCommand(UIImage.FromBundle(Styles.BackButtonBundleName), ViewModel.BackCommand, true);
+            CustomNavigationItem.SetCommand(
+                UIImage.FromBundle(StyleHelper.Style.BackButtonBundleName),
+                ViewModel.BackCommand,
+                true);
             CustomNavigationItem.SetCommand(
                 ViewModel.ActionButtonName,
-                Styles.NavigationBarTintColor,
+                StyleHelper.Style.NavigationBarTintColor,
                 new RelayCommand(AddChat),
                 false);
 
             TableView.AllowsSelection = false;
             TableView.RegisterNibForCellReuse(ChatUserViewCell.Nib, ChatUserViewCell.Key);
-            TableView.RowHeight = 80;
+            TableView.RowHeight = 50;
             TableView.KeyboardDismissMode = UIScrollViewKeyboardDismissMode.Interactive;
             TableView.AddGestureRecognizer(new UITapGestureRecognizer(() =>
             {
                 _chatDetailsHeaderView.ChatNameField.ResignFirstResponder();
             }));
 
-            //_simpleImagePicker = new SimpleImagePicker(this, ViewModel.PermissionsManager, false)
-            //{
-            //    MaxImageWidth = 280,
-            //    MaxImageHeight = 280,
-            //};
-
-            _chatDetailsHeaderView = new ChatDetailsHeaderView(new CGRect(0, 0, 200, 220))
+            _simpleImagePicker = new SimpleImagePicker(this, ServiceLocator.Resolve<IPermissionsManager>(), false)
             {
-                IsEditMode = true,
-                IsAddMembersButtonHidden = true
+                MaxImageWidth = 280,
+                MaxImageHeight = 280,
+            };
+
+            _chatDetailsHeaderView = new ChatDetailsHeaderView(new CGRect(0, 0, 200, 250))
+            {
+                IsEditMode = true
             };
 
             _chatDetailsHeaderView.SetChangeChatPhotoCommand(new RelayCommand(OpenPicker));
+            _chatDetailsHeaderView.SetAddMembersCommand(ViewModel.AddMembersCommand);
             _chatDetailsHeaderView.SetChatAvatar(null);
 
             TableView.TableHeaderView = _chatDetailsHeaderView;
@@ -84,45 +89,34 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
             base.DoAttachBindings();
 
             Bindings.Add(this.SetBinding(() => ViewModel.ChatName, () => _chatDetailsHeaderView.ChatNameField.Text, BindingMode.TwoWay));
-            Bindings.Add(this.SetBinding(() => ViewModel.IsInviteToChat).WhenSourceChanges(() =>
-            {
-                if (ViewModel.IsInviteToChat)
-                {
-                    _chatDetailsHeaderView.RemoveFromSuperview();
-                    TableView.TableHeaderView = new UIView();
-                }
-
-                CustomNavigationItem.Title = ViewModel.Title;
-            }));
             Bindings.Add(this.SetBinding(() => ViewModel.ContactsCountText, () => _chatDetailsHeaderView.ChatMembersCount));
-            //Bindings.Add(this.SetBinding(() => _simpleImagePicker.ViewModel.ImageCacheKey)
-            //.WhenSourceChanges(() =>
-            //{
-            //    if (string.IsNullOrEmpty(_simpleImagePicker.ViewModel.ImageCacheKey))
-            //    {
-            //        return;
-            //    }
+            Bindings.Add(this.SetBinding(() => _simpleImagePicker.ViewModel.ImageCacheKey)
+                .WhenSourceChanges(() =>
+                {
+                    if (string.IsNullOrEmpty(_simpleImagePicker.ViewModel.ImageCacheKey))
+                    {
+                        return;
+                    }
 
-            //    var key = _simpleImagePicker.ViewModel.ImageCacheKey;
-            //    if (key == _previewImageKey)
-            //    {
-            //        return;
-            //    }
+                    var key = _simpleImagePicker.ViewModel.ImageCacheKey;
+                    if (key == _previewImageKey)
+                    {
+                        return;
+                    }
 
-            //    _previewImageKey = key;
-            //    _chatDetailsHeaderView.SetEditedChatAvatar(_previewImageKey);
-            //}));
+                    _previewImageKey = key;
+                    _chatDetailsHeaderView.SetEditedChatAvatar(_previewImageKey);
+                }));
         }
 
         private void OpenPicker()
         {
-            //_simpleImagePicker.OpenGalleryAsync();
+            _simpleImagePicker.OpenGalleryAsync();
         }
 
         private void AddChat()
         {
-            ViewModel.AddChatCommand.Execute(null);
-            //ViewModel.SaveCommand.Execute(_simpleImagePicker.StreamFunc);
+            ViewModel.SaveCommand.Execute(_simpleImagePicker.StreamFunc);
         }
     }
 }

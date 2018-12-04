@@ -13,7 +13,6 @@
     <AndroidResgenClass>Resource</AndroidResgenClass>
     <MonoAndroidResourcePrefix>Resources</MonoAndroidResourcePrefix>
     <MonoAndroidAssetsPrefix>Assets</MonoAndroidAssetsPrefix>
-    <AndroidUseLatestPlatformSdk>false</AndroidUseLatestPlatformSdk>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -68,6 +67,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="StyleHelper.cs" />
     <Compile Include="Views\ChatsListFragment.cs" />
     <Compile Include="Views\ChatDetailsActivity.cs" />
     <Compile Include="Views\ChatMessagesActivity.cs" />
@@ -91,10 +91,9 @@
     <Compile Include="Adapters\GroupedObservableRecyclerViewAdapter.cs" />
     <Compile Include="ItemTouchCallbacks\SwipeCallback.cs" />
     <Compile Include="Controls\ContextMenuComponent.cs" />
-    <Compile Include="ExternalResourceIds.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\AboutResources.txt" />
+    <Compile Include="Views\AddContactsDialogFragment.cs" />
+    <Compile Include="ViewHolders\SelectedContactViewHolder.cs" />
+    <Compile Include="ViewHolders\FilteredItemViewHolder.cs" />
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\layout\activity_chat_details.xml" />
@@ -106,49 +105,18 @@
     <AndroidResource Include="Resources\layout\item_chat_conversation_outcoming.xml" />
     <AndroidResource Include="Resources\layout\activity_chat_create.xml" />
     <AndroidResource Include="Resources\values\themes.xml" />
-    <AndroidResource Include="Resources\drawable-hdpi\chat_ic_new.png" />
-    <AndroidResource Include="Resources\drawable-mdpi\chat_ic_new.png" />
-    <AndroidResource Include="Resources\drawable-xhdpi\chat_ic_new.png" />
-    <AndroidResource Include="Resources\drawable-xxhdpi\chat_ic_new.png" />
-    <AndroidResource Include="Resources\drawable-xxxhdpi\chat_ic_new.png" />
-    <AndroidResource Include="Resources\drawable-hdpi\chat_ic_close.png" />
-    <AndroidResource Include="Resources\drawable-mdpi\chat_ic_close.png" />
-    <AndroidResource Include="Resources\drawable-xhdpi\chat_ic_close.png" />
-    <AndroidResource Include="Resources\drawable-xxhdpi\chat_ic_close.png" />
-    <AndroidResource Include="Resources\drawable-xxxhdpi\chat_ic_close.png" />
     <AndroidResource Include="Resources\drawable\chat_bg_conversation_editing_indicator.xml" />
     <AndroidResource Include="Resources\values\colors.xml" />
-    <AndroidResource Include="Resources\drawable-hdpi\chat_conversation_bubble_incoming.9.png" />
-    <AndroidResource Include="Resources\drawable-hdpi\chat_conversation_bubble_outcoming.9.png" />
-    <AndroidResource Include="Resources\drawable-mdpi\chat_conversation_bubble_incoming.9.png" />
-    <AndroidResource Include="Resources\drawable-mdpi\chat_conversation_bubble_outcoming.9.png" />
-    <AndroidResource Include="Resources\drawable-xhdpi\chat_conversation_bubble_incoming.9.png" />
-    <AndroidResource Include="Resources\drawable-xhdpi\chat_conversation_bubble_outcoming.9.png" />
-    <AndroidResource Include="Resources\drawable-xxhdpi\chat_conversation_bubble_incoming.9.png" />
-    <AndroidResource Include="Resources\drawable-xxhdpi\chat_conversation_bubble_outcoming.9.png" />
-    <AndroidResource Include="Resources\drawable-xxxhdpi\chat_conversation_bubble_incoming.9.png" />
-    <AndroidResource Include="Resources\drawable-xxxhdpi\chat_conversation_bubble_outcoming.9.png" />
-    <AndroidResource Include="Resources\drawable-hdpi\chat_conversation_scroll_down.png" />
-    <AndroidResource Include="Resources\drawable-mdpi\chat_conversation_scroll_down.png" />
-    <AndroidResource Include="Resources\drawable-xhdpi\chat_conversation_scroll_down.png" />
-    <AndroidResource Include="Resources\drawable-xxhdpi\chat_conversation_scroll_down.png" />
-    <AndroidResource Include="Resources\drawable-xxxhdpi\chat_conversation_scroll_down.png" />
-    <AndroidResource Include="Resources\drawable-hdpi\chat_ic_delivered.png" />
-    <AndroidResource Include="Resources\drawable-hdpi\chat_ic_read.png" />
-    <AndroidResource Include="Resources\drawable-hdpi\chat_ic_sent.png" />
-    <AndroidResource Include="Resources\drawable-mdpi\chat_ic_delivered.png" />
-    <AndroidResource Include="Resources\drawable-mdpi\chat_ic_read.png" />
-    <AndroidResource Include="Resources\drawable-mdpi\chat_ic_sent.png" />
-    <AndroidResource Include="Resources\drawable-xhdpi\chat_ic_delivered.png" />
-    <AndroidResource Include="Resources\drawable-xhdpi\chat_ic_read.png" />
-    <AndroidResource Include="Resources\drawable-xhdpi\chat_ic_sent.png" />
-    <AndroidResource Include="Resources\drawable-xxhdpi\chat_ic_delivered.png" />
-    <AndroidResource Include="Resources\drawable-xxhdpi\chat_ic_read.png" />
-    <AndroidResource Include="Resources\drawable-xxhdpi\chat_ic_sent.png" />
-    <AndroidResource Include="Resources\drawable-xxxhdpi\chat_ic_delivered.png" />
-    <AndroidResource Include="Resources\drawable-xxxhdpi\chat_ic_read.png" />
-    <AndroidResource Include="Resources\drawable-xxxhdpi\chat_ic_sent.png" />
     <AndroidResource Include="Resources\layout\activity_chat_conversations.xml" />
+    <AndroidResource Include="Resources\drawable\chat_ic_sent.xml" />
+    <AndroidResource Include="Resources\drawable\chat_ic_read.xml" />
+    <AndroidResource Include="Resources\drawable\chat_ic_delivered.xml" />
+    <AndroidResource Include="Resources\drawable\chat_ic_new.xml" />
+    <AndroidResource Include="Resources\drawable\chat_conversation_scroll_down.xml" />
+    <AndroidResource Include="Resources\drawable\chat_ic_close.xml" />
+    <AndroidResource Include="Resources\layout\dialog_select_members.xml" />
+    <AndroidResource Include="Resources\layout\view_holder_member.xml" />
+    <AndroidResource Include="Resources\layout\view_holder_member_filter_item.xml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Views\" />
@@ -180,6 +148,10 @@
     <ProjectReference Include="..\..\XToolkit.WhiteLabel\Softeq.XToolkit.WhiteLabel\Softeq.XToolkit.WhiteLabel.csproj">
       <Project>{690D58CB-A04C-418F-863B-F4ED17775120}</Project>
       <Name>Softeq.XToolkit.WhiteLabel</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\XToolkit\Softeq.XToolkit.Permissions\Softeq.XToolkit.Permissions.csproj">
+      <Project>{424eabdc-dcc0-4616-b603-93582d9a9ad4}</Project>
+      <Name>Softeq.XToolkit.Permissions</Name>
     </ProjectReference>
     <ProjectReference Include="..\Softeq.XToolkit.Chat.Models\Softeq.XToolkit.Chat.Models.csproj">
       <Project>{8CA8A57B-4F07-469A-B2DD-8420483380D7}</Project>

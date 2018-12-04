@@ -12,24 +12,22 @@ using Softeq.XToolkit.WhiteLabel.Threading;
 
 namespace Softeq.XToolkit.Chat.ViewModels
 {
-    public class ChatSummaryViewModel : ViewModelBase, IViewModelParameter<ChatSummaryModel>, IEquatable<ChatSummaryViewModel>
+    public class ChatSummaryViewModel : ViewModelBase,
+        IViewModelParameter<ChatSummaryModel>,
+        IEquatable<ChatSummaryViewModel>
     {
         private const string TypingUsersDelimiter = ",";
         private const string SpaceDelimiter = " ";
         private const int MaxVisibleTypingUsersCount = 3;
 
-        private readonly ISocketChatAdapter _chatAdapter;
         private readonly IChatLocalizedStrings _localizedStrings;
         private readonly IFormatService _formatService;
-
         private ChatSummaryModel _chatSummary;
 
         public ChatSummaryViewModel(
-            ISocketChatAdapter chatAdapter,
             IChatLocalizedStrings localizedStrings,
             IFormatService formatService)
         {
-            _chatAdapter = chatAdapter;
             _localizedStrings = localizedStrings;
             _formatService = formatService;
         }
@@ -48,6 +46,7 @@ namespace Softeq.XToolkit.Chat.ViewModels
         public ChatMessageStatus LastMessageStatus => _chatSummary.LastMessage?.Status ?? ChatMessageStatus.Other;
         public string LastMessageDateTime => _formatService.ToShortTimeFormat(_chatSummary.LastMessage?.DateTime.LocalDateTime);
 
+
         public int UnreadMessageCount
         {
             get => _chatSummary.UnreadMessagesCount;
@@ -61,7 +60,16 @@ namespace Softeq.XToolkit.Chat.ViewModels
             }
         }
 
-        public string ChatPhotoUrl => _chatSummary.AvatarUrl;
+        public string ChatPhotoUrl
+        {
+            get => _chatSummary.AvatarUrl;
+            set
+            {
+                _chatSummary.AvatarUrl = value;
+                RaisePropertyChanged();
+            }
+        }
+
         public bool IsMuted => _chatSummary.IsMuted;
         public bool IsCreatedByMe => _chatSummary.IsCreatedByMe;
 

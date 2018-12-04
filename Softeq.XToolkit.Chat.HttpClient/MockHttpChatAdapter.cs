@@ -11,6 +11,7 @@ using Softeq.XToolkit.Chat.HttpClient.Requests;
 using Softeq.XToolkit.Chat.Models;
 using Softeq.XToolkit.Chat.Models.Interfaces;
 using Softeq.XToolkit.Common;
+using Softeq.XToolkit.Common.Models;
 using Softeq.XToolkit.RemoteData;
 using Softeq.XToolkit.RemoteData.HttpClient;
 
@@ -149,6 +150,16 @@ namespace Softeq.XToolkit.Chat.HttpClient
         public async Task MarkMessageAsReadAsync(string chatId, string messageId)
         {
             
+        }
+
+        public Task<PagingModel<ChatUserModel>> GetContactsAsync(string nameFilter, int pageSize, int pageNumber)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<PagingModel<ChatUserModel>> GetContactsForInviteAsync(string chatId, string nameFilter, int pageSize, int pageNumber)
+        {
+            throw new NotImplementedException();
         }
 
         public async Task<IList<ChatMessageModel>> GetAllMessagesAsync(string chatId)
@@ -291,11 +302,6 @@ namespace Softeq.XToolkit.Chat.HttpClient
             _messageEdited.OnNext(("1", "Test msg1 edited"));
             await Task.Delay(delay);
             _messageEdited.OnNext(("2", "Test msg2 edited"));
-        }
-
-        public Task<IList<ChatUserModel>> GetContactsAsync()
-        {
-            throw new NotImplementedException();
         }
 
         public Task<ChatUserModel> GetUserSummaryAsync()
