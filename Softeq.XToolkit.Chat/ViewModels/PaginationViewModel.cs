@@ -43,10 +43,7 @@ namespace Softeq.XToolkit.Chat.ViewModels
 
             var viewModels = await LoadPageAsync(_pageNumber).ConfigureAwait(false);
             
-            if (viewModels.Count > 0)
-            {
-                Items.ReplaceRange(viewModels);
-            }
+            Items.ReplaceRange(viewModels);
         }
         
         public async Task LoadNextPageAsync()
