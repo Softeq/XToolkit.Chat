@@ -15,6 +15,7 @@ using Softeq.XToolkit.Chat.ViewModels;
 using Softeq.XToolkit.Common;
 using Softeq.XToolkit.Common.Command;
 using Softeq.XToolkit.Common.Droid.Converters;
+using Softeq.XToolkit.WhiteLabel.Droid.Controls;
 using Softeq.XToolkit.WhiteLabel.Droid.Extensions;
 
 namespace Softeq.XToolkit.Chat.Droid.ViewHolders
@@ -71,7 +72,11 @@ namespace Softeq.XToolkit.Chat.Droid.ViewHolders
                 ChatPhotoImageView.LoadImageWithTextPlaceholder(
                     _viewModelRef.Target.ChatPhotoUrl,
                     _viewModelRef.Target.ChatName,
-                    StyleHelper.Style.ChatAvatarStyles,
+                    new AvatarPlaceholderDrawable.AvatarStyles
+                    {
+                        BackgroundHexColors = StyleHelper.Style.ChatAvatarStyles.BackgroundHexColors,
+                        Size = new System.Drawing.Size(45, 45)
+                    },
                     (TaskParameter x) => x.Transform(new CircleTransformation()));
             }));
 
