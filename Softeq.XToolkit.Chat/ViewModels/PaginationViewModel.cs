@@ -18,7 +18,7 @@ namespace Softeq.XToolkit.Chat.ViewModels
     {
         private readonly IViewModelFactoryService _viewModelFactoryService;
         private readonly Func<int, int, Task<PagingModel<TModel>>> _loaderAction;
-        private readonly Action<IReadOnlyList<TViewModel>> _filterAction;
+        private readonly Func<IReadOnlyList<TViewModel>, IReadOnlyList<TViewModel>> _filterAction;
         private readonly int _pageSize;
 
         private int _pageNumber = 1;
@@ -26,7 +26,7 @@ namespace Softeq.XToolkit.Chat.ViewModels
         public PaginationViewModel(
             IViewModelFactoryService viewModelFactory,
             Func<int, int, Task<PagingModel<TModel>>> loaderAction,
-            Action<IReadOnlyList<TViewModel>> filterAction,
+            Func<IReadOnlyList<TViewModel>, IReadOnlyList<TViewModel>> filterAction,
             int pageSize)
         {
             _viewModelFactoryService = viewModelFactory ?? throw new ArgumentNullException(nameof(viewModelFactory));
@@ -34,7 +34,7 @@ namespace Softeq.XToolkit.Chat.ViewModels
             _filterAction = filterAction;
             _pageSize = pageSize;
         }
-        
+
         public ObservableRangeCollection<TViewModel> Items { get; } = new ObservableRangeCollection<TViewModel>();
 
         public async Task LoadFirstPageAsync()
@@ -42,14 +42,14 @@ namespace Softeq.XToolkit.Chat.ViewModels
             _pageNumber = 1;
 
             var viewModels = await LoadPageAsync(_pageNumber).ConfigureAwait(false);
-            
+
             Items.ReplaceRange(viewModels);
         }
-        
+
         public async Task LoadNextPageAsync()
         {
             Interlocked.Increment(ref _pageNumber);
-            
+
             var viewModels = await LoadPageAsync(_pageNumber).ConfigureAwait(false);
 
             if (viewModels.Count > 0)
@@ -75,12 +75,15 @@ namespace Softeq.XToolkit.Chat.ViewModels
             {
                 return new List<TViewModel>();
             }
-            
+
             var viewModels = pagingModel.Data
                 .Select(_viewModelFactoryService.ResolveViewModel<TViewModel, TModel>)
                 .ToList();
 
-            _filterAction?.Invoke(viewModels);
+            if (_filterAction != null)
+            {
+                return _filterAction(viewModels);
+            }
 
             return viewModels;
         }

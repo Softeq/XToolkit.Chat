@@ -44,12 +44,12 @@ namespace Softeq.XToolkit.Chat.ViewModels
         {
             Resources = chatLocalizedStrings;
 
-            PaginationViewModel = new PaginationViewModel<ChatUserViewModel,ChatUserModel>(
+            PaginationViewModel = new PaginationViewModel<ChatUserViewModel, ChatUserModel>(
                 viewModelFactoryService,
                 SearchLoader,
                 SearchFilter,
                 DefaultSearchResultsPageSize);
-            
+
             _contactSelectedCommand = new RelayCommand<ChatUserViewModel>(SwitchSelectedContact);
             SearchContactCommand = new RelayCommand<string>(DoSearch);
             CancelCommand = new RelayCommand(() => DialogComponent.CloseCommand.Execute(false));
@@ -87,7 +87,7 @@ namespace Softeq.XToolkit.Chat.ViewModels
             {
                 if (Set(ref _contactNameSearchQuery, value))
                 {
-                    SearchContactCommand.Execute(value);    
+                    SearchContactCommand.Execute(value);
                 }
             }
         }
@@ -125,8 +125,8 @@ namespace Softeq.XToolkit.Chat.ViewModels
         {
             return _searchContactsStrategy.Search(_contactNameSearchQuery, pageNumber, pageSize);
         }
-        
-        private void SearchFilter(IReadOnlyList<ChatUserViewModel> contacts)
+
+        private IReadOnlyList<ChatUserViewModel> SearchFilter(IReadOnlyList<ChatUserViewModel> contacts)
         {
             var filteredContacts = contacts.Where(x => !SelectedContacts
                 .Concat(_excludedContacts)
@@ -134,10 +134,12 @@ namespace Softeq.XToolkit.Chat.ViewModels
                 .Contains(x.Id)
             ).ToList();
 
-            ApplySelectionCommand(filteredContacts);
+            ApplySelectionCommand(filteredContacts, true);
+
+            return filteredContacts;
         }
 
-        private void ApplySelectionCommand(IEnumerable<ChatUserViewModel> contacts, bool isSelectable = true)
+        private void ApplySelectionCommand(IEnumerable<ChatUserViewModel> contacts, bool isSelectable)
         {
             contacts.Apply(x =>
             {

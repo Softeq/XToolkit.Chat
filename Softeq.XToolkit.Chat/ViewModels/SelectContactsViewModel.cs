@@ -31,7 +31,7 @@ namespace Softeq.XToolkit.Chat.ViewModels
         private readonly IPageNavigationService _pageNavigationService;
         private readonly IUploadImageService _uploadImageService;
         private readonly IDialogsService _dialogsService;
-        
+
         private string _chatName;
 
         public SelectContactsViewModel(
@@ -144,11 +144,11 @@ namespace Softeq.XToolkit.Chat.ViewModels
             {
                 var selectedContactsIds = Contacts.Where(x => x.IsSelected).Select(x => x.Id).ToList();
                 await _chatManager.CreateChatAsync(ChatName, selectedContactsIds, imagePath).ConfigureAwait(false);
-                
+
                 Execute.BeginOnUIThread(() =>
                 {
                     ChatName = string.Empty;
-                    
+
                     _pageNavigationService.GoBack();
                 });
             }
