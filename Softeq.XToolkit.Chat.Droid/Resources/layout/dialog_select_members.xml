@@ -22,6 +22,8 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="@android:color/transparent"
+            android:maxLines="1"
+            android:inputType="text"
             android:hint="Search" />
     </RelativeLayout>
     <android.support.v7.widget.RecyclerView
