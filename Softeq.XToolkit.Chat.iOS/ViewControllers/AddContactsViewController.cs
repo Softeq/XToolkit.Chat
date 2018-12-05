@@ -86,6 +86,7 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
             TableView.RowHeight = DefaultFoundMembersCellHeight;
             TableView.RegisterNibForCellReuse(ChatUserViewCell.Nib, ChatUserViewCell.Key);
             TableView.TableFooterView = new UIView();
+            TableView.KeyboardDismissMode = UIScrollViewKeyboardDismissMode.Interactive;
 
             var source = new ObservableTableViewSource<ChatUserViewModel>
             {
