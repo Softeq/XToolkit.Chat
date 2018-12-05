@@ -146,8 +146,7 @@ namespace Softeq.XToolkit.Chat.ViewModels
                 {
                     SelectedContacts = Members,
                     SelectionType = SelectedContactsAction.InviteToChat,
-                    SearchStrategy = new InviteSearchContactsStrategy(_chatService,
-                        _viewModelFactoryService, Summary.Id)
+                    SearchStrategy = new InviteSearchContactsStrategy(_chatService, Summary.Id)
                 },
                 new OpenDialogOptions
                 {

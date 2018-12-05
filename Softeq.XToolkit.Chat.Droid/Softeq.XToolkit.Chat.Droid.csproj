@@ -94,6 +94,7 @@
     <Compile Include="Views\AddContactsDialogFragment.cs" />
     <Compile Include="ViewHolders\SelectedContactViewHolder.cs" />
     <Compile Include="ViewHolders\FilteredItemViewHolder.cs" />
+    <Compile Include="Listeners\LoadMoreScrollListener.cs" />
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\layout\activity_chat_details.xml" />

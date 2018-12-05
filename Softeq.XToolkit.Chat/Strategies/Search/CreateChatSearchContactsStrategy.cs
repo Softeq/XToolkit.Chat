@@ -1,25 +1,25 @@
 // Developed by Softeq Development Corporation
 // http://www.softeq.com
 
-using System.Collections.Generic;
 using System.Threading.Tasks;
-using Softeq.XToolkit.Chat.Manager;
-using Softeq.XToolkit.Chat.ViewModels;
+using Softeq.XToolkit.Chat.Models;
+using Softeq.XToolkit.Chat.Models.Interfaces;
+using Softeq.XToolkit.Common.Models;
 
 namespace Softeq.XToolkit.Chat.Strategies.Search
 {
     public class CreateChatSearchContactsStrategy : ISearchContactsStrategy
     {
-        private readonly ChatManager _chatManager;
+        private readonly IChatService _chatService;
 
-        public CreateChatSearchContactsStrategy(ChatManager chatManager)
+        public CreateChatSearchContactsStrategy(IChatService chatService)
         {
-            _chatManager = chatManager;
+            _chatService = chatService;
         }
 
-        public Task<IList<ChatUserViewModel>> Search(string query, int pageNumber, int pageSize)
+        public Task<PagingModel<ChatUserModel>> Search(string query, int pageNumber, int pageSize)
         {
-            return _chatManager.GetContactsAsync(query, pageNumber, pageSize);
+            return _chatService.GetContactsAsync(query, pageNumber, pageSize);
         }
     }
 }

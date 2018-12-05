@@ -59,19 +59,6 @@ namespace Softeq.XToolkit.Chat.Manager
             return _chatService.InviteMembersAsync(chatId, participantsIds);
         }
 
-        public async Task<IList<ChatUserViewModel>> GetContactsAsync(string nameFilter, int pageNumber, int pageSize)
-        {
-            var models = await _chatService.GetContactsAsync(nameFilter, pageNumber, pageSize).ConfigureAwait(false);
-            if (models == null)
-            {
-                return new List<ChatUserViewModel>();
-            }
-            
-            return models.Data
-                .Select(_viewModelFactoryService.ResolveViewModel<ChatUserViewModel, ChatUserModel>)
-                .ToList();
-        }
-
         public async Task<IList<ChatUserViewModel>> GetChatMembersAsync(string chatId)
         {
             var models = await _chatService.GetChatMembersAsync(chatId).ConfigureAwait(false);
