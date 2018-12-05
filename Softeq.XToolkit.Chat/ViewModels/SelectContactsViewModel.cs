@@ -24,6 +24,7 @@ namespace Softeq.XToolkit.Chat.ViewModels
     public class SelectContactsViewModel : ViewModelBase
     {
         private readonly ChatManager _chatManager;
+        private readonly IChatService _chatService;
         private readonly IFormatService _formatService;
         private readonly IChatLocalizedStrings _localizedStrings;
         private readonly ICommand _memberSelectedCommand;
@@ -35,6 +36,7 @@ namespace Softeq.XToolkit.Chat.ViewModels
 
         public SelectContactsViewModel(
             ChatManager chatManager,
+            IChatService chatService,
             IPageNavigationService pageNavigationService,
             IChatLocalizedStrings localizedStrings,
             IFormatService formatService,
@@ -42,6 +44,7 @@ namespace Softeq.XToolkit.Chat.ViewModels
             IDialogsService dialogsService)
         {
             _chatManager = chatManager;
+            _chatService = chatService;
             _pageNavigationService = pageNavigationService;
             _localizedStrings = localizedStrings;
             _formatService = formatService;
@@ -94,7 +97,7 @@ namespace Softeq.XToolkit.Chat.ViewModels
                 {
                     SelectedContacts = Contacts,
                     SelectionType = SelectedContactsAction.CreateChat,
-                    SearchStrategy = new CreateChatSearchContactsStrategy(_chatManager)
+                    SearchStrategy = new CreateChatSearchContactsStrategy(_chatService)
                 },
                 new OpenDialogOptions
                 {
