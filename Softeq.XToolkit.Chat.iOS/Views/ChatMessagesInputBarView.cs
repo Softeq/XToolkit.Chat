@@ -240,6 +240,7 @@ namespace Softeq.XToolkit.Chat.iOS.Views
             Execute.BeginOnUIThread(() => 
             {
                 _previewImageKey = null;
+                _simpleImagePicker.ViewModel.ImageCacheKey = null;
                 AttachedImageView.Image?.Dispose();
                 AttachedImageView.Image = null;
                 EditImageContainer.Hidden = true;
