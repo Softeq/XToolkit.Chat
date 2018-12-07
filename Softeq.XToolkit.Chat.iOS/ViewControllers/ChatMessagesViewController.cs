@@ -74,7 +74,7 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
             InputBar.ViewDidLoad(this);
 
             InputBar.SetCommandWithArgs(nameof(InputBar.SendRaised), ViewModel.SendCommand);
-
+            InputBar.SetCommand(nameof(InputBar.PickerWillOpen), new RelayCommand(UnregisterKeyboardObservers));
             InputBar.EditingClose.SetCommand(ViewModel.CancelEditingMessageModeCommand);
 
             ScrollToBottomButton.SetCommand(new RelayCommand(() => ScrollToBottom(true)));
@@ -83,10 +83,11 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
 
         public override void ViewWillAppear(bool animated)
         {
-            base.ViewWillAppear(animated);
-            ViewModel.MessageAddedCommand = new RelayCommand(OnMessageAdded);
-
             RegisterKeyboardObservers();
+
+            base.ViewWillAppear(animated);
+
+            ViewModel.MessageAddedCommand = new RelayCommand(OnMessageAdded);
         }
 
         public override void ViewDidAppear(bool animated)

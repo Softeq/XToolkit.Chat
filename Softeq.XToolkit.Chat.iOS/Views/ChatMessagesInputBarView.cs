@@ -30,6 +30,7 @@ namespace Softeq.XToolkit.Chat.iOS.Views
 
         public event EventHandler<nfloat> TopContainersHeightChanged;
         public event EventHandler<GenericEventArgs<Func<(Task<Stream>, string)>>> SendRaised;
+        public event EventHandler PickerWillOpen;
 
         public override CGSize IntrinsicContentSize => _cachedIntrinsicContentSize;
 
@@ -132,6 +133,7 @@ namespace Softeq.XToolkit.Chat.iOS.Views
 
                 OpenAttachPanel();
             });
+            _simpleImagePicker.SetCommand(nameof(_simpleImagePicker.PickerWillOpen), new RelayCommand(RaisePickerWillOpen));
         }
 
         protected override void Initialize()
@@ -255,6 +257,11 @@ namespace Softeq.XToolkit.Chat.iOS.Views
             var parameter = _simpleImagePicker.ViewModel.ImageCacheKey == null ? null : _simpleImagePicker.StreamFunc;
             SendRaised?.Invoke(this, new GenericEventArgs<Func<(Task<Stream>, string)>>(parameter));
             CloseAttachPanel();
+        }
+
+        private void RaisePickerWillOpen()
+        {
+            PickerWillOpen?.Invoke(this, EventArgs.Empty); 
         }
     }
 }
