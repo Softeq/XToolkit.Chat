@@ -301,6 +301,7 @@ namespace Softeq.XToolkit.Chat.Droid.Views
             {
                 _editImageContainer.Visibility = ViewStates.Gone;
                 _previewImageKey = null;
+                _imagePicker.ViewModel.ImageCacheKey = null;
                 _imagePreview.SetImageDrawable(null);
             });
         }

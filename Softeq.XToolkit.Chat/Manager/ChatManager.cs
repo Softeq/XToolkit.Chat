@@ -142,11 +142,23 @@ namespace Softeq.XToolkit.Chat.Manager
             {
                 return;
             }
-            var addedMessagesViewModels = CreateMessagesViewModels(addedMessages);
-            _messagesBatchAdded.OnNext(addedMessagesViewModels);
 
-            _messagesBatchUpdated.OnNext(updatedMessages);
-            _messagesBatchDeleted.OnNext(deletedMessagesIds);
+            var addedMessagesViewModels = CreateMessagesViewModels(addedMessages);
+
+            if (addedMessagesViewModels.Count > 0)
+            {
+                _messagesBatchAdded.OnNext(addedMessagesViewModels);
+            }
+
+            if (updatedMessages.Count > 0)
+            {
+                _messagesBatchUpdated.OnNext(updatedMessages);
+            }
+
+            if (deletedMessagesIds.Count > 0)
+            {
+                _messagesBatchDeleted.OnNext(deletedMessagesIds);
+            }
         }
     }
 }
