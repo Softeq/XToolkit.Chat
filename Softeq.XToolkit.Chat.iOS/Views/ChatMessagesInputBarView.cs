@@ -63,11 +63,6 @@ namespace Softeq.XToolkit.Chat.iOS.Views
             InvalidateIntrinsicContentSize();
         }
 
-        public void SetInputPlaceholderHidden(bool isHidden)
-        {
-            InputTextViewPlaceholder.Hidden = isHidden;
-        }
-
         public void StartEditing(string originalMessageBody)
         {
             EditingText.Text = originalMessageBody;
@@ -79,7 +74,6 @@ namespace Softeq.XToolkit.Chat.iOS.Views
             var isEditViewContainerHidden = !isInEditMessageMode;
 
             CollapseEditViewContainer(isEditViewContainerHidden);
-            SetInputPlaceholderHidden(isInEditMessageMode);
 
             InvokeTopContainersHeightChangedIfNeeded();
             InvalidateIntrinsicContentSize();
@@ -134,6 +128,11 @@ namespace Softeq.XToolkit.Chat.iOS.Views
                 OpenAttachPanel();
             });
             _simpleImagePicker.SetCommand(nameof(_simpleImagePicker.PickerWillOpen), new RelayCommand(RaisePickerWillOpen));
+        }
+
+        public void SetTextPlaceholdervisibility(bool isVisible)
+        {
+            InputTextViewPlaceholder.Hidden = !isVisible;
         }
 
         protected override void Initialize()
