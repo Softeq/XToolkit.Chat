@@ -66,14 +66,19 @@ namespace Softeq.XToolkit.Chat.iOS.Views
                 var size = new CGSize(AvatarSize, AvatarSize);
                 return image.MakeCircularImageWithSize(size);
             };
-            _avatarImageNode.ContentMode = UIViewContentMode.ScaleAspectFit;
+            _avatarImageNode.ContentMode = UIViewContentMode.ScaleAspectFill;
             _avatarImageNode.Hidden = _isMyMessage;
             if (!_isMyMessage)
             {
                 _avatarImageNode.LoadImageWithTextPlaceholder(
                     _viewModelRef.Target.SenderPhotoUrl,
                     _viewModelRef.Target.SenderName,
-                    StyleHelper.Style.AvatarStyles);
+                    new AvatarImageHelpers.AvatarStyles 
+                    { 
+                        BackgroundHexColors = StyleHelper.Style.AvatarStyles.BackgroundHexColors,
+                        Font = StyleHelper.Style.AvatarStyles.Font,
+                        Size = new System.Drawing.Size((int)AvatarSize, (int)AvatarSize)
+                    });
             }
 
             _attachmentImageNode.ContentMode = UIViewContentMode.ScaleAspectFit;

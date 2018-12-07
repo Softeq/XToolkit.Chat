@@ -74,8 +74,9 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
             InputBar.ViewDidLoad(this);
 
             InputBar.SetCommandWithArgs(nameof(InputBar.SendRaised), ViewModel.SendCommand);
-
+            InputBar.SetCommand(nameof(InputBar.PickerWillOpen), new RelayCommand(UnregisterKeyboardObservers));
             InputBar.EditingClose.SetCommand(ViewModel.CancelEditingMessageModeCommand);
+            InputBar.EditingClose.SetImage(UIImage.FromBundle(StyleHelper.Style.CloseButtonImageBoundleName), UIControlState.Normal);
 
             ScrollToBottomButton.SetCommand(new RelayCommand(() => ScrollToBottom(true)));
             ScrollToBottomButton.SetBackgroundImage(UIImage.FromBundle(StyleHelper.Style.ScrollDownBoundleName), UIControlState.Normal);
@@ -83,10 +84,11 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
 
         public override void ViewWillAppear(bool animated)
         {
-            base.ViewWillAppear(animated);
-            ViewModel.MessageAddedCommand = new RelayCommand(OnMessageAdded);
-
             RegisterKeyboardObservers();
+
+            base.ViewWillAppear(animated);
+
+            ViewModel.MessageAddedCommand = new RelayCommand(OnMessageAdded);
         }
 
         public override void ViewDidAppear(bool animated)
@@ -145,6 +147,10 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
             Bindings.Add(this.SetBinding(() => ViewModel.ConnectionStatusViewModel).WhenSourceChanges(() =>
             {
                 _customTitleView.Update(ViewModel.ConnectionStatusViewModel);
+            }));
+            Bindings.Add(this.SetBinding(() => ViewModel.MessageToSendBody).WhenSourceChanges(() =>
+            {
+                InputBar.SetTextPlaceholdervisibility(string.IsNullOrEmpty(ViewModel.MessageToSendBody));
             }));
         }
 
