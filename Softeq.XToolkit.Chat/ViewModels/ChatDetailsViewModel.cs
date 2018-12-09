@@ -2,12 +2,11 @@
 // http://www.softeq.com
 
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
-using Softeq.XToolkit.Chat.Manager;
+using Softeq.XToolkit.Chat.Interfaces;
 using Softeq.XToolkit.Chat.Models;
 using Softeq.XToolkit.Chat.Models.Enum;
 using Softeq.XToolkit.Chat.Models.Interfaces;
@@ -18,7 +17,6 @@ using Softeq.XToolkit.WhiteLabel.Navigation;
 using Softeq.XToolkit.Chat.Strategies.Search;
 using Softeq.XToolkit.Common.Extensions;
 using Softeq.XToolkit.WhiteLabel;
-using Softeq.XToolkit.WhiteLabel.Interfaces;
 using Softeq.XToolkit.WhiteLabel.Model;
 using Softeq.XToolkit.WhiteLabel.Threading;
 

@@ -3,6 +3,7 @@
 
 using Autofac;
 using Softeq.XToolkit.Chat.HttpClient;
+using Softeq.XToolkit.Chat.Interfaces;
 using Softeq.XToolkit.Chat.Manager;
 using Softeq.XToolkit.Chat.Models.Interfaces;
 using Softeq.XToolkit.Chat.SignalRClient;

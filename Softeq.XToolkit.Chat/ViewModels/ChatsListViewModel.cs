@@ -3,7 +3,7 @@
 
 using System.Threading.Tasks;
 using System.Windows.Input;
-using Softeq.XToolkit.Chat.Manager;
+using Softeq.XToolkit.Chat.Interfaces;
 using Softeq.XToolkit.Chat.Models.Interfaces;
 using Softeq.XToolkit.Common.Collections;
 using Softeq.XToolkit.Common.Command;
@@ -70,7 +70,7 @@ namespace Softeq.XToolkit.Chat.ViewModels
 
             ConnectionStatusViewModel.Initialize(LocalizedStrings.ChatsTitle);
             
-            _chatsListManager.RefreshOnBackgroundAsync();
+            _chatsListManager.RefreshChatsListOnBackgroundAsync();
         }
 
         public override void OnDisappearing()

@@ -179,7 +179,7 @@ namespace Softeq.XToolkit.Chat.Manager
 
             if (TryAddChat(new ChatSummaryModel { Id = messageViewModel.ChatId }))
             {
-                UpdateChatsListAsync();
+                UpdateChatsListFromNetworkAsync();
             }
             ModifyChatsSafely(() =>
             {

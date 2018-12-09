@@ -31,13 +31,13 @@ namespace Softeq.XToolkit.Chat.ViewModels
         private readonly IChatLocalizedStrings _localizedStrings;
         private readonly IFormatService _formatService;
         private readonly IList<IDisposable> _subscriptions = new List<IDisposable>();
-        
+
         private ChatSummaryViewModel _chatSummaryViewModel;
         private ChatMessageViewModel _messageBeingEdited;
-        
+
         private bool _areLatestMessagesLoaded;
         private string _messageToSendBody = string.Empty;
-        
+
         public ChatMessagesViewModel(
             IPageNavigationService pageNavigationService,
             IChatLocalizedStrings localizedStrings,
@@ -66,12 +66,9 @@ namespace Softeq.XToolkit.Chat.ViewModels
             {
                 _chatSummaryViewModel = value;
                 RaisePropertyChanged(nameof(ChatName));
-
-                // TODO: affected by different ways of register ViewModel on each platform
-                ClearMessages();
             }
         }
-        
+
         public ObservableKeyGroupsCollection<DateTimeOffset, ChatMessageViewModel> Messages { get; }
             = new ObservableKeyGroupsCollection<DateTimeOffset, ChatMessageViewModel>(message => message.DateTime.Date,
                 (x, y) => x.CompareTo(y),
@@ -129,8 +126,8 @@ namespace Softeq.XToolkit.Chat.ViewModels
             _subscriptions.Add(_chatManager.MessagesBatchAdded.Subscribe(OnMessagesBatchReceived));
             _subscriptions.Add(_chatManager.MessagesBatchUpdated.Subscribe(OnMessagesBatchUpdated));
             _subscriptions.Add(_chatManager.MessagesBatchDeleted.Subscribe(OnMessagesBatchDeleted));
-            
-            ConnectionStatusViewModel.Initialize(ChatName);            
+
+            ConnectionStatusViewModel.Initialize(ChatName);
 
             if (!_areLatestMessagesLoaded)
             {
@@ -149,7 +146,7 @@ namespace Softeq.XToolkit.Chat.ViewModels
 
             Messages.ItemsChanged -= OnMessagesAddedToCollection;
             _subscriptions.Apply(x => x.Dispose());
-            
+
             ConnectionStatusViewModel.Dispose();
         }
 

@@ -4,7 +4,7 @@
 using System;
 using System.ComponentModel;
 using Softeq.XToolkit.Chat.Exceptions;
-using Softeq.XToolkit.Chat.Manager;
+using Softeq.XToolkit.Chat.Interfaces;
 using Softeq.XToolkit.Chat.Models.Enum;
 using Softeq.XToolkit.Chat.Models.Interfaces;
 using Softeq.XToolkit.WhiteLabel.Mvvm;

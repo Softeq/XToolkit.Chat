@@ -26,20 +26,10 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
 
         public override void ViewDidLoad()
         {
-            if (ViewModel == null)
-            {
-                var viewModel = ServiceLocator.Resolve<ChatsListViewModel>();
-                SetExistingViewModel(viewModel);
-            }
-
             base.ViewDidLoad();
 
-            // Setup brand color for NavigationBar buttons
-            CustomNavigationBar.TintColor = StyleHelper.Style.NavigationBarTintColor;
-
             _customTitleView = new ConnectionStatusView(CGRect.Empty);
-
-            // Setup NavigationBar
+            CustomNavigationBar.TintColor = StyleHelper.Style.NavigationBarTintColor;
             CustomNavigationItem.AddTitleView(_customTitleView);
             CustomNavigationItem.SetCommand(UIBarButtonSystemItem.Add, ViewModel.CreateChatCommand, false);
 
