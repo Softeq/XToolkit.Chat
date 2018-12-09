@@ -18,7 +18,7 @@ using Softeq.XToolkit.WhiteLabel.Messenger;
 
 namespace Softeq.XToolkit.Chat.Manager
 {
-    public partial class ChatManager
+    public partial class ChatManager : IChatConnectionManager
     {
         private readonly IChatService _chatService;
         private readonly IMessagesCache _messagesCache;

@@ -26,32 +26,29 @@ namespace Softeq.XToolkit.Chat.ViewModels
 {
     public class ChatDetailsViewModel : ViewModelBase
     {
-        private readonly ChatManager _chatManager;
+        private readonly IChatsListManager _chatsListManager;
         private readonly IPageNavigationService _pageNavigationService;
         private readonly IFormatService _formatService;
         private readonly IUploadImageService _uploadImageService;
         private readonly IDialogsService _dialogsService;
         private readonly IChatService _chatService;
-        private readonly IViewModelFactoryService _viewModelFactoryService;
 
         public ChatDetailsViewModel(
-            ChatManager chatManager,
+            IChatsListManager chatsListManager,
             IPageNavigationService pageNavigationService,
             IChatLocalizedStrings localizedStrings,
             IFormatService formatService,
             IUploadImageService uploadImageService,
             IDialogsService dialogsService,
-            IChatService chatService,
-            IViewModelFactoryService viewModelFactoryService)
+            IChatService chatService)
         {
-            _chatManager = chatManager;
+            _chatsListManager = chatsListManager;
             _pageNavigationService = pageNavigationService;
             LocalizedStrings = localizedStrings;
             _formatService = formatService;
             _uploadImageService = uploadImageService;
             _dialogsService = dialogsService;
             _chatService = chatService;
-            _viewModelFactoryService = viewModelFactoryService;
 
             AddMembersCommand = new RelayCommand(AddMembers);
             BackCommand = new RelayCommand(_pageNavigationService.GoBack, () => _pageNavigationService.CanGoBack);
@@ -72,15 +69,13 @@ namespace Softeq.XToolkit.Chat.ViewModels
         public ICommand BackCommand { get; }
         public RelayCommand<int> RemoveMemberAtCommand { get; }
 
-        public IList<CommandAction> MenuActions { get; } = new List<CommandAction>();
-
         public override async void OnAppearing()
         {
             base.OnAppearing();
 
             Members.Clear();
 
-            var members = await _chatManager.GetChatMembersAsync(Summary.Id);
+            var members = await _chatsListManager.GetChatMembersAsync(Summary.Id);
             Members.AddRange(members);
             RaisePropertyChanged(nameof(MembersCountText));
         }
@@ -130,7 +125,7 @@ namespace Softeq.XToolkit.Chat.ViewModels
                 Summary.AvatarUrl = imagePath;
                 RaisePropertyChanged(nameof(Summary.AvatarUrl));
 
-                await _chatManager.EditChatAsync(Summary).ConfigureAwait(false);
+                await _chatsListManager.EditChatAsync(Summary).ConfigureAwait(false);
             }
 
             Execute.BeginOnUIThread(() =>
@@ -164,7 +159,7 @@ namespace Softeq.XToolkit.Chat.ViewModels
 
                 try
                 {
-                    await _chatManager.InviteMembersAsync(Summary.Id, contactsForInvite);
+                    await _chatsListManager.InviteMembersAsync(Summary.Id, contactsForInvite);
                 }
                 catch (Exception ex)
                 {

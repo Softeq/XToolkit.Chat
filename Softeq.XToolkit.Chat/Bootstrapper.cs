@@ -21,7 +21,11 @@ namespace Softeq.XToolkit.Chat
                 .InstancePerLifetimeScope();
             containerBuilder.RegisterType<ChatService>().As<IChatService>()
                 .InstancePerLifetimeScope();
-            containerBuilder.RegisterType<ChatManager>().InstancePerLifetimeScope();
+            containerBuilder.RegisterType<ChatManager>()
+                .As<ChatManager>()
+                .As<IChatsListManager>()
+                .As<IChatConnectionManager>()
+                .InstancePerLifetimeScope();
             containerBuilder.RegisterType<InMemoryMessagesCache>().As<IMessagesCache>().InstancePerLifetimeScope();
             containerBuilder.RegisterType<FormatService>().As<IFormatService>().InstancePerLifetimeScope();
             containerBuilder.RegisterType<UploadImageService>().As<IUploadImageService>().InstancePerLifetimeScope();

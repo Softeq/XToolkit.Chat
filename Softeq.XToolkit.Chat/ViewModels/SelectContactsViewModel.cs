@@ -21,9 +21,10 @@ using Softeq.XToolkit.WhiteLabel.Threading;
 
 namespace Softeq.XToolkit.Chat.ViewModels
 {
+    // TODO YP: rename to CreateChatViewModel or merge with ChatDetailsViewModel
     public class SelectContactsViewModel : ViewModelBase
     {
-        private readonly ChatManager _chatManager;
+        private readonly IChatsListManager _chatsListManager;
         private readonly IChatService _chatService;
         private readonly IFormatService _formatService;
         private readonly IChatLocalizedStrings _localizedStrings;
@@ -35,7 +36,7 @@ namespace Softeq.XToolkit.Chat.ViewModels
         private string _chatName;
 
         public SelectContactsViewModel(
-            ChatManager chatManager,
+            IChatsListManager chatsListManager,
             IChatService chatService,
             IPageNavigationService pageNavigationService,
             IChatLocalizedStrings localizedStrings,
@@ -43,7 +44,7 @@ namespace Softeq.XToolkit.Chat.ViewModels
             IUploadImageService uploadImageService,
             IDialogsService dialogsService)
         {
-            _chatManager = chatManager;
+            _chatsListManager = chatsListManager;
             _chatService = chatService;
             _pageNavigationService = pageNavigationService;
             _localizedStrings = localizedStrings;
@@ -116,12 +117,7 @@ namespace Softeq.XToolkit.Chat.ViewModels
 
         private async void SaveAsync(Func<(Task<Stream> GetImageTask, string Extension)> getImageFunc)
         {
-            if (string.IsNullOrEmpty(ChatName))
-            {
-                return;
-            }
-
-            if (IsBusy)
+            if (IsBusy || string.IsNullOrEmpty(ChatName))
             {
                 return;
             }
@@ -143,7 +139,7 @@ namespace Softeq.XToolkit.Chat.ViewModels
             try
             {
                 var selectedContactsIds = Contacts.Where(x => x.IsSelected).Select(x => x.Id).ToList();
-                await _chatManager.CreateChatAsync(ChatName, selectedContactsIds, imagePath).ConfigureAwait(false);
+                await _chatsListManager.CreateChatAsync(ChatName, selectedContactsIds, imagePath).ConfigureAwait(false);
 
                 Execute.BeginOnUIThread(() =>
                 {

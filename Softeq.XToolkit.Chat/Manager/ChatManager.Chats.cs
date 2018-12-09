@@ -6,15 +6,42 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Softeq.XToolkit.Chat.Models;
+using Softeq.XToolkit.Chat.Models.Enum;
 using Softeq.XToolkit.Chat.ViewModels;
 using Softeq.XToolkit.Common.Collections;
 using TaskExtensions = Softeq.XToolkit.Common.Extensions.TaskExtensions;
 
 namespace Softeq.XToolkit.Chat.Manager
 {
-    public partial class ChatManager
+    public interface IChatConnectionManager
     {
-        public async Task UpdateChatsListAsync()
+        IObservable<ConnectionStatus> ConnectionStatusChanged { get; }
+        ConnectionStatus ConnectionStatus { get; }
+    }
+    
+    public interface IChatsListManager
+    {
+        ObservableRangeCollection<ChatSummaryViewModel> ChatsCollection { get; }
+        
+        Task CreateChatAsync(string chatName, IList<string> participantsIds, string imagePath);
+        Task EditChatAsync(ChatSummaryModel chatSummary);
+        Task CloseChatAsync(string chatId);
+        Task LeaveChatAsync(string chatId);
+        
+        Task InviteMembersAsync(string chatId, IList<string> participantsIds);
+        Task<IList<ChatUserViewModel>> GetChatMembersAsync(string chatId);
+
+        void RefreshOnBackgroundAsync();
+    }
+    
+    public partial class ChatManager : IChatsListManager
+    {
+        public void MakeChatActive(string chatId)
+        {
+            _activeChatId = chatId;
+        }
+        
+        private async Task UpdateChatsListAsync()
         {
             var result = await GetChatsListAsync();
 
@@ -24,15 +51,17 @@ namespace Softeq.XToolkit.Chat.Manager
             }
         }
 
-        public void MakeChatActive(string chatId)
+        private async Task<IList<ChatSummaryViewModel>> GetChatsListAsync()
         {
-            _activeChatId = chatId;
-        }
-
-        public async Task<IList<ChatSummaryViewModel>> GetChatsListAsync()
-        {
-            var models = await _chatService.GetChatsHeadersAsync().ConfigureAwait(false);
-            return models?.Select(_viewModelFactoryService.ResolveViewModel<ChatSummaryViewModel, ChatSummaryModel>)?.ToList();
+            var models = await _chatService.GetChatsListAsync().ConfigureAwait(false);
+            if (models == null)
+            {
+                return null; // TODO:
+            }
+            
+            return models
+                .Select(_viewModelFactoryService.ResolveViewModel<ChatSummaryViewModel, ChatSummaryModel>)
+                .ToList();
         }
 
         public async Task CreateChatAsync(string chatName, IList<string> participantsIds, string imagePath)
@@ -65,7 +94,7 @@ namespace Softeq.XToolkit.Chat.Manager
             return models?.Select(_viewModelFactoryService.ResolveViewModel<ChatUserViewModel, ChatUserModel>)?.ToList();
         }
 
-        internal Task EditChatAsync(ChatSummaryModel chatSummary)
+        public Task EditChatAsync(ChatSummaryModel chatSummary)
         {
             return _chatService.EditChatAsync(chatSummary);
         }
