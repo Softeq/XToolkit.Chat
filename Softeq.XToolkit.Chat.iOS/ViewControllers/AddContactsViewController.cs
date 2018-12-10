@@ -67,7 +67,7 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
 
             CustomNavigationBarItem.SetCommand(
                 ViewModel.Resources.Done,
-                StyleHelper.Style.NavigationBarTintColor,
+                StyleHelper.Style.AccentColor,
                 ViewModel.DoneCommand,
                 false);
         }

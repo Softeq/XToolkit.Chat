@@ -35,7 +35,7 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
                 true);
             CustomNavigationItem.SetCommand(
                 ViewModel.ActionButtonName,
-                StyleHelper.Style.NavigationBarTintColor,
+                StyleHelper.Style.AccentColor,
                 new RelayCommand(AddChat),
                 false);
 
