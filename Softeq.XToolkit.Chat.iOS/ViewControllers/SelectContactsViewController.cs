@@ -48,7 +48,7 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
                 _chatDetailsHeaderView.ChatNameField.ResignFirstResponder();
             }));
 
-            _simpleImagePicker = new SimpleImagePicker(this, ServiceLocator.Resolve<IPermissionsManager>(), false)
+            _simpleImagePicker = new SimpleImagePicker(this, Dependencies.ServiceLocator.Resolve<IPermissionsManager>(), false)
             {
                 MaxImageWidth = 280,
                 MaxImageHeight = 280,
