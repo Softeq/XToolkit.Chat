@@ -22,7 +22,7 @@ namespace Softeq.XToolkit.Chat.Droid.ViewHolders
 {
     public class ChatViewHolder : BindableViewHolder<ChatSummaryViewModel>
     {
-        private const string UnreadMessagesCountColor = "#5bc6c9";
+        //TODO: move this to resources
         private const string UnreadMutedMessagesCountColor = "#b4b4b4";
         private const string ChatStatusDefaultColor = "#dedede";
 
@@ -52,6 +52,8 @@ namespace Softeq.XToolkit.Chat.Droid.ViewHolders
         private TextView DateTimeTextView { get; }
         private TextView UnreadMessageCountTextView { get; }
         private View MessageStatusIndicatorView { get; }
+
+        private string _unreadMessagesCountColor = StyleHelper.Style.UnreadMessagesCountColor;
 
         public override void BindViewModel(ChatSummaryViewModel viewModel)
         {
@@ -93,7 +95,7 @@ namespace Softeq.XToolkit.Chat.Droid.ViewHolders
             {
                 if (UnreadMessageCountTextView != null)
                 {
-                    var color = _viewModelRef.Target.IsMuted ? UnreadMutedMessagesCountColor : UnreadMessagesCountColor;
+                    var color = _viewModelRef.Target.IsMuted ? UnreadMutedMessagesCountColor : _unreadMessagesCountColor;
                     UnreadMessageCountTextView.Background = CreateBackgroundWithCornerRadius(Color.ParseColor(color), 56f);
                 }
             }));

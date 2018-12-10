@@ -113,7 +113,10 @@ namespace Softeq.XToolkit.Chat.Droid.ViewHolders
                 SenderPhotoImageView.LoadImageWithTextPlaceholder(
                     _viewModelRef.Target.SenderPhotoUrl,
                     _viewModelRef.Target.SenderName,
-                    StyleHelper.Style.ChatAvatarStyles,
+                    new WhiteLabel.Droid.Controls.AvatarPlaceholderDrawable.AvatarStyles {
+                        BackgroundHexColors = StyleHelper.Style.ChatAvatarStyles.BackgroundHexColors,
+                        Size = new System.Drawing.Size(35, 35)
+                    },
                     (TaskParameter x) => x.Transform(new CircleTransformation()));
             }
 
