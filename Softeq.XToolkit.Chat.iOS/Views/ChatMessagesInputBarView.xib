@@ -16,6 +16,7 @@
                 <outlet property="AttachedImageView" destination="Maf-l1-mKT" id="P2I-1U-9Du"/>
                 <outlet property="EditImageContainer" destination="SUd-N4-WMG" id="0A8-nO-Oxs"/>
                 <outlet property="EditImageContainerHeightConstraint" destination="uga-fH-shW" id="z57-yM-Zw9"/>
+                <outlet property="EditMessageHeaderLabel" destination="z3m-QQ-vov" id="ogw-ZU-Le0"/>
                 <outlet property="EditViewContainer" destination="pC9-C5-kEw" id="Afv-2M-HrJ"/>
                 <outlet property="EditViewContainerHeightConstraint" destination="3gf-JO-6to" id="EM8-3W-2Hl"/>
                 <outlet property="EditingCloseButton" destination="psV-Lx-L4y" id="tE9-tv-hBn"/>
