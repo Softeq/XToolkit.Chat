@@ -3,13 +3,18 @@
 
 using FFImageLoading;
 using FFImageLoading.Cross;
+using FFImageLoading.Transformations;
 using FFImageLoading.Work;
 
 namespace Softeq.XToolkit.Chat.Droid.Extensions
 {
     public static class MvxCachedImageViewExtensions
     {
-        public static void LoadImageAsync(this MvxCachedImageView imageView, string bundleResourceName, string url)
+        public static void LoadImageAsync(
+            this MvxCachedImageView imageView, 
+            string bundleResourceName, 
+            string url,
+            TransformationBase transformationBase = null)
         {
             if (string.IsNullOrEmpty(url))
             {
@@ -17,7 +22,15 @@ namespace Softeq.XToolkit.Chat.Droid.Extensions
 
                 if (!string.IsNullOrEmpty(bundleResourceName))
                 {
-                    ImageService.Instance.LoadCompiledResource(bundleResourceName).IntoAsync(imageView);
+                    var loadTask = ImageService.Instance
+                        .LoadCompiledResource(bundleResourceName);
+
+                    if (transformationBase != null)
+                    {
+                        loadTask = loadTask.Transform(transformationBase);
+                    }
+
+                    loadTask.IntoAsync(imageView);
                 }
 
                 return;
@@ -29,6 +42,11 @@ namespace Softeq.XToolkit.Chat.Droid.Extensions
             {
                 expr = expr.LoadingPlaceholder(bundleResourceName, ImageSource.CompiledResource)
                            .ErrorPlaceholder(bundleResourceName, ImageSource.CompiledResource);
+            }
+
+            if (transformationBase != null)
+            {
+                expr = expr.Transform(transformationBase);
             }
 
             expr.IntoAsync(imageView);

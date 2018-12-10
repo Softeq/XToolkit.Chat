@@ -18,6 +18,7 @@ using Softeq.XToolkit.WhiteLabel.Interfaces;
 using Softeq.XToolkit.WhiteLabel.Mvvm;
 using Softeq.XToolkit.WhiteLabel.Navigation;
 using Softeq.XToolkit.Chat.Models.Interfaces;
+using System.IO;
 
 namespace Softeq.XToolkit.Chat.ViewModels
 {
@@ -27,33 +28,24 @@ namespace Softeq.XToolkit.Chat.ViewModels
         private const int OlderMessagesBatchCount = 50;
 
         private readonly ChatManager _chatManager;
-        private readonly IViewModelFactoryService _viewModelFactoryService;
         private readonly IPageNavigationService _pageNavigationService;
         private readonly IChatLocalizedStrings _localizedStrings;
         private readonly IFormatService _formatService;
+        private readonly List<IDisposable> _subscriptions = new List<IDisposable>();
+        
         private ChatSummaryViewModel _chatSummaryViewModel;
-
-        private bool _areLatestMessagesLoaded;
-
-        public ObservableKeyGroupsCollection<DateTimeOffset, ChatMessageViewModel> Messages { get; }
-            = new ObservableKeyGroupsCollection<DateTimeOffset, ChatMessageViewModel>(message => message.DateTime.Date,
-                                                                                      (x, y) => x.CompareTo(y),
-                                                                                      (x, y) => x.DateTime.CompareTo(y.DateTime));
-
-        private string _messageToSendBody = string.Empty;
         private ChatMessageViewModel _messageBeingEdited;
-
-        private List<IDisposable> _subscriptions = new List<IDisposable>();
-
+        
+        private bool _areLatestMessagesLoaded;
+        private string _messageToSendBody = string.Empty;
+        
         public ChatMessagesViewModel(
-            IViewModelFactoryService viewModelFactoryService,
             IPageNavigationService pageNavigationService,
             IChatLocalizedStrings localizedStrings,
             IFormatService formatService,
             ChatManager chatManager,
             ConnectionStatusViewModel connectionStatusViewModel)
         {
-            _viewModelFactoryService = viewModelFactoryService;
             _pageNavigationService = pageNavigationService;
             _localizedStrings = localizedStrings;
             _formatService = formatService;
@@ -62,8 +54,7 @@ namespace Softeq.XToolkit.Chat.ViewModels
             ConnectionStatusViewModel = connectionStatusViewModel;
 
             BackCommand = new RelayCommand(_pageNavigationService.GoBack, () => _pageNavigationService.CanGoBack);
-            SendCommand = new RelayCommand(SendMessageAsync);
-            AttachImageCommand = new RelayCommand(AttachImage);
+            SendCommand = new RelayCommand<GenericEventArgs<Func<(Task<Stream>, string)>>>(SendMessageAsync);
             CancelEditingMessageModeCommand = new RelayCommand(CancelEditingMessageMode);
             ShowInfoCommand = new RelayCommand(ShowInfo);
             LoadOlderMessagesCommand = new RelayCommand(() => LoadOlderMessagesAsync().SafeTaskWrapper());
@@ -71,6 +62,7 @@ namespace Softeq.XToolkit.Chat.ViewModels
 
         public ChatSummaryViewModel Parameter
         {
+            get => _chatSummaryViewModel;
             set
             {
                 _chatSummaryViewModel = value;
@@ -79,8 +71,12 @@ namespace Softeq.XToolkit.Chat.ViewModels
                 // TODO: affected by different ways of register ViewModel on each platform
                 ClearMessages();
             }
-            get { return _chatSummaryViewModel; }
         }
+        
+        public ObservableKeyGroupsCollection<DateTimeOffset, ChatMessageViewModel> Messages { get; }
+            = new ObservableKeyGroupsCollection<DateTimeOffset, ChatMessageViewModel>(message => message.DateTime.Date,
+                (x, y) => x.CompareTo(y),
+                (x, y) => x.DateTime.CompareTo(y.DateTime));
 
         public ConnectionStatusViewModel ConnectionStatusViewModel { get; }
 
@@ -97,8 +93,7 @@ namespace Softeq.XToolkit.Chat.ViewModels
         public bool IsInEditMessageMode { get; private set; }
 
         public ICommand BackCommand { get; }
-        public ICommand SendCommand { get; }
-        public ICommand AttachImageCommand { get; }
+        public RelayCommand<GenericEventArgs<Func<(Task<Stream>, string)>>> SendCommand { get; }
         public ICommand CancelEditingMessageModeCommand { get; }
         public ICommand ShowInfoCommand { get; }
         public ICommand MessageAddedCommand { get; set; }
@@ -165,10 +160,11 @@ namespace Softeq.XToolkit.Chat.ViewModels
                 await LoadInitialMessagesAsync();
                 return;
             }
-            var olderMessages = await _chatManager.LoadOlderMessagesAsync(_chatSummaryViewModel.ChatId,
-                                                                          oldestMessage.Id,
-                                                                          oldestMessage.DateTime,
-                                                                          OlderMessagesBatchCount);
+            var olderMessages = await _chatManager.LoadOlderMessagesAsync(
+                _chatSummaryViewModel.ChatId,
+                oldestMessage.Id,
+                oldestMessage.DateTime,
+                OlderMessagesBatchCount);
             Messages.AddRangeToGroupsSorted(olderMessages);
         }
 
@@ -180,12 +176,16 @@ namespace Softeq.XToolkit.Chat.ViewModels
 
         private void ShowInfo()
         {
-            _pageNavigationService.For<ChatDetailsViewModel>().WithParam(x => x.Summary, _chatSummaryViewModel.Parameter).Navigate();
+            _pageNavigationService.For<ChatDetailsViewModel>()
+                .WithParam(x => x.Summary, _chatSummaryViewModel.Parameter)
+                .Navigate();
         }
 
         private void AttachImage()
         {
-            //_chatManager.LoadOlderMessagesAsync().SafeTaskWrapper();
+            _pageNavigationService.For<ChatDetailsViewModel>()
+                .WithParam(x => x.Summary, _chatSummaryViewModel.Parameter)
+                .Navigate();
         }
 
         private void ClearMessages()
@@ -230,11 +230,11 @@ namespace Softeq.XToolkit.Chat.ViewModels
 
         private void OnMessageEdited(ChatMessageModel messageModel)
         {
-            bool wasUpdated(ChatMessageViewModel x) => x.Id == messageModel.Id;
-            Messages.Where(x => x.Any(wasUpdated))
-                     .SelectMany(x => x)
-                     .Where(wasUpdated)
-                     .Apply(x => x.Parameter = messageModel);
+            bool WasUpdated(ChatMessageViewModel x) => x.Id == messageModel.Id;
+            Messages.Where(x => x.Any(WasUpdated))
+                    .SelectMany(x => x)
+                    .Where(WasUpdated)
+                    .Apply(x => x.Parameter = messageModel);
         }
 
         private void OnMessagesBatchUpdated(IList<ChatMessageModel> messagesModels)
@@ -263,20 +263,22 @@ namespace Softeq.XToolkit.Chat.ViewModels
 
         private void DeleteAllMessages(Func<ChatMessageViewModel, bool> predicate)
         {
-            var messagesToDelete = Messages.Where(x => x.Any(predicate))
-                                   .SelectMany(x => x)
-                                   .Where(predicate)
-                                   .ToList();
+            var messagesToDelete = Messages
+                .Where(x => x.Any(predicate))
+                .SelectMany(x => x)
+                .Where(predicate)
+                .ToList();
             Messages.RemoveAllFromGroups(messagesToDelete);
         }
 
-        private async void SendMessageAsync()
+        private async void SendMessageAsync(GenericEventArgs<Func<(Task<Stream>, string)>> e)
         {
             var newMessageBody = MessageToSendBody?.Trim();
             if (string.IsNullOrEmpty(newMessageBody))
             {
                 return;
             }
+
             MessageToSendBody = string.Empty;
 
             if (IsInEditMessageMode && _messageBeingEdited != null)
@@ -287,7 +289,7 @@ namespace Softeq.XToolkit.Chat.ViewModels
             }
             else
             {
-                await _chatManager.SendMessageAsync(_chatSummaryViewModel.ChatId, newMessageBody).ConfigureAwait(false);
+                await _chatManager.SendMessageAsync(_chatSummaryViewModel.ChatId, newMessageBody, e?.Value).ConfigureAwait(false);
             }
         }
 

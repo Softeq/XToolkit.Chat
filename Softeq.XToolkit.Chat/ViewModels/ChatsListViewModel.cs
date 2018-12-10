@@ -88,9 +88,7 @@ namespace Softeq.XToolkit.Chat.ViewModels
 
         private void CreateChat()
         {
-            _pageNavigationService.For<SelectContactsViewModel>()
-                .WithParam(x => x.SelectedContactsAction, SelectedContactsAction.CreateChat)
-                .Navigate();
+            _pageNavigationService.NavigateToViewModel<SelectContactsViewModel>();
         }
 
         private Task LeaveChatAsync(ChatSummaryViewModel chatViewModel)

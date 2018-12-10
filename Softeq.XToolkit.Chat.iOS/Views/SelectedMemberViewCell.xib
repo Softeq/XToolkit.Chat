@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="14460.31" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
+    <device id="retina4_0" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14460.20"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="SelectedMemberViewCell" id="cZE-iV-UFb" customClass="SelectedMemberViewCell">
+            <rect key="frame" x="0.0" y="0.0" width="50" height="70"/>
+            <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMinY="YES" flexibleMaxY="YES"/>
+            <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
+                <rect key="frame" x="0.0" y="0.0" width="50" height="70"/>
+                <autoresizingMask key="autoresizingMask"/>
+                <subviews>
+                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="aet-dC-xWa">
+                        <rect key="frame" x="0.0" y="0.0" width="50" height="70"/>
+                        <subviews>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="SAo-ht-Ndq">
+                                <rect key="frame" x="5" y="4" width="40" height="40"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="40" id="8cG-iH-Y9Q"/>
+                                    <constraint firstAttribute="width" constant="40" id="meA-Xu-GLe"/>
+                                </constraints>
+                            </imageView>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="E1f-qv-FuP">
+                                <rect key="frame" x="35" y="26" width="14" height="14"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="14" id="NSp-Jm-JrQ"/>
+                                    <constraint firstAttribute="width" constant="14" id="gF3-R7-DNy"/>
+                                </constraints>
+                            </button>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Lorem Ipsum" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="QYU-Lh-IDK">
+                                <rect key="frame" x="0.0" y="52" width="50" height="18"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="13"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <constraints>
+                            <constraint firstItem="QYU-Lh-IDK" firstAttribute="top" secondItem="SAo-ht-Ndq" secondAttribute="bottom" constant="8" id="0nW-au-Oq9"/>
+                            <constraint firstItem="SAo-ht-Ndq" firstAttribute="centerX" secondItem="aet-dC-xWa" secondAttribute="centerX" id="HH3-nX-O8d"/>
+                            <constraint firstAttribute="bottom" secondItem="QYU-Lh-IDK" secondAttribute="bottom" id="P8Y-Pw-ZXm"/>
+                            <constraint firstAttribute="trailing" secondItem="QYU-Lh-IDK" secondAttribute="trailing" id="RSn-3q-Cmi"/>
+                            <constraint firstItem="E1f-qv-FuP" firstAttribute="bottom" secondItem="SAo-ht-Ndq" secondAttribute="bottom" constant="-4" id="YnE-Cd-S5j"/>
+                            <constraint firstItem="E1f-qv-FuP" firstAttribute="trailing" secondItem="SAo-ht-Ndq" secondAttribute="trailing" constant="4" id="ZuS-v7-4Tr"/>
+                            <constraint firstItem="SAo-ht-Ndq" firstAttribute="top" secondItem="aet-dC-xWa" secondAttribute="top" constant="4" id="fj5-ib-dh9"/>
+                            <constraint firstItem="QYU-Lh-IDK" firstAttribute="leading" secondItem="aet-dC-xWa" secondAttribute="leading" id="vSF-TP-Zw8"/>
+                        </constraints>
+                    </view>
+                </subviews>
+            </view>
+            <constraints>
+                <constraint firstAttribute="bottom" secondItem="aet-dC-xWa" secondAttribute="bottom" id="2Gh-Ir-gLe"/>
+                <constraint firstAttribute="trailing" secondItem="aet-dC-xWa" secondAttribute="trailing" id="MeL-ft-zvV"/>
+                <constraint firstItem="aet-dC-xWa" firstAttribute="leading" secondItem="cZE-iV-UFb" secondAttribute="leading" id="RRs-Ye-YPH"/>
+                <constraint firstItem="aet-dC-xWa" firstAttribute="top" secondItem="cZE-iV-UFb" secondAttribute="top" id="h2u-S4-0PR"/>
+            </constraints>
+            <size key="customSize" width="77" height="87"/>
+            <connections>
+                <outlet property="MemberNameLabel" destination="QYU-Lh-IDK" id="XKh-Pi-d59"/>
+                <outlet property="MemberPhotoImageView" destination="SAo-ht-Ndq" id="PBd-Rc-EVv"/>
+                <outlet property="RemoveMemberBtn" destination="E1f-qv-FuP" id="GgI-S6-1Rf"/>
+            </connections>
+            <point key="canvasLocation" x="48.75" y="70.774647887323951"/>
+        </collectionViewCell>
+    </objects>
+</document>

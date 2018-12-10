@@ -3,7 +3,9 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Net.Sockets;
 using System.Threading.Tasks;
 using Softeq.XToolkit.Chat.Exceptions;
 using Softeq.XToolkit.Chat.Models;
@@ -52,17 +54,29 @@ namespace Softeq.XToolkit.Chat.Manager
             return new List<ChatMessageViewModel>();
         }
 
-        public async Task SendMessageAsync(string chatId, string messageBody)
+        public async Task SendMessageAsync(string chatId, string messageBody, Func<(Task<Stream>, string)> func)
         {
+            string imageUrl = null;
+            if (func != null)
+            {
+                var result = func();
+                using (var stream = await result.Item1.ConfigureAwait(false))
+                {
+                    imageUrl = await _uploadImageService.UploadImageAsync(stream, result.Item2).ConfigureAwait(false);
+                }
+            }
+
             var messageModel = new ChatMessageModel
             {
                 DateTime = DateTimeOffset.UtcNow,
                 Body = messageBody,
                 ChannelId = chatId,
                 IsMine = true,
+                ImageUrl = imageUrl
             };
+            
             var viewModel = AddLatestMessage(messageModel);
-            var updatedModel = await _chatService.SendMessageAsync(chatId, messageBody).ConfigureAwait(false);
+            var updatedModel = await _chatService.SendMessageAsync(chatId, messageBody, messageModel.ImageUrl).ConfigureAwait(false);
             if (updatedModel != null)
             {
                 try

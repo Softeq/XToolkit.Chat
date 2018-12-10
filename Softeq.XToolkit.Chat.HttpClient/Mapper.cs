@@ -4,6 +4,9 @@
 using Softeq.XToolkit.Chat.HttpClient.Dtos;
 using Softeq.XToolkit.Chat.Models;
 using System.ComponentModel;
+using System.Linq;
+using Softeq.XToolkit.Common.Models;
+using Softeq.XToolkit.RemoteData;
 
 namespace Softeq.XToolkit.Chat.HttpClient
 {
@@ -21,7 +24,9 @@ namespace Softeq.XToolkit.Chat.HttpClient
                 AvatarUrl = dto.PhotoUrl,
                 LastMessage = DtoToChatMessage(dto.LastMessage),
                 CreatedDate = dto.Created,
-                UpdatedDate = dto.Updated
+                UpdatedDate = dto.Updated,
+                WelcomeMessage = dto.WelcomeMessage,
+                Topic = dto.Topic
             };
         }
 
@@ -67,6 +72,28 @@ namespace Softeq.XToolkit.Chat.HttpClient
                 default:
                     throw new InvalidEnumArgumentException("messageType", (int)dto, typeof(MessageTypeDto));
             }
+        }
+        
+        public static PagingModel<ChatUserModel> PagedMembersDtoToPagingModel(PagingModelDto<ChatUserDto> dto)
+        {
+            if (dto?.Items == null)
+            {
+                return null;
+            }
+
+            var items = dto.Items
+                .Where(y => y.AvatarUrl != null || !string.IsNullOrEmpty(y.UserName))
+                .Select(DtoToChatUser)
+                .ToList();
+            
+            return new PagingModel<ChatUserModel>
+            {
+                Page = dto.PageNumber,
+                Data = items,
+                TotalNumberOfPages = dto.TotalNumberOfPages,
+                TotalNumberOfRecords = dto.TotalNumberOfRecords,
+                PageSize = dto.PageSize
+            };
         }
     }
 }

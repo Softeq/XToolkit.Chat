@@ -14,23 +14,23 @@ namespace Softeq.XToolkit.Chat.HttpClient
 {
     public class UploadImageService : IUploadImageService
     {
-        private readonly IChatConfiguration _chatConfiguration;
+        private readonly IChatConfig _chatConfig;
         private readonly IRestHttpClient _httpClient;
         private readonly ILogger _logger;
 
         public UploadImageService(
-            IChatConfiguration chatConfiguration,
+            IChatConfig chatConfig,
             IRestHttpClient httpClient,
             ILogManager logManager)
         {
-            _chatConfiguration = chatConfiguration;
+            _chatConfig = chatConfig;
             _httpClient = httpClient;
             _logger = logManager.GetLogger<UploadImageService>();
         }
         
         public async Task<string> UploadImageAsync(Stream image, string extension)
         {
-            var getTokenRequest = new GetAzureTokenRequest(_chatConfiguration.ApiUrl);
+            var getTokenRequest = new GetAzureTokenRequest(_chatConfig.ApiUrl);
             var token = default(string);
             try
             {
@@ -46,7 +46,7 @@ namespace Softeq.XToolkit.Chat.HttpClient
                 return null;
             }
 
-            var uploadRequest = new UploadImageRequest(_chatConfiguration.BlobUrl, token.Replace("\"", string.Empty), image, extension);
+            var uploadRequest = new UploadImageRequest(_chatConfig.BlobUrl, token.Replace("\"", string.Empty), image, extension);
             var uploadResult = await _httpClient.TrySendAsync(uploadRequest, _logger).ConfigureAwait(false);
 
             return uploadResult ? uploadRequest.FilePath : null;

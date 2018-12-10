@@ -17,8 +17,8 @@ namespace Softeq.XToolkit.Chat.ViewModels
 
         public ChatUserModel Parameter
         {
-            set => _model = value;
             get => _model;
+            set => _model = value;
         }
 
         public string Id => _model.SaasUserId;
@@ -32,7 +32,7 @@ namespace Softeq.XToolkit.Chat.ViewModels
             {
                 if (Set(ref _isSelected, value))
                 {
-                    _selectionCommand?.Execute(null);
+                    _selectionCommand?.Execute(this);
                 }
             }
         }
