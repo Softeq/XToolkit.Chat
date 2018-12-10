@@ -10,7 +10,6 @@ using Softeq.XToolkit.Chat.Models;
 using Softeq.XToolkit.Chat.ViewModels;
 using Softeq.XToolkit.Common.Collections;
 using Softeq.XToolkit.Common.Extensions;
-using TaskExtensions = Softeq.XToolkit.Common.Extensions.TaskExtensions;
 
 namespace Softeq.XToolkit.Chat.Manager
 {
@@ -52,7 +51,7 @@ namespace Softeq.XToolkit.Chat.Manager
                 return null;
             }
 
-            await _localCache.SaveToCache(ChatsCacheKey, DateTimeOffset.UtcNow, models).ConfigureAwait(false);
+            await _localCache.Add(ChatsCacheKey, DateTimeOffset.UtcNow, models).ConfigureAwait(false);
 
             return models;
         }
@@ -61,8 +60,7 @@ namespace Softeq.XToolkit.Chat.Manager
         {
             if (ChatsCollection.Count == 0)
             {
-                UpdateChatsListWithLoader(
-                    _localCache.GetFromCache<IList<ChatSummaryModel>>(ChatsCacheKey)).SafeTaskWrapper();
+                UpdateChatsListWithLoader(_localCache.Get<IList<ChatSummaryModel>>(ChatsCacheKey)).SafeTaskWrapper();
             }
 
             UpdateChatsListFromNetworkAsync().SafeTaskWrapper();
@@ -129,7 +127,7 @@ namespace Softeq.XToolkit.Chat.Manager
                 }
             });
 
-            TaskExtensions.SafeTaskWrapper(_messagesCache.RemoveMessagesAsync(chatId));
+            _messagesCache.RemoveMessagesAsync(chatId).SafeTaskWrapper();
         }
 
         private void ModifyChatsSafely(Action modifyAction)
