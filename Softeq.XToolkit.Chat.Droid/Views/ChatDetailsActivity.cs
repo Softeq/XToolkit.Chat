@@ -95,7 +95,11 @@ namespace Softeq.XToolkit.Chat.Droid.Views
                 _chatPhotoImageView.LoadImageWithTextPlaceholder(
                     ViewModel.Summary.AvatarUrl,
                     ViewModel.Summary.Name,
-                    StyleHelper.Style.ChatAvatarStyles,
+                    new AvatarPlaceholderDrawable.AvatarStyles 
+                    {
+                        BackgroundHexColors = StyleHelper.Style.ChatAvatarStyles.BackgroundHexColors,
+                        Size = new System.Drawing.Size(64, 64)
+                    },
                     x => x.Transform(new CircleTransformation()));
             }));
             Bindings.Add(this.SetBinding(() => _imagePicker.ViewModel.ImageCacheKey)

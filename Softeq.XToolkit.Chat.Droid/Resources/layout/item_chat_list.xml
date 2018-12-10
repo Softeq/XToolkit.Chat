@@ -84,7 +84,7 @@
         android:layout_width="18dp"
         android:layout_height="18dp"
         android:layout_toLeftOf="@+id/date_time_text_view"
-        android:background="@android:color/holo_green_light"
+        android:background="@color/chat_unreaded_color"
         android:visibility="gone" />
 
     <TextView

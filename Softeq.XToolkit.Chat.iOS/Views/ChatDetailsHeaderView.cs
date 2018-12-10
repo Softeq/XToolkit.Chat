@@ -89,6 +89,9 @@ namespace Softeq.XToolkit.Chat.iOS.Views
             ChatAvatarcontainer.ClipsToBounds = true;
 
             EditedChatAvatarImageView.Hidden = true;
+
+            ChangeChatPhotoButton.SetTitleColor(StyleHelper.Style.AccentColor, UIControlState.Normal);
+            AddMembersButton.SetTitleColor(StyleHelper.Style.AccentColor, UIControlState.Normal);
         }
     }
 }
