@@ -24,7 +24,7 @@ namespace Softeq.XToolkit.Chat.Models.Interfaces
         IObservable<SocketConnectionStatus> ConnectionStatusChanged { get; }
         SocketConnectionStatus ConnectionStatus { get; }
 
-        Task<IList<ChatSummaryModel>> GetChatsHeadersAsync();
+        Task<IList<ChatSummaryModel>> GetChatsListAsync();
         Task<ChatSummaryModel> CreateChatAsync(string chatName, IList<string> participantsIds, string imagePath);
         Task CloseChatAsync(string chatId);
         Task LeaveChatAsync(string chatId);

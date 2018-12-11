@@ -64,12 +64,11 @@ namespace Softeq.XToolkit.Chat.HttpClient
             return _httpClient.GetModelAsync<ChatSummaryModel, ChatSummaryDto>(request, _logger, Mapper.DtoToChatSummary);
         }
 
-        public async Task<IList<ChatSummaryModel>> GetChatsHeadersAsync()
+        public async Task<IList<ChatSummaryModel>> GetChatsListAsync()
         {
             var request = new GetChatsListRequest(_chatConfig.ApiUrl);
-            var result = await _httpClient.GetModelOrExceptionAsync<IList<ChatSummaryModel>, IList<ChatSummaryDto>>(request, _logger,
-                                                                                                                    x => x.Select(Mapper.DtoToChatSummary).ToList())
-                                          .ConfigureAwait(false);
+            var result = await _httpClient.GetModelOrExceptionAsync<IList<ChatSummaryModel>, IList<ChatSummaryDto>>(
+                request, _logger, x => x.Select(Mapper.DtoToChatSummary).ToList()).ConfigureAwait(false);
             return result.Model;
         }
 

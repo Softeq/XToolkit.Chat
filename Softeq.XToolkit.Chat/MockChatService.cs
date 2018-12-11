@@ -18,7 +18,7 @@ namespace Softeq.XToolkit.Chat
         {
         }
 
-        public override async Task<IList<ChatSummaryModel>> GetChatsHeadersAsync()
+        public override async Task<IList<ChatSummaryModel>> GetChatsListAsync()
         {
             await Task.Delay(500);
             return new List<ChatSummaryModel> { new ChatSummaryModel { Id = "1", Name = "test" } };

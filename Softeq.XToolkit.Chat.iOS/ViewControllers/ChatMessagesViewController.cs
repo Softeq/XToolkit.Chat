@@ -144,7 +144,7 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
                 InputBar.ChangeEditingMode(ViewModel.IsInEditMessageMode);
             }));
             Bindings.Add(this.SetBinding(() => ViewModel.Messages, () => _dataSourceRef.Target.DataSource));
-            Bindings.Add(this.SetBinding(() => ViewModel.ConnectionStatusViewModel).WhenSourceChanges(() =>
+            Bindings.Add(this.SetBinding(() => ViewModel.ConnectionStatusViewModel.ConnectionStatusText).WhenSourceChanges(() =>
             {
                 _customTitleView.Update(ViewModel.ConnectionStatusViewModel);
             }));

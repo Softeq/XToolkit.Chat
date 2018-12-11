@@ -55,13 +55,13 @@ namespace Softeq.XToolkit.Chat.Droid.Views
         {
             base.DoAttachBindings();
 
-            this.SetBinding(() => ViewModel.ContactNameSearchQuery, () => _editText.Text, BindingMode.TwoWay);
-            this.SetBinding(() => ViewModel.HasSelectedContacts).WhenSourceChanges(() =>
+            Bindings.Add(this.SetBinding(() => ViewModel.ContactNameSearchQuery, () => _editText.Text, BindingMode.TwoWay));
+            Bindings.Add(this.SetBinding(() => ViewModel.HasSelectedContacts).WhenSourceChanges(() =>
             {
                 _addedMembers.Visibility = ViewModel.HasSelectedContacts
                     ? ViewStates.Visible
                     : ViewStates.Gone;
-            });
+            }));
         }
 
         public override void OnDestroy()

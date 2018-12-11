@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Reactive.Subjects;
 using System.Threading.Tasks;
+using Softeq.XToolkit.Chat.Interfaces;
 using Softeq.XToolkit.Chat.Models;
 using Softeq.XToolkit.Chat.Models.Enum;
 using Softeq.XToolkit.Chat.Models.Interfaces;
@@ -18,15 +19,18 @@ using Softeq.XToolkit.WhiteLabel.Messenger;
 
 namespace Softeq.XToolkit.Chat.Manager
 {
-    public partial class ChatManager
+    public partial class ChatManager : IChatConnectionManager
     {
+        private const string ChatsCacheKey = "chat_chats";
+        
         private readonly IChatService _chatService;
         private readonly IMessagesCache _messagesCache;
         private readonly IViewModelFactoryService _viewModelFactoryService;
         private readonly IUploadImageService _uploadImageService;
+        private readonly ILocalCache _localCache;
         private readonly ILogger _logger;
 
-        private readonly List<IDisposable> _subscriptions = new List<IDisposable>();
+        private readonly IList<IDisposable> _subscriptions = new List<IDisposable>();
 
         private readonly Subject<ChatMessageViewModel> _messageAdded = new Subject<ChatMessageViewModel>();
         private readonly Subject<ChatMessageModel> _messageEdited = new Subject<ChatMessageModel>();
@@ -44,12 +48,14 @@ namespace Softeq.XToolkit.Chat.Manager
             IMessagesCache messagesCache,
             IViewModelFactoryService viewModelFactoryService,
             ILogManager logManager,
-            IUploadImageService uploadImageService)
+            IUploadImageService uploadImageService,
+            ILocalCache localCache)
         {
             _chatService = chatService;
             _messagesCache = messagesCache;
             _viewModelFactoryService = viewModelFactoryService;
             _uploadImageService = uploadImageService;
+            _localCache = localCache;
             _logger = logManager.GetLogger<ChatManager>();
 
             _messagesCache.Init(new Common.TaskReference<string, string, DateTimeOffset, IList<ChatMessageModel>>(
@@ -68,7 +74,7 @@ namespace Softeq.XToolkit.Chat.Manager
             _subscriptions.Add(_chatService.ConnectionStatusChanged.Subscribe(OnConnectionStatusChanged));
             OnConnectionStatusChanged(_chatService.ConnectionStatus);
 
-            Messenger.Default.Register<ChatInForegroundMessage>(this, x => ForceReconnect());
+            Messenger.Default.Register<ChatInForegroundMessage>(this, x => _chatService.ForceReconnect());
             Messenger.Default.Register<ChatInBackgroundMessage>(this, x => _chatService.ForceDisconnect());
         }
 
@@ -92,11 +98,6 @@ namespace Softeq.XToolkit.Chat.Manager
 
         public ObservableRangeCollection<ChatSummaryViewModel> ChatsCollection { get; }
             = new ObservableRangeCollection<ChatSummaryViewModel>();
-
-        public void ForceReconnect()
-        {
-            _chatService.ForceReconnect();
-        }
 
         public void Logout()
         {
@@ -128,10 +129,10 @@ namespace Softeq.XToolkit.Chat.Manager
         private async Task UpdateCacheAsync()
         {
             ConnectionStatus = ConnectionStatus.Updating;
-            await Task.WhenAll(UpdateChatsListAsync(), UpdateMessagesCacheAsync()).ConfigureAwait(false);
+            await Task.WhenAll(UpdateChatsListFromNetworkAsync(), UpdateMessagesCacheAsync()).ConfigureAwait(false);
             ConnectionStatus = ConnectionStatus.Online;
         }
-
+       
         private void OnCacheUpdated(
             string chatId,
             IList<ChatMessageModel> addedMessages,

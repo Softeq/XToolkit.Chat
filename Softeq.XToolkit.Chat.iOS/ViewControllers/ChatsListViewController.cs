@@ -26,20 +26,11 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
 
         public override void ViewDidLoad()
         {
-            if (ViewModel == null)
-            {
-                var viewModel = ServiceLocator.Resolve<ChatsListViewModel>();
-                SetExistingViewModel(viewModel);
-            }
-
             base.ViewDidLoad();
 
-            // Setup brand color for NavigationBar buttons
-            CustomNavigationBar.TintColor = StyleHelper.Style.AccentColor;
-
+            
             _customTitleView = new ConnectionStatusView(CGRect.Empty);
-
-            // Setup NavigationBar
+            CustomNavigationBar.TintColor = StyleHelper.Style.AccentColor;
             CustomNavigationItem.AddTitleView(_customTitleView);
             CustomNavigationItem.SetCommand(UIBarButtonSystemItem.Add, ViewModel.CreateChatCommand, false);
 
@@ -62,7 +53,7 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
 
             Bindings.Add(this.SetBinding(() => ViewModel.SelectedChat, () => _sourceRef.Target.SelectedItem, BindingMode.TwoWay));
 
-            Bindings.Add(this.SetBinding(() => ViewModel.ConnectionStatusViewModel).WhenSourceChanges(() =>
+            Bindings.Add(this.SetBinding(() => ViewModel.ConnectionStatusViewModel.ConnectionStatusText).WhenSourceChanges(() =>
             {
                 _customTitleView.Update(ViewModel.ConnectionStatusViewModel);
             }));
@@ -102,7 +93,7 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
                 {
                     UITableViewRowAction.Create(
                         UITableViewRowActionStyle.Default,
-                        _viewModelRef.Target?.LeaveChatOptionText,
+                        _viewModelRef.Target?.LocalizedStrings.Leave,
                         (row, index) => OnClickLeave(row, index, tableView))
                 };
 
@@ -110,7 +101,7 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
                 {
                     var closeButton = UITableViewRowAction.Create(
                         UITableViewRowActionStyle.Default,
-                        _viewModelRef.Target?.DeleteChatOptionText,
+                        _viewModelRef.Target?.LocalizedStrings.Delete,
                         (row, index) => OnClickDelete(row, index, tableView));
                     closeButton.BackgroundColor = UIColor.Orange;
                     buttons.Add(closeButton);
