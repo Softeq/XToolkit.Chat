@@ -28,8 +28,9 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
         {
             base.ViewDidLoad();
 
+            
             _customTitleView = new ConnectionStatusView(CGRect.Empty);
-            CustomNavigationBar.TintColor = StyleHelper.Style.NavigationBarTintColor;
+            CustomNavigationBar.TintColor = StyleHelper.Style.AccentColor;
             CustomNavigationItem.AddTitleView(_customTitleView);
             CustomNavigationItem.SetCommand(UIBarButtonSystemItem.Add, ViewModel.CreateChatCommand, false);
 
