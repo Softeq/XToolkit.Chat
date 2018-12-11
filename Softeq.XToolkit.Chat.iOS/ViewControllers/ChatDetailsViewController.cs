@@ -59,7 +59,7 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
 
             _sourceRef = WeakReferenceEx.Create(source);
 
-            _simpleImagePicker = new SimpleImagePicker(this, Dependencies.ServiceLocator.Resolve<IPermissionsManager>(), false)
+            _simpleImagePicker = new SimpleImagePicker(this, Dependencies.IocContainer.Resolve<IPermissionsManager>(), false)
             {
                 MaxImageWidth = 280,
                 MaxImageHeight = 280

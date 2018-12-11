@@ -77,8 +77,8 @@ namespace Softeq.XToolkit.Chat.Droid.Views
 
             // TODO YP: remove ServiceLocator
             _imagePicker = new ImagePicker(
-                Dependencies.ServiceLocator.Resolve<IPermissionsManager>(),
-                Dependencies.ServiceLocator.Resolve<IImagePickerService>())
+                Dependencies.IocContainer.Resolve<IPermissionsManager>(),
+                Dependencies.IocContainer.Resolve<IImagePickerService>())
             {
                 MaxImageWidth = 300
             };
