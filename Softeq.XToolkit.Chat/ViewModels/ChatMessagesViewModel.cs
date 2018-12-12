@@ -18,6 +18,7 @@ using Softeq.XToolkit.WhiteLabel.Mvvm;
 using Softeq.XToolkit.WhiteLabel.Navigation;
 using Softeq.XToolkit.Chat.Models.Interfaces;
 using System.IO;
+using Softeq.XToolkit.WhiteLabel.Threading;
 
 namespace Softeq.XToolkit.Chat.ViewModels
 {
@@ -37,6 +38,7 @@ namespace Softeq.XToolkit.Chat.ViewModels
 
         private bool _areLatestMessagesLoaded;
         private string _messageToSendBody = string.Empty;
+        private bool _isInEditMessageMode;
 
         public ChatMessagesViewModel(
             IPageNavigationService pageNavigationService,
@@ -86,7 +88,11 @@ namespace Softeq.XToolkit.Chat.ViewModels
 
         public string EditedMessageOriginalBody => _messageBeingEdited?.Body;
 
-        public bool IsInEditMessageMode { get; private set; }
+        public bool IsInEditMessageMode
+        {
+            get => _isInEditMessageMode;
+            private set => Set(ref _isInEditMessageMode, value);
+        }
 
         public ICommand BackCommand { get; }
         public RelayCommand<GenericEventArgs<Func<(Task<Stream>, string)>>> SendCommand { get; }
@@ -265,23 +271,28 @@ namespace Softeq.XToolkit.Chat.ViewModels
 
         private async void SendMessageAsync(GenericEventArgs<Func<(Task<Stream>, string)>> e)
         {
+            var photoSelector = e?.Value;
             var newMessageBody = MessageToSendBody?.Trim();
-            if (string.IsNullOrEmpty(newMessageBody))
+
+            if (photoSelector == null && string.IsNullOrEmpty(newMessageBody))
             {
                 return;
             }
 
             MessageToSendBody = string.Empty;
 
-            if (IsInEditMessageMode && _messageBeingEdited != null)
+            if (IsInEditMessageMode)
             {
-                var editedMessageId = _messageBeingEdited.Id;
+                IsInEditMessageMode = false;
+
+                await _chatManager.EditMessageAsync(_messageBeingEdited.Id, newMessageBody).ConfigureAwait(false);
+
                 CancelEditingMessageMode();
-                await _chatManager.EditMessageAsync(editedMessageId, newMessageBody).ConfigureAwait(false);
             }
             else
             {
-                await _chatManager.SendMessageAsync(_chatSummaryViewModel.ChatId, newMessageBody, e?.Value).ConfigureAwait(false);
+                await _chatManager.SendMessageAsync(_chatSummaryViewModel.ChatId, newMessageBody, photoSelector)
+                                  .ConfigureAwait(false);
             }
         }
 
@@ -309,24 +320,28 @@ namespace Softeq.XToolkit.Chat.ViewModels
 
         private void EditMessage(ChatMessageViewModel message)
         {
-            SetIsInEditMessageMode(true, message);
+            SetMessageEditMode(true, message);
         }
 
         private void CancelEditingMessageMode()
         {
-            SetIsInEditMessageMode(false);
+            SetMessageEditMode(false);
         }
 
-        private void SetIsInEditMessageMode(bool value, ChatMessageViewModel editedMessage = null)
+        private void SetMessageEditMode(bool value, ChatMessageViewModel editedMessage = null)
         {
             if (value && editedMessage == null)
             {
                 return;
             }
-            IsInEditMessageMode = value;
+
             _messageBeingEdited = value ? editedMessage : null;
-            MessageToSendBody = editedMessage?.Body;
-            RaisePropertyChanged(nameof(IsInEditMessageMode));
+
+            Execute.BeginOnUIThread(() =>
+            {
+                MessageToSendBody = editedMessage?.Body;
+                IsInEditMessageMode = value;
+            });
         }
     }
 }
