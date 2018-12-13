@@ -29,8 +29,10 @@ namespace Softeq.XToolkit.Chat.HttpClient.Requests
         {
             get
             {
+                var messageCreated = _messageFromDateTime.Value.ToString("u");
+
                 var urlParams = _messageFromId != null ? $"messageId={_messageFromId}&" : string.Empty;
-                urlParams += _messageFromDateTime.HasValue ? $"messageCreated={_messageFromDateTime.Value}&" : string.Empty;
+                urlParams += _messageFromDateTime.HasValue ? $"messageCreated={messageCreated}&" : string.Empty;
                 urlParams += _pageSize.HasValue ? $"pageSize={_pageSize.Value}" : string.Empty;
                 return string.IsNullOrEmpty(urlParams) ? MainEndpointUrl : $"{MainEndpointUrl}?{urlParams.Trim('&')}";
             }
