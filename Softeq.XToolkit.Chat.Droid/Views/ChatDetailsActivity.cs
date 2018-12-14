@@ -56,7 +56,7 @@ namespace Softeq.XToolkit.Chat.Droid.Views
             _navigationBarView = FindViewById<NavigationBarView>(Resource.Id.activity_chat_details_navigation_bar);
             _navigationBarView.SetLeftButton(StyleHelper.Style.NavigationBarBackButtonIcon, ViewModel.BackCommand);
             _navigationBarView.SetTitle(ViewModel.LocalizedStrings.DetailsTitle);
-            _navigationBarView.SetRightButton(ViewModel.LocalizedStrings.Save, new RelayCommand(() => OnSaveClick()));
+            _navigationBarView.SetRightButton(ViewModel.LocalizedStrings.Save, new RelayCommand(OnSaveClick));
 
             _chatPhotoImageView = FindViewById<MvxCachedImageView>(Resource.Id.iv_chat_photo);
 
@@ -77,8 +77,8 @@ namespace Softeq.XToolkit.Chat.Droid.Views
 
             // TODO YP: remove ServiceLocator
             _imagePicker = new ImagePicker(
-                ServiceLocator.Resolve<IPermissionsManager>(),
-                ServiceLocator.Resolve<IImagePickerService>())
+                Dependencies.IocContainer.Resolve<IPermissionsManager>(),
+                Dependencies.IocContainer.Resolve<IImagePickerService>())
             {
                 MaxImageWidth = 300
             };
