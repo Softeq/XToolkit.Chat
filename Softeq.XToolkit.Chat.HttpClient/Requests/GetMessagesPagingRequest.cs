@@ -3,40 +3,34 @@
 
 using System;
 using Softeq.XToolkit.RemoteData.HttpClient;
+using Softeq.XToolkit.RemoteData;
 
 namespace Softeq.XToolkit.Chat.HttpClient.Requests
 {
     internal abstract class GetMessagesPagingRequest : BaseRestRequest
     {
-        private readonly string _messageFromId;
-        private readonly DateTimeOffset? _messageFromDateTime;
-        private readonly int? _pageSize;
+        private readonly string _queryParams;
 
-        public GetMessagesPagingRequest(string channelId,
-                                        string messageFromId = null,
-                                        DateTimeOffset? messageFromDateTime = null,
-                                        int? pageSize = null)
+        public GetMessagesPagingRequest(
+            string channelId,
+            string messageFromId = null,
+            DateTimeOffset? messageFromDateTime = null,
+            int? pageSize = null)
         {
             ChannelId = channelId;
-            _messageFromId = messageFromId;
-            _messageFromDateTime = messageFromDateTime;
-            _pageSize = pageSize;
+
+            var messageCreated = messageFromDateTime.Value.ToString("u");
+
+            _queryParams = new QueryStringBuilder()
+                .AddParam("messageId", messageFromId)
+                .AddParam("messageCreated", messageCreated)
+                .AddParam("pageSize", pageSize)
+                .Build();
         }
 
         protected string ChannelId { get; }
 
-        public sealed override string EndpointUrl
-        {
-            get
-            {
-                var messageCreated = _messageFromDateTime.Value.ToString("u");
-
-                var urlParams = _messageFromId != null ? $"messageId={_messageFromId}&" : string.Empty;
-                urlParams += _messageFromDateTime.HasValue ? $"messageCreated={messageCreated}&" : string.Empty;
-                urlParams += _pageSize.HasValue ? $"pageSize={_pageSize.Value}" : string.Empty;
-                return string.IsNullOrEmpty(urlParams) ? MainEndpointUrl : $"{MainEndpointUrl}?{urlParams.Trim('&')}";
-            }
-        }
+        public sealed override string EndpointUrl => MainEndpointUrl + _queryParams;
 
         public override bool UseOriginalEndpoint => true;
 
