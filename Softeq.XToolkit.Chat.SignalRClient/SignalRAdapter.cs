@@ -62,7 +62,8 @@ namespace Softeq.XToolkit.Chat.SignalRClient
 
             internetConnectionManager.NetworkConnectionChanged += OnNetworkConnectionChanged;
 
-            ConnectIfNotConnectedAsync().SafeTaskWrapper();
+            // TODO YP: need investigate auto-connect (when init before login)
+            //ConnectIfNotConnectedAsync().SafeTaskWrapper();
         }
 
         public IObservable<ChatMessageModel> MessageReceived => _messageReceived;
