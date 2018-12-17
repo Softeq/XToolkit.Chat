@@ -101,7 +101,7 @@ namespace Softeq.XToolkit.Chat.Droid.Views
                 ScrollToPosition(_conversationsRecyclerView.GetAdapter().ItemCount - 1);
             }));
 
-            _imagePicker = new ImagePicker(ServiceLocator.Resolve<IPermissionsManager>(), ServiceLocator.Resolve<IImagePickerService>());
+            _imagePicker = new ImagePicker(Dependencies.PermissionsManager, Dependencies.IocContainer.Resolve<IImagePickerService>());
 
             _editImageContainer = FindViewById<View>(Resource.Id.activity_chat_conversations_image_preview_container);
             _imagePreview = FindViewById<ImageViewAsync>(Resource.Id.activity_chat_conversations_preview_image);
@@ -201,7 +201,7 @@ namespace Softeq.XToolkit.Chat.Droid.Views
                 _isAdapterSourceInitialized = true;
             }));
 
-            Bindings.Add(this.SetBinding(() => _imagePicker.ViewModel.ImageCacheKey).WhenSourceChanges(() => 
+            Bindings.Add(this.SetBinding(() => _imagePicker.ViewModel.ImageCacheKey).WhenSourceChanges(() =>
             {
                 if (_imagePicker.ViewModel.ImageCacheKey == null)
                 {
@@ -313,8 +313,8 @@ namespace Softeq.XToolkit.Chat.Droid.Views
 
         private void Send()
         {
-            var args = _imagePicker.ViewModel.ImageCacheKey == null 
-                                   ? null 
+            var args = _imagePicker.ViewModel.ImageCacheKey == null
+                                   ? null
                                    : new GenericEventArgs<Func<(Task<Stream>, string)>>(_imagePicker.GetStreamFunc());
             ViewModel.SendCommand.Execute(args);
             CloseEditImageContainer();
