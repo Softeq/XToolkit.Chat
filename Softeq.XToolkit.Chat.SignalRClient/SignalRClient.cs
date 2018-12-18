@@ -187,6 +187,15 @@ namespace Softeq.XToolkit.Chat.SignalRClient
                     tcs.SetResult(true);
                 }
             });
+            IDisposable validationFailedSubscription = null;
+            validationFailedSubscription = _connection.On<Exception, string>(ClientEvents.RequestValidationFailed, (ex, id) =>
+            {
+                if (id == requestId)
+                {
+                    validationFailedSubscription.Dispose();
+                    tcs.SetException(ex);
+                }
+            });
             request.RequestId = requestId;
             await _connection.InvokeAsync(methodName, request).ConfigureAwait(false);
             await tcs.Task.ConfigureAwait(false);

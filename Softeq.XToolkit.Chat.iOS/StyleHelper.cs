@@ -10,7 +10,7 @@ namespace Softeq.XToolkit.Chat.iOS
 {
     internal static class StyleHelper
     {
-        private static readonly Lazy<IChatIosStyle> StyleLazy = ServiceLocator.LazyResolve<IChatIosStyle>();
+        private static readonly Lazy<IChatIosStyle> StyleLazy = Dependencies.IocContainer.LazyResolve<IChatIosStyle>();
 
         public static IChatIosStyle Style => StyleLazy.Value;
     }

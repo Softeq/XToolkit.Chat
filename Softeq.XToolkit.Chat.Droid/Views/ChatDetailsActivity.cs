@@ -56,7 +56,7 @@ namespace Softeq.XToolkit.Chat.Droid.Views
             _navigationBarView = FindViewById<NavigationBarView>(Resource.Id.activity_chat_details_navigation_bar);
             _navigationBarView.SetLeftButton(StyleHelper.Style.NavigationBarBackButtonIcon, ViewModel.BackCommand);
             _navigationBarView.SetTitle(ViewModel.LocalizedStrings.DetailsTitle);
-            _navigationBarView.SetRightButton(ViewModel.LocalizedStrings.Save, new RelayCommand(() => OnSaveClick()));
+            _navigationBarView.SetRightButton(ViewModel.LocalizedStrings.Save, new RelayCommand(OnSaveClick));
 
             _chatPhotoImageView = FindViewById<MvxCachedImageView>(Resource.Id.iv_chat_photo);
 
@@ -77,8 +77,8 @@ namespace Softeq.XToolkit.Chat.Droid.Views
 
             // TODO YP: remove ServiceLocator
             _imagePicker = new ImagePicker(
-                ServiceLocator.Resolve<IPermissionsManager>(),
-                ServiceLocator.Resolve<IImagePickerService>())
+                Dependencies.IocContainer.Resolve<IPermissionsManager>(),
+                Dependencies.IocContainer.Resolve<IImagePickerService>())
             {
                 MaxImageWidth = 300
             };
@@ -92,15 +92,18 @@ namespace Softeq.XToolkit.Chat.Droid.Views
             Bindings.Add(this.SetBinding(() => ViewModel.MembersCountText, () => _chatMembersCountTextView.Text));
             Bindings.Add(this.SetBinding(() => ViewModel.Summary.AvatarUrl).WhenSourceChanges(() =>
             {
-                _chatPhotoImageView.LoadImageWithTextPlaceholder(
-                    ViewModel.Summary.AvatarUrl,
-                    ViewModel.Summary.Name,
-                    new AvatarPlaceholderDrawable.AvatarStyles 
-                    {
-                        BackgroundHexColors = StyleHelper.Style.ChatAvatarStyles.BackgroundHexColors,
-                        Size = new System.Drawing.Size(64, 64)
-                    },
-                    x => x.Transform(new CircleTransformation()));
+                Execute.BeginOnUIThread(() =>
+                {
+                    _chatPhotoImageView.LoadImageWithTextPlaceholder(
+                        ViewModel.Summary.AvatarUrl,
+                        ViewModel.Summary.Name,
+                        new AvatarPlaceholderDrawable.AvatarStyles
+                        {
+                            BackgroundHexColors = StyleHelper.Style.ChatAvatarStyles.BackgroundHexColors,
+                            Size = new System.Drawing.Size(64, 64)
+                        },
+                        x => x.Transform(new CircleTransformation()));
+                });
             }));
             Bindings.Add(this.SetBinding(() => _imagePicker.ViewModel.ImageCacheKey)
                 .WhenSourceChanges(() =>
@@ -121,7 +124,6 @@ namespace Softeq.XToolkit.Chat.Droid.Views
                             .DownSampleInDip(95, 95)
                             .Transform(new CircleTransformation())
                             .IntoAsync(_chatEditedPhotoImageView);
-                        InvalidateOptionsMenu();
                     });
                 }));
         }
@@ -138,7 +140,7 @@ namespace Softeq.XToolkit.Chat.Droid.Views
             var swipeItemCallback = new SwipeCallback(this, _membersRecyclerView, ConfigureSwipeForViewHolder);
             var swipeItemTouchHelper = new ItemTouchHelper(swipeItemCallback);
             swipeItemTouchHelper.AttachToRecyclerView(_membersRecyclerView);
-            
+
             _membersRecyclerView.HasFixedSize = true;
             _membersRecyclerView.SetLayoutManager(new GuardedLinearLayoutManager(this));
             _membersRecyclerView.AddItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.Vertical));
