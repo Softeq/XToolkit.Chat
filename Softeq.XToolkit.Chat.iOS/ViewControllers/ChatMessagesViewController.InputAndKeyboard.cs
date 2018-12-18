@@ -81,7 +81,6 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
                 {
                     return;
                 }
-                InputBar.SetInputPlaceholderHidden(true);
             });
 
             _textViewEditingEndedObserver = UITextView.Notifications.ObserveTextDidEndEditing((sender, e) =>
@@ -90,7 +89,6 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
                 {
                     return;
                 }
-                InputBar.SetInputPlaceholderHidden(!string.IsNullOrEmpty(ViewModel.MessageToSendBody));
             });
 
             _textViewContentSizeObserver = InputBar.Input.AddObserver(ContentSizeKey, NSKeyValueObservingOptions.OldNew, e =>

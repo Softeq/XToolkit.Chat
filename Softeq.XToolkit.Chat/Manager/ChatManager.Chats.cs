@@ -5,34 +5,65 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Softeq.XToolkit.Chat.Interfaces;
 using Softeq.XToolkit.Chat.Models;
 using Softeq.XToolkit.Chat.ViewModels;
 using Softeq.XToolkit.Common.Collections;
-using TaskExtensions = Softeq.XToolkit.Common.Extensions.TaskExtensions;
+using Softeq.XToolkit.Common.Extensions;
 
 namespace Softeq.XToolkit.Chat.Manager
 {
-    public partial class ChatManager
+    public partial class ChatManager : IChatsListManager
     {
-        public async Task UpdateChatsListAsync()
-        {
-            var result = await GetChatsListAsync();
-
-            if (result != null)
-            {
-                ModifyChatsSafely(() => ChatsCollection.ReplaceRange(result.OrderByDescending(x => x.LastUpdateDate)));
-            }
-        }
-
         public void MakeChatActive(string chatId)
         {
             _activeChatId = chatId;
         }
 
-        public async Task<IList<ChatSummaryViewModel>> GetChatsListAsync()
+        private Task UpdateChatsListFromNetworkAsync()
         {
-            var models = await _chatService.GetChatsHeadersAsync().ConfigureAwait(false);
-            return models?.Select(_viewModelFactoryService.ResolveViewModel<ChatSummaryViewModel, ChatSummaryModel>)?.ToList();
+            return UpdateChatsListWithLoader(GetChatsListAsync());
+        }
+
+        private async Task UpdateChatsListWithLoader(Task<IList<ChatSummaryModel>> loader)
+        {
+            var result = await loader.ConfigureAwait(false);
+
+            if (result != null)
+            {
+                var orderedChats = result
+                    .Select(_viewModelFactoryService.ResolveViewModel<ChatSummaryViewModel, ChatSummaryModel>)
+                    .OrderByDescending(x => x.LastUpdateDate)
+                    .ToList();
+
+                ModifyChatsSafely(() =>
+                {
+                    ChatsCollection.ReplaceRange(orderedChats);
+                });
+            }
+        }
+
+        private async Task<IList<ChatSummaryModel>> GetChatsListAsync()
+        {
+            var models = await _chatService.GetChatsListAsync().ConfigureAwait(false);
+            if (models == null)
+            {
+                return null;
+            }
+
+            await _localCache.Add(ChatsCacheKey, DateTimeOffset.UtcNow, models).ConfigureAwait(false);
+
+            return models;
+        }
+
+        public void RefreshChatsListOnBackgroundAsync()
+        {
+            if (ChatsCollection.Count == 0)
+            {
+                UpdateChatsListWithLoader(_localCache.Get<IList<ChatSummaryModel>>(ChatsCacheKey)).SafeTaskWrapper();
+            }
+
+            UpdateChatsListFromNetworkAsync().SafeTaskWrapper();
         }
 
         public async Task CreateChatAsync(string chatName, IList<string> participantsIds, string imagePath)
@@ -59,26 +90,13 @@ namespace Softeq.XToolkit.Chat.Manager
             return _chatService.InviteMembersAsync(chatId, participantsIds);
         }
 
-        public async Task<IList<ChatUserViewModel>> GetContactsAsync(string nameFilter, int pageNumber, int pageSize)
-        {
-            var models = await _chatService.GetContactsAsync(nameFilter, pageNumber, pageSize).ConfigureAwait(false);
-            if (models == null)
-            {
-                return new List<ChatUserViewModel>();
-            }
-            
-            return models.Data
-                .Select(_viewModelFactoryService.ResolveViewModel<ChatUserViewModel, ChatUserModel>)
-                .ToList();
-        }
-
         public async Task<IList<ChatUserViewModel>> GetChatMembersAsync(string chatId)
         {
             var models = await _chatService.GetChatMembersAsync(chatId).ConfigureAwait(false);
-            return models?.Select(_viewModelFactoryService.ResolveViewModel<ChatUserViewModel, ChatUserModel>)?.ToList();
+            return models?.Select(_viewModelFactoryService.ResolveViewModel<ChatUserViewModel, ChatUserModel>).ToList();
         }
 
-        internal Task EditChatAsync(ChatSummaryModel chatSummary)
+        public Task EditChatAsync(ChatSummaryModel chatSummary)
         {
             return _chatService.EditChatAsync(chatSummary);
         }
@@ -109,7 +127,7 @@ namespace Softeq.XToolkit.Chat.Manager
                 }
             });
 
-            TaskExtensions.SafeTaskWrapper(_messagesCache.RemoveMessagesAsync(chatId));
+            _messagesCache.RemoveMessagesAsync(chatId).SafeTaskWrapper();
         }
 
         private void ModifyChatsSafely(Action modifyAction)

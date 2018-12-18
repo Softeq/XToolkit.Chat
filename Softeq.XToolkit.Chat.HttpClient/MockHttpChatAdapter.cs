@@ -87,7 +87,7 @@ namespace Softeq.XToolkit.Chat.HttpClient
             };
         }
 
-        public async Task<IList<ChatSummaryModel>> GetChatsHeadersAsync()
+        public async Task<IList<ChatSummaryModel>> GetChatsListAsync()
         {
             return new List<ChatSummaryModel>
             {

@@ -110,9 +110,16 @@ namespace Softeq.XToolkit.Chat
         public ChatMessageModel FindDuplicateMessage(ChatMessageModel message)
         {
             var chatMessages = GetMessagesCollectionForChat(message.ChannelId);
-            return chatMessages.FirstOrDefault(x => (x.Id == null || x.Id == message.Id) &&
-                                               x.Body == message.Body &&
-                                               x.IsMine == message.IsMine);
+            ChatMessageModel chatMessageModel = null;
+
+            lock (chatMessages)
+            {
+                chatMessageModel = chatMessages.FirstOrDefault(x => (x.Id == null || x.Id == message.Id) &&
+                    x.Body == message.Body &&
+                    x.IsMine == message.IsMine);
+            }
+
+            return chatMessageModel;
         }
 
         public void UpdateSentMessage(ChatMessageModel sentMessage, ChatMessageModel deliveredMessage)

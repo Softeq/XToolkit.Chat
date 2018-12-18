@@ -22,6 +22,7 @@ namespace Softeq.XToolkit.Chat.iOS.Views
         private readonly List<Binding> _bindings = new List<Binding>();
 
         private WeakReferenceEx<ChatUserViewModel> _viewModelRef;
+        private UITapGestureRecognizer _tapGesture;
 
         static ChatUserViewCell()
         {
@@ -51,6 +52,27 @@ namespace Softeq.XToolkit.Chat.iOS.Views
             _bindings.Add(this.SetBinding(() => _viewModelRef.Target.IsSelected, () => CheckBoxButton.Selected, BindingMode.TwoWay));
             _bindings.Add(this.SetBinding(() => _viewModelRef.Target.IsSelectable, () => CheckBoxButton.Hidden)
                 .ConvertSourceToTarget(x => !x));
+
+            _tapGesture = new UITapGestureRecognizer(() =>
+            {
+                _viewModelRef.Target.IsSelected = !_viewModelRef.Target.IsSelected;
+            })
+            {
+                NumberOfTapsRequired = 1
+            };
+
+            UserInteractionEnabled = true;
+            AddGestureRecognizer(_tapGesture);
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                RemoveGestureRecognizer(_tapGesture);
+            }
+
+            base.Dispose(disposing);
         }
     }
 }

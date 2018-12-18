@@ -6,12 +6,14 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using Softeq.XToolkit.Chat.Models;
 using Softeq.XToolkit.Chat.Models.Enum;
 using Softeq.XToolkit.Chat.Models.Interfaces;
 using Softeq.XToolkit.Chat.Strategies.Search;
 using Softeq.XToolkit.Common.Collections;
 using Softeq.XToolkit.Common.Command;
 using Softeq.XToolkit.Common.Extensions;
+using Softeq.XToolkit.Common.Models;
 using Softeq.XToolkit.WhiteLabel.Interfaces;
 using Softeq.XToolkit.WhiteLabel.Mvvm;
 
@@ -27,9 +29,7 @@ namespace Softeq.XToolkit.Chat.ViewModels
     public class AddContactsViewModel : DialogViewModelBase, IViewModelParameter<AddContactParameters>
     {
         private const int SearchDelayMs = 2000;
-        private const string InitialContactSearchQuery = "";
-        private const int DefaultSearchResultsPageNumber = 1;
-        private const int DefaultSearchResultsPageSize = 20000;
+        private const int DefaultSearchResultsPageSize = 20;
 
         private readonly ICommand _contactSelectedCommand;
 
@@ -38,9 +38,17 @@ namespace Softeq.XToolkit.Chat.ViewModels
         private CancellationTokenSource _lastSearchCancelSource = new CancellationTokenSource();
         private IReadOnlyList<ChatUserViewModel> _excludedContacts = new List<ChatUserViewModel>();
 
-        public AddContactsViewModel(IChatLocalizedStrings chatLocalizedStrings)
+        public AddContactsViewModel(
+            IChatLocalizedStrings chatLocalizedStrings,
+            IViewModelFactoryService viewModelFactoryService)
         {
             Resources = chatLocalizedStrings;
+
+            PaginationViewModel = new PaginationViewModel<ChatUserViewModel, ChatUserModel>(
+                viewModelFactoryService,
+                SearchLoader,
+                SearchFilter,
+                DefaultSearchResultsPageSize);
 
             _contactSelectedCommand = new RelayCommand<ChatUserViewModel>(SwitchSelectedContact);
             SearchContactCommand = new RelayCommand<string>(DoSearch);
@@ -68,6 +76,8 @@ namespace Softeq.XToolkit.Chat.ViewModels
             }
         }
 
+        public PaginationViewModel<ChatUserViewModel, ChatUserModel> PaginationViewModel { get; }
+
         public string Title { get; private set; }
 
         public string ContactNameSearchQuery
@@ -75,16 +85,14 @@ namespace Softeq.XToolkit.Chat.ViewModels
             get => _contactNameSearchQuery;
             set
             {
-                Set(ref _contactNameSearchQuery, value);
-
-                SearchContactCommand.Execute(value);
+                if (Set(ref _contactNameSearchQuery, value))
+                {
+                    SearchContactCommand.Execute(value);
+                }
             }
         }
 
         public ObservableRangeCollection<ChatUserViewModel> SelectedContacts { get; } =
-            new ObservableRangeCollection<ChatUserViewModel>();
-
-        public ObservableRangeCollection<ChatUserViewModel> FoundContacts { get; } =
             new ObservableRangeCollection<ChatUserViewModel>();
 
         public bool HasSelectedContacts => SelectedContacts.Count > 0;
@@ -93,7 +101,7 @@ namespace Softeq.XToolkit.Chat.ViewModels
         {
             base.OnAppearing();
 
-            await LoadContactsAsync(InitialContactSearchQuery);
+            await PaginationViewModel.LoadFirstPageAsync();
         }
 
         private async void DoSearch(string query)
@@ -105,7 +113,7 @@ namespace Softeq.XToolkit.Chat.ViewModels
             {
                 await Task.Delay(SearchDelayMs, _lastSearchCancelSource.Token);
 
-                await LoadContactsAsync(query);
+                await PaginationViewModel.LoadFirstPageAsync();
             }
             catch (TaskCanceledException)
             {
@@ -113,28 +121,25 @@ namespace Softeq.XToolkit.Chat.ViewModels
             }
         }
 
-        private async Task LoadContactsAsync(string query)
+        private Task<PagingModel<ChatUserModel>> SearchLoader(int pageNumber, int pageSize)
         {
-            FoundContacts.Clear();
-
-            var contacts = await _searchContactsStrategy.Search(query,
-                DefaultSearchResultsPageNumber,
-                DefaultSearchResultsPageSize).ConfigureAwait(false);
-
-            if (contacts != null)
-            {
-                var filteredContacts = contacts.Where(x => !SelectedContacts
-                    .Concat(_excludedContacts)
-                    .Select(c => c.Id)
-                    .Contains(x.Id)
-                ).ToList();
-
-                ApplySelectionCommand(filteredContacts);
-                FoundContacts.AddRange(filteredContacts);
-            }
+            return _searchContactsStrategy.Search(_contactNameSearchQuery, pageNumber, pageSize);
         }
 
-        private void ApplySelectionCommand(IEnumerable<ChatUserViewModel> contacts, bool isSelectable = true)
+        private IReadOnlyList<ChatUserViewModel> SearchFilter(IReadOnlyList<ChatUserViewModel> contacts)
+        {
+            var filteredContacts = contacts.Where(x => !SelectedContacts
+                .Concat(_excludedContacts)
+                .Select(c => c.Id)
+                .Contains(x.Id)
+            ).ToList();
+
+            ApplySelectionCommand(filteredContacts, true);
+
+            return filteredContacts;
+        }
+
+        private void ApplySelectionCommand(IEnumerable<ChatUserViewModel> contacts, bool isSelectable)
         {
             contacts.Apply(x =>
             {

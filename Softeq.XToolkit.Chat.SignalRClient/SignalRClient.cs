@@ -2,6 +2,7 @@
 // http://www.softeq.com
 
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.SignalR.Client;
@@ -10,12 +11,16 @@ using Softeq.XToolkit.Chat.SignalRClient.DTOs.Channel;
 using Softeq.XToolkit.Chat.SignalRClient.DTOs.Client;
 using Softeq.XToolkit.Chat.SignalRClient.DTOs.Member;
 using Softeq.XToolkit.Chat.SignalRClient.DTOs.Message;
+using Softeq.XToolkit.Common.Extensions;
 
 namespace Softeq.XToolkit.Chat.SignalRClient
 {
     internal class SignalRClient
     {
+        private readonly List<IDisposable> _subscriptions = new List<IDisposable>();
+
         private HubConnection _connection;
+        private IDisposable _accessTokenExpiredSubscription;
 
         public SignalRClient(string url)
         {
@@ -97,12 +102,16 @@ namespace Softeq.XToolkit.Chat.SignalRClient
                 }
             }
 
-            _connection.On<string>(ClientEvents.AccessTokenExpired, (requestId) =>
+            _accessTokenExpiredSubscription?.Dispose();
+            _accessTokenExpiredSubscription = _connection.On<string>(ClientEvents.AccessTokenExpired, (requestId) =>
             {
                 AccessTokenExpired?.Invoke();
             });
+
             var client = await _connection.InvokeAsync<ClientResponse>(ServerMethods.AddClientAsync).ConfigureAwait(false);
+
             SubscribeToEvents();
+
             return client;
         }
 
@@ -241,65 +250,68 @@ namespace Softeq.XToolkit.Chat.SignalRClient
 
         private void SubscribeToEvents()
         {
-            _connection.On<MessageResponse>(ClientEvents.MessageAdded, (message) =>
+            _subscriptions.Apply(x => x.Dispose());
+            _subscriptions.Clear();
+
+            _subscriptions.Add(_connection.On<MessageResponse>(ClientEvents.MessageAdded, (message) =>
             {
                 MessageAdded?.Invoke(message);
-            });
+            }));
 
-            _connection.On<Guid, ChannelSummaryResponse>(ClientEvents.MessageDeleted, (deletedMessageId, updatedChannelSummary) =>
+            _subscriptions.Add(_connection.On<Guid, ChannelSummaryResponse>(ClientEvents.MessageDeleted, (deletedMessageId, updatedChannelSummary) =>
             {
                 MessageDeleted?.Invoke(deletedMessageId.ToString(), updatedChannelSummary);
-            });
+            }));
 
-            _connection.On<MessageResponse>(ClientEvents.MessageUpdated, (message) =>
+            _subscriptions.Add(_connection.On<MessageResponse>(ClientEvents.MessageUpdated, (message) =>
             {
                 MessageUpdated?.Invoke(message);
-            });
+            }));
 
-            _connection.On<MemberSummary, string>(ClientEvents.MemberLeft, (user, channelId) =>
+            _subscriptions.Add(_connection.On<MemberSummary, string>(ClientEvents.MemberLeft, (user, channelId) =>
             {
                 MemberLeft?.Invoke(user, channelId);
-            });
+            }));
 
-            _connection.On<MemberSummary, ChannelSummaryResponse>(ClientEvents.MemberJoined, (user, channel) =>
+            _subscriptions.Add(_connection.On<MemberSummary, ChannelSummaryResponse>(ClientEvents.MemberJoined, (user, channel) =>
             {
                 MemberJoined?.Invoke(user, channel);
-            });
+            }));
 
-            _connection.On<ChannelSummaryResponse>(ClientEvents.ChannelUpdated, (channel) =>
+            _subscriptions.Add(_connection.On<ChannelSummaryResponse>(ClientEvents.ChannelUpdated, (channel) =>
             {
                 ChannelUpdated?.Invoke(channel);
-            });
+            }));
 
-            _connection.On<ChannelSummaryResponse>(ClientEvents.ChannelClosed, (channel) =>
+            _subscriptions.Add(_connection.On<ChannelSummaryResponse>(ClientEvents.ChannelClosed, (channel) =>
             {
                 ChannelClosed?.Invoke(channel);
-            });
+            }));
 
             _connection.On<ChannelSummaryResponse>(ClientEvents.ChannelAdded, (channel) =>
             {
                 ChannelAdded?.Invoke(channel);
             });
 
-            _connection.On<string, string>(ClientEvents.AttachmentAdded, (username, message) =>
+            _subscriptions.Add(_connection.On<string, string>(ClientEvents.AttachmentAdded, (username, message) =>
             {
                 AttachmentAdded?.Invoke(username, message);
-            });
+            }));
 
-            _connection.On<string, string>(ClientEvents.AttachmentDeleted, (username, message) =>
+            _subscriptions.Add(_connection.On<string, string>(ClientEvents.AttachmentDeleted, (username, message) =>
             {
                 AttachmentDeleted?.Invoke(username, message);
-            });
+            }));
 
-            _connection.On<string>(ClientEvents.TypingStarted, (username) =>
+            _subscriptions.Add(_connection.On<string>(ClientEvents.TypingStarted, (username) =>
             {
                 TypingStarted?.Invoke(username);
-            });
+            }));
 
-            _connection.On<string>(ClientEvents.TypingEnded, (username) =>
+            _subscriptions.Add(_connection.On<string>(ClientEvents.TypingEnded, (username) =>
             {
                 TypingEnded?.Invoke(username);
-            });
+            }));
         }
     }
 }

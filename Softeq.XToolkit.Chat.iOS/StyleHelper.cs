@@ -17,7 +17,7 @@ namespace Softeq.XToolkit.Chat.iOS
 
     public interface IChatIosStyle
     {
-        UIColor NavigationBarTintColor { get; }
+        UIColor AccentColor { get; }
         UIColor ButtonTintColor { get; }
 
         AvatarImageHelpers.AvatarStyles AvatarStyles { get; }

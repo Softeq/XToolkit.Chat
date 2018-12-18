@@ -12,6 +12,8 @@ using Softeq.XToolkit.Chat.ViewModels;
 using Softeq.XToolkit.Common.Command;
 using Softeq.XToolkit.WhiteLabel.Droid.Controls;
 using Softeq.XToolkit.WhiteLabel.Droid.Dialogs;
+using Softeq.XToolkit.Chat.Droid.Listeners;
+using Softeq.XToolkit.Common;
 
 namespace Softeq.XToolkit.Chat.Droid.Views
 {
@@ -37,11 +39,7 @@ namespace Softeq.XToolkit.Chat.Droid.Views
 
             View.SetBackgroundResource(StyleHelper.Style.ContentColor);
 
-            _navigationBarView = View.FindViewById<NavigationBarView>(Resource.Id.dialog_select_members_nav_bar);
-            _navigationBarView.SetLeftButton(StyleHelper.Style.NavigationBarBackButtonIcon, new RelayCommand(Close));
-            _navigationBarView.SetRightButton(ViewModel.Resources.Done, ViewModel.DoneCommand);
-            _navigationBarView.SetTitle(ViewModel.Title);
-            _navigationBarView.SetBackground(StyleHelper.Style.ContentColor);
+            InitNavigationBarView(view);
 
             var searchContainer = View.FindViewById<View>(Resource.Id.dialog_select_members_serch_container);
             searchContainer.SetBackgroundResource(StyleHelper.Style.UnderlinedBg);
@@ -49,7 +47,43 @@ namespace Softeq.XToolkit.Chat.Droid.Views
             _editText = View.FindViewById<EditText>(Resource.Id.dialog_select_members_serch_text);
             _editText.Hint = ViewModel.Resources.Search;
 
-            _addedMembers = View.FindViewById<RecyclerView>(Resource.Id.dialog_select_members_added_members);
+            InitSelectedRecyclerView(view);
+            InitFilteredRecyclerView(view);
+        }
+
+        protected override void DoAttachBindings()
+        {
+            base.DoAttachBindings();
+
+            Bindings.Add(this.SetBinding(() => ViewModel.ContactNameSearchQuery, () => _editText.Text, BindingMode.TwoWay));
+            Bindings.Add(this.SetBinding(() => ViewModel.HasSelectedContacts).WhenSourceChanges(() =>
+            {
+                _addedMembers.Visibility = ViewModel.HasSelectedContacts
+                    ? ViewStates.Visible
+                    : ViewStates.Gone;
+            }));
+        }
+
+        public override void OnDestroy()
+        {
+            base.OnDestroy();
+
+            _filteredAdapter.Dispose();
+            _selectedAdapter.Dispose();
+        }
+
+        private void InitNavigationBarView(View view)
+        {
+            _navigationBarView = view.FindViewById<NavigationBarView>(Resource.Id.dialog_select_members_nav_bar);
+            _navigationBarView.SetLeftButton(StyleHelper.Style.NavigationBarBackButtonIcon, new RelayCommand(Close));
+            _navigationBarView.SetRightButton(ViewModel.Resources.Done, ViewModel.DoneCommand);
+            _navigationBarView.SetTitle(ViewModel.Title);
+            _navigationBarView.SetBackground(StyleHelper.Style.ContentColor);
+        }
+
+        private void InitSelectedRecyclerView(View view)
+        {
+            _addedMembers = view.FindViewById<RecyclerView>(Resource.Id.dialog_select_members_added_members);
             _addedMembers.SetLayoutManager(new LinearLayoutManager(Context, LinearLayoutManager.Horizontal, false));
             _selectedAdapter = new ObservableRecyclerViewAdapter<ChatUserViewModel>(
                 ViewModel.SelectedContacts,
@@ -64,12 +98,15 @@ namespace Softeq.XToolkit.Chat.Droid.Views
                     viewHolder.Bind(item);
                 });
             _addedMembers.SetAdapter(_selectedAdapter);
+        }
 
-            _filteredMembers = View.FindViewById<RecyclerView>(Resource.Id.dialog_select_members_filtered_members);
+        private void InitFilteredRecyclerView(View view)
+        {
+            _filteredMembers = view.FindViewById<RecyclerView>(Resource.Id.dialog_select_members_filtered_members);
             _filteredMembers.SetLayoutManager(new LinearLayoutManager(Context));
             _filteredMembers.AddItemDecoration(new DividerItemDecoration(Context, DividerItemDecoration.Vertical));
             _filteredAdapter = new ObservableRecyclerViewAdapter<ChatUserViewModel>(
-                ViewModel.FoundContacts,
+                ViewModel.PaginationViewModel.Items,
                 (parent, i) =>
                 {
                     var v = LayoutInflater.From(parent.Context).Inflate(Resource.Layout.view_holder_member_filter_item, parent, false);
@@ -81,27 +118,10 @@ namespace Softeq.XToolkit.Chat.Droid.Views
                     viewHolder.Bind(item);
                 });
             _filteredMembers.SetAdapter(_filteredAdapter);
-        }
-
-        protected override void DoAttachBindings()
-        {
-            base.DoAttachBindings();
-
-            this.SetBinding(() => ViewModel.ContactNameSearchQuery, () => _editText.Text, BindingMode.TwoWay);
-            this.SetBinding(() => ViewModel.HasSelectedContacts).WhenSourceChanges(() =>
+            _filteredMembers.AddOnScrollListener(new LoadMoreScrollListener(new TaskReference(async () =>
             {
-                _addedMembers.Visibility = ViewModel.HasSelectedContacts
-                    ? ViewStates.Visible
-                    : ViewStates.Gone;
-            });
-        }
-
-        public override void OnDestroy()
-        {
-            base.OnDestroy();
-
-            _filteredAdapter.Dispose();
-            _selectedAdapter.Dispose();
+                await ViewModel.PaginationViewModel.LoadNextPageAsync();
+            })));
         }
 
         private void Close()

@@ -49,7 +49,6 @@ namespace Softeq.XToolkit.Chat.SignalRClient
                               IRefreshTokenService refreshTokenService,
                               IRestHttpClient httpClient,
                               ILogManager logManager,
-                              IInternetConnectionManager internetConnectionManager,
                               IChatConfig chatConfig)
         {
             _accountService = accountService;
@@ -59,8 +58,6 @@ namespace Softeq.XToolkit.Chat.SignalRClient
             _signalRClient = new SignalRClient(chatConfig.BaseUrl);
 
             SubscribeToEvents();
-
-            internetConnectionManager.NetworkConnectionChanged += OnNetworkConnectionChanged;
 
             // TODO YP: need investigate auto-connect (when init before login)
             //ConnectIfNotConnectedAsync().SafeTaskWrapper();
@@ -251,19 +248,6 @@ namespace Softeq.XToolkit.Chat.SignalRClient
                 }
             };
             _signalRClient.Disconnected += OnDisconnected;
-        }
-
-        private void OnNetworkConnectionChanged(object sender, NetworkConnectionEventArgs e)
-        {
-            if (e.IsNetworkAvailable)
-            {
-                ConnectIfNotConnectedAsync(true).SafeTaskWrapper();
-            }
-            else
-            {
-                _isConnected = false;
-                UpdateConnectionStatus(SocketConnectionStatus.WaitingForNetwork);
-            }
         }
 
         private async Task CheckConnectionAndSendRequest(TaskReference funcSendRequest)

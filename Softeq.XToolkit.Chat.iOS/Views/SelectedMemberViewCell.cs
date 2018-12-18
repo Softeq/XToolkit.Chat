@@ -17,6 +17,7 @@ namespace Softeq.XToolkit.Chat.iOS.Views
         public static readonly UINib Nib;
 
         private ChatUserViewModel _memberViewModel;
+        private UITapGestureRecognizer _imageTapGesture;
 
         protected SelectedMemberViewCell(IntPtr handle) : base(handle) { }
 
@@ -30,10 +31,7 @@ namespace Softeq.XToolkit.Chat.iOS.Views
             _memberViewModel = memberViewModel;
 
             RemoveMemberBtn.SetBackgroundImage(UIImage.FromBundle(StyleHelper.Style.RemoveAttachBundleName), UIControlState.Normal);
-            RemoveMemberBtn.SetCommand(new RelayCommand(() =>
-            {
-                _memberViewModel.IsSelected = false;
-            }));
+            RemoveMemberBtn.SetCommand(new RelayCommand(RemoveSelection));
 
             MemberNameLabel.Text = _memberViewModel.Username;
 
@@ -42,6 +40,29 @@ namespace Softeq.XToolkit.Chat.iOS.Views
                 _memberViewModel.Username,
                 StyleHelper.Style.AvatarStyles,
                 x => x.Transform(new CircleTransformation()));
+
+            _imageTapGesture = new UITapGestureRecognizer(RemoveSelection)
+            {
+                NumberOfTapsRequired = 1
+            };
+
+            MemberPhotoImageView.UserInteractionEnabled = true;
+            MemberPhotoImageView.AddGestureRecognizer(_imageTapGesture);
+        }
+
+        private void RemoveSelection()
+        {
+            _memberViewModel.IsSelected = false;
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                MemberPhotoImageView.RemoveGestureRecognizer(_imageTapGesture);
+            }
+
+            base.Dispose(disposing);
         }
     }
 }
