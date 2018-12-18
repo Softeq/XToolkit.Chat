@@ -148,6 +148,7 @@ namespace Softeq.XToolkit.Chat.Droid.Views
         {
             _conversationsRecyclerView.GetAdapter().Dispose();
             _conversationsRecyclerView.ClearOnScrollListeners();
+            // TODO: remove onTouchListener
 
             base.OnDestroy();
         }
@@ -200,7 +201,7 @@ namespace Softeq.XToolkit.Chat.Droid.Views
                 _isAdapterSourceInitialized = true;
             }));
 
-            Bindings.Add(this.SetBinding(() => _imagePicker.ViewModel.ImageCacheKey).WhenSourceChanges(() => 
+            Bindings.Add(this.SetBinding(() => _imagePicker.ViewModel.ImageCacheKey).WhenSourceChanges(() =>
             {
                 if (_imagePicker.ViewModel.ImageCacheKey == null)
                 {
@@ -312,8 +313,8 @@ namespace Softeq.XToolkit.Chat.Droid.Views
 
         private void Send()
         {
-            var args = _imagePicker.ViewModel.ImageCacheKey == null 
-                                   ? null 
+            var args = _imagePicker.ViewModel.ImageCacheKey == null
+                                   ? null
                                    : new GenericEventArgs<Func<(Task<Stream>, string)>>(_imagePicker.GetStreamFunc());
             ViewModel.SendCommand.Execute(args);
             CloseEditImageContainer();

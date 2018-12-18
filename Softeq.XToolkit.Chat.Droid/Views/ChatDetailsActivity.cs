@@ -92,11 +92,14 @@ namespace Softeq.XToolkit.Chat.Droid.Views
             Bindings.Add(this.SetBinding(() => ViewModel.MembersCountText, () => _chatMembersCountTextView.Text));
             Bindings.Add(this.SetBinding(() => ViewModel.Summary.AvatarUrl).WhenSourceChanges(() =>
             {
-                _chatPhotoImageView.LoadImageWithTextPlaceholder(
-                    ViewModel.Summary.AvatarUrl,
-                    ViewModel.Summary.Name,
-                    StyleHelper.Style.ChatAvatarStyles,
-                    x => x.Transform(new CircleTransformation()));
+                Execute.BeginOnUIThread(() =>
+                {
+                    _chatPhotoImageView.LoadImageWithTextPlaceholder(
+                        ViewModel.Summary.AvatarUrl,
+                        ViewModel.Summary.Name,
+                        StyleHelper.Style.ChatAvatarStyles,
+                        x => x.Transform(new CircleTransformation()));
+                });
             }));
             Bindings.Add(this.SetBinding(() => _imagePicker.ViewModel.ImageCacheKey)
                 .WhenSourceChanges(() =>
@@ -117,7 +120,6 @@ namespace Softeq.XToolkit.Chat.Droid.Views
                             .DownSampleInDip(95, 95)
                             .Transform(new CircleTransformation())
                             .IntoAsync(_chatEditedPhotoImageView);
-                        InvalidateOptionsMenu();
                     });
                 }));
         }
@@ -134,7 +136,7 @@ namespace Softeq.XToolkit.Chat.Droid.Views
             var swipeItemCallback = new SwipeCallback(this, _membersRecyclerView, ConfigureSwipeForViewHolder);
             var swipeItemTouchHelper = new ItemTouchHelper(swipeItemCallback);
             swipeItemTouchHelper.AttachToRecyclerView(_membersRecyclerView);
-            
+
             _membersRecyclerView.HasFixedSize = true;
             _membersRecyclerView.SetLayoutManager(new GuardedLinearLayoutManager(this));
             _membersRecyclerView.AddItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.Vertical));
