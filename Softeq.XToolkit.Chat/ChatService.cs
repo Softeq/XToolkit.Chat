@@ -76,22 +76,24 @@ namespace Softeq.XToolkit.Chat
             return _socketChatAdapter.InviteMembersAsync(chatId, participantsIds);
         }
 
-        public virtual async Task<IList<ChatSummaryModel>> GetChatsHeadersAsync()
+        public virtual async Task<IList<ChatSummaryModel>> GetChatsListAsync()
         {
-            var chats = await _httpChatAdapter.GetChatsHeadersAsync().ConfigureAwait(false);
-            if (chats != null)
+            var models = await _httpChatAdapter.GetChatsListAsync().ConfigureAwait(false);
+            if (models == null)
             {
-                var userId = await GetUserIdAsync().ConfigureAwait(false);
-                chats.Apply(x => x.UpdateIsCreatedByMeStatus(userId));
-                return chats.ToList();
+                return null;
             }
-            return null;
+            
+            var userId = await GetUserIdAsync().ConfigureAwait(false);
+            models.Apply(x => x.UpdateIsCreatedByMeStatus(userId));
+                    
+            return models.ToList();
         }
 
         public virtual async Task<IList<ChatMessageModel>> GetOlderMessagesAsync(string chatId,
-                                                                         string messageFromId = null,
-                                                                         DateTimeOffset? messageFromDateTime = null,
-                                                                         int? count = null)
+            string messageFromId = null,
+            DateTimeOffset? messageFromDateTime = null,
+            int? count = null)
         {
             var messages = await _httpChatAdapter.GetOlderMessagesAsync(chatId, messageFromId, messageFromDateTime, count)
                                                  .ConfigureAwait(false);
@@ -188,11 +190,12 @@ namespace Softeq.XToolkit.Chat
                 await _semaphoreSlim.WaitAsync().ConfigureAwait(false);
                 if (string.IsNullOrEmpty(_cachedUserId))
                 {
-                    var userSummary = default(ChatUserModel);
+                    ChatUserModel userSummary;
                     do
                     {
                         userSummary = await _httpChatAdapter.GetUserSummaryAsync().ConfigureAwait(false);
-                    } while (string.IsNullOrEmpty(userSummary?.SaasUserId));
+                    }
+                    while (string.IsNullOrEmpty(userSummary?.SaasUserId));
                     _cachedUserId = userSummary.SaasUserId;
                 }
                 result = _cachedUserId;

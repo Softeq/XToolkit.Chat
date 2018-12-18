@@ -6,23 +6,23 @@ using Android.Graphics;
 using Android.Graphics.Drawables;
 using Android.Views;
 using Android.Widget;
+using Android.Support.V4.Content;
 using FFImageLoading.Cross;
 using FFImageLoading.Transformations;
-using FFImageLoading.Work;
 using Softeq.XToolkit.Bindings;
 using Softeq.XToolkit.Chat.Models;
 using Softeq.XToolkit.Chat.ViewModels;
 using Softeq.XToolkit.Common;
 using Softeq.XToolkit.Common.Command;
 using Softeq.XToolkit.Common.Droid.Converters;
+using Softeq.XToolkit.WhiteLabel.Droid.Controls;
 using Softeq.XToolkit.WhiteLabel.Droid.Extensions;
 
 namespace Softeq.XToolkit.Chat.Droid.ViewHolders
 {
     public class ChatViewHolder : BindableViewHolder<ChatSummaryViewModel>
     {
-        private const string UnreadMessagesCountColor = "#5bc6c9";
-        private const string UnreadMutedMessagesCountColor = "#b4b4b4";
+        //TODO: move this to resources
         private const string ChatStatusDefaultColor = "#dedede";
 
         private readonly WeakAction<ChatSummaryViewModel> _selectChatAction;
@@ -71,8 +71,12 @@ namespace Softeq.XToolkit.Chat.Droid.ViewHolders
                 ChatPhotoImageView.LoadImageWithTextPlaceholder(
                     _viewModelRef.Target.ChatPhotoUrl,
                     _viewModelRef.Target.ChatName,
-                    StyleHelper.Style.ChatAvatarStyles,
-                    (TaskParameter x) => x.Transform(new CircleTransformation()));
+                    new AvatarPlaceholderDrawable.AvatarStyles
+                    {
+                        BackgroundHexColors = StyleHelper.Style.ChatAvatarStyles.BackgroundHexColors,
+                        Size = new System.Drawing.Size(45, 45)
+                    },
+                    x => x.Transform(new CircleTransformation()));
             }));
 
             Bindings.Add(this.SetBinding(() => _viewModelRef.Target.UnreadMessageCount).WhenSourceChanges(() =>
@@ -88,8 +92,13 @@ namespace Softeq.XToolkit.Chat.Droid.ViewHolders
             {
                 if (UnreadMessageCountTextView != null)
                 {
-                    var color = _viewModelRef.Target.IsMuted ? UnreadMutedMessagesCountColor : UnreadMessagesCountColor;
-                    UnreadMessageCountTextView.Background = CreateBackgroundWithCornerRadius(Color.ParseColor(color), 56f);
+                    var colorResId = _viewModelRef.Target.IsMuted
+                        ? StyleHelper.Style.UnreadMutedMessagesCountColor
+                        : StyleHelper.Style.UnreadMessagesCountColor;
+
+                    var color = ContextCompat.GetColor(UnreadMessageCountTextView.Context, colorResId);
+
+                    UnreadMessageCountTextView.Background = CreateBackgroundWithCornerRadius(color, 56f);
                 }
             }));
 
@@ -115,7 +124,7 @@ namespace Softeq.XToolkit.Chat.Droid.ViewHolders
         }
 
         // TODO: move to XToolkit.Common
-        private static Drawable CreateBackgroundWithCornerRadius(Color color, float radius)
+        private static Drawable CreateBackgroundWithCornerRadius(int color, float radius)
         {
             var drawable = new GradientDrawable();
 

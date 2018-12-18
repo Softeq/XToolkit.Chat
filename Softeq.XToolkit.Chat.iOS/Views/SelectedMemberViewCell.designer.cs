@@ -9,34 +9,37 @@ using System.CodeDom.Compiler;
 
 namespace Softeq.XToolkit.Chat.iOS.Views
 {
-	[Register ("SelectedMemberViewCell")]
-	partial class SelectedMemberViewCell
-	{
-		[Outlet]
-		UIKit.UILabel MemberNameLabel { get; set; }
+    [Register("SelectedMemberViewCell")]
+    partial class SelectedMemberViewCell
+    {
+        [Outlet]
+        UIKit.UILabel MemberNameLabel { get; set; }
 
-		[Outlet]
-		UIKit.UIImageView MemberPhotoImageView { get; set; }
+        [Outlet]
+        UIKit.UIImageView MemberPhotoImageView { get; set; }
 
-		[Outlet]
-		UIKit.UIButton RemoveMemberBtn { get; set; }
-		
-		void ReleaseDesignerOutlets ()
-		{
-			if (MemberPhotoImageView != null) {
-				MemberPhotoImageView.Dispose ();
-				MemberPhotoImageView = null;
-			}
+        [Outlet]
+        UIKit.UIButton RemoveMemberBtn { get; set; }
 
-			if (RemoveMemberBtn != null) {
-				RemoveMemberBtn.Dispose ();
-				RemoveMemberBtn = null;
-			}
+        void ReleaseDesignerOutlets()
+        {
+            if (MemberNameLabel != null)
+            {
+                MemberNameLabel.Dispose();
+                MemberNameLabel = null;
+            }
 
-			if (MemberNameLabel != null) {
-				MemberNameLabel.Dispose ();
-				MemberNameLabel = null;
-			}
-		}
-	}
+            if (MemberPhotoImageView != null)
+            {
+                MemberPhotoImageView.Dispose();
+                MemberPhotoImageView = null;
+            }
+
+            if (RemoveMemberBtn != null)
+            {
+                RemoveMemberBtn.Dispose();
+                RemoveMemberBtn = null;
+            }
+        }
+    }
 }

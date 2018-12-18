@@ -73,7 +73,7 @@ namespace Softeq.XToolkit.Chat.iOS.Views
                 {
                     UnreadMessageCountBackground.BackgroundColor = _viewModelRef.Target.IsMuted
                         ? UIColor.FromRGB(180, 180, 180)
-                        : UIColor.FromRGB(91, 198, 201);
+                        : StyleHelper.Style.AccentColor;
                 }
             }));
             _bindings.Add(this.SetBinding(() => _viewModelRef.Target.UnreadMessageCount).WhenSourceChanges(() =>

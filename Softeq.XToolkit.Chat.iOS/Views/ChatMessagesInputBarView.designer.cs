@@ -34,6 +34,9 @@ namespace Softeq.XToolkit.Chat.iOS.Views
 		UIKit.UILabel EditingText { get; set; }
 
 		[Outlet]
+		UIKit.UILabel EditMessageHeaderLabel { get; set; }
+
+		[Outlet]
 		UIKit.UIView EditViewContainer { get; set; }
 
 		[Outlet]
@@ -140,6 +143,11 @@ namespace Softeq.XToolkit.Chat.iOS.Views
 			if (TakePhotoButton != null) {
 				TakePhotoButton.Dispose ();
 				TakePhotoButton = null;
+			}
+
+			if (EditMessageHeaderLabel != null) {
+				EditMessageHeaderLabel.Dispose ();
+				EditMessageHeaderLabel = null;
 			}
 		}
 	}

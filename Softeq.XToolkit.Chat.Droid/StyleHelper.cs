@@ -37,6 +37,8 @@ namespace Softeq.XToolkit.Chat.Droid
         int UnderlinedBg { get; }
         int CheckedIcon { get; }
         int UnCheckedIcon { get; }
+        int UnreadMessagesCountColor { get; }
+        int UnreadMutedMessagesCountColor { get; }
     }
 
     public abstract class ChatDroidStyleBase : IChatDroidStyle
@@ -62,5 +64,7 @@ namespace Softeq.XToolkit.Chat.Droid
         public abstract int UnderlinedBg { get; }
         public abstract int CheckedIcon { get; }
         public abstract int UnCheckedIcon { get; }
+        public abstract int UnreadMessagesCountColor { get; }
+        public abstract int UnreadMutedMessagesCountColor { get; }
     }
 }

@@ -46,7 +46,7 @@ namespace Softeq.XToolkit.Chat.Droid.Views
         private ImageButton _editingMessageCloseButton;
         private ImageButton _scrollDownImageButton;
         private ContextMenuComponent _contextMenuComponent;
-        private bool _shouldSendStateMessageToChat;
+        //private bool _shouldSendStateMessageToChat;
         private bool _isAdapterSourceInitialized;
         private bool _isAutoScrollToFooterEnabled = true;
         private ImagePicker _imagePicker;
@@ -113,10 +113,10 @@ namespace Softeq.XToolkit.Chat.Droid.Views
 
         protected override void OnPause()
         {
-            if (_shouldSendStateMessageToChat)
-            {
-                Messenger.Default.Send(new ChatInBackgroundMessage());
-            }
+            //if (_shouldSendStateMessageToChat)
+            //{
+            //    Messenger.Default.Send(new ChatInBackgroundMessage());
+            //}
 
             KeyboardService.HideSoftKeyboard(_messageEditText);
 
@@ -127,22 +127,23 @@ namespace Softeq.XToolkit.Chat.Droid.Views
         {
             base.OnResume();
 
-            if (_shouldSendStateMessageToChat)
-            {
-                Messenger.Default.Send(new ChatInForegroundMessage());
-            }
-            else
-            {
-                _shouldSendStateMessageToChat = true;
-            }
+            // TODO YP: think about disconnecting when app in background
+            //if (_shouldSendStateMessageToChat)
+            //{
+            //    Messenger.Default.Send(new ChatInForegroundMessage());
+            //}
+            //else
+            //{
+            //    _shouldSendStateMessageToChat = true;
+            //}
         }
 
-        public override void OnBackPressed()
-        {
-            _shouldSendStateMessageToChat = false;
+        //public override void OnBackPressed()
+        //{
+        //    _shouldSendStateMessageToChat = false;
 
-            base.OnBackPressed();
-        }
+        //    base.OnBackPressed();
+        //}
 
         protected override void OnDestroy()
         {
@@ -301,6 +302,7 @@ namespace Softeq.XToolkit.Chat.Droid.Views
             {
                 _editImageContainer.Visibility = ViewStates.Gone;
                 _previewImageKey = null;
+                _imagePicker.ViewModel.ImageCacheKey = null;
                 _imagePreview.SetImageDrawable(null);
             });
         }

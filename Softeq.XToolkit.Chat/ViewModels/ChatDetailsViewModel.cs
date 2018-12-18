@@ -2,12 +2,11 @@
 // http://www.softeq.com
 
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
-using Softeq.XToolkit.Chat.Manager;
+using Softeq.XToolkit.Chat.Interfaces;
 using Softeq.XToolkit.Chat.Models;
 using Softeq.XToolkit.Chat.Models.Enum;
 using Softeq.XToolkit.Chat.Models.Interfaces;
@@ -18,7 +17,6 @@ using Softeq.XToolkit.WhiteLabel.Navigation;
 using Softeq.XToolkit.Chat.Strategies.Search;
 using Softeq.XToolkit.Common.Extensions;
 using Softeq.XToolkit.WhiteLabel;
-using Softeq.XToolkit.WhiteLabel.Interfaces;
 using Softeq.XToolkit.WhiteLabel.Model;
 using Softeq.XToolkit.WhiteLabel.Threading;
 
@@ -26,32 +24,29 @@ namespace Softeq.XToolkit.Chat.ViewModels
 {
     public class ChatDetailsViewModel : ViewModelBase
     {
-        private readonly ChatManager _chatManager;
+        private readonly IChatsListManager _chatsListManager;
         private readonly IPageNavigationService _pageNavigationService;
         private readonly IFormatService _formatService;
         private readonly IUploadImageService _uploadImageService;
         private readonly IDialogsService _dialogsService;
         private readonly IChatService _chatService;
-        private readonly IViewModelFactoryService _viewModelFactoryService;
 
         public ChatDetailsViewModel(
-            ChatManager chatManager,
+            IChatsListManager chatsListManager,
             IPageNavigationService pageNavigationService,
             IChatLocalizedStrings localizedStrings,
             IFormatService formatService,
             IUploadImageService uploadImageService,
             IDialogsService dialogsService,
-            IChatService chatService,
-            IViewModelFactoryService viewModelFactoryService)
+            IChatService chatService)
         {
-            _chatManager = chatManager;
+            _chatsListManager = chatsListManager;
             _pageNavigationService = pageNavigationService;
             LocalizedStrings = localizedStrings;
             _formatService = formatService;
             _uploadImageService = uploadImageService;
             _dialogsService = dialogsService;
             _chatService = chatService;
-            _viewModelFactoryService = viewModelFactoryService;
 
             AddMembersCommand = new RelayCommand(AddMembers);
             BackCommand = new RelayCommand(_pageNavigationService.GoBack, () => _pageNavigationService.CanGoBack);
@@ -72,15 +67,13 @@ namespace Softeq.XToolkit.Chat.ViewModels
         public ICommand BackCommand { get; }
         public RelayCommand<int> RemoveMemberAtCommand { get; }
 
-        public IList<CommandAction> MenuActions { get; } = new List<CommandAction>();
-
         public override async void OnAppearing()
         {
             base.OnAppearing();
 
             Members.Clear();
 
-            var members = await _chatManager.GetChatMembersAsync(Summary.Id);
+            var members = await _chatsListManager.GetChatMembersAsync(Summary.Id);
             Members.AddRange(members);
             RaisePropertyChanged(nameof(MembersCountText));
         }
@@ -130,7 +123,7 @@ namespace Softeq.XToolkit.Chat.ViewModels
                 Summary.AvatarUrl = imagePath;
                 RaisePropertyChanged(nameof(Summary.AvatarUrl));
 
-                await _chatManager.EditChatAsync(Summary).ConfigureAwait(false);
+                await _chatsListManager.EditChatAsync(Summary).ConfigureAwait(false);
             }
 
             Execute.BeginOnUIThread(() =>
@@ -146,8 +139,7 @@ namespace Softeq.XToolkit.Chat.ViewModels
                 {
                     SelectedContacts = Members,
                     SelectionType = SelectedContactsAction.InviteToChat,
-                    SearchStrategy = new InviteSearchContactsStrategy(_chatService,
-                        _viewModelFactoryService, Summary.Id)
+                    SearchStrategy = new InviteSearchContactsStrategy(_chatService, Summary.Id)
                 },
                 new OpenDialogOptions
                 {
@@ -165,7 +157,7 @@ namespace Softeq.XToolkit.Chat.ViewModels
 
                 try
                 {
-                    await _chatManager.InviteMembersAsync(Summary.Id, contactsForInvite);
+                    await _chatsListManager.InviteMembersAsync(Summary.Id, contactsForInvite);
                 }
                 catch (Exception ex)
                 {

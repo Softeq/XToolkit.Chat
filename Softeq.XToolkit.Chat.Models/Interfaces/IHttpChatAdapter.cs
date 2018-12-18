@@ -11,7 +11,7 @@ namespace Softeq.XToolkit.Chat.Models.Interfaces
     public interface IHttpChatAdapter
     {
         Task<ChatUserModel> GetUserSummaryAsync();
-        Task<IList<ChatSummaryModel>> GetChatsHeadersAsync();
+        Task<IList<ChatSummaryModel>> GetChatsListAsync();
 
         Task<IList<ChatMessageModel>> GetOlderMessagesAsync(string chatId,
                                                             string messageFromId = null,

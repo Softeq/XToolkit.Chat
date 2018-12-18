@@ -30,6 +30,7 @@ namespace Softeq.XToolkit.Chat.iOS.Views
 
         public event EventHandler<nfloat> TopContainersHeightChanged;
         public event EventHandler<GenericEventArgs<Func<(Task<Stream>, string)>>> SendRaised;
+        public event EventHandler PickerWillOpen;
 
         public override CGSize IntrinsicContentSize => _cachedIntrinsicContentSize;
 
@@ -62,11 +63,6 @@ namespace Softeq.XToolkit.Chat.iOS.Views
             InvalidateIntrinsicContentSize();
         }
 
-        public void SetInputPlaceholderHidden(bool isHidden)
-        {
-            InputTextViewPlaceholder.Hidden = isHidden;
-        }
-
         public void StartEditing(string originalMessageBody)
         {
             EditingText.Text = originalMessageBody;
@@ -78,7 +74,6 @@ namespace Softeq.XToolkit.Chat.iOS.Views
             var isEditViewContainerHidden = !isInEditMessageMode;
 
             CollapseEditViewContainer(isEditViewContainerHidden);
-            SetInputPlaceholderHidden(isInEditMessageMode);
 
             InvokeTopContainersHeightChangedIfNeeded();
             InvalidateIntrinsicContentSize();
@@ -95,13 +90,13 @@ namespace Softeq.XToolkit.Chat.iOS.Views
 
             _cachedIntrinsicContentSize = CalculateIntrinsicContentSize();
         }
-        
+
         public void ViewDidLoad(UIViewController viewController)
         {
             SendButton.TintColor = StyleHelper.Style.ButtonTintColor;
             SendButton.SetImage(UIImage.FromBundle(StyleHelper.Style.SendBundleName), UIControlState.Normal);
             SendButton.SetCommand(new RelayCommand(OnRaiseSend));
-            
+
             AttachImageButton.TintColor = StyleHelper.Style.ButtonTintColor;
             AttachImageButton.SetImage(UIImage.FromBundle(StyleHelper.Style.AddImageBundleName), UIControlState.Normal);
             AttachImageButton.SetCommand(new RelayCommand(OnAddPhotoClicked));
@@ -122,7 +117,7 @@ namespace Softeq.XToolkit.Chat.iOS.Views
             EditImageContainerHeightConstraint.Constant = 0;
 
             _simpleImagePicker = new SimpleImagePicker(viewController, Dependencies.IocContainer.Resolve<IPermissionsManager>(), false);
-            _attachedImageBinding = this.SetBinding(() => _simpleImagePicker.ViewModel.ImageCacheKey).WhenSourceChanges(() => 
+            _attachedImageBinding = this.SetBinding(() => _simpleImagePicker.ViewModel.ImageCacheKey).WhenSourceChanges(() =>
             {
                 if (string.IsNullOrEmpty(_simpleImagePicker.ViewModel.ImageCacheKey))
                 {
@@ -132,6 +127,12 @@ namespace Softeq.XToolkit.Chat.iOS.Views
 
                 OpenAttachPanel();
             });
+            _simpleImagePicker.SetCommand(nameof(_simpleImagePicker.PickerWillOpen), new RelayCommand(RaisePickerWillOpen));
+        }
+
+        public void SetTextPlaceholdervisibility(bool isVisible)
+        {
+            InputTextViewPlaceholder.Hidden = !isVisible;
         }
 
         protected override void Initialize()
@@ -140,6 +141,9 @@ namespace Softeq.XToolkit.Chat.iOS.Views
 
             AutoresizingMask = UIViewAutoresizing.FlexibleHeight;
             EditingIndicatorView.Layer.CornerRadius = 2f;
+            EditingIndicatorView.BackgroundColor = StyleHelper.Style.AccentColor;
+
+            EditMessageHeaderLabel.TextColor = StyleHelper.Style.AccentColor;
 
             _editViewContainerInitialHeight = EditViewContainerHeightConstraint.Constant;
             UpdateEditViewHeightConstraint();
@@ -173,7 +177,7 @@ namespace Softeq.XToolkit.Chat.iOS.Views
 
         private void InvokeTopContainersHeightChangedIfNeeded()
         {
-            var changedHeight = EditViewContainerHeightConstraint.Constant 
+            var changedHeight = EditViewContainerHeightConstraint.Constant
                 + EditImageContainerHeightConstraint.Constant;
 
             if (changedHeight == _cachedHeight)
@@ -212,7 +216,7 @@ namespace Softeq.XToolkit.Chat.iOS.Views
 
         private void OpenAttachPanel()
         {
-            Execute.BeginOnUIThread(() => 
+            Execute.BeginOnUIThread(() =>
             {
                 var key = _simpleImagePicker.ViewModel.ImageCacheKey;
                 if (key == _previewImageKey)
@@ -237,9 +241,10 @@ namespace Softeq.XToolkit.Chat.iOS.Views
 
         private void CloseAttachPanel()
         {
-            Execute.BeginOnUIThread(() => 
+            Execute.BeginOnUIThread(() =>
             {
                 _previewImageKey = null;
+                _simpleImagePicker.ViewModel.ImageCacheKey = null;
                 AttachedImageView.Image?.Dispose();
                 AttachedImageView.Image = null;
                 EditImageContainer.Hidden = true;
@@ -254,6 +259,11 @@ namespace Softeq.XToolkit.Chat.iOS.Views
             var parameter = _simpleImagePicker.ViewModel.ImageCacheKey == null ? null : _simpleImagePicker.StreamFunc;
             SendRaised?.Invoke(this, new GenericEventArgs<Func<(Task<Stream>, string)>>(parameter));
             CloseAttachPanel();
+        }
+
+        private void RaisePickerWillOpen()
+        {
+            PickerWillOpen?.Invoke(this, EventArgs.Empty);
         }
     }
 }

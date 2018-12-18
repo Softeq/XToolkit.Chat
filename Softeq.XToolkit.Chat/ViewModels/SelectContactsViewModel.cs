@@ -6,7 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
-using Softeq.XToolkit.Chat.Manager;
+using Softeq.XToolkit.Chat.Interfaces;
 using Softeq.XToolkit.Chat.Models.Enum;
 using Softeq.XToolkit.Chat.Models.Interfaces;
 using Softeq.XToolkit.Chat.Strategies.Search;
@@ -21,27 +21,31 @@ using Softeq.XToolkit.WhiteLabel.Threading;
 
 namespace Softeq.XToolkit.Chat.ViewModels
 {
+    // TODO YP: rename to CreateChatViewModel or merge with ChatDetailsViewModel
     public class SelectContactsViewModel : ViewModelBase
     {
-        private readonly ChatManager _chatManager;
+        private readonly IChatsListManager _chatsListManager;
+        private readonly IChatService _chatService;
         private readonly IFormatService _formatService;
         private readonly IChatLocalizedStrings _localizedStrings;
         private readonly ICommand _memberSelectedCommand;
         private readonly IPageNavigationService _pageNavigationService;
         private readonly IUploadImageService _uploadImageService;
         private readonly IDialogsService _dialogsService;
-        
+
         private string _chatName;
 
         public SelectContactsViewModel(
-            ChatManager chatManager,
+            IChatsListManager chatsListManager,
+            IChatService chatService,
             IPageNavigationService pageNavigationService,
             IChatLocalizedStrings localizedStrings,
             IFormatService formatService,
             IUploadImageService uploadImageService,
             IDialogsService dialogsService)
         {
-            _chatManager = chatManager;
+            _chatsListManager = chatsListManager;
+            _chatService = chatService;
             _pageNavigationService = pageNavigationService;
             _localizedStrings = localizedStrings;
             _formatService = formatService;
@@ -94,7 +98,7 @@ namespace Softeq.XToolkit.Chat.ViewModels
                 {
                     SelectedContacts = Contacts,
                     SelectionType = SelectedContactsAction.CreateChat,
-                    SearchStrategy = new CreateChatSearchContactsStrategy(_chatManager)
+                    SearchStrategy = new CreateChatSearchContactsStrategy(_chatService)
                 },
                 new OpenDialogOptions
                 {
@@ -113,12 +117,7 @@ namespace Softeq.XToolkit.Chat.ViewModels
 
         private async void SaveAsync(Func<(Task<Stream> GetImageTask, string Extension)> getImageFunc)
         {
-            if (string.IsNullOrEmpty(ChatName))
-            {
-                return;
-            }
-
-            if (IsBusy)
+            if (IsBusy || string.IsNullOrEmpty(ChatName))
             {
                 return;
             }
@@ -140,12 +139,12 @@ namespace Softeq.XToolkit.Chat.ViewModels
             try
             {
                 var selectedContactsIds = Contacts.Where(x => x.IsSelected).Select(x => x.Id).ToList();
-                await _chatManager.CreateChatAsync(ChatName, selectedContactsIds, imagePath).ConfigureAwait(false);
-                
+                await _chatsListManager.CreateChatAsync(ChatName, selectedContactsIds, imagePath).ConfigureAwait(false);
+
                 Execute.BeginOnUIThread(() =>
                 {
                     ChatName = string.Empty;
-                    
+
                     _pageNavigationService.GoBack();
                 });
             }
