@@ -59,7 +59,8 @@ namespace Softeq.XToolkit.Chat.SignalRClient
 
             SubscribeToEvents();
 
-            ConnectIfNotConnectedAsync().SafeTaskWrapper();
+            // TODO YP: need investigate auto-connect (when init before login)
+            //ConnectIfNotConnectedAsync().SafeTaskWrapper();
         }
 
         public IObservable<ChatMessageModel> MessageReceived => _messageReceived;

@@ -351,20 +351,4 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
             }
         }
     }
-
-    public class LinksDelegate : ASTextNodeDelegate
-    {
-        public override void TappedLinkAttribute(ASTextNode textNode, string attribute, NSObject value, CGPoint point,
-            NSRange textRange)
-        {
-            var launcherService = ServiceLocator.Resolve<ILauncherService>();
-            launcherService.OpenUrl(((NSUrl)value).AbsoluteString);
-        }
-
-        public override bool ShouldHighlightLinkAttribute(ASTextNode textNode, string attribute, NSObject value,
-            CGPoint point)
-        {
-            return true;
-        }
-    }
 }
