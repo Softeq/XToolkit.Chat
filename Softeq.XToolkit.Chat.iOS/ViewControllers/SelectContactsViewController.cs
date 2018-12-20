@@ -29,6 +29,7 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
         {
             base.ViewDidLoad();
 
+            CustomNavigationItem.Title = ViewModel.Title;
             CustomNavigationItem.SetCommand(
                 UIImage.FromBundle(StyleHelper.Style.BackButtonBundleName),
                 ViewModel.BackCommand,
