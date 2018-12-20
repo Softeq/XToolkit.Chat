@@ -41,5 +41,8 @@ namespace Softeq.XToolkit.Chat
         public string AddMembers => "Add members";
         public string Done => "Done";
         public string Search => "Search";
+
+        public string Ok => "OK";
+        public string ValidationErrorsDialogTitle => "Validation errors";
     }
 }

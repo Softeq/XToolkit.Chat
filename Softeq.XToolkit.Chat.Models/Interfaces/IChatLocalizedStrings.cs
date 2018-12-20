@@ -39,5 +39,8 @@ namespace Softeq.XToolkit.Chat.Models.Interfaces
         string AddMembers { get; }
         string Done { get; }
         string Search { get; }
+
+        string Ok { get; }
+        string ValidationErrorsDialogTitle { get; }
     }
 }

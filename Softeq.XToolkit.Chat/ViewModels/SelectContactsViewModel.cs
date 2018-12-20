@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using Softeq.XToolkit.Chat.Interfaces;
 using Softeq.XToolkit.Chat.Models.Enum;
+using Softeq.XToolkit.Chat.Models.Exceptions;
 using Softeq.XToolkit.Chat.Models.Interfaces;
 using Softeq.XToolkit.Chat.Strategies.Search;
 using Softeq.XToolkit.Common.Collections;
@@ -147,6 +148,13 @@ namespace Softeq.XToolkit.Chat.ViewModels
 
                     _pageNavigationService.GoBack();
                 });
+            }
+            catch (ChatValidationException ex)
+            {
+                await _dialogsService.ShowDialogAsync(
+                    _localizedStrings.ValidationErrorsDialogTitle,
+                    string.Join("\n", ex.Errors),
+                    _localizedStrings.Ok);
             }
             catch (Exception ex)
             {
