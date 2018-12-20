@@ -84,7 +84,7 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
         private void InitSearchMembersTableView()
         {
             TableView.RowHeight = DefaultFoundMembersCellHeight;
-            TableView.RegisterNibForCellReuse(ChatUserViewCell.Nib, ChatUserViewCell.Key);
+            TableView.RegisterNibForCellReuse(FilteredContactViewCell.Nib, FilteredContactViewCell.Key);
             TableView.TableFooterView = new UIView();
             TableView.KeyboardDismissMode = UIScrollViewKeyboardDismissMode.Interactive;
 
@@ -93,12 +93,12 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
                 DataSource = ViewModel.PaginationViewModel.Items,
                 BindCellDelegate = (cell, viewModel, index) =>
                 {
-                    if (cell is ChatUserViewCell memberCell)
+                    if (cell is FilteredContactViewCell memberCell)
                     {
                         memberCell.BindViewModel(viewModel);
                     }
                 },
-                ReuseId = ChatUserViewCell.Key
+                ReuseId = FilteredContactViewCell.Key
             };
 
             TableView.Source = source;

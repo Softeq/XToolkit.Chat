@@ -92,8 +92,6 @@ namespace Softeq.XToolkit.Chat.ViewModels
 
         private async void OpenDialogForAddMembers()
         {
-            Contacts.Clear();
-
             var result = await _dialogsService.ShowForViewModel<AddContactsViewModel, AddContactParameters>(
                 new AddContactParameters
                 {

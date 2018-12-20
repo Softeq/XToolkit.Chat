@@ -16,6 +16,7 @@ using Softeq.XToolkit.Common.Extensions;
 using Softeq.XToolkit.Common.Models;
 using Softeq.XToolkit.WhiteLabel.Interfaces;
 using Softeq.XToolkit.WhiteLabel.Mvvm;
+using Softeq.XToolkit.Auth;
 
 namespace Softeq.XToolkit.Chat.ViewModels
 {
@@ -32,6 +33,7 @@ namespace Softeq.XToolkit.Chat.ViewModels
         private const int DefaultSearchResultsPageSize = 20;
 
         private readonly ICommand _contactSelectedCommand;
+        private readonly IAccountService _accountService;
 
         private string _contactNameSearchQuery;
         private ISearchContactsStrategy _searchContactsStrategy;
@@ -39,9 +41,11 @@ namespace Softeq.XToolkit.Chat.ViewModels
         private IReadOnlyList<ChatUserViewModel> _excludedContacts = new List<ChatUserViewModel>();
 
         public AddContactsViewModel(
+            IAccountService accountService,
             IChatLocalizedStrings chatLocalizedStrings,
             IViewModelFactoryService viewModelFactoryService)
         {
+            _accountService = accountService;
             Resources = chatLocalizedStrings;
 
             PaginationViewModel = new PaginationViewModel<ChatUserViewModel, ChatUserModel>(
@@ -131,21 +135,17 @@ namespace Softeq.XToolkit.Chat.ViewModels
             var filteredContacts = contacts.Where(x => !SelectedContacts
                 .Concat(_excludedContacts)
                 .Select(c => c.Id)
+                .Concat(new[] { _accountService.UserId })
                 .Contains(x.Id)
             ).ToList();
 
-            ApplySelectionCommand(filteredContacts, true);
-
-            return filteredContacts;
-        }
-
-        private void ApplySelectionCommand(IEnumerable<ChatUserViewModel> contacts, bool isSelectable)
-        {
-            contacts.Apply(x =>
+            filteredContacts.Apply(x =>
             {
-                x.IsSelectable = isSelectable;
+                x.IsSelectable = true;
                 x.SetSelectionCommand(_contactSelectedCommand);
             });
+
+            return filteredContacts;
         }
 
         private void SwitchSelectedContact(ChatUserViewModel viewModel)

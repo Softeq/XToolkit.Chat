@@ -19,6 +19,7 @@ namespace Softeq.XToolkit.Chat.iOS
     {
         UIColor AccentColor { get; }
         UIColor ButtonTintColor { get; }
+        UIColor OnlineStatusColor { get; }
 
         AvatarImageHelpers.AvatarStyles AvatarStyles { get; }
 

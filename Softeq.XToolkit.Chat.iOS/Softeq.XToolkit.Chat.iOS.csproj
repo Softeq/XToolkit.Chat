@@ -134,6 +134,10 @@
       <DependentUpon>SelectedMemberViewCell.cs</DependentUpon>
     </Compile>
     <Compile Include="Views\CheckBoxView.cs" />
+    <Compile Include="Views\FilteredContactViewCell.cs" />
+    <Compile Include="Views\FilteredContactViewCell.designer.cs">
+      <DependentUpon>FilteredContactViewCell.cs</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <InterfaceDefinition Include="ViewControllers\ChatDetailsStoryboard.storyboard" />
@@ -148,6 +152,7 @@
     <InterfaceDefinition Include="Views\ChatMessagesInputBarView.xib" />
     <InterfaceDefinition Include="ViewControllers\AddContactsStoryboard.storyboard" />
     <InterfaceDefinition Include="Views\SelectedMemberViewCell.xib" />
+    <InterfaceDefinition Include="Views\FilteredContactViewCell.xib" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\XToolkit\Softeq.XToolkit.Permissions\Softeq.XToolkit.Permissions.csproj">
