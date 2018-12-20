@@ -7,6 +7,7 @@
   <ItemGroup>
     <Folder Include="Interfaces\" />
     <Folder Include="Enum\" />
+    <Folder Include="Exceptions\" />
   </ItemGroup>
 
   <ItemGroup>

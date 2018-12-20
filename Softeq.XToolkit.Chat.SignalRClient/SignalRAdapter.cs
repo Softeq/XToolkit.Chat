@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.SignalR;
 using Softeq.XToolkit.Auth;
 using Softeq.XToolkit.Chat.Models;
 using Softeq.XToolkit.Chat.Models.Enum;
+using Softeq.XToolkit.Chat.Models.Exceptions;
 using Softeq.XToolkit.Chat.Models.Interfaces;
 using Softeq.XToolkit.Chat.SignalRClient.DTOs.Channel;
 using Softeq.XToolkit.Chat.SignalRClient.DTOs.Member;
@@ -18,7 +19,6 @@ using Softeq.XToolkit.Chat.SignalRClient.DTOs.Message;
 using Softeq.XToolkit.Common;
 using Softeq.XToolkit.Common.Extensions;
 using Softeq.XToolkit.Common.Interfaces;
-using Softeq.XToolkit.Connectivity;
 using Softeq.XToolkit.RemoteData;
 using Softeq.XToolkit.RemoteData.HttpClient;
 
@@ -45,11 +45,12 @@ namespace Softeq.XToolkit.Chat.SignalRClient
         private bool _isConnected = false;
         private bool _canReconnectAutomatically = true;
 
-        public SignalRAdapter(IAccountService accountService,
-                              IRefreshTokenService refreshTokenService,
-                              IRestHttpClient httpClient,
-                              ILogManager logManager,
-                              IChatConfig chatConfig)
+        public SignalRAdapter(
+            IAccountService accountService,
+            IRefreshTokenService refreshTokenService,
+            IRestHttpClient httpClient,
+            ILogManager logManager,
+            IChatConfig chatConfig)
         {
             _accountService = accountService;
             _refreshTokenService = refreshTokenService;
@@ -60,7 +61,7 @@ namespace Softeq.XToolkit.Chat.SignalRClient
             SubscribeToEvents();
 
             // TODO YP: need investigate auto-connect (when init before login)
-            //ConnectIfNotConnectedAsync().SafeTaskWrapper();
+            ConnectIfNotConnectedAsync().SafeTaskWrapper();
         }
 
         public IObservable<ChatMessageModel> MessageReceived => _messageReceived;
@@ -193,7 +194,6 @@ namespace Softeq.XToolkit.Chat.SignalRClient
                     Name = x.Name,
                     PhotoUrl = x.AvatarUrl,
                     WelcomeMessage = x.WelcomeMessage,
-                    Topic = x.Topic
                 };
 
                 return _signalRClient.UpdateChannelAsync(request);
@@ -307,6 +307,10 @@ namespace Softeq.XToolkit.Chat.SignalRClient
             catch (HubException ex)
             {
                 _logger.Error(ex);
+            }
+            catch (ChatValidationException)
+            {
+                throw;
             }
             catch (Exception ex)
             {

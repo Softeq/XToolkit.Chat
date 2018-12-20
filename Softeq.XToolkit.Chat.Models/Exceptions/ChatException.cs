@@ -3,7 +3,7 @@
 
 using System;
 
-namespace Softeq.XToolkit.Chat.Exceptions
+namespace Softeq.XToolkit.Chat.Models.Exceptions
 {
     public class ChatException : Exception
     {

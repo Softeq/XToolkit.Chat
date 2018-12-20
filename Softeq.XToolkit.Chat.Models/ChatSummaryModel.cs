@@ -14,13 +14,13 @@ namespace Softeq.XToolkit.Chat.Models
         public string Name { get; set; }
         public int UnreadMessagesCount { get; set; }
         public bool IsMuted { get; set; }
+        public bool IsPinned { get; set; }
         public string CreatorId { get; set; }
         public bool IsCreatedByMe { get; private set; }
         public string AvatarUrl { get; set; }
         public ChatMessageModel LastMessage { get; set; }
         public IList<string> TypingUsersNames { get; set; }
         public bool AreMoreThanThreeUsersTyping { get; set; }
-        public string Topic { get; set; }
         public string WelcomeMessage { get; set; }
 
         public void UpdateIsCreatedByMeStatus(string currentUserId)
