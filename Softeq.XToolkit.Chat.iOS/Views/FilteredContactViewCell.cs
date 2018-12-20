@@ -20,7 +20,6 @@ namespace Softeq.XToolkit.Chat.iOS.Views
         private readonly List<Binding> _bindings = new List<Binding>();
 
         private WeakReferenceEx<ChatUserViewModel> _viewModelRef;
-        private UITapGestureRecognizer _tapGesture;
 
         static FilteredContactViewCell()
         {
@@ -41,6 +40,8 @@ namespace Softeq.XToolkit.Chat.iOS.Views
         {
             OnlineIndicatorView.BackgroundColor = StyleHelper.Style.OnlineStatusColor;
             OnlineIndicatorView.WithBorder(1f).AsCircle();
+
+            SelectionStyle = UITableViewCellSelectionStyle.None;
         }
 
         public void BindViewModel(ChatUserViewModel viewModel)
@@ -69,22 +70,6 @@ namespace Softeq.XToolkit.Chat.iOS.Views
             }));
             _bindings.Add(this.SetBinding(() => _viewModelRef.Target.IsOnline, () => OnlineIndicatorView.Hidden)
                 .ConvertSourceToTarget(x => !x));
-
-            _tapGesture = new UITapGestureRecognizer(() =>
-            {
-                _viewModelRef.Target.IsSelected = !_viewModelRef.Target.IsSelected;
-            })
-            {
-                NumberOfTapsRequired = 1
-            };
-            AddGestureRecognizer(_tapGesture);
-        }
-
-        protected override void Dispose(bool disposing)
-        {
-            RemoveGestureRecognizer(_tapGesture);
-
-            base.Dispose(disposing);
         }
     }
 }
