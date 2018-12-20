@@ -118,6 +118,7 @@
     <AndroidResource Include="Resources\layout\dialog_select_members.xml" />
     <AndroidResource Include="Resources\layout\view_holder_member.xml" />
     <AndroidResource Include="Resources\layout\view_holder_member_filter_item.xml" />
+    <AndroidResource Include="Resources\drawable\chat_bg_contact_status_online.xml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Views\" />
