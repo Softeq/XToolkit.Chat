@@ -138,6 +138,9 @@
     <Compile Include="Views\FilteredContactViewCell.designer.cs">
       <DependentUpon>FilteredContactViewCell.cs</DependentUpon>
     </Compile>
+    <Compile Include="Controls\BindableTableViewCell.cs" />
+    <Compile Include="Controls\IBindableViewCell.cs" />
+    <Compile Include="Controls\BindableCollectionViewCell.cs" />
   </ItemGroup>
   <ItemGroup>
     <InterfaceDefinition Include="ViewControllers\ChatDetailsStoryboard.storyboard" />

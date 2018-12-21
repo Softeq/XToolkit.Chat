@@ -1,74 +1,54 @@
 ﻿using System;
-using System.Collections.Generic;
 using FFImageLoading.Transformations;
 using Foundation;
 using Softeq.XToolkit.Bindings;
-using Softeq.XToolkit.Bindings.Extensions;
 using Softeq.XToolkit.Chat.ViewModels;
-using Softeq.XToolkit.Common;
 using Softeq.XToolkit.WhiteLabel.iOS.Extensions;
 using UIKit;
 using Softeq.XToolkit.Common.iOS.Extensions;
+using Softeq.XToolkit.Chat.iOS.Controls;
 
 namespace Softeq.XToolkit.Chat.iOS.Views
 {
-    public partial class FilteredContactViewCell : UITableViewCell
+    public partial class FilteredContactViewCell : BindableTableViewCell<ChatUserViewModel>
     {
-        public static readonly NSString Key = new NSString(nameof(FilteredContactViewCell));
+        public static readonly string Key = nameof(FilteredContactViewCell);
         public static readonly UINib Nib;
-
-        private readonly List<Binding> _bindings = new List<Binding>();
-
-        private WeakReferenceEx<ChatUserViewModel> _viewModelRef;
 
         static FilteredContactViewCell()
         {
-            Nib = UINib.FromName(nameof(FilteredContactViewCell), NSBundle.MainBundle);
+            Nib = UINib.FromName(Key, NSBundle.MainBundle);
         }
 
-        protected FilteredContactViewCell(IntPtr handle) : base(handle)
-        {
-            // Note: this .ctor should not contain any initialization logic.
-        }
+        protected FilteredContactViewCell(IntPtr handle) : base(handle) { }
 
-        public override void AwakeFromNib()
-        {
-            Initialize();
-        }
-
-        private void Initialize()
+        protected override void Initialize()
         {
             OnlineIndicatorView.BackgroundColor = StyleHelper.Style.OnlineStatusColor;
             OnlineIndicatorView.WithBorder(1f).AsCircle();
-
-            SelectionStyle = UITableViewCellSelectionStyle.None;
         }
 
-        public void BindViewModel(ChatUserViewModel viewModel)
+        protected override void DoAttachBindings()
         {
-            _viewModelRef = WeakReferenceEx.Create(viewModel);
-
-            _bindings.DetachAllAndClear();
-
-            _bindings.Add(this.SetBinding(() => _viewModelRef.Target.Username, () => UsernameLabel.Text));
-            _bindings.Add(this.SetBinding(() => _viewModelRef.Target.PhotoUrl).WhenSourceChanges(() =>
+            Bindings.Add(this.SetBinding(() => ViewModel.Target.Username, () => UsernameLabel.Text));
+            Bindings.Add(this.SetBinding(() => ViewModel.Target.PhotoUrl).WhenSourceChanges(() =>
             {
                 PhotoImageView.LoadImageWithTextPlaceholder(
-                    _viewModelRef.Target.PhotoUrl,
-                    _viewModelRef.Target.Username,
+                    ViewModel.Target.PhotoUrl,
+                    ViewModel.Target.Username,
                     StyleHelper.Style.AvatarStyles,
                     x => x.Transform(new CircleTransformation()));
             }));
-            _bindings.Add(this.SetBinding(() => _viewModelRef.Target.IsSelected, () => CheckBoxButton.Selected, BindingMode.TwoWay));
-            _bindings.Add(this.SetBinding(() => _viewModelRef.Target.IsActive).WhenSourceChanges(() =>
+            Bindings.Add(this.SetBinding(() => ViewModel.Target.IsSelected, () => CheckBoxButton.Selected, BindingMode.TwoWay));
+            Bindings.Add(this.SetBinding(() => ViewModel.Target.IsActive).WhenSourceChanges(() =>
             {
-                var isActive = _viewModelRef.Target.IsActive;
+                var isActive = ViewModel.Target.IsActive;
 
                 InactiveContactOverlay.Hidden = isActive;
                 CheckBoxButton.Hidden = !isActive;
                 UserInteractionEnabled = isActive;
             }));
-            _bindings.Add(this.SetBinding(() => _viewModelRef.Target.IsOnline, () => OnlineIndicatorView.Hidden)
+            Bindings.Add(this.SetBinding(() => ViewModel.Target.IsOnline, () => OnlineIndicatorView.Hidden)
                 .ConvertSourceToTarget(x => !x));
         }
     }

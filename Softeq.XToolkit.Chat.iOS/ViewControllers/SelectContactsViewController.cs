@@ -14,6 +14,8 @@ using Softeq.XToolkit.WhiteLabel.iOS.Extensions;
 using Softeq.XToolkit.WhiteLabel.iOS.ImagePicker;
 using Softeq.XToolkit.WhiteLabel;
 using Softeq.XToolkit.Permissions;
+using Softeq.XToolkit.Common.EventArguments;
+using Softeq.XToolkit.Chat.iOS.Controls;
 
 namespace Softeq.XToolkit.Chat.iOS.ViewControllers
 {
@@ -22,6 +24,8 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
         private ChatDetailsHeaderView _chatDetailsHeaderView;
         private SimpleImagePicker _simpleImagePicker;
         private string _previewImageKey;
+        private ObservableTableViewSource<ChatUserViewModel> _tableViewSource;
+        private UITapGestureRecognizer _hideKeyboardByTapGestureRecognizer;
 
         public SelectContactsViewController(IntPtr handle) : base(handle) { }
 
@@ -29,60 +33,13 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
         {
             base.ViewDidLoad();
 
-            CustomNavigationItem.Title = ViewModel.Title;
-            CustomNavigationItem.SetCommand(
-                UIImage.FromBundle(StyleHelper.Style.BackButtonBundleName),
-                ViewModel.BackCommand,
-                true);
-            CustomNavigationItem.SetCommand(
-                ViewModel.ActionButtonName,
-                StyleHelper.Style.AccentColor,
-                new RelayCommand(AddChat),
-                false);
+            InitNavigationBar();
+            InitChatMembersTableView();
 
-            TableView.AllowsSelection = false;
-            TableView.RegisterNibForCellReuse(ChatUserViewCell.Nib, ChatUserViewCell.Key);
-            TableView.RowHeight = 50;
-            TableView.KeyboardDismissMode = UIScrollViewKeyboardDismissMode.Interactive;
-            TableView.AddGestureRecognizer(new UITapGestureRecognizer(() =>
+            _hideKeyboardByTapGestureRecognizer = new UITapGestureRecognizer(() =>
             {
                 _chatDetailsHeaderView.ChatNameField.ResignFirstResponder();
-            }));
-
-            _simpleImagePicker = new SimpleImagePicker(this, Dependencies.IocContainer.Resolve<IPermissionsManager>(), false)
-            {
-                MaxImageWidth = 280,
-                MaxImageHeight = 280,
-            };
-
-            _chatDetailsHeaderView = new ChatDetailsHeaderView(new CGRect(0, 0, 200, 250))
-            {
-                IsEditMode = true
-            };
-
-            _chatDetailsHeaderView.SetChangeChatPhotoCommand(new RelayCommand(OpenPicker));
-            _chatDetailsHeaderView.SetAddMembersCommand(ViewModel.AddMembersCommand);
-            _chatDetailsHeaderView.SetChatAvatar(null);
-
-            TableView.TableHeaderView = _chatDetailsHeaderView;
-            TableView.TableFooterView = new UIView();
-
-            var source = ViewModel.Contacts.GetTableViewSource((cell, viewModel, index) =>
-            {
-                (cell as ChatUserViewCell)?.BindViewModel(viewModel);
-            }, ChatUserViewCell.Key);
-            TableView.Source = source;
-        }
-
-        public override void ViewWillDisappear(bool animated)
-        {
-            base.ViewWillDisappear(animated);
-
-            var indexPath = TableView.IndexPathForSelectedRow;
-            if (indexPath != null)
-            {
-                TableView.DeselectRow(indexPath, false);
-            }
+            });
         }
 
         protected override void DoAttachBindings()
@@ -108,6 +65,79 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
                     _previewImageKey = key;
                     _chatDetailsHeaderView.SetEditedChatAvatar(_previewImageKey);
                 }));
+
+            _tableViewSource.ItemTapped += TableViewSourceItemTapped;
+
+            TableView.AddGestureRecognizer(_hideKeyboardByTapGestureRecognizer);
+        }
+
+        protected override void DoDetachBindings()
+        {
+            base.DoDetachBindings();
+
+            _tableViewSource.ItemTapped -= TableViewSourceItemTapped;
+
+            TableView.RemoveGestureRecognizer(_hideKeyboardByTapGestureRecognizer);
+
+            ResetSelectedRow();
+        }
+
+        private void InitNavigationBar()
+        {
+            CustomNavigationItem.Title = ViewModel.Title;
+            CustomNavigationItem.SetCommand(
+                UIImage.FromBundle(StyleHelper.Style.BackButtonBundleName),
+                ViewModel.BackCommand,
+                true);
+            CustomNavigationItem.SetCommand(
+                ViewModel.ActionButtonName,
+                StyleHelper.Style.AccentColor,
+                new RelayCommand(AddChat),
+                false);
+        }
+
+        private void InitChatMembersTableView()
+        {
+            TableView.RegisterNibForCellReuse(ChatUserViewCell.Nib, ChatUserViewCell.Key);
+            TableView.RowHeight = 50;
+            TableView.KeyboardDismissMode = UIScrollViewKeyboardDismissMode.Interactive;
+
+            _simpleImagePicker = new SimpleImagePicker(this, Dependencies.IocContainer.Resolve<IPermissionsManager>(), false)
+            {
+                MaxImageWidth = 280,
+                MaxImageHeight = 280,
+            };
+
+            _chatDetailsHeaderView = new ChatDetailsHeaderView(new CGRect(0, 0, 200, 250))
+            {
+                IsEditMode = true
+            };
+
+            _chatDetailsHeaderView.SetChangeChatPhotoCommand(new RelayCommand(OpenPicker));
+            _chatDetailsHeaderView.SetAddMembersCommand(ViewModel.AddMembersCommand);
+            _chatDetailsHeaderView.SetChatAvatar(null);
+
+            TableView.TableHeaderView = _chatDetailsHeaderView;
+            TableView.TableFooterView = new UIView();
+
+            _tableViewSource = ViewModel.Contacts.GetTableViewSource((cell, viewModel, index) =>
+            {
+                if (cell is IBindableViewCell<ChatUserViewModel> userCell)
+                {
+                    userCell.Bind(viewModel);
+                }
+            }, ChatUserViewCell.Key);
+
+            TableView.Source = _tableViewSource;
+        }
+
+        private void ResetSelectedRow()
+        {
+            var indexPath = TableView.IndexPathForSelectedRow;
+            if (indexPath != null)
+            {
+                TableView.DeselectRow(indexPath, false);
+            }
         }
 
         private void OpenPicker()
@@ -118,6 +148,11 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
         private void AddChat()
         {
             ViewModel.SaveCommand.Execute(_simpleImagePicker.StreamFunc);
+        }
+
+        private void TableViewSourceItemTapped(object sender, GenericEventArgs<ChatUserViewModel> e)
+        {
+            e.Value.IsSelected = !e.Value.IsSelected;
         }
     }
 }

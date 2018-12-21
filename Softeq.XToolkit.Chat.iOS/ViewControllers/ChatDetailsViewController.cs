@@ -17,6 +17,7 @@ using Softeq.XToolkit.WhiteLabel;
 using Softeq.XToolkit.Permissions;
 using Softeq.XToolkit.Common.Command;
 using Softeq.XToolkit.WhiteLabel.Threading;
+using Softeq.XToolkit.Chat.iOS.Controls;
 
 namespace Softeq.XToolkit.Chat.iOS.ViewControllers
 {
@@ -52,7 +53,10 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
 
             var source = ViewModel.Members.GetTableViewSource((cell, viewModel, index) =>
             {
-                (cell as ChatUserViewCell)?.BindViewModel(viewModel);
+                if (cell is IBindableViewCell<ChatUserViewModel> userViewCell)
+                {
+                    userViewCell.Bind(viewModel);
+                }
             }, ChatUserViewCell.Key);
             TableView.Source = source;
             TableView.Delegate = new ParticipantsTableViewDelegate(ViewModel);

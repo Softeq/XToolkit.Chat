@@ -4,8 +4,10 @@
 using System;
 using Softeq.XToolkit.Bindings;
 using Softeq.XToolkit.Bindings.iOS;
+using Softeq.XToolkit.Chat.iOS.Controls;
 using Softeq.XToolkit.Chat.iOS.Views;
 using Softeq.XToolkit.Chat.ViewModels;
+using Softeq.XToolkit.Common.EventArguments;
 using Softeq.XToolkit.WhiteLabel.iOS;
 using Softeq.XToolkit.WhiteLabel.iOS.Extensions;
 using UIKit;
@@ -31,26 +33,6 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
             InitSelectedMembersCollectionView();
         }
 
-        public override void ViewWillAppear(bool animated)
-        {
-            base.ViewWillAppear(animated);
-
-            TableViewSearchBar.TextChanged += TableViewSearchBar_TextChanged;
-            _tableViewSource.ItemTapped += TableViewSource_ItemTapped;
-            _tableViewSource.LastItemRequested += TableViewSource_LastItemRequested;
-        }
-
-        public override void ViewWillDisappear(bool animated)
-        {
-            base.ViewWillDisappear(animated);
-
-            TableViewSearchBar.TextChanged -= TableViewSearchBar_TextChanged;
-            _tableViewSource.ItemTapped -= TableViewSource_ItemTapped;
-            _tableViewSource.LastItemRequested -= TableViewSource_LastItemRequested;
-
-            ResetSelectedRow();
-        }
-
         protected override void DoAttachBindings()
         {
             base.DoAttachBindings();
@@ -66,19 +48,34 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
                     SelectedMembersCollectionView.LayoutIfNeeded();
                 });
             }));
+
+            TableViewSearchBar.TextChanged += TableViewSearchBarTextChanged;
+            _tableViewSource.ItemTapped += TableViewSourceItemTapped;
+            _tableViewSource.LastItemRequested += TableViewSourceLastItemRequested;
         }
 
-        private void TableViewSearchBar_TextChanged(object sender, UISearchBarTextChangedEventArgs e)
+        protected override void DoDetachBindings()
+        {
+            base.DoDetachBindings();
+
+            TableViewSearchBar.TextChanged -= TableViewSearchBarTextChanged;
+            _tableViewSource.ItemTapped -= TableViewSourceItemTapped;
+            _tableViewSource.LastItemRequested -= TableViewSourceLastItemRequested;
+
+            ResetSelectedRow();
+        }
+
+        private void TableViewSearchBarTextChanged(object sender, UISearchBarTextChangedEventArgs e)
         {
             ViewModel.ContactNameSearchQuery = e.SearchText;
         }
 
-        private void TableViewSource_ItemTapped(object sender, Common.EventArguments.GenericEventArgs<ChatUserViewModel> e)
+        private void TableViewSourceItemTapped(object sender, GenericEventArgs<ChatUserViewModel> e)
         {
             e.Value.IsSelected = !e.Value.IsSelected;
         }
 
-        private async void TableViewSource_LastItemRequested(object sender, EventArgs e)
+        private async void TableViewSourceLastItemRequested(object sender, EventArgs e)
         {
             await ViewModel.PaginationViewModel.LoadNextPageAsync();
         }
@@ -118,9 +115,9 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
                 DataSource = ViewModel.PaginationViewModel.Items,
                 BindCellDelegate = (cell, viewModel, index) =>
                 {
-                    if (cell is FilteredContactViewCell memberCell)
+                    if (cell is IBindableViewCell<ChatUserViewModel> memberCell)
                     {
-                        memberCell.BindViewModel(viewModel);
+                        memberCell.Bind(viewModel);
                     }
                 },
                 ReuseId = FilteredContactViewCell.Key
@@ -138,7 +135,7 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
                 DataSource = ViewModel.SelectedContacts,
                 BindCellDelegate = (cell, viewModel, index) =>
                 {
-                    cell.BindCell(viewModel);
+                    cell.Bind(viewModel);
                 },
                 ReuseId = SelectedMemberViewCell.Key
             };
