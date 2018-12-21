@@ -24,6 +24,8 @@ namespace Softeq.XToolkit.Chat.ViewModels
         public string Id => _model.SaasUserId;
         public string Username => _model.Username;
         public string PhotoUrl => _model.PhotoUrl;
+        public bool IsOnline => _model.IsOnline;
+        public bool IsActive => _model.IsActive;
 
         public bool IsSelected
         {

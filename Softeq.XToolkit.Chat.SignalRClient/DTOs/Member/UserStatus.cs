@@ -5,8 +5,7 @@ namespace Softeq.XToolkit.Chat.SignalRClient.DTOs.Member
 {
     internal enum UserStatus
     {
-        Active,
-        Inactive,
+        Online,
         Offline
     }
 }

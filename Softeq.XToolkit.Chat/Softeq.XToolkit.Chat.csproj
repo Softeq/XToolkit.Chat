@@ -21,7 +21,4 @@
     <Folder Include="Exceptions\" />
     <Folder Include="Services\" />
   </ItemGroup>
-  <ItemGroup>
-    <Compile Remove="ViewModels\SelectMembersViewModel.cs" />
-  </ItemGroup>
 </Project>

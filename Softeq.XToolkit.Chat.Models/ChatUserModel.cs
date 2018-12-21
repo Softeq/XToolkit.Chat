@@ -12,6 +12,7 @@ namespace Softeq.XToolkit.Chat.Models
         public string Username { get; set; }
         public string PhotoUrl { get; set; }
         public bool IsOnline { get; set; }
+        public bool IsActive { get; set; }
         public DateTimeOffset LastActivity { get; set; }
     }
 }

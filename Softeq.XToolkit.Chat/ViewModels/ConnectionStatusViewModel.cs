@@ -6,6 +6,7 @@ using System.ComponentModel;
 using Softeq.XToolkit.Chat.Exceptions;
 using Softeq.XToolkit.Chat.Interfaces;
 using Softeq.XToolkit.Chat.Models.Enum;
+using Softeq.XToolkit.Chat.Models.Exceptions;
 using Softeq.XToolkit.Chat.Models.Interfaces;
 using Softeq.XToolkit.WhiteLabel.Mvvm;
 
@@ -15,7 +16,7 @@ namespace Softeq.XToolkit.Chat.ViewModels
     {
         private readonly IChatLocalizedStrings _localizedStrings;
         private readonly IChatConnectionManager _chatConnectionManager;
-        
+
         private IDisposable _connectionStatusChangedSubscription;
         private string _onlineTextStatus;
         private string _connectionStatusText;
@@ -48,14 +49,14 @@ namespace Softeq.XToolkit.Chat.ViewModels
 
             UpdateConnectionStatus(_chatConnectionManager.ConnectionStatus);
         }
-        
+
         private void UpdateConnectionStatus(ConnectionStatus status)
         {
             if (_onlineTextStatus == null)
             {
                 throw new ChatException("Need to call Initialize() method before.");
             }
-            
+
             switch (status)
             {
                 case ConnectionStatus.Online:

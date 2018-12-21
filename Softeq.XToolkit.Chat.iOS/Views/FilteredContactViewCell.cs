@@ -1,28 +1,32 @@
-﻿// Developed by Softeq Development Corporation
-// http://www.softeq.com
-
-using System;
+﻿using System;
 using FFImageLoading.Transformations;
 using Foundation;
 using Softeq.XToolkit.Bindings;
-using Softeq.XToolkit.Chat.iOS.Controls;
 using Softeq.XToolkit.Chat.ViewModels;
 using Softeq.XToolkit.WhiteLabel.iOS.Extensions;
 using UIKit;
+using Softeq.XToolkit.Common.iOS.Extensions;
+using Softeq.XToolkit.Chat.iOS.Controls;
 
 namespace Softeq.XToolkit.Chat.iOS.Views
 {
-    public partial class ChatUserViewCell : BindableTableViewCell<ChatUserViewModel>
+    public partial class FilteredContactViewCell : BindableTableViewCell<ChatUserViewModel>
     {
-        public static readonly string Key = nameof(ChatUserViewCell);
+        public static readonly string Key = nameof(FilteredContactViewCell);
         public static readonly UINib Nib;
 
-        static ChatUserViewCell()
+        static FilteredContactViewCell()
         {
             Nib = UINib.FromName(Key, NSBundle.MainBundle);
         }
 
-        protected ChatUserViewCell(IntPtr handle) : base(handle) { }
+        protected FilteredContactViewCell(IntPtr handle) : base(handle) { }
+
+        protected override void Initialize()
+        {
+            OnlineIndicatorView.BackgroundColor = StyleHelper.Style.OnlineStatusColor;
+            OnlineIndicatorView.WithBorder(1f).AsCircle();
+        }
 
         protected override void DoAttachBindings()
         {
@@ -36,7 +40,15 @@ namespace Softeq.XToolkit.Chat.iOS.Views
                     x => x.Transform(new CircleTransformation()));
             }));
             Bindings.Add(this.SetBinding(() => ViewModel.Target.IsSelected, () => CheckBoxButton.Selected, BindingMode.TwoWay));
-            Bindings.Add(this.SetBinding(() => ViewModel.Target.IsSelectable, () => CheckBoxButton.Hidden)
+            Bindings.Add(this.SetBinding(() => ViewModel.Target.IsActive).WhenSourceChanges(() =>
+            {
+                var isActive = ViewModel.Target.IsActive;
+
+                InactiveContactOverlay.Hidden = isActive;
+                CheckBoxButton.Hidden = !isActive;
+                UserInteractionEnabled = isActive;
+            }));
+            Bindings.Add(this.SetBinding(() => ViewModel.Target.IsOnline, () => OnlineIndicatorView.Hidden)
                 .ConvertSourceToTarget(x => !x));
         }
     }
