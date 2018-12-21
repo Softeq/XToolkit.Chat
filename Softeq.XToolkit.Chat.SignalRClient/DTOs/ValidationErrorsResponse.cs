@@ -1,6 +1,6 @@
 ﻿namespace Softeq.XToolkit.Chat.SignalRClient.DTOs
 {
-    public class ValidationErrorsResponse
+    internal class ValidationErrorsResponse
     {
         public string PropertyName { get; set; }
 
