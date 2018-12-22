@@ -308,9 +308,10 @@ namespace Softeq.XToolkit.Chat.SignalRClient
             {
                 _logger.Error(ex);
             }
-            catch (ChatValidationException)
+            catch (ChatValidationException ex)
             {
-                throw;
+                //TODO YP: need an approach how to handle this exception for user
+                _logger.Error(ex);
             }
             catch (Exception ex)
             {

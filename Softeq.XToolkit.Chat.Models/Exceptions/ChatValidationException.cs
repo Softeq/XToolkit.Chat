@@ -5,7 +5,7 @@ namespace Softeq.XToolkit.Chat.Models.Exceptions
     public class ChatValidationException : ChatException
     {
         public ChatValidationException(IEnumerable<string> errors)
-            : base("Chat validation exception")
+            : base(string.Concat("Chat Validation Exception: ", string.Join("\n", errors)))
         {
             Errors = new List<string>(errors);
         }
