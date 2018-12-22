@@ -56,6 +56,10 @@ namespace Softeq.XToolkit.Chat
         public async Task<ChatSummaryModel> CreateChatAsync(string chatName, IList<string> participantsIds, string imagePath)
         {
             var result = await _socketChatAdapter.CreateChatAsync(chatName, participantsIds, imagePath);
+            if (result == null)
+            {
+                return null;
+            }
             var userId = await GetUserIdAsync().ConfigureAwait(false);
             result.UpdateIsCreatedByMeStatus(userId);
             return result;
@@ -83,10 +87,10 @@ namespace Softeq.XToolkit.Chat
             {
                 return null;
             }
-            
+
             var userId = await GetUserIdAsync().ConfigureAwait(false);
             models.Apply(x => x.UpdateIsCreatedByMeStatus(userId));
-                    
+
             return models.ToList();
         }
 

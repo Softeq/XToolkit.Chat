@@ -123,22 +123,19 @@ namespace Softeq.XToolkit.Chat.ViewModels
 
             IsBusy = true;
 
-            var imageInfo = getImageFunc();
-            var imagePath = default(string);
-
-            using (var image = await imageInfo.GetImageTask.ConfigureAwait(false))
-            {
-                if (image != null)
-                {
-                    imagePath = await _uploadImageService.UploadImageAsync(image, imageInfo.Extension)
-                        .ConfigureAwait(false);
-                }
-            }
+            var imagePath = await UploadChatAvatarAsync(getImageFunc);
 
             try
             {
                 var selectedContactsIds = Contacts.Where(x => x.IsSelected).Select(x => x.Id).ToList();
-                await _chatsListManager.CreateChatAsync(ChatName, selectedContactsIds, imagePath).ConfigureAwait(false);
+                var isChatCreated = await _chatsListManager.CreateChatAsync(ChatName, selectedContactsIds, imagePath).ConfigureAwait(false);
+
+                if (!isChatCreated)
+                {
+                    await _dialogsService.ShowDialogAsync(_localizedStrings.ValidationErrorsDialogTitle,
+                        string.Empty, _localizedStrings.Ok);
+                    return;
+                }
 
                 Execute.BeginOnUIThread(() =>
                 {
@@ -146,13 +143,6 @@ namespace Softeq.XToolkit.Chat.ViewModels
 
                     _pageNavigationService.GoBack();
                 });
-            }
-            catch (ChatValidationException ex)
-            {
-                await _dialogsService.ShowDialogAsync(
-                    _localizedStrings.ValidationErrorsDialogTitle,
-                    string.Join("\n", ex.Errors),
-                    _localizedStrings.Ok);
             }
             catch (Exception ex)
             {
@@ -162,6 +152,23 @@ namespace Softeq.XToolkit.Chat.ViewModels
             {
                 IsBusy = false;
             }
+        }
+
+        private async Task<string> UploadChatAvatarAsync(Func<(Task<Stream> GetImageTask, string Extension)> getImageFunc)
+        {
+            var (GetImageTask, Extension) = getImageFunc();
+            var imagePath = default(string);
+
+            using (var image = await GetImageTask.ConfigureAwait(false))
+            {
+                if (image != null)
+                {
+                    imagePath = await _uploadImageService.UploadImageAsync(image, Extension)
+                        .ConfigureAwait(false);
+                }
+            }
+
+            return imagePath;
         }
     }
 }

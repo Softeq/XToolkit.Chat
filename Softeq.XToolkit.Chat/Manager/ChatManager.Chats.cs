@@ -66,13 +66,15 @@ namespace Softeq.XToolkit.Chat.Manager
             UpdateChatsListFromNetworkAsync().SafeTaskWrapper();
         }
 
-        public async Task CreateChatAsync(string chatName, IList<string> participantsIds, string imagePath)
+        public async Task<bool> CreateChatAsync(string chatName, IList<string> participantsIds, string imagePath)
         {
             var chatModel = await _chatService.CreateChatAsync(chatName, participantsIds, imagePath).ConfigureAwait(false);
             if (chatModel != null)
             {
                 TryAddChat(chatModel);
+                return true;
             }
+            return false;
         }
 
         public Task CloseChatAsync(string chatId)
