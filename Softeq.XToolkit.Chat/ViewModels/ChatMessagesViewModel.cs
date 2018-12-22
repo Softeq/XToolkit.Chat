@@ -19,8 +19,6 @@ using Softeq.XToolkit.WhiteLabel.Navigation;
 using Softeq.XToolkit.Chat.Models.Interfaces;
 using System.IO;
 using Softeq.XToolkit.WhiteLabel.Threading;
-using Softeq.XToolkit.Chat.Models.Exceptions;
-using Softeq.XToolkit.Common.Interfaces;
 
 namespace Softeq.XToolkit.Chat.ViewModels
 {
@@ -34,7 +32,6 @@ namespace Softeq.XToolkit.Chat.ViewModels
         private readonly IChatLocalizedStrings _localizedStrings;
         private readonly IFormatService _formatService;
         private readonly IList<IDisposable> _subscriptions = new List<IDisposable>();
-        private readonly ILogger _logger;
 
         private ChatSummaryViewModel _chatSummaryViewModel;
         private ChatMessageViewModel _messageBeingEdited;
@@ -47,7 +44,6 @@ namespace Softeq.XToolkit.Chat.ViewModels
             IPageNavigationService pageNavigationService,
             IChatLocalizedStrings localizedStrings,
             IFormatService formatService,
-            ILogManager logManager,
             ChatManager chatManager,
             ConnectionStatusViewModel connectionStatusViewModel)
         {
@@ -55,7 +51,6 @@ namespace Softeq.XToolkit.Chat.ViewModels
             _localizedStrings = localizedStrings;
             _formatService = formatService;
             _chatManager = chatManager;
-            _logger = logManager.GetLogger<ChatMessagesViewModel>();
 
             ConnectionStatusViewModel = connectionStatusViewModel;
 
@@ -286,25 +281,18 @@ namespace Softeq.XToolkit.Chat.ViewModels
 
             MessageToSendBody = string.Empty;
 
-            try
+            if (IsInEditMessageMode)
             {
-                if (IsInEditMessageMode)
-                {
-                    IsInEditMessageMode = false;
+                IsInEditMessageMode = false;
 
-                    await _chatManager.EditMessageAsync(_messageBeingEdited.Id, newMessageBody).ConfigureAwait(false);
+                await _chatManager.EditMessageAsync(_messageBeingEdited.Id, newMessageBody).ConfigureAwait(false);
 
-                    CancelEditingMessageMode();
-                }
-                else
-                {
-                    await _chatManager.SendMessageAsync(_chatSummaryViewModel.ChatId, newMessageBody, photoSelector)
-                                      .ConfigureAwait(false);
-                }
+                CancelEditingMessageMode();
             }
-            catch (ChatValidationException ex)
+            else
             {
-                _logger.Error(ex);
+                await _chatManager.SendMessageAsync(_chatSummaryViewModel.ChatId, newMessageBody, photoSelector)
+                                  .ConfigureAwait(false);
             }
         }
 
