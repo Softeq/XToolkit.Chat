@@ -15,8 +15,6 @@ using Softeq.XToolkit.Chat.ViewModels;
 using Softeq.XToolkit.Common;
 using Softeq.XToolkit.Common.Command;
 using Softeq.XToolkit.Common.Extensions;
-using Softeq.XToolkit.WhiteLabel;
-using Softeq.XToolkit.WhiteLabel.Interfaces;
 using Softeq.XToolkit.WhiteLabel.iOS;
 using Softeq.XToolkit.WhiteLabel.iOS.Extensions;
 using Softeq.XToolkit.WhiteLabel.Threading;
@@ -261,7 +259,7 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
         {
             TableViewScrollChanged(scrollPosition);
         }
-       
+
         private void TableViewScrollChanged(nfloat scrollViewOffsetY)
         {
             var isAutoScrollAvailable = scrollViewOffsetY < TableNode.View.Frame.Height;
@@ -301,6 +299,11 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
 
         private void UpdateScrollDownButtonPosition()
         {
+            if (InputBar.Superview == null || View.Superview == null)
+            {
+                return;
+            }
+
             var newScrollDownBottomOffset = View.Superview.Frame.Height - InputBar.Superview.Frame.Y;
             if (newScrollDownBottomOffset < InputBarHeight)
             {
