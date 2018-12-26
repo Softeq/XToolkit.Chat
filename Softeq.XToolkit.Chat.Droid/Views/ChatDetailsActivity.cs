@@ -19,9 +19,9 @@ using Softeq.XToolkit.Chat.Droid.LayoutManagers;
 using Softeq.XToolkit.Chat.Droid.ViewHolders;
 using Softeq.XToolkit.Chat.ViewModels;
 using Softeq.XToolkit.Common.Droid.Extensions;
-using Softeq.XToolkit.Common.Command;
 using Softeq.XToolkit.Permissions;
 using Softeq.XToolkit.WhiteLabel;
+using Softeq.XToolkit.WhiteLabel.Commands;
 using Softeq.XToolkit.WhiteLabel.Droid;
 using Softeq.XToolkit.WhiteLabel.Droid.Controls;
 using Softeq.XToolkit.WhiteLabel.Droid.Extensions;
@@ -185,9 +185,9 @@ namespace Softeq.XToolkit.Chat.Droid.Views
             _imagePicker.OpenGallery();
         }
 
-        private async void OnSaveClick()
+        private void OnSaveClick()
         {
-            await ViewModel.SaveAsync(_imagePicker.GetStreamFunc()).ConfigureAwait(false);
+            ViewModel.SaveCommand.Execute(_imagePicker.GetStreamFunc());
             Execute.BeginOnUIThread(() =>
             {
                 _previewImageKey = null;

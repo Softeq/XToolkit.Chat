@@ -6,8 +6,8 @@ using System.Windows.Input;
 using Softeq.XToolkit.Chat.Interfaces;
 using Softeq.XToolkit.Chat.Models.Interfaces;
 using Softeq.XToolkit.Common.Collections;
-using Softeq.XToolkit.Common.Command;
 using Softeq.XToolkit.Common.Extensions;
+using Softeq.XToolkit.WhiteLabel.Commands;
 using Softeq.XToolkit.WhiteLabel.Mvvm;
 using Softeq.XToolkit.WhiteLabel.Navigation;
 
@@ -33,8 +33,8 @@ namespace Softeq.XToolkit.Chat.ViewModels
             Chats = _chatsListManager.ChatsCollection;
 
             CreateChatCommand = new RelayCommand(CreateChat);
-            LeaveChatCommand = new RelayCommand<ChatSummaryViewModel>(x => LeaveChatAsync(x).SafeTaskWrapper());
-            DeleteChatCommand = new RelayCommand<ChatSummaryViewModel>(x => DeleteChatAsync(x).SafeTaskWrapper());
+            LeaveChatCommand = new AsyncCommand<ChatSummaryViewModel>(LeaveChatAsync);
+            DeleteChatCommand = new AsyncCommand<ChatSummaryViewModel>(DeleteChatAsync);
         }
 
         public ICommand CreateChatCommand { get; }

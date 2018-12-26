@@ -11,12 +11,12 @@ using Softeq.XToolkit.Chat.Models;
 using Softeq.XToolkit.Chat.Models.Enum;
 using Softeq.XToolkit.Chat.Models.Interfaces;
 using Softeq.XToolkit.Common.Collections;
-using Softeq.XToolkit.Common.Command;
 using Softeq.XToolkit.WhiteLabel.Mvvm;
 using Softeq.XToolkit.WhiteLabel.Navigation;
 using Softeq.XToolkit.Chat.Strategies.Search;
 using Softeq.XToolkit.Common.Extensions;
 using Softeq.XToolkit.WhiteLabel;
+using Softeq.XToolkit.WhiteLabel.Commands;
 using Softeq.XToolkit.WhiteLabel.Model;
 using Softeq.XToolkit.WhiteLabel.Threading;
 
@@ -48,9 +48,11 @@ namespace Softeq.XToolkit.Chat.ViewModels
             _dialogsService = dialogsService;
             _chatService = chatService;
 
-            AddMembersCommand = new RelayCommand(AddMembers);
+            AddMembersCommand = new AsyncCommand(AddMembers);
             BackCommand = new RelayCommand(_pageNavigationService.GoBack, () => _pageNavigationService.CanGoBack);
             RemoveMemberAtCommand = new RelayCommand<int>(RemoveMemberAt);
+            //TODO:YS very strange parameter, possibly need to refactor
+            SaveCommand = new AsyncCommand<Func<(Task<Stream> GetImageTask, string Extension)>>(SaveAsync);
         }
 
         public ChatSummaryModel Summary { get; set; }
@@ -62,6 +64,8 @@ namespace Softeq.XToolkit.Chat.ViewModels
         public string MembersCountText => _formatService.PluralizeWithQuantity(Members.Count,
             LocalizedStrings.MembersPlural, LocalizedStrings.MemberSingular);
 
+
+        public ICommand SaveCommand { get; }
         public ICommand AddMembersCommand { get; }
 
         public ICommand BackCommand { get; }
@@ -97,7 +101,7 @@ namespace Softeq.XToolkit.Chat.ViewModels
             RaisePropertyChanged(nameof(MembersCountText));
         }
 
-        public async Task SaveAsync(Func<(Task<Stream> GetImageTask, string Extension)> getImageFunc)
+        private async Task SaveAsync(Func<(Task<Stream> GetImageTask, string Extension)> getImageFunc)
         {
             if (IsBusy)
             {
@@ -126,13 +130,10 @@ namespace Softeq.XToolkit.Chat.ViewModels
                 await _chatsListManager.EditChatAsync(Summary).ConfigureAwait(false);
             }
 
-            Execute.BeginOnUIThread(() =>
-            {
-                IsBusy = false;
-            });
+            Execute.BeginOnUIThread(() => { IsBusy = false; });
         }
 
-        private async void AddMembers()
+        private async Task AddMembers()
         {
             var result = await _dialogsService.ShowForViewModel<AddContactsViewModel, AddContactParameters>(
                 new AddContactParameters

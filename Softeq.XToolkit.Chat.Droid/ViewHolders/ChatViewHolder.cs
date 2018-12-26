@@ -13,8 +13,8 @@ using Softeq.XToolkit.Bindings;
 using Softeq.XToolkit.Chat.Models;
 using Softeq.XToolkit.Chat.ViewModels;
 using Softeq.XToolkit.Common;
-using Softeq.XToolkit.Common.Command;
 using Softeq.XToolkit.Common.Droid.Converters;
+using Softeq.XToolkit.WhiteLabel.Commands;
 using Softeq.XToolkit.WhiteLabel.Droid.Controls;
 using Softeq.XToolkit.WhiteLabel.Droid.Extensions;
 

@@ -10,7 +10,6 @@ using System.Windows.Input;
 using Softeq.XToolkit.Chat.Manager;
 using Softeq.XToolkit.Chat.Models;
 using Softeq.XToolkit.Common.Collections;
-using Softeq.XToolkit.Common.Command;
 using Softeq.XToolkit.Common.EventArguments;
 using Softeq.XToolkit.Common.Extensions;
 using Softeq.XToolkit.WhiteLabel.Interfaces;
@@ -18,6 +17,7 @@ using Softeq.XToolkit.WhiteLabel.Mvvm;
 using Softeq.XToolkit.WhiteLabel.Navigation;
 using Softeq.XToolkit.Chat.Models.Interfaces;
 using System.IO;
+using Softeq.XToolkit.WhiteLabel.Commands;
 using Softeq.XToolkit.WhiteLabel.Threading;
 
 namespace Softeq.XToolkit.Chat.ViewModels

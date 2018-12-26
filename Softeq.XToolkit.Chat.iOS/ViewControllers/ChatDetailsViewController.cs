@@ -15,7 +15,7 @@ using Softeq.XToolkit.WhiteLabel.iOS.Extensions;
 using Softeq.XToolkit.WhiteLabel.iOS.ImagePicker;
 using Softeq.XToolkit.WhiteLabel;
 using Softeq.XToolkit.Permissions;
-using Softeq.XToolkit.Common.Command;
+using Softeq.XToolkit.WhiteLabel.Commands;
 using Softeq.XToolkit.WhiteLabel.Threading;
 
 namespace Softeq.XToolkit.Chat.iOS.ViewControllers
@@ -105,9 +105,9 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
             _simpleImagePicker.OpenGalleryAsync();
         }
 
-        private async void SaveAsync()
+        private void SaveAsync()
         {
-            await ViewModel.SaveAsync(_simpleImagePicker.StreamFunc).ConfigureAwait(false);
+            ViewModel.SaveCommand.Execute(_simpleImagePicker.StreamFunc);
             Execute.BeginOnUIThread(() =>
             {
                 CustomNavigationItem.SetRightBarButtonItem(null, true);

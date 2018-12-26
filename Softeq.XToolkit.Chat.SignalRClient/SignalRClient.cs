@@ -167,6 +167,7 @@ namespace Softeq.XToolkit.Chat.SignalRClient
 
         public async Task SendAndHandleExceptionsAsync(string methodName, BaseRequest request)
         {
+            //TODO:YS in viewmodel that use this method(LeaveChannelAsync) I see exception handling(try/catch), better log exception here 
             var tcs = new TaskCompletionSource<bool>();
             var requestId = Guid.NewGuid().ToString();
             IDisposable exceptionSubscription = null;
