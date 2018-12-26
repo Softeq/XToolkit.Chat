@@ -6,8 +6,8 @@ using System.Windows.Input;
 using Softeq.XToolkit.Chat.Interfaces;
 using Softeq.XToolkit.Chat.Models.Interfaces;
 using Softeq.XToolkit.Common.Collections;
+using Softeq.XToolkit.Common.Command;
 using Softeq.XToolkit.Common.Extensions;
-using Softeq.XToolkit.WhiteLabel.Commands;
 using Softeq.XToolkit.WhiteLabel.Mvvm;
 using Softeq.XToolkit.WhiteLabel.Navigation;
 

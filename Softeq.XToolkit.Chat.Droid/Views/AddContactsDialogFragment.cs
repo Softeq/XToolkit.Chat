@@ -13,7 +13,7 @@ using Softeq.XToolkit.WhiteLabel.Droid.Controls;
 using Softeq.XToolkit.WhiteLabel.Droid.Dialogs;
 using Softeq.XToolkit.Chat.Droid.Listeners;
 using Softeq.XToolkit.Common;
-using Softeq.XToolkit.WhiteLabel.Commands;
+using Softeq.XToolkit.Common.Command;
 
 namespace Softeq.XToolkit.Chat.Droid.Views
 {

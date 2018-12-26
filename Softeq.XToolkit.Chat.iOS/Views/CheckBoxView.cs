@@ -7,7 +7,7 @@ using System.Runtime.CompilerServices;
 using CoreGraphics;
 using Foundation;
 using Softeq.XToolkit.Bindings;
-using Softeq.XToolkit.WhiteLabel.Commands;
+using Softeq.XToolkit.Common.Command;
 using UIKit;
 
 namespace Softeq.XToolkit.Chat.iOS.Views

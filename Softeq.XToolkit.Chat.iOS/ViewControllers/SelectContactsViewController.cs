@@ -9,11 +9,11 @@ using Softeq.XToolkit.Bindings.iOS;
 using Softeq.XToolkit.Bindings;
 using Softeq.XToolkit.Chat.iOS.Views;
 using Softeq.XToolkit.Chat.ViewModels;
+using Softeq.XToolkit.Common.Command;
 using Softeq.XToolkit.WhiteLabel.iOS.Extensions;
 using Softeq.XToolkit.WhiteLabel.iOS.ImagePicker;
 using Softeq.XToolkit.WhiteLabel;
 using Softeq.XToolkit.Permissions;
-using Softeq.XToolkit.WhiteLabel.Commands;
 
 namespace Softeq.XToolkit.Chat.iOS.ViewControllers
 {

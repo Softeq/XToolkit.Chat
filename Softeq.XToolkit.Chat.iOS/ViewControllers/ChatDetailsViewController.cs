@@ -11,11 +11,11 @@ using Softeq.XToolkit.Bindings;
 using Softeq.XToolkit.Common;
 using Softeq.XToolkit.Bindings.iOS;
 using Softeq.XToolkit.Chat.ViewModels;
+using Softeq.XToolkit.Common.Command;
 using Softeq.XToolkit.WhiteLabel.iOS.Extensions;
 using Softeq.XToolkit.WhiteLabel.iOS.ImagePicker;
 using Softeq.XToolkit.WhiteLabel;
 using Softeq.XToolkit.Permissions;
-using Softeq.XToolkit.WhiteLabel.Commands;
 using Softeq.XToolkit.WhiteLabel.Threading;
 
 namespace Softeq.XToolkit.Chat.iOS.ViewControllers
