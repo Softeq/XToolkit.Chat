@@ -54,14 +54,14 @@ namespace Softeq.XToolkit.Chat.ViewModels
             _memberSelectedCommand = new RelayCommand(() => RaisePropertyChanged(nameof(ContactsCountText)));
 
             BackCommand = new RelayCommand(_pageNavigationService.GoBack, () => _pageNavigationService.CanGoBack);
-            AddMembersCommand = new RelayCommand(OpenDialogForAddMembers);
+            AddMembersCommand = new AsyncCommand(OpenDialogForAddMembersAsync);
         }
 
         public ICommand BackCommand { get; }
 
         public ICommand AddMembersCommand { get; }
 
-        public RelayCommand<Func<(Task<Stream>, string)>> SaveCommand { get; private set; }
+        public ICommand SaveCommand { get; private set; }
 
         public string Title => _localizedStrings.CreateGroup;
 
@@ -86,10 +86,10 @@ namespace Softeq.XToolkit.Chat.ViewModels
         {
             base.OnInitialize();
 
-            SaveCommand = new RelayCommand<Func<(Task<Stream>, string)>>(SaveAsync);
+            SaveCommand = new AsyncCommand<Func<(Task<Stream>, string)>>(SaveAsync);
         }
 
-        private async void OpenDialogForAddMembers()
+        private async Task OpenDialogForAddMembersAsync()
         {
             Contacts.Clear();
 
@@ -115,7 +115,7 @@ namespace Softeq.XToolkit.Chat.ViewModels
             }
         }
 
-        private async void SaveAsync(Func<(Task<Stream> GetImageTask, string Extension)> getImageFunc)
+        private async Task SaveAsync(Func<(Task<Stream> GetImageTask, string Extension)> getImageFunc)
         {
             if (IsBusy || string.IsNullOrEmpty(ChatName))
             {

@@ -18,7 +18,9 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
         private const float DefaultSelectedMembersCollectionTopConstraint = 20;
         private const float DefaultFoundMembersCellHeight = 50;
 
-        public AddContactsViewController(IntPtr handle) : base(handle) { }
+        public AddContactsViewController(IntPtr handle) : base(handle)
+        {
+        }
 
         public override void ViewDidLoad()
         {
@@ -49,6 +51,7 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
                     SelectedMembersCollectionViewTopConstraint.Constant = ViewModel.HasSelectedContacts
                         ? DefaultSelectedMembersCollectionTopConstraint + SelectedMembersCollectionView.Frame.Height
                         : DefaultSelectedMembersCollectionTopConstraint;
+
                     SelectedMembersCollectionView.LayoutIfNeeded();
                 });
             }));
@@ -75,10 +78,7 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
         private void InitSearchBar()
         {
             TableViewSearchBar.Placeholder = ViewModel.Resources.Search;
-            TableViewSearchBar.TextChanged += (sender, e) =>
-            {
-                ViewModel.ContactNameSearchQuery = e.SearchText;
-            };
+            TableViewSearchBar.TextChanged += (sender, e) => { ViewModel.ContactNameSearchQuery = e.SearchText; };
         }
 
         private void InitSearchMembersTableView()
@@ -116,10 +116,7 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
             var source = new ObservableCollectionViewSource<ChatUserViewModel, SelectedMemberViewCell>
             {
                 DataSource = ViewModel.SelectedContacts,
-                BindCellDelegate = (cell, viewModel, index) =>
-                {
-                    cell.BindCell(viewModel);
-                },
+                BindCellDelegate = (cell, viewModel, index) => { cell.BindCell(viewModel); },
                 ReuseId = SelectedMemberViewCell.Key
             };
 
