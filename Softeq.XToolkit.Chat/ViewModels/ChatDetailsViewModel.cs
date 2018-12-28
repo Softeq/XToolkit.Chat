@@ -67,15 +67,11 @@ namespace Softeq.XToolkit.Chat.ViewModels
         public ICommand BackCommand { get; }
         public RelayCommand<int> RemoveMemberAtCommand { get; }
 
-        public override async void OnAppearing()
+        public override void OnAppearing()
         {
             base.OnAppearing();
 
-            Members.Clear();
-
-            var members = await _chatsListManager.GetChatMembersAsync(Summary.Id);
-            Members.AddRange(members);
-            RaisePropertyChanged(nameof(MembersCountText));
+            LoadDataAsync().SafeTaskWrapper();
         }
 
         public bool IsMemberRemovable(int memberPosition)
@@ -86,6 +82,16 @@ namespace Softeq.XToolkit.Chat.ViewModels
             }
 
             return false;
+        }
+
+        private async Task LoadDataAsync()
+        {
+            var members = await _chatsListManager.GetChatMembersAsync(Summary.Id).ConfigureAwait(false);
+            Execute.BeginOnUIThread(() =>
+            {
+                Members.ReplaceRange(members.EmptyIfNull());
+                RaisePropertyChanged(nameof(MembersCountText));
+            });
         }
 
         private void RemoveMemberAt(int index)
