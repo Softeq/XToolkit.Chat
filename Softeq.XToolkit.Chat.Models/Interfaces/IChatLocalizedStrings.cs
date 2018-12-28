@@ -35,5 +35,6 @@ namespace Softeq.XToolkit.Chat.Models.Interfaces
         string ValidationErrorsDialogTitle { get; }
         string ChatName { get; }
         string ChangePhoto { get; }
+        string EditMessage { get; }
     }
 }

@@ -109,6 +109,9 @@ namespace Softeq.XToolkit.Chat.Droid.Views
             _removeImageButton.SetImageResource(StyleHelper.Style.RemoveImageButtonIcon);
             _removeImageButton.SetCommand(new RelayCommand(RemoveAttachment));
             _editImageContainer.Visibility = ViewStates.Gone;
+
+            var editingMessageHeader = FindViewById<TextView>(Resource.Id.tv_conversations_editing_message_header);
+            editingMessageHeader.Text = ViewModel.EditMessageLabelText;
         }
 
         protected override void OnPause()
