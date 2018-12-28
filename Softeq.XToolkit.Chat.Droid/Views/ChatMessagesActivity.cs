@@ -70,7 +70,10 @@ namespace Softeq.XToolkit.Chat.Droid.Views
             _navigationBarView.SetRightButton(StyleHelper.Style.NavigationBarDetailsButtonIcon, ViewModel.ShowInfoCommand);
 
             _conversationsRecyclerView = FindViewById<RecyclerView>(Resource.Id.rv_conversations_list);
+
             _messageEditText = FindViewById<EditText>(Resource.Id.et_conversations_message);
+            _messageEditText.Hint = ViewModel.MessagePlaceholderText;
+
             _editingMessageLayout = FindViewById<RelativeLayout>(Resource.Id.rl_conversations_editing_message);
             _editingMessageBodyTextView = FindViewById<TextView>(Resource.Id.tv_editing_message_body);
             _editingMessageCloseButton = FindViewById<ImageButton>(Resource.Id.ib_conversations_editing_message_close);
@@ -109,6 +112,9 @@ namespace Softeq.XToolkit.Chat.Droid.Views
             _removeImageButton.SetImageResource(StyleHelper.Style.RemoveImageButtonIcon);
             _removeImageButton.SetCommand(new RelayCommand(RemoveAttachment));
             _editImageContainer.Visibility = ViewStates.Gone;
+
+            var editingMessageHeader = FindViewById<TextView>(Resource.Id.tv_conversations_editing_message_header);
+            editingMessageHeader.Text = ViewModel.EditMessageLabelText;
         }
 
         protected override void OnPause()

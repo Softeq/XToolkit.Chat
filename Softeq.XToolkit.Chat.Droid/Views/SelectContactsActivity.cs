@@ -16,7 +16,6 @@ using Softeq.XToolkit.Chat.Droid.LayoutManagers;
 using Softeq.XToolkit.Chat.Droid.ViewHolders;
 using Softeq.XToolkit.Chat.ViewModels;
 using Softeq.XToolkit.Common.Command;
-using Softeq.XToolkit.Permissions;
 using Softeq.XToolkit.WhiteLabel;
 using Softeq.XToolkit.WhiteLabel.Droid;
 using Softeq.XToolkit.WhiteLabel.Droid.Controls;
@@ -69,6 +68,7 @@ namespace Softeq.XToolkit.Chat.Droid.Views
             _membersCountTextView = FindViewById<TextView>(Resource.Id.tv_members_count);
             _changeChatPhotoButton = FindViewById<Button>(Resource.Id.b_chat_change_photo);
             _changeChatPhotoButton.SetCommand(new RelayCommand(ChangePhoto));
+            _changeChatPhotoButton.Text = ViewModel.ChangePhotoText;
 
             InitializeContactsRecyclerView();
 
@@ -79,11 +79,14 @@ namespace Softeq.XToolkit.Chat.Droid.Views
 
             _chatPhotoImageView.SetImageResource(StyleHelper.Style.ChatGroupNoAvatarIcon);
             _chatEditedPhotoImageView.Visibility = ViewStates.Gone;
+
             _addMembers = FindViewById<Button>(Resource.Id.activity_chat_create_add_member);
             _addMembers.Text = ViewModel.AddMembersText;
             _addMembers.SetCommand(ViewModel.AddMembersCommand);
 
             _chatHeaderLayout.Visibility = ViewStates.Visible;
+
+            _chatNameEditTextView.Hint = ViewModel.ChatNamePlaceholderText;
         }
 
         protected override void DoAttachBindings()

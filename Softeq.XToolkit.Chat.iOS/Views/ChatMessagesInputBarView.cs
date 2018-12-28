@@ -135,6 +135,12 @@ namespace Softeq.XToolkit.Chat.iOS.Views
             InputTextViewPlaceholder.Hidden = !isVisible;
         }
 
+        public void SetLabels(string editMessageLabel, string inputPlaceholder)
+        {
+            EditMessageHeaderLabel.Text = editMessageLabel;
+            InputTextViewPlaceholder.Text = inputPlaceholder;
+        }
+
         protected override void Initialize()
         {
             base.Initialize();

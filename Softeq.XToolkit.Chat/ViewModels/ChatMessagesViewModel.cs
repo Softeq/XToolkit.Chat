@@ -94,6 +94,9 @@ namespace Softeq.XToolkit.Chat.ViewModels
             private set => Set(ref _isInEditMessageMode, value);
         }
 
+        public string EditMessageLabelText => _localizedStrings.EditMessage;
+        public string MessagePlaceholderText => _localizedStrings.YourMessage;
+
         public ICommand BackCommand { get; }
         public RelayCommand<GenericEventArgs<Func<(Task<Stream>, string)>>> SendCommand { get; }
         public ICommand CancelEditingMessageModeCommand { get; }

@@ -97,7 +97,6 @@
                     android:layout_marginLeft="8dp"
                     android:layout_toLeftOf="@+id/ib_conversations_editing_message_close"
                     android:layout_toRightOf="@+id/v_conversations_editing_indicator"
-                    android:text="Edit Message"
                     android:textColor="@color/chat_brand_color"
                     android:textSize="15sp" />
 
@@ -145,7 +144,6 @@
                 android:layout_marginRight="16dp"
                 android:layout_weight="1"
                 android:background="@android:color/transparent"
-                android:hint="Enter message"
                 android:maxLines="6" />
             <ImageButton
                 android:id="@+id/ib_conversations_take_attachment"
