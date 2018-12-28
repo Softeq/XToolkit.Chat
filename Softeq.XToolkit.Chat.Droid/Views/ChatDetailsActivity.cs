@@ -65,15 +65,18 @@ namespace Softeq.XToolkit.Chat.Droid.Views
 
             _chatNameTextView = FindViewById<TextView>(Resource.Id.tv_chat_name);
             _chatMembersCountTextView = FindViewById<TextView>(Resource.Id.tv_members_count);
+
             _addMemberButton = FindViewById<Button>(Resource.Id.b_chat_add_member);
+            _addMemberButton.SetCommand(ViewModel.AddMembersCommand);
+            _addMemberButton.Text = ViewModel.LocalizedStrings.AddMembers;
+
             _membersRecyclerView = FindViewById<RecyclerView>(Resource.Id.rv_contacts_list);
 
             _changeChatPhotoButton = FindViewById<Button>(Resource.Id.b_chat_change_photo);
             _changeChatPhotoButton.SetCommand(new RelayCommand(OpenImagePicker));
+            _changeChatPhotoButton.Text = ViewModel.LocalizedStrings.ChangePhoto;
 
             InitializeMembersRecyclerView();
-
-            _addMemberButton.SetCommand(ViewModel.AddMembersCommand);
 
             // TODO YP: remove ServiceLocator
             _imagePicker = new ImagePicker(

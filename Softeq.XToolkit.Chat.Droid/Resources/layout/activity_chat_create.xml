@@ -36,7 +36,6 @@
             android:layout_toRightOf="@+id/iv_chat_photo"
             android:maxLines="1"
             android:inputType="text"
-            android:hint="Group Name"
             android:textSize="20sp" />
 
         <Button
@@ -48,7 +47,6 @@
             android:paddingLeft="8dp"
             android:paddingRight="8dp"
             android:background="?attr/selectableItemBackground"
-            android:text="Change group photo"
             android:textColor="@color/chat_brand_color" />
 
         <LinearLayout

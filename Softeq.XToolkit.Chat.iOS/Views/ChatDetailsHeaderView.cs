@@ -38,13 +38,15 @@ namespace Softeq.XToolkit.Chat.iOS.Views
         //    set => AddMembersButton.Hidden = value;
         //}
 
-        public void SetAddMembersCommand(ICommand command)
+        public void SetAddMembersCommand(ICommand command, string label)
         {
+            AddMembersButton.SetTitle(label, UIControlState.Normal);
             AddMembersButton.SetCommand(command);
         }
 
-        public void SetChangeChatPhotoCommand(ICommand command)
+        public void SetChangeChatPhotoCommand(ICommand command, string label)
         {
+            ChangeChatPhotoButton.SetTitle(label, UIControlState.Normal);
             ChangeChatPhotoButton.SetCommand(command);
         }
 
@@ -72,6 +74,11 @@ namespace Softeq.XToolkit.Chat.iOS.Views
                         .IntoAsync(EditedChatAvatarImageView);
                 }
             });
+        }
+
+        public void SetPlaceholder(string value)
+        {
+            ChatNameTextField.Placeholder = value;
         }
 
         protected override void Initialize()

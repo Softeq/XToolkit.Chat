@@ -83,6 +83,10 @@ namespace Softeq.XToolkit.Chat.ViewModels
 
         public string AddMembersText => _localizedStrings.AddMembers;
 
+        public string ChatNamePlaceholderText => _localizedStrings.ChatName;
+
+        public string ChangePhotoText => _localizedStrings.ChangePhoto;
+
         public override void OnInitialize()
         {
             base.OnInitialize();
