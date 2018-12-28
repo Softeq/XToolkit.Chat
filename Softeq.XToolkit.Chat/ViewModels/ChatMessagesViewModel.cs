@@ -95,6 +95,7 @@ namespace Softeq.XToolkit.Chat.ViewModels
         }
 
         public string EditMessageLabelText => _localizedStrings.EditMessage;
+        public string MessagePlaceholderText => _localizedStrings.YourMessage;
 
         public ICommand BackCommand { get; }
         public RelayCommand<GenericEventArgs<Func<(Task<Stream>, string)>>> SendCommand { get; }

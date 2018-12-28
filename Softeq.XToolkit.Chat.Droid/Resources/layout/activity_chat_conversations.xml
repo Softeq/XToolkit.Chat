@@ -144,7 +144,6 @@
                 android:layout_marginRight="16dp"
                 android:layout_weight="1"
                 android:background="@android:color/transparent"
-                android:hint="Enter message"
                 android:maxLines="6" />
             <ImageButton
                 android:id="@+id/ib_conversations_take_attachment"

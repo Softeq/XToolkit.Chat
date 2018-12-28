@@ -75,7 +75,7 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
             InputBar.SetCommand(nameof(InputBar.PickerWillOpen), new RelayCommand(UnregisterKeyboardObservers));
             InputBar.EditingClose.SetCommand(ViewModel.CancelEditingMessageModeCommand);
             InputBar.EditingClose.SetImage(UIImage.FromBundle(StyleHelper.Style.CloseButtonImageBoundleName), UIControlState.Normal);
-            InputBar.SetEditLabel(ViewModel.EditMessageLabelText);
+            InputBar.SetLabels(ViewModel.EditMessageLabelText, ViewModel.MessagePlaceholderText);
 
             ScrollToBottomButton.SetCommand(new RelayCommand(() => ScrollToBottom(true)));
             ScrollToBottomButton.SetBackgroundImage(UIImage.FromBundle(StyleHelper.Style.ScrollDownBoundleName), UIControlState.Normal);
