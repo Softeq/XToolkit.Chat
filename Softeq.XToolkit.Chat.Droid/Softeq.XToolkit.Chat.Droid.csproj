@@ -71,7 +71,7 @@
     <Compile Include="Views\ChatsListFragment.cs" />
     <Compile Include="Views\ChatDetailsActivity.cs" />
     <Compile Include="Views\ChatMessagesActivity.cs" />
-    <Compile Include="Views\SelectContactsActivity.cs" />
+    <Compile Include="Views\CreateChatActivity.cs" />
     <Compile Include="BootstrapperDroid.cs" />
     <Compile Include="Resources\Resource.designer.cs" />
     <Compile Include="ViewHolders\ChatUserViewHolder.cs" />

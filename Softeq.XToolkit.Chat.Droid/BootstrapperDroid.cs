@@ -15,7 +15,7 @@ namespace Softeq.XToolkit.Chat.Droid
             containerBuilder.RegisterType<ChatsListViewModel>().InstancePerDependency();
             containerBuilder.RegisterType<ChatMessagesViewModel>().InstancePerDependency();
             containerBuilder.RegisterType<ChatDetailsViewModel>().InstancePerDependency();
-            containerBuilder.RegisterType<SelectContactsViewModel>().InstancePerDependency();
+            containerBuilder.RegisterType<CreateChatViewModel>().InstancePerDependency();
         }
     }
 }
