@@ -141,5 +141,17 @@ namespace Softeq.XToolkit.Chat.HttpClient
                 ? null
                 : Mapper.PagedMembersDtoToPagingModel(result);
         }
+
+        public Task MuteChatAsync(string chatId)
+        {
+            var request = new PostMuteChatRequest(_chatConfig.ApiUrl, chatId);
+            return _httpClient.TrySendAsync(request, _logger);
+        }
+
+        public Task UnMuteChatAsync(string chatId)
+        {
+            var request = new PostUnMuteChatRequest(_chatConfig.ApiUrl, chatId);
+            return _httpClient.TrySendAsync(request, _logger);
+        }
     }
 }

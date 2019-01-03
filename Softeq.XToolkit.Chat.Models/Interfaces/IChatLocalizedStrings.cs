@@ -37,5 +37,6 @@ namespace Softeq.XToolkit.Chat.Models.Interfaces
         string ChangePhoto { get; }
         string EditMessage { get; }
         string YourMessage { get; }
+        string Notifications { get; }
     }
 }
