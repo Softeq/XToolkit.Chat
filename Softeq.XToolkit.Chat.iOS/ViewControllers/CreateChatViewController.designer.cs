@@ -9,8 +9,8 @@ using System.CodeDom.Compiler;
 
 namespace Softeq.XToolkit.Chat.iOS.ViewControllers
 {
-	[Register ("SelectContactsViewController")]
-	partial class SelectContactsViewController
+	[Register ("CreateChatViewController")]
+	partial class CreateChatViewController
 	{
 		[Outlet]
 		UIKit.UINavigationBar CustomNavigationBar { get; set; }
@@ -24,9 +24,9 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
 		
 		void ReleaseDesignerOutlets ()
 		{
-			if (TableView != null) {
-				TableView.Dispose ();
-				TableView = null;
+			if (CustomNavigationBar != null) {
+				CustomNavigationBar.Dispose ();
+				CustomNavigationBar = null;
 			}
 
 			if (CustomNavigationItem != null) {
@@ -34,9 +34,9 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
 				CustomNavigationItem = null;
 			}
 
-			if (CustomNavigationBar != null) {
-				CustomNavigationBar.Dispose ();
-				CustomNavigationBar = null;
+			if (TableView != null) {
+				TableView.Dispose ();
+				TableView = null;
 			}
 		}
 	}

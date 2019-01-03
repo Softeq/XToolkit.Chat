@@ -8,7 +8,6 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using Softeq.XToolkit.Chat.Interfaces;
 using Softeq.XToolkit.Chat.Models.Enum;
-using Softeq.XToolkit.Chat.Models.Exceptions;
 using Softeq.XToolkit.Chat.Models.Interfaces;
 using Softeq.XToolkit.Chat.Strategies.Search;
 using Softeq.XToolkit.Common.Collections;
@@ -22,21 +21,19 @@ using Softeq.XToolkit.WhiteLabel.Threading;
 
 namespace Softeq.XToolkit.Chat.ViewModels
 {
-    // TODO YP: rename to CreateChatViewModel or merge with ChatDetailsViewModel
-    public class SelectContactsViewModel : ViewModelBase
+    public class CreateChatViewModel : ViewModelBase
     {
         private readonly IChatsListManager _chatsListManager;
         private readonly IChatService _chatService;
         private readonly IFormatService _formatService;
-        private readonly IChatLocalizedStrings _localizedStrings;
-        private readonly ICommand _memberSelectedCommand;
         private readonly IPageNavigationService _pageNavigationService;
         private readonly IUploadImageService _uploadImageService;
         private readonly IDialogsService _dialogsService;
 
+        private ICommand _updateContactsCountCommand;
         private string _chatName;
 
-        public SelectContactsViewModel(
+        public CreateChatViewModel(
             IChatsListManager chatsListManager,
             IChatService chatService,
             IPageNavigationService pageNavigationService,
@@ -48,29 +45,23 @@ namespace Softeq.XToolkit.Chat.ViewModels
             _chatsListManager = chatsListManager;
             _chatService = chatService;
             _pageNavigationService = pageNavigationService;
-            _localizedStrings = localizedStrings;
             _formatService = formatService;
             _uploadImageService = uploadImageService;
             _dialogsService = dialogsService;
-            _memberSelectedCommand = new RelayCommand(() => RaisePropertyChanged(nameof(ContactsCountText)));
-
-            BackCommand = new RelayCommand(_pageNavigationService.GoBack, () => _pageNavigationService.CanGoBack);
-            AddMembersCommand = new RelayCommand(OpenDialogForAddMembers);
+            LocalizedStrings = localizedStrings;
         }
 
-        public ICommand BackCommand { get; }
+        public IChatLocalizedStrings LocalizedStrings { get; }
 
-        public ICommand AddMembersCommand { get; }
+        public ICommand BackCommand { get; private set; }
 
-        public RelayCommand<Func<(Task<Stream>, string)>> SaveCommand { get; private set; }
+        public ICommand AddMembersCommand { get; private set; }
 
-        public string Title => _localizedStrings.CreateGroup;
-
-        public string ActionButtonName => _localizedStrings.Create;
+        public ICommand SaveCommand { get; private set; }
 
         public string ContactsCountText => _formatService.PluralizeWithQuantity(Contacts.Count(x => x.IsSelected),
-            _localizedStrings.MembersPlural,
-            _localizedStrings.MemberSingular);
+            LocalizedStrings.MembersPlural,
+            LocalizedStrings.MemberSingular);
 
         public ObservableRangeCollection<ChatUserViewModel> Contacts { get; } =
             new ObservableRangeCollection<ChatUserViewModel>();
@@ -81,16 +72,14 @@ namespace Softeq.XToolkit.Chat.ViewModels
             set => Set(ref _chatName, value);
         }
 
-        public string AddMembersText => _localizedStrings.AddMembers;
-
-        public string ChatNamePlaceholderText => _localizedStrings.ChatName;
-
-        public string ChangePhotoText => _localizedStrings.ChangePhoto;
-
         public override void OnInitialize()
         {
             base.OnInitialize();
 
+            _updateContactsCountCommand = new RelayCommand(() => RaisePropertyChanged(nameof(ContactsCountText)));
+
+            BackCommand = new RelayCommand(_pageNavigationService.GoBack, () => _pageNavigationService.CanGoBack);
+            AddMembersCommand = new RelayCommand(OpenDialogForAddMembers);
             SaveCommand = new RelayCommand<Func<(Task<Stream>, string)>>(SaveAsync);
         }
 
@@ -111,10 +100,10 @@ namespace Softeq.XToolkit.Chat.ViewModels
             if (result != null)
             {
                 var contacts = result.SelectedContacts;
-                contacts.Apply(x => x.SetSelectionCommand(_memberSelectedCommand));
+                contacts.Apply(x => x.SetSelectionCommand(_updateContactsCountCommand));
                 Contacts.AddRange(contacts);
 
-                RaisePropertyChanged(nameof(ContactsCountText));
+                _updateContactsCountCommand.Execute(null);
             }
         }
 
@@ -136,8 +125,8 @@ namespace Softeq.XToolkit.Chat.ViewModels
 
                 if (!isChatCreated)
                 {
-                    await _dialogsService.ShowDialogAsync(_localizedStrings.ValidationErrorsDialogTitle,
-                        string.Empty, _localizedStrings.Ok);
+                    await _dialogsService.ShowDialogAsync(LocalizedStrings.ValidationErrorsDialogTitle,
+                        string.Empty, LocalizedStrings.Ok);
                     return;
                 }
 
@@ -150,7 +139,7 @@ namespace Softeq.XToolkit.Chat.ViewModels
             }
             catch (Exception ex)
             {
-                LogManager.LogError<SelectContactsViewModel>(ex);
+                LogManager.LogError<CreateChatViewModel>(ex);
             }
             finally
             {
