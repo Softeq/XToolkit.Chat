@@ -4,6 +4,7 @@
 using System.Windows.Input;
 using CoreGraphics;
 using FFImageLoading;
+using FFImageLoading.Transformations;
 using Softeq.XToolkit.Bindings;
 using Softeq.XToolkit.Chat.iOS.Extensions;
 using Softeq.XToolkit.WhiteLabel.iOS.Controls;
@@ -21,22 +22,34 @@ namespace Softeq.XToolkit.Chat.iOS.Views
 
         public UITextField ChatNameField => ChatNameTextField;
 
+        public bool IsNotificationsMuted
+        {
+            get => !MuteChatSwitch.On;
+            set => MuteChatSwitch.On = !value;
+        }
+
+        public bool IsMuteNotificationsAvailable
+        {
+            get => MuteChatSwitch.Enabled;
+            set => MuteChatSwitch.Enabled = value;
+        }
+
+        public string ChatNamePlaceholder
+        {
+            set => ChatNameTextField.Placeholder = value;
+        }
+
         public string ChatMembersCount
         {
             get => MembersCountLabel.Text;
             set => MembersCountLabel.Text = value;
         }
 
-        public bool IsEditMode
+        public void EnableEditMode(bool isEditMode)
         {
-            set => ChatNameTextField.Enabled = value;
+            ChatNameTextField.Enabled = isEditMode;
+            MuteContainer.Hidden = isEditMode;
         }
-
-        //public bool IsAddMembersButtonHidden
-        //{
-        //    get => AddMembersButton.Hidden;
-        //    set => AddMembersButton.Hidden = value;
-        //}
 
         public void SetAddMembersCommand(ICommand command, string label)
         {
@@ -50,9 +63,22 @@ namespace Softeq.XToolkit.Chat.iOS.Views
             ChangeChatPhotoButton.SetCommand(command);
         }
 
-        public void SetChatAvatar(string photoUrl)
+        public void SetChangeMuteNotificationsCommand(ICommand command, string label)
         {
-            ChatAvatarImageView.LoadImageAsync(StyleHelper.Style.ChatGroupNoAvatarBundleName, photoUrl);
+            MuteLabel.Text = label;
+            MuteChatSwitch.SetCommand(command);
+        }
+
+        public void SetChatAvatar(string photoUrl, string chatName)
+        {
+            if (string.IsNullOrEmpty(chatName))
+            {
+                return;
+            }
+
+            ChatAvatarImageView.LoadImageWithTextPlaceholder(photoUrl,
+               chatName, StyleHelper.Style.GroupDetailsAvatarStyles,
+               x => x.Transform(new CircleTransformation()));
         }
 
         public void SetEditedChatAvatar(string key)
@@ -66,19 +92,17 @@ namespace Softeq.XToolkit.Chat.iOS.Views
                 }
                 else
                 {
-                    ChatAvatarImageView.Hidden = true;
                     EditedChatAvatarImageView.Hidden = false;
+                    ChatAvatarImageView.Hidden = true;
+
+                    var imageSize = StyleHelper.Style.GroupDetailsAvatarStyles.Size;
                     ImageService.Instance
                         .LoadFile(key)
-                        .DownSampleInDip(95, 95)
+                        .DownSampleInDip(imageSize.Width, imageSize.Height)
+                        .Transform(new CircleTransformation())
                         .IntoAsync(EditedChatAvatarImageView);
                 }
             });
-        }
-
-        public void SetPlaceholder(string value)
-        {
-            ChatNameTextField.Placeholder = value;
         }
 
         protected override void Initialize()
@@ -91,14 +115,15 @@ namespace Softeq.XToolkit.Chat.iOS.Views
                 return true;
             };
 
-            ChatAvatarcontainer.Layer.MasksToBounds = false;
-            ChatAvatarcontainer.Layer.CornerRadius = ChatAvatarcontainer.Bounds.Width / 2;
-            ChatAvatarcontainer.ClipsToBounds = true;
-
             EditedChatAvatarImageView.Hidden = true;
+            MuteContainer.Hidden = true;
 
             ChangeChatPhotoButton.SetTitleColor(StyleHelper.Style.AccentColor, UIControlState.Normal);
             AddMembersButton.SetTitleColor(StyleHelper.Style.AccentColor, UIControlState.Normal);
+
+            ChatAvatarImageView.LoadImageAsync(StyleHelper.Style.ChatGroupNoAvatarBundleName, null);
+
+            MuteChatSwitch.OnTintColor = StyleHelper.Style.AccentColor;
         }
     }
 }
