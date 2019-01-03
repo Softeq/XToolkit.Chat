@@ -126,7 +126,7 @@ namespace Softeq.XToolkit.Chat.ViewModels
             RaisePropertyChanged(nameof(MembersCountText));
         }
 
-        public async Task ChangeMuteNotificationsAsync()
+        private async Task ChangeMuteNotificationsAsync()
         {
             if (IsBusy)
             {
@@ -135,10 +135,14 @@ namespace Softeq.XToolkit.Chat.ViewModels
 
             IsBusy = true;
 
-            await (IsMuted
-                    ? _chatService.UnMuteChatAsync(Summary.Id)
-                    : _chatService.MuteChatAsync(Summary.Id))
-                .ConfigureAwait(false);
+            if (IsMuted)
+            {
+                await _chatService.UnMuteChatAsync(Summary.Id).ConfigureAwait(false);
+            }
+            else
+            {
+                await _chatService.MuteChatAsync(Summary.Id).ConfigureAwait(false);
+            }
 
             Execute.OnUIThread(() =>
             {
