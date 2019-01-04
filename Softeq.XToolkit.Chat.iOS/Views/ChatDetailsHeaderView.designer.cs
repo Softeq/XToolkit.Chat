@@ -32,6 +32,15 @@ namespace Softeq.XToolkit.Chat.iOS.Views
 
 		[Outlet]
 		UIKit.UILabel MembersCountLabel { get; set; }
+
+		[Outlet]
+		UIKit.UISwitch MuteChatSwitch { get; set; }
+
+		[Outlet]
+		UIKit.UIView MuteContainer { get; set; }
+
+		[Outlet]
+		UIKit.UILabel MuteLabel { get; set; }
 		
 		void ReleaseDesignerOutlets ()
 		{
@@ -43,6 +52,11 @@ namespace Softeq.XToolkit.Chat.iOS.Views
 			if (ChangeChatPhotoButton != null) {
 				ChangeChatPhotoButton.Dispose ();
 				ChangeChatPhotoButton = null;
+			}
+
+			if (ChatAvatarcontainer != null) {
+				ChatAvatarcontainer.Dispose ();
+				ChatAvatarcontainer = null;
 			}
 
 			if (ChatAvatarImageView != null) {
@@ -65,9 +79,19 @@ namespace Softeq.XToolkit.Chat.iOS.Views
 				MembersCountLabel = null;
 			}
 
-			if (ChatAvatarcontainer != null) {
-				ChatAvatarcontainer.Dispose ();
-				ChatAvatarcontainer = null;
+			if (MuteChatSwitch != null) {
+				MuteChatSwitch.Dispose ();
+				MuteChatSwitch = null;
+			}
+
+			if (MuteLabel != null) {
+				MuteLabel.Dispose ();
+				MuteLabel = null;
+			}
+
+			if (MuteContainer != null) {
+				MuteContainer.Dispose ();
+				MuteContainer = null;
 			}
 		}
 	}

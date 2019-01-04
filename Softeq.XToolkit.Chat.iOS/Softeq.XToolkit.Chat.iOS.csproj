@@ -87,9 +87,9 @@
     <Compile Include="ViewControllers\ChatMessagesViewController.designer.cs">
       <DependentUpon>ChatMessagesViewController.cs</DependentUpon>
     </Compile>
-    <Compile Include="ViewControllers\SelectContactsViewController.cs" />
-    <Compile Include="ViewControllers\SelectContactsViewController.designer.cs">
-      <DependentUpon>SelectContactsViewController.cs</DependentUpon>
+    <Compile Include="ViewControllers\CreateChatViewController.cs" />
+    <Compile Include="ViewControllers\CreateChatViewController.designer.cs">
+      <DependentUpon>CreateChatViewController.cs</DependentUpon>
     </Compile>
     <Compile Include="Views\ChatDetailsHeaderView.cs" />
     <Compile Include="Views\ChatDetailsHeaderView.designer.cs">
@@ -146,7 +146,7 @@
     <InterfaceDefinition Include="ViewControllers\ChatDetailsStoryboard.storyboard" />
     <InterfaceDefinition Include="ViewControllers\ChatsListStoryboard.storyboard" />
     <InterfaceDefinition Include="ViewControllers\ChatMessagesStoryboard.storyboard" />
-    <InterfaceDefinition Include="ViewControllers\SelectContactsStoryboard.storyboard" />
+    <InterfaceDefinition Include="ViewControllers\CreateChatStoryboard.storyboard" />
     <InterfaceDefinition Include="Views\ChatDetailsHeaderView.xib" />
     <InterfaceDefinition Include="Views\ChatSummaryViewCell.xib" />
     <InterfaceDefinition Include="Views\ChatUserViewCell.xib" />

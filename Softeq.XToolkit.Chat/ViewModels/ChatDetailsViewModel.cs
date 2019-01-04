@@ -47,13 +47,10 @@ namespace Softeq.XToolkit.Chat.ViewModels
             _uploadImageService = uploadImageService;
             _dialogsService = dialogsService;
             _chatService = chatService;
-
-            AddMembersCommand = new RelayCommand(AddMembers);
-            BackCommand = new RelayCommand(_pageNavigationService.GoBack, () => _pageNavigationService.CanGoBack);
-            RemoveMemberAtCommand = new RelayCommand<int>(RemoveMemberAt);
         }
 
         public ChatSummaryModel Summary { get; set; }
+
         public IChatLocalizedStrings LocalizedStrings { get; }
 
         public ObservableRangeCollection<ChatUserViewModel> Members { get; }
@@ -62,10 +59,36 @@ namespace Softeq.XToolkit.Chat.ViewModels
         public string MembersCountText => _formatService.PluralizeWithQuantity(Members.Count,
             LocalizedStrings.MembersPlural, LocalizedStrings.MemberSingular);
 
-        public ICommand AddMembersCommand { get; }
+        public bool IsMuted
+        {
+            get => Summary.IsMuted;
+            set
+            {
+                if (Summary.IsMuted != value)
+                {
+                    Summary.IsMuted = value;
+                    RaisePropertyChanged(nameof(IsMuted));
+                }
+            }
+        }
 
-        public ICommand BackCommand { get; }
-        public RelayCommand<int> RemoveMemberAtCommand { get; }
+        public ICommand AddMembersCommand { get; private set; }
+
+        public ICommand BackCommand { get; private set; }
+
+        public ICommand ChangeMuteNotificationsCommand { get; private set; }
+
+        public RelayCommand<int> RemoveMemberAtCommand { get; private set; }
+
+        public override void OnInitialize()
+        {
+            base.OnInitialize();
+
+            AddMembersCommand = new RelayCommand(AddMembers);
+            BackCommand = new RelayCommand(_pageNavigationService.GoBack, () => _pageNavigationService.CanGoBack);
+            RemoveMemberAtCommand = new RelayCommand<int>(RemoveMemberAt);
+            ChangeMuteNotificationsCommand = new RelayCommand(() => ChangeMuteNotificationsAsync().SafeTaskWrapper());
+        }
 
         public override void OnAppearing()
         {
@@ -103,6 +126,31 @@ namespace Softeq.XToolkit.Chat.ViewModels
             RaisePropertyChanged(nameof(MembersCountText));
         }
 
+        private async Task ChangeMuteNotificationsAsync()
+        {
+            if (IsBusy)
+            {
+                return;
+            }
+
+            IsBusy = true;
+
+            if (IsMuted)
+            {
+                await _chatService.UnMuteChatAsync(Summary.Id).ConfigureAwait(false);
+            }
+            else
+            {
+                await _chatService.MuteChatAsync(Summary.Id).ConfigureAwait(false);
+            }
+
+            Execute.OnUIThread(() =>
+            {
+                IsMuted = !IsMuted;
+                IsBusy = false;
+            });
+        }
+
         public async Task SaveAsync(Func<(Task<Stream> GetImageTask, string Extension)> getImageFunc)
         {
             if (IsBusy)
@@ -112,17 +160,7 @@ namespace Softeq.XToolkit.Chat.ViewModels
 
             IsBusy = true;
 
-            var imageInfo = getImageFunc();
-            var imagePath = default(string);
-
-            using (var image = await imageInfo.GetImageTask.ConfigureAwait(false))
-            {
-                if (image != null)
-                {
-                    imagePath = await _uploadImageService.UploadImageAsync(image, imageInfo.Extension)
-                        .ConfigureAwait(false);
-                }
-            }
+            var imagePath = await UploadChatAvatarAsync(getImageFunc);
 
             if (imagePath != null)
             {
@@ -170,6 +208,24 @@ namespace Softeq.XToolkit.Chat.ViewModels
                     LogManager.LogError<ChatDetailsViewModel>(ex);
                 }
             }
+        }
+
+        // TODO YP: dublicate CreateChatViewModel logic
+        private async Task<string> UploadChatAvatarAsync(Func<(Task<Stream> GetImageTask, string Extension)> getImageFunc)
+        {
+            var (GetImageTask, Extension) = getImageFunc();
+            var imagePath = default(string);
+
+            using (var image = await GetImageTask.ConfigureAwait(false))
+            {
+                if (image != null)
+                {
+                    imagePath = await _uploadImageService.UploadImageAsync(image, Extension)
+                        .ConfigureAwait(false);
+                }
+            }
+
+            return imagePath;
         }
     }
 }

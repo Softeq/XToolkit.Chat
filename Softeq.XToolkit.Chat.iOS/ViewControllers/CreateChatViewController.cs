@@ -3,7 +3,6 @@
 
 using System;
 using UIKit;
-using CoreGraphics;
 using Softeq.XToolkit.WhiteLabel.iOS;
 using Softeq.XToolkit.Bindings.iOS;
 using Softeq.XToolkit.Bindings;
@@ -16,24 +15,26 @@ using Softeq.XToolkit.WhiteLabel;
 using Softeq.XToolkit.Permissions;
 using Softeq.XToolkit.Common.EventArguments;
 using Softeq.XToolkit.Chat.iOS.Controls;
+using CoreGraphics;
 
 namespace Softeq.XToolkit.Chat.iOS.ViewControllers
 {
-    public partial class SelectContactsViewController : ViewControllerBase<SelectContactsViewModel>
+    public partial class CreateChatViewController : ViewControllerBase<CreateChatViewModel>
     {
-        private ChatDetailsHeaderView _chatDetailsHeaderView;
         private SimpleImagePicker _simpleImagePicker;
+        private ChatDetailsHeaderView _chatDetailsHeaderView;
         private string _previewImageKey;
         private ObservableTableViewSource<ChatUserViewModel> _tableViewSource;
         private UITapGestureRecognizer _hideKeyboardByTapGestureRecognizer;
 
-        public SelectContactsViewController(IntPtr handle) : base(handle) { }
+        public CreateChatViewController(IntPtr handle) : base(handle) { }
 
         public override void ViewDidLoad()
         {
             base.ViewDidLoad();
 
             InitNavigationBar();
+            InitDetailsHeader();
             InitChatMembersTableView();
 
             _hideKeyboardByTapGestureRecognizer = new UITapGestureRecognizer(() =>
@@ -84,16 +85,32 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
 
         private void InitNavigationBar()
         {
-            CustomNavigationItem.Title = ViewModel.Title;
+            CustomNavigationItem.Title = ViewModel.LocalizedStrings.CreateGroup;
             CustomNavigationItem.SetCommand(
                 UIImage.FromBundle(StyleHelper.Style.BackButtonBundleName),
                 ViewModel.BackCommand,
                 true);
             CustomNavigationItem.SetCommand(
-                ViewModel.ActionButtonName,
+                ViewModel.LocalizedStrings.Create,
                 StyleHelper.Style.AccentColor,
                 new RelayCommand(AddChat),
                 false);
+        }
+
+        private void InitDetailsHeader()
+        {
+            _chatDetailsHeaderView = new ChatDetailsHeaderView(new CGRect(0, 0, 200, 250));
+            _chatDetailsHeaderView.EnableEditMode(true);
+            _chatDetailsHeaderView.ChatNamePlaceholder = ViewModel.LocalizedStrings.ChatName;
+            _chatDetailsHeaderView.SetChangeChatPhotoCommand(new RelayCommand(OpenPicker), ViewModel.LocalizedStrings.ChangePhoto);
+            _chatDetailsHeaderView.SetAddMembersCommand(ViewModel.AddMembersCommand, ViewModel.LocalizedStrings.AddMembers);
+            _chatDetailsHeaderView.SetChatAvatar(null, string.Empty);
+
+            _simpleImagePicker = new SimpleImagePicker(this, Dependencies.IocContainer.Resolve<IPermissionsManager>(), false)
+            {
+                MaxImageWidth = 280,
+                MaxImageHeight = 280
+            };
         }
 
         private void InitChatMembersTableView()
@@ -101,25 +118,7 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
             TableView.RegisterNibForCellReuse(ChatUserViewCell.Nib, ChatUserViewCell.Key);
             TableView.RowHeight = 50;
             TableView.KeyboardDismissMode = UIScrollViewKeyboardDismissMode.Interactive;
-
-            _simpleImagePicker = new SimpleImagePicker(this, Dependencies.IocContainer.Resolve<IPermissionsManager>(), false)
-            {
-                MaxImageWidth = 280,
-                MaxImageHeight = 280,
-            };
-
-            _chatDetailsHeaderView = new ChatDetailsHeaderView(new CGRect(0, 0, 200, 250))
-            {
-                IsEditMode = true
-            };
-
-            _chatDetailsHeaderView.SetPlaceholder(ViewModel.ChatNamePlaceholderText);
-            _chatDetailsHeaderView.SetChangeChatPhotoCommand(new RelayCommand(OpenPicker), ViewModel.ChangePhotoText);
-            _chatDetailsHeaderView.SetAddMembersCommand(ViewModel.AddMembersCommand, ViewModel.AddMembersText);
-            _chatDetailsHeaderView.SetChatAvatar(null);
-
             TableView.TableHeaderView = _chatDetailsHeaderView;
-            TableView.TableFooterView = new UIView();
 
             _tableViewSource = ViewModel.Contacts.GetTableViewSource((cell, viewModel, index) =>
             {

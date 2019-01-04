@@ -25,7 +25,7 @@ using Softeq.XToolkit.WhiteLabel.Threading;
 namespace Softeq.XToolkit.Chat.Droid.Views
 {
     [Activity]
-    public class SelectContactsActivity : ActivityBase<SelectContactsViewModel>
+    public class CreateChatActivity : ActivityBase<CreateChatViewModel>
     {
         private NavigationBarView _navigationBarView;
         private RelativeLayout _chatHeaderLayout;
@@ -51,8 +51,8 @@ namespace Softeq.XToolkit.Chat.Droid.Views
 
             _navigationBarView = FindViewById<NavigationBarView>(Resource.Id.activity_chat_create_navigation_bar);
             _navigationBarView.SetLeftButton(StyleHelper.Style.NavigationBarBackButtonIcon, ViewModel.BackCommand);
-            _navigationBarView.SetTitle(ViewModel.Title);
-            _navigationBarView.SetRightButton(ViewModel.ActionButtonName, new RelayCommand(() =>
+            _navigationBarView.SetTitle(ViewModel.LocalizedStrings.CreateGroup);
+            _navigationBarView.SetRightButton(ViewModel.LocalizedStrings.Create, new RelayCommand(() =>
             {
                 KeyboardService.HideSoftKeyboard(_chatNameEditTextView);
 
@@ -68,7 +68,7 @@ namespace Softeq.XToolkit.Chat.Droid.Views
             _membersCountTextView = FindViewById<TextView>(Resource.Id.tv_members_count);
             _changeChatPhotoButton = FindViewById<Button>(Resource.Id.b_chat_change_photo);
             _changeChatPhotoButton.SetCommand(new RelayCommand(ChangePhoto));
-            _changeChatPhotoButton.Text = ViewModel.ChangePhotoText;
+            _changeChatPhotoButton.Text = ViewModel.LocalizedStrings.ChangePhoto;
 
             InitializeContactsRecyclerView();
 
@@ -81,19 +81,18 @@ namespace Softeq.XToolkit.Chat.Droid.Views
             _chatEditedPhotoImageView.Visibility = ViewStates.Gone;
 
             _addMembers = FindViewById<Button>(Resource.Id.activity_chat_create_add_member);
-            _addMembers.Text = ViewModel.AddMembersText;
+            _addMembers.Text = ViewModel.LocalizedStrings.AddMembers;
             _addMembers.SetCommand(ViewModel.AddMembersCommand);
 
             _chatHeaderLayout.Visibility = ViewStates.Visible;
 
-            _chatNameEditTextView.Hint = ViewModel.ChatNamePlaceholderText;
+            _chatNameEditTextView.Hint = ViewModel.LocalizedStrings.ChatName;
         }
 
         protected override void DoAttachBindings()
         {
             base.DoAttachBindings();
 
-            Bindings.Add(this.SetBinding(() => ViewModel.ActionButtonName, () => SupportActionBar.Title));
             Bindings.Add(this.SetBinding(() => ViewModel.ChatName, () => _chatNameEditTextView.Text, BindingMode.TwoWay));
             Bindings.Add(this.SetBinding(() => ViewModel.ContactsCountText, () => _membersCountTextView.Text));
             Bindings.Add(this.SetBinding(() => _imagePicker.ViewModel.ImageCacheKey)

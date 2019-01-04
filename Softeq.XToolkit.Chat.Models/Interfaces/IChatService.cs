@@ -29,6 +29,8 @@ namespace Softeq.XToolkit.Chat.Models.Interfaces
         Task CloseChatAsync(string chatId);
         Task LeaveChatAsync(string chatId);
         Task InviteMembersAsync(string chatId, IList<string> participantsIds);
+        Task MuteChatAsync(string chatId);
+        Task UnMuteChatAsync(string chatId);
 
         Task<IList<ChatMessageModel>> GetOlderMessagesAsync(string chatId,
                                                             string messageFromId = null,
@@ -47,9 +49,9 @@ namespace Softeq.XToolkit.Chat.Models.Interfaces
         Task DeleteMessageAsync(string chatId, string messageId);
 
         Task<IList<ChatUserModel>> GetChatMembersAsync(string chatId);
-        
+
         Task<PagingModel<ChatUserModel>> GetContactsAsync(string nameFilter, int pageNumber, int pageSize);
-        
+
         Task<PagingModel<ChatUserModel>> GetContactsForInviteAsync(string chatId,
             string nameFilter, int pageNumber, int pageSize);
 

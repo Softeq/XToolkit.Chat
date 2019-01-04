@@ -50,10 +50,33 @@
             android:textColor="@color/chat_brand_color" />
 
         <LinearLayout
+            android:id="@+id/activity_chat_details_mute_container"
+            android:layout_below="@+id/b_chat_change_photo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingLeft="16dp"
+            android:paddingRight="8dp"
+            android:paddingBottom="8dp">
+            <TextView
+                android:id="@+id/activity_chat_details_mute_label"
+                android:layout_width="match_parent"
+                android:textColor="@android:color/black"
+                android:textSize="16sp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:text="[Notifications]" />
+            <android.support.v7.widget.SwitchCompat
+                android:id="@+id/activity_chat_details_mute_switch"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:theme="@style/SwitchCompatTheme" />
+        </LinearLayout>
+
+        <LinearLayout
             android:id="@+id/ll_members_count"
             android:layout_width="match_parent"
             android:layout_height="34dp"
-            android:layout_below="@+id/b_chat_change_photo"
+            android:layout_below="@+id/activity_chat_details_mute_container"
             android:background="#f5f5f5"
             android:orientation="horizontal">
 

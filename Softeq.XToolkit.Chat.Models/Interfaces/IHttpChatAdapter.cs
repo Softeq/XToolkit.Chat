@@ -26,6 +26,9 @@ namespace Softeq.XToolkit.Chat.Models.Interfaces
 
         Task MarkMessageAsReadAsync(string chatId, string messageId);
 
+        Task MuteChatAsync(string chatId);
+        Task UnMuteChatAsync(string chatId);
+
         Task<IList<ChatUserModel>> GetChatMembersAsync(string chatId);
         
         Task<PagingModel<ChatUserModel>> GetContactsAsync(string nameFilter, int pageSize, int pageNumber);

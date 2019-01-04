@@ -3,17 +3,11 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Reactive.Subjects;
 using System.Threading.Tasks;
-using Softeq.XToolkit.Chat.HttpClient.Dtos;
-using Softeq.XToolkit.Chat.HttpClient.Requests;
 using Softeq.XToolkit.Chat.Models;
 using Softeq.XToolkit.Chat.Models.Interfaces;
-using Softeq.XToolkit.Common;
 using Softeq.XToolkit.Common.Models;
-using Softeq.XToolkit.RemoteData;
-using Softeq.XToolkit.RemoteData.HttpClient;
 
 namespace Softeq.XToolkit.Chat.HttpClient
 {
@@ -149,7 +143,7 @@ namespace Softeq.XToolkit.Chat.HttpClient
 
         public async Task MarkMessageAsReadAsync(string chatId, string messageId)
         {
-            
+
         }
 
         public Task<PagingModel<ChatUserModel>> GetContactsAsync(string nameFilter, int pageSize, int pageNumber)
@@ -325,6 +319,16 @@ namespace Softeq.XToolkit.Chat.HttpClient
         }
 
         public Task<IList<ChatMessageModel>> GetMessagesFromAsync(string chatId, string messageFromId, DateTimeOffset messageFromDateTime, int? count = null)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task MuteChatAsync(string chatId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task UnMuteChatAsync(string chatId)
         {
             throw new NotImplementedException();
         }

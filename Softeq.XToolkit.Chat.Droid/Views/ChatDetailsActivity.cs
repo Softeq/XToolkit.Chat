@@ -42,6 +42,8 @@ namespace Softeq.XToolkit.Chat.Droid.Views
         private Button _changeChatPhotoButton;
         private ImagePicker _imagePicker;
         private string _previewImageKey;
+        private TextView _muteNotificationsLabel;
+        private SwitchCompat _muteNotificationsSwitch;
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -57,6 +59,7 @@ namespace Softeq.XToolkit.Chat.Droid.Views
             _navigationBarView.SetLeftButton(StyleHelper.Style.NavigationBarBackButtonIcon, ViewModel.BackCommand);
             _navigationBarView.SetTitle(ViewModel.LocalizedStrings.DetailsTitle);
             _navigationBarView.SetRightButton(ViewModel.LocalizedStrings.Save, new RelayCommand(OnSaveClick));
+            _navigationBarView.RightTextButton.Visibility = ViewStates.Gone;
 
             _chatPhotoImageView = FindViewById<MvxCachedImageView>(Resource.Id.iv_chat_photo);
 
@@ -75,6 +78,11 @@ namespace Softeq.XToolkit.Chat.Droid.Views
             _changeChatPhotoButton = FindViewById<Button>(Resource.Id.b_chat_change_photo);
             _changeChatPhotoButton.SetCommand(new RelayCommand(OpenImagePicker));
             _changeChatPhotoButton.Text = ViewModel.LocalizedStrings.ChangePhoto;
+
+            _muteNotificationsLabel = FindViewById<TextView>(Resource.Id.activity_chat_details_mute_label);
+            _muteNotificationsLabel.Text = ViewModel.LocalizedStrings.Notifications;
+            _muteNotificationsSwitch = FindViewById<SwitchCompat>(Resource.Id.activity_chat_details_mute_switch);
+            _muteNotificationsSwitch.SetCommand(ViewModel.ChangeMuteNotificationsCommand);
 
             InitializeMembersRecyclerView();
 
@@ -121,6 +129,7 @@ namespace Softeq.XToolkit.Chat.Droid.Views
 
                     Execute.BeginOnUIThread(() =>
                     {
+                        _navigationBarView.RightTextButton.Visibility = ViewStates.Visible;
                         _chatEditedPhotoImageView.Visibility = ViewStates.Visible;
                         ImageService.Instance
                             .LoadFile(_imagePicker.ViewModel.ImageCacheKey)
@@ -129,6 +138,10 @@ namespace Softeq.XToolkit.Chat.Droid.Views
                             .IntoAsync(_chatEditedPhotoImageView);
                     });
                 }));
+            Bindings.Add(this.SetBinding(() => ViewModel.IsMuted, () => _muteNotificationsSwitch.Checked)
+                .ConvertSourceToTarget(x => !x));
+            Bindings.Add(this.SetBinding(() => ViewModel.IsBusy, () => _muteNotificationsSwitch.Enabled)
+                .ConvertSourceToTarget(x => !x));
         }
 
         protected override void OnDestroy()

@@ -80,6 +80,16 @@ namespace Softeq.XToolkit.Chat
             return _socketChatAdapter.InviteMembersAsync(chatId, participantsIds);
         }
 
+        public Task MuteChatAsync(string chatId)
+        {
+            return _httpChatAdapter.MuteChatAsync(chatId);
+        }
+
+        public Task UnMuteChatAsync(string chatId)
+        {
+            return _httpChatAdapter.UnMuteChatAsync(chatId);
+        }
+
         public virtual async Task<IList<ChatSummaryModel>> GetChatsListAsync()
         {
             var models = await _httpChatAdapter.GetChatsListAsync().ConfigureAwait(false);
