@@ -78,7 +78,7 @@ namespace Softeq.XToolkit.Chat.ViewModels
 
         public ICommand ChangeMuteNotificationsCommand { get; private set; }
 
-        public RelayCommand<int> RemoveMemberAtCommand { get; private set; }
+        public ICommand RemoveMemberCommand { get; private set; }
 
         public override void OnInitialize()
         {
@@ -86,7 +86,7 @@ namespace Softeq.XToolkit.Chat.ViewModels
 
             AddMembersCommand = new RelayCommand(AddMembers);
             BackCommand = new RelayCommand(_pageNavigationService.GoBack, () => _pageNavigationService.CanGoBack);
-            RemoveMemberAtCommand = new RelayCommand<int>(RemoveMemberAt);
+            RemoveMemberCommand = new RelayCommand<ChatUserViewModel>(RemoveMember);
             ChangeMuteNotificationsCommand = new RelayCommand(() => ChangeMuteNotificationsAsync().SafeTaskWrapper());
         }
 
@@ -97,31 +97,28 @@ namespace Softeq.XToolkit.Chat.ViewModels
             LoadDataAsync().SafeTaskWrapper();
         }
 
-        public bool IsMemberRemovable(int memberPosition)
-        {
-            if (Summary.IsCreatedByMe)
-            {
-                return Members[memberPosition].Id != Summary.CreatorId;
-            }
-
-            return false;
-        }
-
         private async Task LoadDataAsync()
         {
             var members = await _chatsListManager.GetChatMembersAsync(Summary.Id).ConfigureAwait(false);
+
             Execute.BeginOnUIThread(() =>
             {
+                members.Apply(member =>
+                {
+                    member.IsRemovable = Summary.IsCreatedByMe && member.Id != Summary.CreatorId;
+                });
+
                 Members.ReplaceRange(members.EmptyIfNull());
+
                 RaisePropertyChanged(nameof(MembersCountText));
             });
         }
 
-        private void RemoveMemberAt(int index)
+        private void RemoveMember(ChatUserViewModel memberViewModel)
         {
-            Members.RemoveAt(index);
+            Members.Remove(memberViewModel);
 
-            //TODO YP: send request to the server, wait backend impl.
+            _chatService.DeleteMemberAsync(Summary.Id, memberViewModel.Id);
 
             RaisePropertyChanged(nameof(MembersCountText));
         }

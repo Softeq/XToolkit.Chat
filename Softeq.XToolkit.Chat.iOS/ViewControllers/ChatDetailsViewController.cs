@@ -4,11 +4,9 @@
 using System;
 using UIKit;
 using CoreGraphics;
-using Foundation;
 using Softeq.XToolkit.WhiteLabel.iOS;
 using Softeq.XToolkit.Chat.iOS.Views;
 using Softeq.XToolkit.Bindings;
-using Softeq.XToolkit.Common;
 using Softeq.XToolkit.Bindings.iOS;
 using Softeq.XToolkit.Chat.ViewModels;
 using Softeq.XToolkit.WhiteLabel.iOS.Extensions;
@@ -18,13 +16,13 @@ using Softeq.XToolkit.Permissions;
 using Softeq.XToolkit.Common.Command;
 using Softeq.XToolkit.WhiteLabel.Threading;
 using Softeq.XToolkit.Chat.iOS.Controls;
+using Softeq.XToolkit.Chat.iOS.TableSources;
 
 namespace Softeq.XToolkit.Chat.iOS.ViewControllers
 {
     public partial class ChatDetailsViewController : ViewControllerBase<ChatDetailsViewModel>
     {
         private ChatDetailsHeaderView _chatDetailsHeaderView;
-        private WeakReferenceEx<ObservableTableViewSource<ChatUserViewModel>> _sourceRef;
         private SimpleImagePicker _simpleImagePicker;
         private string _previewImageKey;
 
@@ -110,18 +108,8 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
             TableView.TableHeaderView = _chatDetailsHeaderView;
             TableView.TableFooterView = new UIView();
 
-            var source = ViewModel.Members.GetTableViewSource((cell, viewModel, index) =>
-            {
-                if (cell is IBindableViewCell<ChatUserViewModel> userViewCell)
-                {
-                    userViewCell.Bind(viewModel);
-                }
-            }, ChatUserViewCell.Key);
-
-            TableView.Source = source;
-            TableView.Delegate = new ParticipantsTableViewDelegate(ViewModel);
-
-            _sourceRef = WeakReferenceEx.Create(source);
+            TableView.Source = CreateTableViewSource();
+            TableView.Delegate = CreateTableViewDelegate();
         }
 
         private void OpenPicker()
@@ -138,29 +126,39 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
             });
         }
 
-        private class ParticipantsTableViewDelegate : UITableViewDelegate
+        private UITableViewSource CreateTableViewSource()
         {
-            private readonly ChatDetailsViewModel _viewModel;
-
-            public ParticipantsTableViewDelegate(ChatDetailsViewModel viewModel)
+            return new ObservableTableViewSource<ChatUserViewModel>
             {
-                _viewModel = viewModel;
-            }
-
-            public override UITableViewRowAction[] EditActionsForRow(UITableView tableView, NSIndexPath indexPath)
-            {
-                if (!_viewModel.IsMemberRemovable((int)indexPath.Item))
+                DataSource = ViewModel.Members,
+                BindCellDelegate = (cell, viewModel, index) =>
                 {
-                    return new UITableViewRowAction[0];
-                }
+                    if (cell is IBindableViewCell<ChatUserViewModel> userViewCell)
+                    {
+                        userViewCell.Bind(viewModel);
+                    }
+                },
+                CanEditCellDelegate = (viewModel, index) =>
+                {
+                    return viewModel.IsRemovable;
+                },
+                ReuseId = ChatUserViewCell.Key
+            };
+        }
 
-                var remove = UITableViewRowAction.Create(
+        private UITableViewDelegate CreateTableViewDelegate()
+        {
+            return new ActionableTableViewDelegate(() =>
+            {
+                var removeAction = UITableViewRowAction.Create(
                     UITableViewRowActionStyle.Default,
-                    _viewModel.LocalizedStrings.Remove,
-                    (row, index) => _viewModel.RemoveMemberAtCommand.Execute((int)indexPath.Item));
-
-                return new[] { remove };
-            }
+                    ViewModel.LocalizedStrings.Remove,
+                    (row, index) =>
+                    {
+                        ViewModel.RemoveMemberCommand.Execute(ViewModel.Members[index.Row]);
+                    });
+                return new[] { removeAction };
+            });
         }
     }
 }

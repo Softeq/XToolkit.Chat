@@ -80,6 +80,11 @@ namespace Softeq.XToolkit.Chat
             return _socketChatAdapter.InviteMembersAsync(chatId, participantsIds);
         }
 
+        public Task DeleteMemberAsync(string chatId, string memberId)
+        {
+            return _socketChatAdapter.DeleteMemberAsync(chatId, memberId);
+        }
+
         public Task MuteChatAsync(string chatId)
         {
             return _httpChatAdapter.MuteChatAsync(chatId);
@@ -209,8 +214,8 @@ namespace Softeq.XToolkit.Chat
                     {
                         userSummary = await _httpChatAdapter.GetUserSummaryAsync().ConfigureAwait(false);
                     }
-                    while (string.IsNullOrEmpty(userSummary?.SaasUserId));
-                    _cachedUserId = userSummary.SaasUserId;
+                    while (string.IsNullOrEmpty(userSummary?.Id));
+                    _cachedUserId = userSummary.Id;
                 }
                 result = _cachedUserId;
             }

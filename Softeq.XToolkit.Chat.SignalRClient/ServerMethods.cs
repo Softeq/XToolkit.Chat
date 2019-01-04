@@ -30,7 +30,8 @@ namespace Softeq.XToolkit.Chat.SignalRClient
         public const string GetChannelMembersAsync = "GetChannelMembersAsync";
 
         public const string InviteMemberAsync = "InviteMemberAsync";
-        public const string InviteMembersAsync = "InviteMembersAsync";
+        public const string InviteMultipleMembersAsync = "InviteMultipleMembersAsync";
+        public const string DeleteMemberAsync = "DeleteMemberAsync";
 
         // messages
         public const string GetChannelMessagesAsync = "GetChannelMessagesAsync";
@@ -38,5 +39,7 @@ namespace Softeq.XToolkit.Chat.SignalRClient
         public const string AddMessageAsync = "AddMessageAsync";
         public const string DeleteMessageAsync = "DeleteMessageAsync";
         public const string UpdateMessageAsync = "UpdateMessageAsync";
+
+
     }
 }

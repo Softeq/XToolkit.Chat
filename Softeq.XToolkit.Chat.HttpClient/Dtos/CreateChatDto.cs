@@ -12,6 +12,6 @@ namespace Softeq.XToolkit.Chat.HttpClient.Dtos
         public string WelcomeMessage { get; set; }
         public int Type { get; set; } = 1;
         public IList<string> AllowedMembers { get; set; }
-        public string SaasUserId { get; set; }
+        public string SaasUserId { get; set; } // TODO: check using
     }
 }

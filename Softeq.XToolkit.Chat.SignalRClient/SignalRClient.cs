@@ -140,6 +140,11 @@ namespace Softeq.XToolkit.Chat.SignalRClient
             return SendAndHandleExceptionsAsync(ServerMethods.CloseChannelAsync, new ChannelRequest { ChannelId = channelId });
         }
 
+        public Task DeleteMemberAsync(DeleteMemberRequest request)
+        {
+            return SendAndHandleExceptionsAsync(ServerMethods.DeleteMemberAsync, request);
+        }
+
         public Task InviteMemberAsync(InviteMemberRequest request)
         {
             return SendAndHandleExceptionsAsync(ServerMethods.InviteMemberAsync, request);
@@ -147,7 +152,7 @@ namespace Softeq.XToolkit.Chat.SignalRClient
 
         public Task InviteMembersAsync(InviteMembersRequest request)
         {
-            return SendAndHandleExceptionsAsync(ServerMethods.InviteMembersAsync, request);
+            return SendAndHandleExceptionsAsync(ServerMethods.InviteMultipleMembersAsync, request);
         }
 
         public Task JoinToChannelAsync(JoinToChannelRequest request)
@@ -317,7 +322,7 @@ namespace Softeq.XToolkit.Chat.SignalRClient
                     ChannelClosed?.Invoke(channel);
                 }));
 
-            _connection.On<ChannelSummaryResponse>(ClientEvents.ChannelAdded, 
+            _connection.On<ChannelSummaryResponse>(ClientEvents.ChannelAdded,
                 channel =>
                 {
                     ChannelAdded?.Invoke(channel);
@@ -341,7 +346,7 @@ namespace Softeq.XToolkit.Chat.SignalRClient
                     TypingStarted?.Invoke(username);
                 }));
 
-            _subscriptions.Add(_connection.On<string>(ClientEvents.TypingEnded, 
+            _subscriptions.Add(_connection.On<string>(ClientEvents.TypingEnded,
                 username =>
                 {
                     TypingEnded?.Invoke(username);

@@ -192,7 +192,7 @@ namespace Softeq.XToolkit.Chat.Droid.Views
                 swipeLeaveActionViewOptions,
                 pos =>
                 {
-                    ViewModel.RemoveMemberAtCommand.Execute(pos);
+                    ViewModel.RemoveMemberCommand.Execute(pos);
                 }));
         }
 

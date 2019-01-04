@@ -29,6 +29,7 @@ namespace Softeq.XToolkit.Chat.Models.Interfaces
         Task CloseChatAsync(string chatId);
         Task LeaveChatAsync(string chatId);
         Task InviteMembersAsync(string chatId, IList<string> participantsIds);
+        Task DeleteMemberAsync(string chatId, string memberId);
         Task MuteChatAsync(string chatId);
         Task UnMuteChatAsync(string chatId);
 

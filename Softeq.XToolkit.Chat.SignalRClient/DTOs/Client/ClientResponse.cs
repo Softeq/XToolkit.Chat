@@ -10,6 +10,7 @@ namespace Softeq.XToolkit.Chat.SignalRClient.DTOs.Client
         public Guid Id { get; set; }
         public string ConnectionClientId { get; set; }
         public string UserName { get; set; }
-        public string SaasUserId { get; set; }
+        //public string SaasUserId { get; set; }
+        public string MemberId { get; set; }
     }
 }

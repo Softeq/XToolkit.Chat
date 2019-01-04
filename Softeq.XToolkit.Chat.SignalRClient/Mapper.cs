@@ -27,7 +27,7 @@ namespace Softeq.XToolkit.Chat.SignalRClient
                 CreatedDate = response.Created,
                 UpdatedDate = response.Updated,
                 UnreadMessagesCount = response.UnreadMessagesCount,
-                CreatorId = response.CreatorSaasUserId,
+                CreatorId = response.Creator?.Id.ToString()
             };
         }
 
