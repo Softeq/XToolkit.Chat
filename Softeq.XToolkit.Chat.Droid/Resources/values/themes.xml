@@ -12,19 +12,19 @@
     <item name="android:colorBackground">@android:color/white</item>
     <item name="android:windowBackground">@android:color/white</item>
   </style>
-    
   <style name="ChatMemberTextStyle">
     <item name="android:textSize">17sp</item>
     <item name="android:fontFamily">sans-serif-medium</item>
     <item name="android:textStyle">normal</item>
     <item name="android:textColor">@color/chat_primary_text_color</item>
   </style>
-    
   <style name="ChatSecondaryTextStyle">
     <item name="android:textSize">13sp</item>
     <item name="android:fontFamily">sans-serif</item>
     <item name="android:textStyle">normal</item>
     <item name="android:textColor">@color/chat_primary_text_color</item>
   </style>
-    
+  <style name="SwitchCompatTheme">
+    <item name="colorControlActivated">@color/chat_brand_color</item>
+  </style>
 </resources>
