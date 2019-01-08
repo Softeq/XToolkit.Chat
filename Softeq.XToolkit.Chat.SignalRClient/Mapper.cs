@@ -43,7 +43,7 @@ namespace Softeq.XToolkit.Chat.SignalRClient
                 Body = response.Body,
                 ChannelId = response.ChannelId.ToString(),
                 DateTime = response.Created,
-                SenderId = response.Sender?.SaasUserId,
+                SenderId = response.Sender?.Id.ToString(),
                 SenderName = response.Sender?.UserName,
                 SenderPhotoUrl = response.Sender?.AvatarUrl,
                 MessageType = DtoToMessageType(response.Type),
