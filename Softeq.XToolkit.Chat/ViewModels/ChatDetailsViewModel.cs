@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using System.Collections.Generic;
 using Softeq.XToolkit.Chat.Interfaces;
 using Softeq.XToolkit.Chat.Models;
 using Softeq.XToolkit.Chat.Models.Enum;
@@ -103,10 +104,7 @@ namespace Softeq.XToolkit.Chat.ViewModels
 
             Execute.BeginOnUIThread(() =>
             {
-                members.Apply(member =>
-                {
-                    member.IsRemovable = Summary.IsCreatedByMe && member.Id != Summary.CreatorId;
-                });
+                ApplyRemovable(members);
 
                 Members.ReplaceRange(members.EmptyIfNull());
 
@@ -190,6 +188,7 @@ namespace Softeq.XToolkit.Chat.ViewModels
             if (result != null)
             {
                 result.SelectedContacts.Apply(x => x.IsSelectable = false);
+                ApplyRemovable(result.SelectedContacts);
                 Members.AddRange(result.SelectedContacts);
 
                 RaisePropertyChanged(nameof(MembersCountText));
@@ -205,6 +204,14 @@ namespace Softeq.XToolkit.Chat.ViewModels
                     LogManager.LogError<ChatDetailsViewModel>(ex);
                 }
             }
+        }
+
+        private void ApplyRemovable(IList<ChatUserViewModel> members)
+        {
+            members.Apply(member =>
+            {
+                member.IsRemovable = Summary.IsCreatedByMe && member.Id != Summary.CreatorId;
+            });
         }
 
         // TODO YP: dublicate CreateChatViewModel logic
