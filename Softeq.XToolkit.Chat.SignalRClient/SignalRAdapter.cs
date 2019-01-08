@@ -163,7 +163,6 @@ namespace Softeq.XToolkit.Chat.SignalRClient
             {
                 var request = new UpdateMessageRequest
                 {
-                    SaasUserId = Guid.NewGuid().ToString(),  // TODO: check using
                     MessageId = new Guid(messageId),
                     Body = newBody
                 };

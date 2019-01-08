@@ -17,7 +17,6 @@ namespace Softeq.XToolkit.Chat.SignalRClient.DTOs.Channel
         public bool IsClosed { get; set; }
         public bool IsMuted { get; set; }
         public bool IsPinned { get; set; }
-        //public string CreatorSaasUserId { get; set; }
         public string Description { get; set; }
         public string WelcomeMessage { get; set; }
         public ChannelTypeDto Type { get; set; }

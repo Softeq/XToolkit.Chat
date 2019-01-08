@@ -8,7 +8,6 @@ namespace Softeq.XToolkit.Chat.SignalRClient.DTOs.Member
     internal class MemberSummary
     {
         public Guid Id { get; set; }
-        public string SaasUserId { get; set; } // TODO: check using
         public string UserName { get; set; }
         public UserRole Role { get; set; }
         public UserStatus Status { get; set; }
