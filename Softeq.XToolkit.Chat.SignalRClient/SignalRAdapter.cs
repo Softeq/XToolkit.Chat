@@ -41,7 +41,7 @@ namespace Softeq.XToolkit.Chat.SignalRClient
         private readonly Subject<string> _chatRemoved = new Subject<string>();
         private readonly Subject<SocketConnectionStatus> _connectionStatusChanged = new Subject<SocketConnectionStatus>();
 
-        private string _saasUserId;
+        private string _memberId;
         private bool _isConnected = false;
         private bool _canReconnectAutomatically = true;
 
@@ -122,10 +122,23 @@ namespace Softeq.XToolkit.Chat.SignalRClient
             {
                 var inviteMembersRequest = new InviteMembersRequest
                 {
-                    InvitedMembers = participantsIds,
+                    InvitedMembersIds = participantsIds,
                     ChannelId = new Guid(chatId),
                 };
                 return _signalRClient.InviteMembersAsync(inviteMembersRequest);
+            }));
+        }
+
+        public Task DeleteMemberAsync(string chatId, string memberId)
+        {
+            return CheckConnectionAndSendRequest(new TaskReference(() =>
+            {
+                var deleteMemberRequest = new DeleteMemberRequest
+                {
+                    ChannelId = new Guid(chatId),
+                    MemberId = new Guid(memberId)
+                };
+                return _signalRClient.DeleteMemberAsync(deleteMemberRequest);
             }));
         }
 
@@ -150,7 +163,6 @@ namespace Softeq.XToolkit.Chat.SignalRClient
             {
                 var request = new UpdateMessageRequest
                 {
-                    SaasUserId = Guid.NewGuid().ToString(),
                     MessageId = new Guid(messageId),
                     Body = newBody
                 };
@@ -210,7 +222,7 @@ namespace Softeq.XToolkit.Chat.SignalRClient
             _signalRClient.MessageAdded += message =>
             {
                 var messageModel = Mapper.DtoToChatMessage(message);
-                messageModel.UpdateIsMineStatus(_saasUserId);
+                messageModel.UpdateIsMineStatus(_memberId);
                 _messageReceived.OnNext(messageModel);
             };
             _signalRClient.MessageUpdated += message =>
@@ -224,7 +236,7 @@ namespace Softeq.XToolkit.Chat.SignalRClient
             _signalRClient.ChannelAdded += channel =>
             {
                 var chat = Mapper.DtoToChatSummary(channel);
-                chat.UpdateIsCreatedByMeStatus(_saasUserId);
+                chat.UpdateIsCreatedByMeStatus(_memberId);
                 _chatAdded.OnNext(chat);
             };
             _signalRClient.ChannelClosed += channel =>
@@ -233,17 +245,27 @@ namespace Softeq.XToolkit.Chat.SignalRClient
             };
             _signalRClient.MemberLeft += (user, channelId) =>
             {
-                if (user?.SaasUserId == _saasUserId)
+                if (user == null)
+                {
+                    return;
+                }
+
+                if (user.Id.Equals(_memberId))
                 {
                     _chatRemoved.OnNext(channelId);
                 }
             };
             _signalRClient.MemberJoined += (user, channel) =>
             {
-                if (user?.SaasUserId == _saasUserId)
+                if (user == null)
+                {
+                    return;
+                }
+
+                if (user.Id.Equals(_memberId))
                 {
                     var chat = Mapper.DtoToChatSummary(channel);
-                    chat.UpdateIsCreatedByMeStatus(_saasUserId);
+                    chat.UpdateIsCreatedByMeStatus(_memberId);
                     _chatAdded.OnNext(chat);
                 }
             };
@@ -337,7 +359,7 @@ namespace Softeq.XToolkit.Chat.SignalRClient
                         _logger.Error("SignalRAdapter: accessToken is not valid, please relogin");
                     }
 
-                    _saasUserId = client.SaasUserId;
+                    _memberId = client.MemberId;
 
                     _isConnected = true;
                     UpdateConnectionStatus(SocketConnectionStatus.Connected);

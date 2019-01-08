@@ -21,7 +21,7 @@ namespace Softeq.XToolkit.Chat.HttpClient
                 UnreadMessagesCount = dto.UnreadMessagesCount,
                 IsMuted = dto.IsMuted,
                 IsPinned = dto.IsPinned,
-                CreatorId = dto.CreatorSaasUserId,
+                CreatorId = dto.Creator?.Id,
                 AvatarUrl = dto.PhotoUrl,
                 LastMessage = DtoToChatMessage(dto.LastMessage),
                 CreatedDate = dto.Created,
@@ -36,7 +36,7 @@ namespace Softeq.XToolkit.Chat.HttpClient
             {
                 Id = dto.Id.ToString(),
                 ChannelId = dto.ChannelId,
-                SenderId = dto.Sender?.SaasUserId,
+                SenderId = dto.Sender?.Id,
                 SenderName = dto.Sender?.UserName,
                 SenderPhotoUrl = dto.Sender?.AvatarUrl,
                 MessageType = DtoToMessageType(dto.Type),
@@ -55,7 +55,6 @@ namespace Softeq.XToolkit.Chat.HttpClient
                 Id = dto.Id,
                 Username = dto.UserName,
                 PhotoUrl = dto.AvatarUrl,
-                SaasUserId = dto.SaasUserId,
                 LastActivity = dto.LastActivity,
                 IsOnline = dto.Status == ChatUserStatusDto.Online,
                 IsActive = dto.IsActive

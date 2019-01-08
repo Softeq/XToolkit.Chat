@@ -141,6 +141,7 @@
     <Compile Include="Controls\BindableTableViewCell.cs" />
     <Compile Include="Controls\IBindableViewCell.cs" />
     <Compile Include="Controls\BindableCollectionViewCell.cs" />
+    <Compile Include="TableSources\ActionableTableViewDelegate.cs" />
   </ItemGroup>
   <ItemGroup>
     <InterfaceDefinition Include="ViewControllers\ChatDetailsStoryboard.storyboard" />

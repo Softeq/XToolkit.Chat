@@ -176,7 +176,8 @@ namespace Softeq.XToolkit.Chat.Droid.Views
         private void ConfigureSwipeForViewHolder(RecyclerView.ViewHolder viewHolder, int position,
             ICollection<SwipeCallback.ISwipeActionView> actions)
         {
-            if (ViewModel.IsMemberRemovable(position))
+            var member = ViewModel.Members[position];
+            if (!member.IsRemovable)
             {
                 return;
             }
@@ -192,7 +193,7 @@ namespace Softeq.XToolkit.Chat.Droid.Views
                 swipeLeaveActionViewOptions,
                 pos =>
                 {
-                    ViewModel.RemoveMemberAtCommand.Execute(pos);
+                    ViewModel.RemoveMemberCommand.Execute(ViewModel.Members[pos]);
                 }));
         }
 

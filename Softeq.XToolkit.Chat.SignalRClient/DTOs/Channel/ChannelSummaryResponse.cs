@@ -3,6 +3,7 @@
 
 using System;
 using Softeq.XToolkit.Chat.SignalRClient.DTOs.Message;
+using Softeq.XToolkit.Chat.SignalRClient.DTOs.Member;
 
 namespace Softeq.XToolkit.Chat.SignalRClient.DTOs.Channel
 {
@@ -16,11 +17,11 @@ namespace Softeq.XToolkit.Chat.SignalRClient.DTOs.Channel
         public bool IsClosed { get; set; }
         public bool IsMuted { get; set; }
         public bool IsPinned { get; set; }
-        public string CreatorSaasUserId { get; set; }
         public string Description { get; set; }
         public string WelcomeMessage { get; set; }
         public ChannelTypeDto Type { get; set; }
         public MessageResponse LastMessage { get; set; }
         public string PhotoUrl { get; set; }
+        public MemberSummary Creator { get; set; }
     }
 }

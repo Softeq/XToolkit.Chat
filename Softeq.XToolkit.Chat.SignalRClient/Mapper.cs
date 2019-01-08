@@ -27,7 +27,7 @@ namespace Softeq.XToolkit.Chat.SignalRClient
                 CreatedDate = response.Created,
                 UpdatedDate = response.Updated,
                 UnreadMessagesCount = response.UnreadMessagesCount,
-                CreatorId = response.CreatorSaasUserId,
+                CreatorId = response.Creator?.Id.ToString()
             };
         }
 
@@ -43,7 +43,7 @@ namespace Softeq.XToolkit.Chat.SignalRClient
                 Body = response.Body,
                 ChannelId = response.ChannelId.ToString(),
                 DateTime = response.Created,
-                SenderId = response.Sender?.SaasUserId,
+                SenderId = response.Sender?.Id.ToString(),
                 SenderName = response.Sender?.UserName,
                 SenderPhotoUrl = response.Sender?.AvatarUrl,
                 MessageType = DtoToMessageType(response.Type),
