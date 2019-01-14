@@ -27,5 +27,7 @@ namespace Softeq.XToolkit.Chat.SignalRClient
         public const string RequestSuccess = "RequestSuccess";
 
         public const string RequestValidationFailed = "RequestValidationFailed";
+
+        public const string LastReadMessageChanged = "LastReadMessageChanged";
     }
 }
