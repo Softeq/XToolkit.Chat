@@ -103,6 +103,11 @@ namespace Softeq.XToolkit.Chat.Manager
             return _chatService.EditChatAsync(chatSummary);
         }
 
+        public ChatSummaryViewModel GetChatById(string chatId)
+        {
+            return ChatsCollection.FirstOrDefault(x => x.ChatId == chatId);
+        }
+
         private bool TryAddChat(ChatSummaryModel chatSummary)
         {
             return ModifyChatsSafely(() =>

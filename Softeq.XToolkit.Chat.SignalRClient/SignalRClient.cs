@@ -48,6 +48,8 @@ namespace Softeq.XToolkit.Chat.SignalRClient
         public event Action<string> TypingStarted;
         public event Action<string> TypingEnded;
 
+        public event Action<string> LastReadMessageChanged;
+
         public event Action<MemberSummary, ChannelSummaryResponse> MemberJoined;
         public event Action<MemberSummary, string> MemberLeft;
 
@@ -350,6 +352,12 @@ namespace Softeq.XToolkit.Chat.SignalRClient
                 username =>
                 {
                     TypingEnded?.Invoke(username);
+                }));
+
+            _subscriptions.Add(_connection.On<string>(ClientEvents.LastReadMessageChanged,
+                chatName =>
+                {
+                    LastReadMessageChanged?.Invoke(chatName);
                 }));
         }
     }
