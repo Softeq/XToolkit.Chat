@@ -8,7 +8,7 @@
     <OutputType>Library</OutputType>
     <RootNamespace>Softeq.XToolkit.Chat.Droid</RootNamespace>
     <AssemblyName>Softeq.XToolkit.Chat.Droid</AssemblyName>
-    <TargetFrameworkVersion>v8.1</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v9.0</TargetFrameworkVersion>
     <AndroidResgenFile>Resources\Resource.designer.cs</AndroidResgenFile>
     <AndroidResgenClass>Resource</AndroidResgenClass>
     <MonoAndroidResourcePrefix>Resources</MonoAndroidResourcePrefix>
@@ -50,16 +50,16 @@
       <Version>1.1.2</Version>
     </PackageReference>
     <PackageReference Include="Xamarin.Android.Support.Design">
-      <Version>27.0.2.1</Version>
+      <Version>28.0.0.1</Version>
     </PackageReference>
     <PackageReference Include="Xamarin.Android.Support.v7.RecyclerView">
-      <Version>27.0.2.1</Version>
+      <Version>28.0.0.1</Version>
     </PackageReference>
     <PackageReference Include="Xamarin.Android.Support.v7.AppCompat">
-      <Version>27.0.2.1</Version>
+      <Version>28.0.0.1</Version>
     </PackageReference>
     <PackageReference Include="Xamarin.Android.Support.Compat">
-      <Version>27.0.2.1</Version>
+      <Version>28.0.0.1</Version>
     </PackageReference>
     <PackageReference Include="Xamarin.FFImageLoading.Transformations">
       <Version>2.4.4.859</Version>
