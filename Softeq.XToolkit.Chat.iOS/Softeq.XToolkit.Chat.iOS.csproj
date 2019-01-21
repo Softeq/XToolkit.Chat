@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -57,13 +57,13 @@
       <Version>1.3.2</Version>
     </PackageReference>
     <PackageReference Include="AsyncDisplayKitBindings">
-      <Version>2.5.0</Version>
+      <Version>2.5.1</Version>
     </PackageReference>
     <PackageReference Include="Xamarin.FFImageLoading">
-      <Version>2.4.3.840</Version>
+      <Version>2.4.4.859</Version>
     </PackageReference>
     <PackageReference Include="Xamarin.FFImageLoading.Transformations">
-      <Version>2.4.3.840</Version>
+      <Version>2.4.4.859</Version>
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
