@@ -44,7 +44,7 @@ namespace Softeq.XToolkit.Chat.ViewModels
 
         public void Initialize(string onlineTextStatus)
         {
-            _onlineTextStatus = onlineTextStatus ?? throw new ArgumentNullException(nameof(onlineTextStatus));
+            _onlineTextStatus = onlineTextStatus ?? string.Empty;
             _connectionStatusChangedSubscription = _chatConnectionManager.ConnectionStatusChanged.Subscribe(UpdateConnectionStatus);
 
             UpdateConnectionStatus(_chatConnectionManager.ConnectionStatus);
