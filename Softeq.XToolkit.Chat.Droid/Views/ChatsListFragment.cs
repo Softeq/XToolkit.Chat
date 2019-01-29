@@ -40,6 +40,11 @@ namespace Softeq.XToolkit.Chat.Droid.Views
 
             _navigationBarView = view.FindViewById<NavigationBarView>(Resource.Id.fragment_chats_navigation_bar);
 
+            if (StyleHelper.Style.UseLogoInsteadOfConnectionStatus)
+            {
+                _navigationBarView.SetCenterImage(StyleHelper.Style.LogoIcon, null);
+            }
+
             _createChatFloatButton = view.FindViewById<FloatingActionButton>(Resource.Id.fab_create_chat);
             _chatsRecyclerView = view.FindViewById<RecyclerView>(Resource.Id.rv_chats_list);
 
@@ -65,13 +70,16 @@ namespace Softeq.XToolkit.Chat.Droid.Views
         {
             base.DoAttachBindings();
 
-            Bindings.Add(this.SetBinding(() => ViewModel.ConnectionStatusViewModel.ConnectionStatusText).WhenSourceChanges(() =>
+            if (!StyleHelper.Style.UseLogoInsteadOfConnectionStatus)
             {
-                Execute.BeginOnUIThread(() =>
+                Bindings.Add(this.SetBinding(() => ViewModel.ConnectionStatusViewModel.ConnectionStatusText).WhenSourceChanges(() =>
                 {
-                    _navigationBarView.SetTitle(ViewModel.ConnectionStatusViewModel.ConnectionStatusText);
-                });
-            }));
+                    Execute.BeginOnUIThread(() =>
+                    {
+                        _navigationBarView.SetTitle(ViewModel.ConnectionStatusViewModel.ConnectionStatusText);
+                    });
+                }));
+            }
         }
 
         public override void OnDestroy()
