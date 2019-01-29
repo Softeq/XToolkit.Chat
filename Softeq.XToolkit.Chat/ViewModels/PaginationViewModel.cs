@@ -10,6 +10,7 @@ using Softeq.XToolkit.Common.Collections;
 using Softeq.XToolkit.Common.Models;
 using Softeq.XToolkit.WhiteLabel.Interfaces;
 using Softeq.XToolkit.WhiteLabel.Mvvm;
+using Softeq.XToolkit.WhiteLabel.Threading;
 
 namespace Softeq.XToolkit.Chat.ViewModels
 {
@@ -37,13 +38,19 @@ namespace Softeq.XToolkit.Chat.ViewModels
 
         public ObservableRangeCollection<TViewModel> Items { get; } = new ObservableRangeCollection<TViewModel>();
 
-        public async Task LoadFirstPageAsync()
+        public async Task LoadFirstPageAsync(CancellationToken cancellationToken)
         {
             _pageNumber = 1;
 
             var viewModels = await LoadPageAsync(_pageNumber).ConfigureAwait(false);
 
-            Items.ReplaceRange(viewModels);
+            if (!cancellationToken.IsCancellationRequested)
+            {
+                Execute.BeginOnUIThread(() => 
+                {
+                    Items.ReplaceRange(viewModels);
+                });
+            }
         }
 
         public async Task LoadNextPageAsync()
