@@ -14,6 +14,7 @@ using Softeq.XToolkit.WhiteLabel.Droid.Controls;
 using Softeq.XToolkit.WhiteLabel.Droid.Dialogs;
 using Softeq.XToolkit.Chat.Droid.Listeners;
 using Softeq.XToolkit.Common;
+using Softeq.XToolkit.Common.Droid.Converters;
 
 namespace Softeq.XToolkit.Chat.Droid.Views
 {
@@ -25,6 +26,7 @@ namespace Softeq.XToolkit.Chat.Droid.Views
         private RecyclerView _filteredMembers;
         private ObservableRecyclerViewAdapter<ChatUserViewModel> _filteredAdapter;
         private ObservableRecyclerViewAdapter<ChatUserViewModel> _selectedAdapter;
+        private BusyOverlayView _busyOverlayView;
 
         protected override int ThemeId => Resource.Style.CoreDialogTheme;
 
@@ -49,6 +51,8 @@ namespace Softeq.XToolkit.Chat.Droid.Views
 
             InitSelectedRecyclerView(view);
             InitFilteredRecyclerView(view);
+
+            _busyOverlayView = View.FindViewById<BusyOverlayView>(Resource.Id.dialog_select_members_busy_view);
         }
 
         protected override void DoAttachBindings()
@@ -61,6 +65,10 @@ namespace Softeq.XToolkit.Chat.Droid.Views
                 _addedMembers.Visibility = ViewModel.HasSelectedContacts
                     ? ViewStates.Visible
                     : ViewStates.Gone;
+            }));
+            Bindings.Add(this.SetBinding(() => ViewModel.IsBusy).WhenSourceChanges(() =>
+            {
+                _busyOverlayView.Visibility = BoolToViewStateConverter.ConvertGone(ViewModel.IsBusy);
             }));
         }
 

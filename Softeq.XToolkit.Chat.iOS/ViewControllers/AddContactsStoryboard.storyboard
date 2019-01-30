@@ -59,10 +59,14 @@
                                     <navigationItem id="hbe-ad-hc1"/>
                                 </items>
                             </navigationBar>
+                            <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" style="whiteLarge" translatesAutoresizingMaskIntoConstraints="NO" id="2wJ-7j-1b7">
+                                <rect key="frame" x="169" y="347" width="37" height="37"/>
+                            </activityIndicatorView>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
                             <constraint firstItem="an6-aD-F8r" firstAttribute="bottom" secondItem="9s2-VM-wWl" secondAttribute="bottom" id="8ul-02-twM"/>
+                            <constraint firstItem="2wJ-7j-1b7" firstAttribute="centerX" secondItem="ieT-ce-gli" secondAttribute="centerX" id="90w-gd-bUO"/>
                             <constraint firstItem="nvm-mz-k7g" firstAttribute="leading" secondItem="9s2-VM-wWl" secondAttribute="leading" id="Bij-0s-6fc"/>
                             <constraint firstItem="D22-7T-QtJ" firstAttribute="trailing" secondItem="9s2-VM-wWl" secondAttribute="trailing" id="LgI-Hg-AmG"/>
                             <constraint firstItem="D22-7T-QtJ" firstAttribute="leading" secondItem="9s2-VM-wWl" secondAttribute="leading" id="MFA-Ll-WsZ"/>
@@ -72,6 +76,7 @@
                             <constraint firstItem="an6-aD-F8r" firstAttribute="leading" secondItem="9s2-VM-wWl" secondAttribute="leading" id="Twd-KH-gHE"/>
                             <constraint firstItem="nvm-mz-k7g" firstAttribute="top" secondItem="9s2-VM-wWl" secondAttribute="top" constant="20" id="Vko-df-hMe"/>
                             <constraint firstItem="1cZ-TV-smg" firstAttribute="top" secondItem="D22-7T-QtJ" secondAttribute="bottom" id="Wz0-CU-3Pm"/>
+                            <constraint firstItem="2wJ-7j-1b7" firstAttribute="centerY" secondItem="ieT-ce-gli" secondAttribute="centerY" constant="32" id="bz2-S8-xkn"/>
                             <constraint firstItem="an6-aD-F8r" firstAttribute="top" secondItem="nvm-mz-k7g" secondAttribute="bottom" id="hTU-Wl-l04"/>
                             <constraint firstItem="nvm-mz-k7g" firstAttribute="trailing" secondItem="9s2-VM-wWl" secondAttribute="trailing" id="hdz-3X-Zyy"/>
                             <constraint firstItem="uD0-ye-tTR" firstAttribute="top" secondItem="1cZ-TV-smg" secondAttribute="bottom" id="mLo-wD-X0L"/>
@@ -84,6 +89,7 @@
                     <connections>
                         <outlet property="CustomNavigationBar" destination="D22-7T-QtJ" id="mVM-Nf-q09"/>
                         <outlet property="CustomNavigationBarItem" destination="hbe-ad-hc1" id="p7S-w9-t25"/>
+                        <outlet property="ProgressIndicator" destination="2wJ-7j-1b7" id="X0k-8f-V07"/>
                         <outlet property="SelectedMembersCollectionView" destination="nvm-mz-k7g" id="rPd-Dj-tRu"/>
                         <outlet property="SelectedMembersCollectionViewTopConstraint" destination="Vko-df-hMe" id="wbE-ru-m6P"/>
                         <outlet property="TableView" destination="an6-aD-F8r" id="vbY-EG-x3v"/>

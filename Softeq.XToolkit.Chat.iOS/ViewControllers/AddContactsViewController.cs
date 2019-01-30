@@ -31,6 +31,8 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
             InitSearchBar();
             InitSearchMembersTableView();
             InitSelectedMembersCollectionView();
+            ProgressIndicator.Color = StyleHelper.Style.AccentColor;
+            ProgressIndicator.HidesWhenStopped = true;
         }
 
         protected override void DoAttachBindings()
@@ -47,6 +49,18 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
                         : DefaultSelectedMembersCollectionTopConstraint;
                     SelectedMembersCollectionView.LayoutIfNeeded();
                 });
+            }));
+
+            Bindings.Add(this.SetBinding(() => ViewModel.IsBusy).WhenSourceChanges(() =>
+            {
+                if (ViewModel.IsBusy)
+                {
+                    ProgressIndicator.StartAnimating();
+                }
+                else
+                {
+                    ProgressIndicator.StopAnimating();
+                }
             }));
 
             TableViewSearchBar.TextChanged += TableViewSearchBarTextChanged;

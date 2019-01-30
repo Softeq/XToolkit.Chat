@@ -19,6 +19,9 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
 		UIKit.UINavigationItem CustomNavigationBarItem { get; set; }
 
 		[Outlet]
+		UIKit.UIActivityIndicatorView ProgressIndicator { get; set; }
+
+		[Outlet]
 		UIKit.UICollectionView SelectedMembersCollectionView { get; set; }
 
 		[Outlet]
@@ -47,6 +50,11 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
 				SelectedMembersCollectionView = null;
 			}
 
+			if (SelectedMembersCollectionViewTopConstraint != null) {
+				SelectedMembersCollectionViewTopConstraint.Dispose ();
+				SelectedMembersCollectionViewTopConstraint = null;
+			}
+
 			if (TableView != null) {
 				TableView.Dispose ();
 				TableView = null;
@@ -57,9 +65,9 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
 				TableViewSearchBar = null;
 			}
 
-			if (SelectedMembersCollectionViewTopConstraint != null) {
-				SelectedMembersCollectionViewTopConstraint.Dispose ();
-				SelectedMembersCollectionViewTopConstraint = null;
+			if (ProgressIndicator != null) {
+				ProgressIndicator.Dispose ();
+				ProgressIndicator = null;
 			}
 		}
 	}

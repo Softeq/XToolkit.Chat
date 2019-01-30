@@ -17,6 +17,7 @@ using Softeq.XToolkit.Common.Models;
 using Softeq.XToolkit.WhiteLabel.Interfaces;
 using Softeq.XToolkit.WhiteLabel.Mvvm;
 using Softeq.XToolkit.Auth;
+using Softeq.XToolkit.WhiteLabel.Threading;
 
 namespace Softeq.XToolkit.Chat.ViewModels
 {
@@ -108,7 +109,14 @@ namespace Softeq.XToolkit.Chat.ViewModels
         {
             base.OnAppearing();
 
-            PaginationViewModel.LoadFirstPageAsync(CancellationToken.None).ConfigureAwait(false);
+            Task.Run(async () => 
+            {
+                Execute.BeginOnUIThread(() => IsBusy = true);
+
+                await PaginationViewModel.LoadFirstPageAsync(CancellationToken.None).ConfigureAwait(false);
+
+                Execute.BeginOnUIThread(() => IsBusy = false);
+            });
         }
 
         private void DoSearch()
