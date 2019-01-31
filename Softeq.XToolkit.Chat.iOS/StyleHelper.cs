@@ -40,5 +40,7 @@ namespace Softeq.XToolkit.Chat.iOS
         string ScrollDownBoundleName { get; }
         string CheckedBoundleName { get; }
         string UnCheckedBoundleName { get; }
+        bool UseLogoInsteadOfConnectionStatus { get; }
+        string LogoBoundleName { get; }
     }
 }

@@ -26,13 +26,21 @@
             android:inputType="text"
             android:hint="Search" />
     </RelativeLayout>
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/dialog_select_members_added_members"
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="90dp"
-        android:paddingTop="12dp" />
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/dialog_select_members_filtered_members"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent">
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/dialog_select_members_added_members"
+            android:layout_width="match_parent"
+            android:layout_height="90dp"
+            android:paddingTop="12dp" />
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/dialog_select_members_filtered_members"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+        <com.softeq.xtoolkit.whitelabel.droid.BusyOverlayView
+            android:id="@+id/dialog_select_members_busy_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+    </RelativeLayout>  
 </LinearLayout>

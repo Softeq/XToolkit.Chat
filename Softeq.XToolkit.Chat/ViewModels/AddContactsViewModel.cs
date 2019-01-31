@@ -17,6 +17,7 @@ using Softeq.XToolkit.Common.Models;
 using Softeq.XToolkit.WhiteLabel.Interfaces;
 using Softeq.XToolkit.WhiteLabel.Mvvm;
 using Softeq.XToolkit.Auth;
+using Softeq.XToolkit.WhiteLabel.Threading;
 
 namespace Softeq.XToolkit.Chat.ViewModels
 {
@@ -29,7 +30,6 @@ namespace Softeq.XToolkit.Chat.ViewModels
 
     public class AddContactsViewModel : DialogViewModelBase, IViewModelParameter<AddContactParameters>
     {
-        private const int SearchDelayMs = 2000;
         private const int DefaultSearchResultsPageSize = 20;
 
         private readonly ICommand _contactSelectedCommand;
@@ -55,7 +55,7 @@ namespace Softeq.XToolkit.Chat.ViewModels
                 DefaultSearchResultsPageSize);
 
             _contactSelectedCommand = new RelayCommand<ChatUserViewModel>(SwitchSelectedContact);
-            SearchContactCommand = new RelayCommand<string>(DoSearch);
+            SearchContactCommand = new RelayCommand(DoSearch);
             CancelCommand = new RelayCommand(() => DialogComponent.CloseCommand.Execute(false));
             DoneCommand = new RelayCommand(() => DialogComponent.CloseCommand.Execute(true));
         }
@@ -89,10 +89,14 @@ namespace Softeq.XToolkit.Chat.ViewModels
             get => _contactNameSearchQuery;
             set
             {
-                if (Set(ref _contactNameSearchQuery, value))
+                if (_contactNameSearchQuery == value)
                 {
-                    SearchContactCommand.Execute(value);
+                    return;
                 }
+
+                _contactNameSearchQuery = value;
+                RaisePropertyChanged();
+                SearchContactCommand.Execute(value);
             }
         }
 
@@ -101,28 +105,25 @@ namespace Softeq.XToolkit.Chat.ViewModels
 
         public bool HasSelectedContacts => SelectedContacts.Count > 0;
 
-        public override async void OnAppearing()
+        public override void OnAppearing()
         {
             base.OnAppearing();
 
-            await PaginationViewModel.LoadFirstPageAsync();
+            Task.Run(async () => 
+            {
+                Execute.BeginOnUIThread(() => IsBusy = true);
+
+                await PaginationViewModel.LoadFirstPageAsync(CancellationToken.None).ConfigureAwait(false);
+
+                Execute.BeginOnUIThread(() => IsBusy = false);
+            });
         }
 
-        private async void DoSearch(string query)
+        private void DoSearch()
         {
             _lastSearchCancelSource?.Cancel();
             _lastSearchCancelSource = new CancellationTokenSource();
-
-            try
-            {
-                await Task.Delay(SearchDelayMs, _lastSearchCancelSource.Token);
-
-                await PaginationViewModel.LoadFirstPageAsync();
-            }
-            catch (TaskCanceledException)
-            {
-                // ignored
-            }
+            PaginationViewModel.LoadFirstPageAsync(_lastSearchCancelSource.Token).ConfigureAwait(false);
         }
 
         private Task<PagingModel<ChatUserModel>> SearchLoader(int pageNumber, int pageSize)
