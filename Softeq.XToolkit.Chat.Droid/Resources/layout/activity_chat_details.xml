@@ -104,9 +104,19 @@
             android:textColor="@color/chat_brand_color" />
 
     </RelativeLayout>
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/rv_contacts_list"
+    
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_weight="1" />
+        android:layout_weight="1">
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/rv_contacts_list"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+        <com.softeq.xtoolkit.whitelabel.droid.BusyOverlayView
+            android:id="@+id/activity_chat_details_busy_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+    </FrameLayout>
+    
 </LinearLayout>

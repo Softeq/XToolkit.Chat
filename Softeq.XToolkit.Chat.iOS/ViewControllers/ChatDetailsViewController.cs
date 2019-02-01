@@ -35,6 +35,8 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
             InitNavigationBar();
             InitDetailsHeader();
             InitChatMembersTableView();
+            BusyIndicator.Color = StyleHelper.Style.AccentColor;
+            BusyIndicator.HidesWhenStopped = true;
         }
 
         protected override void DoAttachBindings()
@@ -72,6 +74,18 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
             Bindings.Add(this.SetBinding(() => ViewModel.IsMuted, () => _chatDetailsHeaderView.IsNotificationsMuted));
             Bindings.Add(this.SetBinding(() => ViewModel.IsBusy, () => _chatDetailsHeaderView.IsMuteNotificationsAvailable)
                 .ConvertSourceToTarget(x => !x));
+            Bindings.Add(this.SetBinding(() => ViewModel.IsLoading).WhenSourceChanges(() =>
+            {
+                if (ViewModel.IsLoading)
+                {
+                    BusyIndicator.StartAnimating();
+                }
+                else
+                {
+                    BusyIndicator.StopAnimating();
+                }
+                _chatDetailsHeaderView.MembersCountLabelHidden = ViewModel.IsLoading;
+            }));
         }
 
         private void InitNavigationBar()

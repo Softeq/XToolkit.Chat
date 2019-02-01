@@ -31,6 +31,7 @@ namespace Softeq.XToolkit.Chat.ViewModels
         private readonly IUploadImageService _uploadImageService;
         private readonly IDialogsService _dialogsService;
         private readonly IChatService _chatService;
+        private bool _isLoading;
 
         public ChatDetailsViewModel(
             IChatsListManager chatsListManager,
@@ -53,6 +54,12 @@ namespace Softeq.XToolkit.Chat.ViewModels
         public ChatSummaryModel Summary { get; set; }
 
         public IChatLocalizedStrings LocalizedStrings { get; }
+
+        public bool IsLoading
+        {
+            get => _isLoading;
+            set => Set(ref _isLoading, value);
+        }
 
         public ObservableRangeCollection<ChatUserViewModel> Members { get; }
             = new ObservableRangeCollection<ChatUserViewModel>();
@@ -100,15 +107,15 @@ namespace Softeq.XToolkit.Chat.ViewModels
 
         private async Task LoadDataAsync()
         {
+            IsLoading = true;
             var members = await _chatsListManager.GetChatMembersAsync(Summary.Id).ConfigureAwait(false);
+            ApplyRemovable(members);
 
             Execute.BeginOnUIThread(() =>
             {
-                ApplyRemovable(members);
-
                 Members.ReplaceRange(members.EmptyIfNull());
-
                 RaisePropertyChanged(nameof(MembersCountText));
+                IsLoading = false;
             });
         }
 

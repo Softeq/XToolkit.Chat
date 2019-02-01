@@ -95,7 +95,7 @@ namespace Softeq.XToolkit.Chat.Manager
         public async Task<IList<ChatUserViewModel>> GetChatMembersAsync(string chatId)
         {
             var models = await _chatService.GetChatMembersAsync(chatId).ConfigureAwait(false);
-            return models?.Select(_viewModelFactoryService.ResolveViewModel<ChatUserViewModel, ChatUserModel>).ToList();
+            return models?.Select(x => new ChatUserViewModel { Parameter = x }).ToList();
         }
 
         public Task EditChatAsync(ChatSummaryModel chatSummary)
