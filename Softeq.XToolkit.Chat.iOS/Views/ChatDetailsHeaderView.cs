@@ -45,6 +45,12 @@ namespace Softeq.XToolkit.Chat.iOS.Views
             set => MembersCountLabel.Text = value;
         }
 
+        public bool MembersCountLabelHidden
+        {
+            get => MembersCountLabel.Hidden;
+            set => MembersCountLabel.Hidden = value;
+        }
+
         public void EnableEditMode(bool isEditMode)
         {
             ChatNameTextField.Enabled = isEditMode;

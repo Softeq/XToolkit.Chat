@@ -49,7 +49,7 @@ namespace Softeq.XToolkit.Chat.ViewModels
             Resources = chatLocalizedStrings;
 
             PaginationViewModel = new PaginationViewModel<ChatUserViewModel, ChatUserModel>(
-                viewModelFactoryService,
+                new ChatUserViewModelFactory(),
                 SearchLoader,
                 SearchFilter,
                 DefaultSearchResultsPageSize);
@@ -164,6 +164,19 @@ namespace Softeq.XToolkit.Chat.ViewModels
             }
 
             RaisePropertyChanged(nameof(HasSelectedContacts));
+        }
+
+        private class ChatUserViewModelFactory : IViewModelFactoryService
+        {
+            public TViewModel ResolveViewModel<TViewModel, TParam>(TParam param) where TViewModel : ObservableObject, IViewModelParameter<TParam>
+            {
+                return new ChatUserViewModel { Parameter = param as ChatUserModel }  as TViewModel;
+            }
+
+            public TViewModel ResolveViewModel<TViewModel>() where TViewModel : ObservableObject
+            {
+                return new ChatUserViewModel() as TViewModel;
+            }
         }
     }
 }

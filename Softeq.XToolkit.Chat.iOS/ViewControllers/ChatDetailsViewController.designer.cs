@@ -13,6 +13,9 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
 	partial class ChatDetailsViewController
 	{
 		[Outlet]
+		UIKit.UIActivityIndicatorView BusyIndicator { get; set; }
+
+		[Outlet]
 		UIKit.UINavigationBar CustomNavigationBar { get; set; }
 
 		[Outlet]
@@ -36,6 +39,11 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
 			if (TableView != null) {
 				TableView.Dispose ();
 				TableView = null;
+			}
+
+			if (BusyIndicator != null) {
+				BusyIndicator.Dispose ();
+				BusyIndicator = null;
 			}
 		}
 	}

@@ -26,6 +26,7 @@ using Softeq.XToolkit.WhiteLabel.Droid;
 using Softeq.XToolkit.WhiteLabel.Droid.Controls;
 using Softeq.XToolkit.WhiteLabel.Droid.Extensions;
 using Softeq.XToolkit.WhiteLabel.Threading;
+using Softeq.XToolkit.Common.Droid.Converters;
 
 namespace Softeq.XToolkit.Chat.Droid.Views
 {
@@ -44,6 +45,7 @@ namespace Softeq.XToolkit.Chat.Droid.Views
         private string _previewImageKey;
         private TextView _muteNotificationsLabel;
         private SwitchCompat _muteNotificationsSwitch;
+        private BusyOverlayView _busyOverlayView;
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -93,6 +95,8 @@ namespace Softeq.XToolkit.Chat.Droid.Views
             {
                 MaxImageWidth = 300
             };
+
+            _busyOverlayView = FindViewById<BusyOverlayView>(Resource.Id.activity_chat_details_busy_view);
         }
 
         protected override void DoAttachBindings()
@@ -142,6 +146,11 @@ namespace Softeq.XToolkit.Chat.Droid.Views
                 .ConvertSourceToTarget(x => !x));
             Bindings.Add(this.SetBinding(() => ViewModel.IsBusy, () => _muteNotificationsSwitch.Enabled)
                 .ConvertSourceToTarget(x => !x));
+            Bindings.Add(this.SetBinding(() => ViewModel.IsLoading).WhenSourceChanges(() =>
+            {
+                _busyOverlayView.Visibility = BoolToViewStateConverter.ConvertGone(ViewModel.IsLoading);
+                _chatMembersCountTextView.Visibility = BoolToViewStateConverter.ConvertGone(!ViewModel.IsLoading);
+            }));
         }
 
         protected override void OnDestroy()
