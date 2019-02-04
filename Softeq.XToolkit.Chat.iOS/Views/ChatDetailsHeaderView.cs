@@ -87,6 +87,12 @@ namespace Softeq.XToolkit.Chat.iOS.Views
                x => x.Transform(new CircleTransformation()));
         }
 
+        public void EnableEditName(ICommand command)
+        {
+            ChatNameTextField.Enabled = true;
+            ChatNameTextField.SetCommand(nameof(ChatNameTextField.EditingDidEnd), command);
+        }
+
         public void SetEditedChatAvatar(string key)
         {
             Execute.BeginOnUIThread(() =>

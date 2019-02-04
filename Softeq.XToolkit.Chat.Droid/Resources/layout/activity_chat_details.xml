@@ -28,14 +28,18 @@
             android:layout_alignParentLeft="true"
             android:layout_alignParentTop="true" />
 
-        <TextView
-            android:id="@+id/tv_chat_name"
+        <EditText
+            android:id="@+id/activity_chat_details_chat_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="32dp"
             android:layout_toRightOf="@+id/iv_chat_photo"
             android:hint="Group Name"
-            android:textSize="20sp" />
+            android:textSize="20sp"
+            android:enabled="false"
+            android:imeOptions="actionDone"
+            android:maxLines="1" 
+            android:inputType="text" />
 
         <Button
             android:id="@+id/b_chat_change_photo"

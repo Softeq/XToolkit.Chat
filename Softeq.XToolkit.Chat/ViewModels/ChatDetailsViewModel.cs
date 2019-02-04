@@ -88,6 +88,8 @@ namespace Softeq.XToolkit.Chat.ViewModels
 
         public ICommand RemoveMemberCommand { get; private set; }
 
+        public ICommand SaveCommand { get; private set; }
+
         public override void OnInitialize()
         {
             base.OnInitialize();
@@ -96,6 +98,7 @@ namespace Softeq.XToolkit.Chat.ViewModels
             BackCommand = new RelayCommand(_pageNavigationService.GoBack, () => _pageNavigationService.CanGoBack);
             RemoveMemberCommand = new RelayCommand<ChatUserViewModel>(RemoveMember);
             ChangeMuteNotificationsCommand = new RelayCommand(() => ChangeMuteNotificationsAsync().SafeTaskWrapper());
+            SaveCommand = new RelayCommand(() => SaveAsync().SafeTaskWrapper());
         }
 
         public override void OnAppearing()
@@ -153,6 +156,7 @@ namespace Softeq.XToolkit.Chat.ViewModels
             });
         }
 
+        // TODO YP: refactor this way
         public async Task SaveAsync(Func<(Task<Stream> GetImageTask, string Extension)> getImageFunc)
         {
             if (IsBusy)
@@ -169,13 +173,18 @@ namespace Softeq.XToolkit.Chat.ViewModels
                 Summary.AvatarUrl = imagePath;
                 RaisePropertyChanged(nameof(Summary.AvatarUrl));
 
-                await _chatsListManager.EditChatAsync(Summary).ConfigureAwait(false);
+                await SaveAsync().ConfigureAwait(false);
             }
 
             Execute.BeginOnUIThread(() =>
             {
                 IsBusy = false;
             });
+        }
+
+        private Task SaveAsync()
+        {
+            return _chatsListManager.EditChatAsync(Summary);
         }
 
         private async void AddMembers()

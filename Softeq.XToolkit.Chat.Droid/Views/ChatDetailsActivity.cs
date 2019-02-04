@@ -27,6 +27,8 @@ using Softeq.XToolkit.WhiteLabel.Droid.Controls;
 using Softeq.XToolkit.WhiteLabel.Droid.Extensions;
 using Softeq.XToolkit.WhiteLabel.Threading;
 using Softeq.XToolkit.Common.Droid.Converters;
+using Softeq.XToolkit.WhiteLabel.Droid.Services;
+using Android.Views.InputMethods;
 
 namespace Softeq.XToolkit.Chat.Droid.Views
 {
@@ -36,7 +38,7 @@ namespace Softeq.XToolkit.Chat.Droid.Views
         private NavigationBarView _navigationBarView;
         private MvxCachedImageView _chatPhotoImageView;
         private MvxCachedImageView _chatEditedPhotoImageView;
-        private TextView _chatNameTextView;
+        private EditText _chatNameEditText;
         private TextView _chatMembersCountTextView;
         private Button _addMemberButton;
         private RecyclerView _membersRecyclerView;
@@ -68,7 +70,8 @@ namespace Softeq.XToolkit.Chat.Droid.Views
             _chatEditedPhotoImageView = FindViewById<MvxCachedImageView>(Resource.Id.iv_chat_photo_edited);
             _chatEditedPhotoImageView.Visibility = ViewStates.Gone;
 
-            _chatNameTextView = FindViewById<TextView>(Resource.Id.tv_chat_name);
+            _chatNameEditText = FindViewById<EditText>(Resource.Id.activity_chat_details_chat_name);
+
             _chatMembersCountTextView = FindViewById<TextView>(Resource.Id.tv_members_count);
 
             _addMemberButton = FindViewById<Button>(Resource.Id.b_chat_add_member);
@@ -103,7 +106,7 @@ namespace Softeq.XToolkit.Chat.Droid.Views
         {
             base.DoAttachBindings();
 
-            Bindings.Add(this.SetBinding(() => ViewModel.Summary.Name, () => _chatNameTextView.Text));
+            Bindings.Add(this.SetBinding(() => ViewModel.Summary.Name, () => _chatNameEditText.Text, BindingMode.TwoWay));
             Bindings.Add(this.SetBinding(() => ViewModel.MembersCountText, () => _chatMembersCountTextView.Text));
             Bindings.Add(this.SetBinding(() => ViewModel.Summary.AvatarUrl).WhenSourceChanges(() =>
             {
@@ -150,6 +153,28 @@ namespace Softeq.XToolkit.Chat.Droid.Views
             {
                 _busyOverlayView.Visibility = BoolToViewStateConverter.ConvertGone(ViewModel.IsLoading);
                 _chatMembersCountTextView.Visibility = BoolToViewStateConverter.ConvertGone(!ViewModel.IsLoading);
+            }));
+            Bindings.Add(this.SetBinding(() => ViewModel.Summary.IsCreatedByMe).WhenSourceChanges(() =>
+            {
+                if (!ViewModel.Summary.IsCreatedByMe)
+                {
+                    _chatNameEditText.Enabled = false;
+                    _chatNameEditText.SetBackgroundColor(Color.Transparent);
+
+                    return;
+                }
+
+                _chatNameEditText.Enabled = true;
+                _chatNameEditText.EditorAction += (sender, e) =>
+                {
+                    if (e.ActionId == ImeAction.Done)
+                    {
+                        _chatNameEditText.ClearFocus();
+                        KeyboardService.HideSoftKeyboard(_chatNameEditText);
+
+                        ViewModel.SaveCommand.Execute(null);
+                    }
+                };
             }));
         }
 

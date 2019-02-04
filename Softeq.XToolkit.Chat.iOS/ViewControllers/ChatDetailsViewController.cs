@@ -47,7 +47,7 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
             {
                 _chatDetailsHeaderView.SetChatAvatar(ViewModel.Summary.AvatarUrl, ViewModel.Summary.Name);
             }));
-            Bindings.Add(this.SetBinding(() => ViewModel.Summary.Name, () => _chatDetailsHeaderView.ChatNameField.Text));
+            Bindings.Add(this.SetBinding(() => ViewModel.Summary.Name, () => _chatDetailsHeaderView.ChatNameField.Text, BindingMode.TwoWay));
             Bindings.Add(this.SetBinding(() => ViewModel.MembersCountText, () => _chatDetailsHeaderView.ChatMembersCount));
             Bindings.Add(this.SetBinding(() => _simpleImagePicker.ViewModel.ImageCacheKey)
                 .WhenSourceChanges(() =>
@@ -85,6 +85,15 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
                     BusyIndicator.StopAnimating();
                 }
                 _chatDetailsHeaderView.MembersCountLabelHidden = ViewModel.IsLoading;
+            }));
+            Bindings.Add(this.SetBinding(() => ViewModel.Summary.IsCreatedByMe).WhenSourceChanges(() =>
+            {
+                if (!ViewModel.Summary.IsCreatedByMe)
+                {
+                    return;
+                }
+
+                _chatDetailsHeaderView.EnableEditName(ViewModel.SaveCommand);
             }));
         }
 
