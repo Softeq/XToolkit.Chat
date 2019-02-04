@@ -43,34 +43,31 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
         {
             base.DoAttachBindings();
 
-            Bindings.Add(this.SetBinding(() => ViewModel.Summary.AvatarUrl).WhenSourceChanges(() =>
+            Bindings.Add(this.SetBinding(() => ViewModel.AvatarUrl).WhenSourceChanges(() =>
             {
-                _chatDetailsHeaderView.SetChatAvatar(ViewModel.Summary.AvatarUrl, ViewModel.Summary.Name);
+                _chatDetailsHeaderView.SetChatAvatar(ViewModel.AvatarUrl, ViewModel.ChatName);
             }));
-            Bindings.Add(this.SetBinding(() => ViewModel.Summary.Name, () => _chatDetailsHeaderView.ChatNameField.Text));
+            Bindings.Add(this.SetBinding(() => ViewModel.ChatName, () => _chatDetailsHeaderView.ChatNameField.Text, BindingMode.TwoWay));
             Bindings.Add(this.SetBinding(() => ViewModel.MembersCountText, () => _chatDetailsHeaderView.ChatMembersCount));
-            Bindings.Add(this.SetBinding(() => _simpleImagePicker.ViewModel.ImageCacheKey)
-                .WhenSourceChanges(() =>
+            Bindings.Add(this.SetBinding(() => _simpleImagePicker.ViewModel.ImageCacheKey).WhenSourceChanges(() =>
+            {
+                if (string.IsNullOrEmpty(_simpleImagePicker.ViewModel.ImageCacheKey))
                 {
-                    if (string.IsNullOrEmpty(_simpleImagePicker.ViewModel.ImageCacheKey))
-                    {
-                        return;
-                    }
+                    return;
+                }
 
-                    var key = _simpleImagePicker.ViewModel.ImageCacheKey;
-                    if (key == _previewImageKey)
-                    {
-                        return;
-                    }
+                var key = _simpleImagePicker.ViewModel.ImageCacheKey;
+                if (key == _previewImageKey)
+                {
+                    return;
+                }
 
-                    _previewImageKey = key;
-                    Execute.BeginOnUIThread(() =>
-                    {
-                        _chatDetailsHeaderView.SetEditedChatAvatar(_previewImageKey);
-                        CustomNavigationItem.SetCommand(
-                            ViewModel.LocalizedStrings.Save, UIColor.Black, new RelayCommand(SaveAsync), false);
-                    });
-                }));
+                _previewImageKey = key;
+                Execute.BeginOnUIThread(() =>
+                {
+                    ViewModel.IsInEditMode = true;
+                });
+            }));
             Bindings.Add(this.SetBinding(() => ViewModel.IsMuted, () => _chatDetailsHeaderView.IsNotificationsMuted));
             Bindings.Add(this.SetBinding(() => ViewModel.IsBusy, () => _chatDetailsHeaderView.IsMuteNotificationsAvailable)
                 .ConvertSourceToTarget(x => !x));
@@ -85,6 +82,39 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
                     BusyIndicator.StopAnimating();
                 }
                 _chatDetailsHeaderView.MembersCountLabelHidden = ViewModel.IsLoading;
+            }));
+            Bindings.Add(this.SetBinding(() => ViewModel.CanEdit).WhenSourceChanges(() =>
+            {
+                _chatDetailsHeaderView.HideChangeChatPhoto(!ViewModel.CanEdit);
+
+                if (!ViewModel.CanEdit)
+                {
+                    _chatDetailsHeaderView.Frame = new CGRect(0, 0, 200, 260);
+
+                    return;
+                }
+
+                _chatDetailsHeaderView.SetChangeChatPhotoCommand(new RelayCommand(OpenPicker), ViewModel.LocalizedStrings.ChangePhoto);
+                _chatDetailsHeaderView.SetChangeChatName(new RelayCommand(() =>
+                {
+                    ViewModel.IsInEditMode = true;
+                }));
+            }));
+            Bindings.Add(this.SetBinding(() => ViewModel.IsInEditMode).WhenSourceChanges(() =>
+            {
+                if (ViewModel.IsInEditMode)
+                {
+                    CustomNavigationItem.SetCommand(
+                        ViewModel.LocalizedStrings.Save, UIColor.Black, new RelayCommand(Save), false);
+
+                    _chatDetailsHeaderView.SetEditedChatAvatar(_previewImageKey);
+                }
+                else
+                {
+                    CustomNavigationItem.SetRightBarButtonItem(null, true);
+
+                    _chatDetailsHeaderView.EndEditing();
+                }
             }));
         }
 
@@ -103,7 +133,6 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
             _chatDetailsHeaderView.EnableEditMode(false);
             _chatDetailsHeaderView.ChatNamePlaceholder = ViewModel.LocalizedStrings.ChatName;
             _chatDetailsHeaderView.SetAddMembersCommand(ViewModel.AddMembersCommand, ViewModel.LocalizedStrings.AddMembers);
-            _chatDetailsHeaderView.SetChangeChatPhotoCommand(new RelayCommand(OpenPicker), ViewModel.LocalizedStrings.ChangePhoto);
             _chatDetailsHeaderView.SetChangeMuteNotificationsCommand(
                 ViewModel.ChangeMuteNotificationsCommand,
                 ViewModel.LocalizedStrings.Notifications);
@@ -131,13 +160,9 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
             _simpleImagePicker.OpenGalleryAsync();
         }
 
-        private async void SaveAsync()
+        private void Save()
         {
-            await ViewModel.SaveAsync(_simpleImagePicker.StreamFunc).ConfigureAwait(false);
-            Execute.BeginOnUIThread(() =>
-            {
-                CustomNavigationItem.SetRightBarButtonItem(null, true);
-            });
+            ViewModel.SaveCommand.Execute(_simpleImagePicker.StreamFunc);
         }
 
         private UITableViewSource CreateTableViewSource()

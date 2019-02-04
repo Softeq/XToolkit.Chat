@@ -65,7 +65,7 @@ namespace Softeq.XToolkit.Chat.SignalRClient
 #if DEBUG
                 .ConfigureLogging(logging =>
                 {
-                    logging.SetMinimumLevel(LogLevel.Information);
+                    logging.SetMinimumLevel(LogLevel.Trace);
                     logging.AddConsole();
                 })
 #endif
@@ -132,9 +132,9 @@ namespace Softeq.XToolkit.Chat.SignalRClient
             return SendAndHandleExceptionsAsync<ChannelSummaryResponse>(ServerMethods.CreateChannelAsync, request);
         }
 
-        public Task UpdateChannelAsync(UpdateChannelRequest request)
+        public Task<ChannelSummaryResponse> UpdateChannelAsync(UpdateChannelRequest request)
         {
-            return SendAndHandleExceptionsAsync(ServerMethods.UpdateChannelAsync, request);
+            return SendAndHandleExceptionsAsync<ChannelSummaryResponse>(ServerMethods.UpdateChannelAsync, request);
         }
 
         public Task CloseChannelAsync(Guid channelId)

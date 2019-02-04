@@ -69,6 +69,11 @@ namespace Softeq.XToolkit.Chat.iOS.Views
             ChangeChatPhotoButton.SetCommand(command);
         }
 
+        public void HideChangeChatPhoto(bool hidden)
+        {
+            ChangeChatPhotoButton.Hidden = hidden;
+        }
+
         public void SetChangeMuteNotificationsCommand(ICommand command, string label)
         {
             MuteLabel.Text = label;
@@ -85,6 +90,19 @@ namespace Softeq.XToolkit.Chat.iOS.Views
             ChatAvatarImageView.LoadImageWithTextPlaceholder(photoUrl,
                chatName, StyleHelper.Style.GroupDetailsAvatarStyles,
                x => x.Transform(new CircleTransformation()));
+        }
+
+        public void SetChangeChatName(ICommand focusCommand)
+        {
+            ChatNameTextField.Enabled = true;
+            ChatNameTextField.SetCommand(nameof(ChatNameTextField.EditingDidBegin), focusCommand);
+        }
+
+        public void EndEditing()
+        {
+            ChatNameTextField.ResignFirstResponder();
+
+            SetEditedChatAvatar(null);
         }
 
         public void SetEditedChatAvatar(string key)
