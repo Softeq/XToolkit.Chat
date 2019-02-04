@@ -28,7 +28,7 @@ using Softeq.XToolkit.WhiteLabel.Droid.Extensions;
 using Softeq.XToolkit.WhiteLabel.Threading;
 using Softeq.XToolkit.Common.Droid.Converters;
 using Softeq.XToolkit.WhiteLabel.Droid.Services;
-using Android.Views.InputMethods;
+using System;
 
 namespace Softeq.XToolkit.Chat.Droid.Views
 {
@@ -68,9 +68,10 @@ namespace Softeq.XToolkit.Chat.Droid.Views
             _chatPhotoImageView = FindViewById<MvxCachedImageView>(Resource.Id.iv_chat_photo);
 
             _chatEditedPhotoImageView = FindViewById<MvxCachedImageView>(Resource.Id.iv_chat_photo_edited);
-            _chatEditedPhotoImageView.Visibility = ViewStates.Gone;
 
             _chatNameEditText = FindViewById<EditText>(Resource.Id.activity_chat_details_chat_name);
+            _chatNameEditText.SetCommandWithArgs(nameof(_chatNameEditText.FocusChange),
+               new RelayCommand<View.FocusChangeEventArgs>(OnEditTextFocusChanged));
 
             _chatMembersCountTextView = FindViewById<TextView>(Resource.Id.tv_members_count);
 
@@ -102,19 +103,21 @@ namespace Softeq.XToolkit.Chat.Droid.Views
             _busyOverlayView = FindViewById<BusyOverlayView>(Resource.Id.activity_chat_details_busy_view);
         }
 
+
+
         protected override void DoAttachBindings()
         {
             base.DoAttachBindings();
 
-            Bindings.Add(this.SetBinding(() => ViewModel.Summary.Name, () => _chatNameEditText.Text, BindingMode.TwoWay));
+            Bindings.Add(this.SetBinding(() => ViewModel.ChatName, () => _chatNameEditText.Text, BindingMode.TwoWay));
             Bindings.Add(this.SetBinding(() => ViewModel.MembersCountText, () => _chatMembersCountTextView.Text));
-            Bindings.Add(this.SetBinding(() => ViewModel.Summary.AvatarUrl).WhenSourceChanges(() =>
+            Bindings.Add(this.SetBinding(() => ViewModel.AvatarUrl).WhenSourceChanges(() =>
             {
                 Execute.BeginOnUIThread(() =>
                 {
                     _chatPhotoImageView.LoadImageWithTextPlaceholder(
-                        ViewModel.Summary.AvatarUrl,
-                        ViewModel.Summary.Name,
+                        ViewModel.AvatarUrl,
+                        ViewModel.ChatName,
                         new AvatarPlaceholderDrawable.AvatarStyles
                         {
                             BackgroundHexColors = StyleHelper.Style.ChatAvatarStyles.BackgroundHexColors,
@@ -136,8 +139,8 @@ namespace Softeq.XToolkit.Chat.Droid.Views
 
                     Execute.BeginOnUIThread(() =>
                     {
-                        _navigationBarView.RightTextButton.Visibility = ViewStates.Visible;
-                        _chatEditedPhotoImageView.Visibility = ViewStates.Visible;
+                        ViewModel.IsInEditMode = true;
+
                         ImageService.Instance
                             .LoadFile(_imagePicker.ViewModel.ImageCacheKey)
                             .DownSampleInDip(95, 95)
@@ -154,9 +157,11 @@ namespace Softeq.XToolkit.Chat.Droid.Views
                 _busyOverlayView.Visibility = BoolToViewStateConverter.ConvertGone(ViewModel.IsLoading);
                 _chatMembersCountTextView.Visibility = BoolToViewStateConverter.ConvertGone(!ViewModel.IsLoading);
             }));
-            Bindings.Add(this.SetBinding(() => ViewModel.Summary.IsCreatedByMe).WhenSourceChanges(() =>
+            Bindings.Add(this.SetBinding(() => ViewModel.CanEdit, BindingMode.OneTime).WhenSourceChanges(() =>
             {
-                if (!ViewModel.Summary.IsCreatedByMe)
+                _changeChatPhotoButton.Visibility = BoolToViewStateConverter.ConvertGone(ViewModel.CanEdit);
+
+                if (!ViewModel.CanEdit)
                 {
                     _chatNameEditText.Enabled = false;
                     _chatNameEditText.SetBackgroundColor(Color.Transparent);
@@ -165,16 +170,23 @@ namespace Softeq.XToolkit.Chat.Droid.Views
                 }
 
                 _chatNameEditText.Enabled = true;
-                _chatNameEditText.EditorAction += (sender, e) =>
+            }));
+            Bindings.Add(this.SetBinding(() => ViewModel.IsInEditMode).WhenSourceChanges(() =>
+            {
+                if (ViewModel.IsInEditMode)
                 {
-                    if (e.ActionId == ImeAction.Done)
-                    {
-                        _chatNameEditText.ClearFocus();
-                        KeyboardService.HideSoftKeyboard(_chatNameEditText);
+                    _navigationBarView.RightTextButton.Visibility = ViewStates.Visible;
+                    _chatEditedPhotoImageView.Visibility = ViewStates.Visible;
+                }
+                else
+                {
+                    _previewImageKey = null;
+                    _navigationBarView.RightTextButton.Visibility = ViewStates.Gone;
+                    _chatEditedPhotoImageView.Visibility = ViewStates.Gone;
 
-                        ViewModel.SaveCommand.Execute(null);
-                    }
-                };
+                    _chatNameEditText.ClearFocus();
+                    KeyboardService.HideSoftKeyboard(_chatNameEditText);
+                }
             }));
         }
 
@@ -231,19 +243,22 @@ namespace Softeq.XToolkit.Chat.Droid.Views
                 }));
         }
 
+        private void OnEditTextFocusChanged(View.FocusChangeEventArgs e)
+        {
+            if (e.HasFocus)
+            {
+                ViewModel.IsInEditMode = true;
+            }
+        }
+
         private void OpenImagePicker()
         {
             _imagePicker.OpenGallery();
         }
 
-        private async void OnSaveClick()
+        private void OnSaveClick()
         {
-            await ViewModel.SaveAsync(_imagePicker.GetStreamFunc()).ConfigureAwait(false);
-            Execute.BeginOnUIThread(() =>
-            {
-                _previewImageKey = null;
-                _navigationBarView.RightTextButton.Visibility = ViewStates.Gone;
-            });
+            ViewModel.SaveCommand.Execute(_imagePicker.GetStreamFunc());
         }
     }
 }

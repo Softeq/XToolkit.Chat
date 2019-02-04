@@ -31,7 +31,11 @@ namespace Softeq.XToolkit.Chat.ViewModels
         private readonly IUploadImageService _uploadImageService;
         private readonly IDialogsService _dialogsService;
         private readonly IChatService _chatService;
+
         private bool _isLoading;
+        private bool _isInEditMode;
+        private string _chatName;
+        private string _avatarUrl;
 
         public ChatDetailsViewModel(
             IChatsListManager chatsListManager,
@@ -60,6 +64,38 @@ namespace Softeq.XToolkit.Chat.ViewModels
             get => _isLoading;
             set => Set(ref _isLoading, value);
         }
+
+        public bool IsInEditMode
+        {
+            get => _isInEditMode;
+            set => Set(ref _isInEditMode, value);
+        }
+
+        public string ChatName
+        {
+            get => _chatName;
+            set
+            {
+                if (Set(ref _chatName, value))
+                {
+                    Summary.Name = value;
+                }
+            }
+        }
+
+        public string AvatarUrl
+        {
+            get => _avatarUrl;
+            set
+            {
+                if (Set(ref _avatarUrl, value))
+                {
+                    Summary.AvatarUrl = value;
+                }
+            }
+        }
+
+        public bool CanEdit => Summary.IsCreatedByMe;
 
         public ObservableRangeCollection<ChatUserViewModel> Members { get; }
             = new ObservableRangeCollection<ChatUserViewModel>();
@@ -94,11 +130,14 @@ namespace Softeq.XToolkit.Chat.ViewModels
         {
             base.OnInitialize();
 
+            ChatName = Summary.Name;
+            AvatarUrl = Summary.AvatarUrl;
+
             AddMembersCommand = new RelayCommand(AddMembers);
             BackCommand = new RelayCommand(_pageNavigationService.GoBack, () => _pageNavigationService.CanGoBack);
             RemoveMemberCommand = new RelayCommand<ChatUserViewModel>(RemoveMember);
             ChangeMuteNotificationsCommand = new RelayCommand(() => ChangeMuteNotificationsAsync().SafeTaskWrapper());
-            SaveCommand = new RelayCommand(() => SaveAsync().SafeTaskWrapper());
+            SaveCommand = new RelayCommand<Func<(Task<Stream>, string)>>(x => SaveAsync(x).SafeTaskWrapper());
         }
 
         public override void OnAppearing()
@@ -156,7 +195,6 @@ namespace Softeq.XToolkit.Chat.ViewModels
             });
         }
 
-        // TODO YP: refactor this way
         public async Task SaveAsync(Func<(Task<Stream> GetImageTask, string Extension)> getImageFunc)
         {
             if (IsBusy)
@@ -168,23 +206,18 @@ namespace Softeq.XToolkit.Chat.ViewModels
 
             var imagePath = await UploadChatAvatarAsync(getImageFunc);
 
-            if (imagePath != null)
+            if (!string.IsNullOrEmpty(imagePath))
             {
-                Summary.AvatarUrl = imagePath;
-                RaisePropertyChanged(nameof(Summary.AvatarUrl));
-
-                await SaveAsync().ConfigureAwait(false);
+                AvatarUrl = imagePath;
             }
+
+            await _chatsListManager.EditChatAsync(Summary).ConfigureAwait(false);
 
             Execute.BeginOnUIThread(() =>
             {
                 IsBusy = false;
+                IsInEditMode = false;
             });
-        }
-
-        private Task SaveAsync()
-        {
-            return _chatsListManager.EditChatAsync(Summary);
         }
 
         private async void AddMembers()
