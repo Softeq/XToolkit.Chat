@@ -22,7 +22,7 @@ namespace Softeq.XToolkit.Chat.ViewModels
         private readonly Func<IReadOnlyList<TViewModel>, IReadOnlyList<TViewModel>> _filterAction;
         private readonly int _pageSize;
 
-        private int _pageNumber = 1;
+        private long _pageNumber = 1;
 
         public PaginationViewModel(
             IViewModelFactoryService viewModelFactory,
@@ -40,9 +40,9 @@ namespace Softeq.XToolkit.Chat.ViewModels
 
         public async Task LoadFirstPageAsync(CancellationToken cancellationToken)
         {
-            _pageNumber = 1;
+            Interlocked.Exchange(ref _pageNumber, 1);
 
-            var viewModels = await LoadPageAsync(_pageNumber).ConfigureAwait(false);
+            var viewModels = await LoadPageAsync((int)_pageNumber).ConfigureAwait(false);
 
             if (!cancellationToken.IsCancellationRequested)
             {
@@ -55,9 +55,14 @@ namespace Softeq.XToolkit.Chat.ViewModels
 
         public async Task LoadNextPageAsync()
         {
+            if (Interlocked.Read(ref _pageNumber) == 0)
+            {
+                return; 
+            }
+
             Interlocked.Increment(ref _pageNumber);
 
-            var viewModels = await LoadPageAsync(_pageNumber).ConfigureAwait(false);
+            var viewModels = await LoadPageAsync((int)_pageNumber).ConfigureAwait(false);
 
             if (viewModels.Count > 0)
             {
