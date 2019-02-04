@@ -103,8 +103,6 @@ namespace Softeq.XToolkit.Chat.Droid.Views
             _busyOverlayView = FindViewById<BusyOverlayView>(Resource.Id.activity_chat_details_busy_view);
         }
 
-
-
         protected override void DoAttachBindings()
         {
             base.DoAttachBindings();
@@ -160,16 +158,12 @@ namespace Softeq.XToolkit.Chat.Droid.Views
             Bindings.Add(this.SetBinding(() => ViewModel.CanEdit, BindingMode.OneTime).WhenSourceChanges(() =>
             {
                 _changeChatPhotoButton.Visibility = BoolToViewStateConverter.ConvertGone(ViewModel.CanEdit);
+                _chatNameEditText.Enabled = ViewModel.CanEdit;
 
                 if (!ViewModel.CanEdit)
                 {
-                    _chatNameEditText.Enabled = false;
                     _chatNameEditText.SetBackgroundColor(Color.Transparent);
-
-                    return;
                 }
-
-                _chatNameEditText.Enabled = true;
             }));
             Bindings.Add(this.SetBinding(() => ViewModel.IsInEditMode).WhenSourceChanges(() =>
             {
