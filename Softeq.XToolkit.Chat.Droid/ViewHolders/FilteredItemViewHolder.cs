@@ -38,11 +38,6 @@ namespace Softeq.XToolkit.Chat.Droid.ViewHolders
             _view.Click += ViewOnClick;
         }
 
-        private void ViewOnClick(object sender, EventArgs e)
-        {
-            _viewModel.IsSelected = !_viewModel.IsSelected;
-        }
-
         public void Bind(ChatUserViewModel viewModel)
         {
             _viewModel = viewModel;
@@ -64,6 +59,17 @@ namespace Softeq.XToolkit.Chat.Droid.ViewHolders
                 var resId = _viewModel.IsSelected ? StyleHelper.Style.CheckedIcon : StyleHelper.Style.UnCheckedIcon;
                 _imageView.SetImageResource(resId);
             });
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            _selectedBinding.Detach();
+            base.Dispose(disposing);
+        }
+
+        private void ViewOnClick(object sender, EventArgs e)
+        {
+            _viewModel.IsSelected = !_viewModel.IsSelected;
         }
     }
 }
