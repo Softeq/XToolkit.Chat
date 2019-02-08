@@ -40,5 +40,9 @@ namespace Softeq.XToolkit.Chat.Models.Interfaces
         string Notifications { get; }
         string RemoveUserConfirmationTitle { get; }
         string RemoveUserConfirmationMessage { get; }
+        string LeaveChatConfirmationTitle { get; }
+        string LeaveChatConfirmationMessage { get; }
+        string Yes { get; }
+        string No { get; }
     }
 }

@@ -215,6 +215,12 @@ namespace Softeq.XToolkit.Chat.Droid.ItemTouchCallbacks
             {
                 if (button.OnClick(e.GetX(), e.GetY()))
                 {
+                    // collapse buttons
+                    if (_recyclerViewRef.Target != null && _swipedPosition >= 0)
+                    {
+                        _recyclerViewRef.Target.GetAdapter().NotifyItemChanged(_swipedPosition);
+                    }
+
                     break;
                 }
             }

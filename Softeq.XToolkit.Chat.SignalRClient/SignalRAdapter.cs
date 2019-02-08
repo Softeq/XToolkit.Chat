@@ -176,8 +176,7 @@ namespace Softeq.XToolkit.Chat.SignalRClient
             {
                 var request = new DeleteMessageRequest
                 {
-                    MessageId = new Guid(messageId),
-                    ChannelId = new Guid(channelId)
+                    MessageId = new Guid(messageId)
                 };
                 return _signalRClient.DeleteMessageAsync(request);
             }));
@@ -250,7 +249,7 @@ namespace Softeq.XToolkit.Chat.SignalRClient
                     return;
                 }
 
-                if (user.Id.Equals(_memberId))
+                if (user.Id.ToString() == _memberId)
                 {
                     _chatRemoved.OnNext(channelId);
                 }

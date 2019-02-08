@@ -135,7 +135,7 @@ namespace Softeq.XToolkit.Chat.ViewModels
 
             AddMembersCommand = new RelayCommand(AddMembers);
             BackCommand = new RelayCommand(_pageNavigationService.GoBack, () => _pageNavigationService.CanGoBack);
-            RemoveMemberCommand = new RelayCommand<ChatUserViewModel>(RemoveMember);
+            RemoveMemberCommand = new RelayCommand<ChatUserViewModel>(x => RemoveMemberAsync(x).SafeTaskWrapper());
             ChangeMuteNotificationsCommand = new RelayCommand(() => ChangeMuteNotificationsAsync().SafeTaskWrapper());
             SaveCommand = new RelayCommand<Func<(Task<Stream>, string)>>(x => SaveAsync(x).SafeTaskWrapper());
         }
@@ -161,11 +161,22 @@ namespace Softeq.XToolkit.Chat.ViewModels
             });
         }
 
-        private void RemoveMember(ChatUserViewModel memberViewModel)
+        private async Task RemoveMemberAsync(ChatUserViewModel memberViewModel)
         {
+            var hasRemoveConfirmation = await _dialogsService.ShowDialogAsync(
+                LocalizedStrings.RemoveUserConfirmationTitle,
+                LocalizedStrings.RemoveUserConfirmationMessage,
+                LocalizedStrings.Yes,
+                LocalizedStrings.No);
+
+            if (!hasRemoveConfirmation)
+            {
+                return;
+            }
+
             Members.Remove(memberViewModel);
 
-            _chatService.DeleteMemberAsync(Summary.Id, memberViewModel.Id);
+            await _chatService.DeleteMemberAsync(Summary.Id, memberViewModel.Id).ConfigureAwait(false);
 
             RaisePropertyChanged(nameof(MembersCountText));
         }
