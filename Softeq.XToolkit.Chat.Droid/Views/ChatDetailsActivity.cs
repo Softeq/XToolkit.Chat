@@ -70,8 +70,6 @@ namespace Softeq.XToolkit.Chat.Droid.Views
             _chatEditedPhotoImageView = FindViewById<MvxCachedImageView>(Resource.Id.iv_chat_photo_edited);
 
             _chatNameEditText = FindViewById<EditText>(Resource.Id.activity_chat_details_chat_name);
-            _chatNameEditText.SetCommandWithArgs(nameof(_chatNameEditText.FocusChange),
-               new RelayCommand<View.FocusChangeEventArgs>(OnEditTextFocusChanged));
 
             _chatMembersCountTextView = FindViewById<TextView>(Resource.Id.tv_members_count);
 
@@ -182,6 +180,15 @@ namespace Softeq.XToolkit.Chat.Droid.Views
                     KeyboardService.HideSoftKeyboard(_chatNameEditText);
                 }
             }));
+
+            _chatNameEditText.FocusChange += OnEditTextFocusChanged;
+        }
+
+        protected override void DoDetachBindings()
+        {
+            base.DoDetachBindings();
+
+            _chatNameEditText.FocusChange -= OnEditTextFocusChanged;
         }
 
         protected override void OnDestroy()
@@ -237,7 +244,7 @@ namespace Softeq.XToolkit.Chat.Droid.Views
                 }));
         }
 
-        private void OnEditTextFocusChanged(View.FocusChangeEventArgs e)
+        private void OnEditTextFocusChanged(object sender, View.FocusChangeEventArgs e)
         {
             if (e.HasFocus)
             {
