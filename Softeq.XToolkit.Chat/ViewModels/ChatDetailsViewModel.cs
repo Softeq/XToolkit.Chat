@@ -176,7 +176,7 @@ namespace Softeq.XToolkit.Chat.ViewModels
 
             Members.Remove(memberViewModel);
 
-            await _chatService.DeleteMemberAsync(Summary.Id, memberViewModel.Id);
+            await _chatService.DeleteMemberAsync(Summary.Id, memberViewModel.Id).ConfigureAwait(false);
 
             RaisePropertyChanged(nameof(MembersCountText));
         }
