@@ -177,6 +177,8 @@ namespace Softeq.XToolkit.Chat.Droid.Views
                     _chatEditedPhotoImageView.Visibility = ViewStates.Gone;
 
                     _chatNameEditText.ClearFocus();
+                    _chatNameEditText.ClearComposingText();
+
                     KeyboardService.HideSoftKeyboard(_chatNameEditText);
                 }
             }));
