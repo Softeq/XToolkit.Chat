@@ -19,8 +19,9 @@ namespace Softeq.XToolkit.Chat.Models
         public MessageType MessageType { get; set; }
         public string Body { get; set; }
         public DateTimeOffset DateTime { get; set; }
-        public string ImageUrl { get; set; }
-
+        public string ImageCacheKey { get; set; }
+        public string ImageRemoteUrl { get; set; }
+        
         public ChatMessageStatus Status
         {
             get
@@ -59,7 +60,7 @@ namespace Softeq.XToolkit.Chat.Models
             MessageType = chatMessageModel.MessageType;
             Body = chatMessageModel.Body;
             DateTime = chatMessageModel.DateTime;
-            ImageUrl = chatMessageModel.ImageUrl;
+            ImageRemoteUrl = chatMessageModel.ImageRemoteUrl;
         }
 
         public bool IsEarlierThan(ChatMessageModel message)

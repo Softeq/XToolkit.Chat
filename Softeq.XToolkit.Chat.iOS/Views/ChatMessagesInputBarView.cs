@@ -2,8 +2,6 @@
 // http://www.softeq.com
 
 using System;
-using System.IO;
-using System.Threading.Tasks;
 using CoreGraphics;
 using FFImageLoading;
 using Softeq.XToolkit.Bindings;
@@ -13,6 +11,7 @@ using Softeq.XToolkit.Permissions;
 using Softeq.XToolkit.WhiteLabel;
 using Softeq.XToolkit.WhiteLabel.iOS.Controls;
 using Softeq.XToolkit.WhiteLabel.iOS.ImagePicker;
+using Softeq.XToolkit.WhiteLabel.ImagePicker;
 using Softeq.XToolkit.WhiteLabel.Threading;
 using UIKit;
 
@@ -21,16 +20,21 @@ namespace Softeq.XToolkit.Chat.iOS.Views
     //TODO VPY: we need to review this class
     public partial class ChatMessagesInputBarView : CustomViewBase
     {
-        private nfloat _editViewContainerInitialHeight;
-        private bool _shouldSkipUpdateInputHeight;
+        private Binding _attachedImageBinding;
+        private nfloat _cachedHeight;
         private CGSize _cachedIntrinsicContentSize;
+        private nfloat _editViewContainerInitialHeight;
+        private string _previewImageKey;
+        private bool _shouldSkipUpdateInputHeight;
+        private SimpleImagePicker _simpleImagePicker;
 
-        public ChatMessagesInputBarView(IntPtr handle) : base(handle) { }
-        public ChatMessagesInputBarView(CGRect frame) : base(frame) { }
+        public ChatMessagesInputBarView(IntPtr handle) : base(handle)
+        {
+        }
 
-        public event EventHandler<nfloat> TopContainersHeightChanged;
-        public event EventHandler<GenericEventArgs<Func<(Task<Stream>, string)>>> SendRaised;
-        public event EventHandler PickerWillOpen;
+        public ChatMessagesInputBarView(CGRect frame) : base(frame)
+        {
+        }
 
         public override CGSize IntrinsicContentSize => _cachedIntrinsicContentSize;
 
@@ -38,11 +42,12 @@ namespace Softeq.XToolkit.Chat.iOS.Views
         public UITextView Input => InputTextView;
         public UIButton EditingClose => EditingCloseButton;
 
-        private double SafeAreaBottomInset => UIDevice.CurrentDevice.CheckSystemVersion(11, 0) ? SafeAreaInsets.Bottom : 0;
-        private nfloat _cachedHeight;
-        private SimpleImagePicker _simpleImagePicker;
-        private string _previewImageKey;
-        private Binding _attachedImageBinding;
+        private double SafeAreaBottomInset =>
+            UIDevice.CurrentDevice.CheckSystemVersion(11, 0) ? SafeAreaInsets.Bottom : 0;
+
+        public event EventHandler<nfloat> TopContainersHeightChanged;
+        public event EventHandler<GenericEventArgs<ImagePickerArgs>> SendRaised;
+        public event EventHandler PickerWillOpen;
 
         public void UpdateInputHeight(CGSize newSize)
         {
@@ -52,6 +57,7 @@ namespace Softeq.XToolkit.Chat.iOS.Views
                 _shouldSkipUpdateInputHeight = false;
                 return;
             }
+
             _shouldSkipUpdateInputHeight = true;
 
             InputTextView.ScrollEnabled = newSize.Height >= InputTextViewMaxHeightConstraint.Constant;
@@ -105,7 +111,8 @@ namespace Softeq.XToolkit.Chat.iOS.Views
             TakePhotoButton.SetImage(UIImage.FromBundle(StyleHelper.Style.TakePhotoBundleName), UIControlState.Normal);
             TakePhotoButton.SetCommand(new RelayCommand(OnTakePhotoClicked));
 
-            RemoveAttachButton.SetImage(UIImage.FromBundle(StyleHelper.Style.RemoveAttachBundleName), UIControlState.Normal);
+            RemoveAttachButton.SetImage(UIImage.FromBundle(StyleHelper.Style.RemoveAttachBundleName),
+                UIControlState.Normal);
             RemoveAttachButton.SetCommand(new RelayCommand(OnRemovePhotoClicked));
 
             AttachedImageView.Layer.MasksToBounds = false;
@@ -116,18 +123,21 @@ namespace Softeq.XToolkit.Chat.iOS.Views
             EditImageContainer.Hidden = true;
             EditImageContainerHeightConstraint.Constant = 0;
 
-            _simpleImagePicker = new SimpleImagePicker(viewController, Dependencies.IocContainer.Resolve<IPermissionsManager>(), false);
-            _attachedImageBinding = this.SetBinding(() => _simpleImagePicker.ViewModel.ImageCacheKey).WhenSourceChanges(() =>
-            {
-                if (string.IsNullOrEmpty(_simpleImagePicker.ViewModel.ImageCacheKey))
+            _simpleImagePicker = new SimpleImagePicker(viewController,
+                Dependencies.IocContainer.Resolve<IPermissionsManager>(), false);
+            _attachedImageBinding = this.SetBinding(() => _simpleImagePicker.ViewModel.ImageCacheKey).WhenSourceChanges(
+                () =>
                 {
-                    CloseAttachPanel();
-                    return;
-                }
+                    if (string.IsNullOrEmpty(_simpleImagePicker.ViewModel.ImageCacheKey))
+                    {
+                        CloseAttachPanel();
+                        return;
+                    }
 
-                OpenAttachPanel();
-            });
-            _simpleImagePicker.SetCommand(nameof(_simpleImagePicker.PickerWillOpen), new RelayCommand(RaisePickerWillOpen));
+                    OpenAttachPanel();
+                });
+            _simpleImagePicker.SetCommand(nameof(_simpleImagePicker.PickerWillOpen),
+                new RelayCommand(RaisePickerWillOpen));
         }
 
         public void SetTextPlaceholdervisibility(bool isVisible)
@@ -166,8 +176,8 @@ namespace Softeq.XToolkit.Chat.iOS.Views
         private nfloat CalculateContainerHeight()
         {
             return InputViewContainer.Frame.Height
-                                     + EditViewContainerHeightConstraint.Constant
-                                     + EditImageContainerHeightConstraint.Constant;
+                   + EditViewContainerHeightConstraint.Constant
+                   + EditImageContainerHeightConstraint.Constant;
         }
 
         private void CollapseEditViewContainer(bool isHidden)
@@ -184,7 +194,7 @@ namespace Softeq.XToolkit.Chat.iOS.Views
         private void InvokeTopContainersHeightChangedIfNeeded()
         {
             var changedHeight = EditViewContainerHeightConstraint.Constant
-                + EditImageContainerHeightConstraint.Constant;
+                                + EditImageContainerHeightConstraint.Constant;
 
             if (changedHeight == _cachedHeight)
             {
@@ -262,8 +272,8 @@ namespace Softeq.XToolkit.Chat.iOS.Views
 
         private void OnRaiseSend()
         {
-            var parameter = _simpleImagePicker.ViewModel.ImageCacheKey == null ? null : _simpleImagePicker.StreamFunc;
-            SendRaised?.Invoke(this, new GenericEventArgs<Func<(Task<Stream>, string)>>(parameter));
+            var args = _simpleImagePicker.GetPickerData();
+            SendRaised?.Invoke(this, new GenericEventArgs<ImagePickerArgs>(args));
             CloseAttachPanel();
         }
 

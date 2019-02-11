@@ -116,12 +116,6 @@ namespace Softeq.XToolkit.Chat.HttpClient
             await _httpClient.TrySendAsync(request, _logger).ConfigureAwait(false);
         }
 
-        public Task<ChatMessageModel> SendMessageAsync(string chatId, string messageBody)
-        {
-            var request = new PostSendMessageRequest(_chatConfig.ApiUrl, chatId, _jsonSerializer, new SendMessageDto { Body = messageBody });
-            return _httpClient.GetModelAsync<ChatMessageModel, ChatMessageDto>(request, _logger, Mapper.DtoToChatMessage);
-        }
-
         public async Task<PagingModel<ChatUserModel>> GetContactsAsync(string nameFilter, int pageSize, int pageNumber)
         {
             var request = new GetMembersRequest(_chatConfig.ApiUrl, nameFilter, pageSize, pageNumber);

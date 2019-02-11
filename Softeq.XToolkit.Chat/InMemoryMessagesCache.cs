@@ -254,7 +254,7 @@ namespace Softeq.XToolkit.Chat
         {
             return currentMessage.Equals(newMessage) &&
                    (currentMessage.Status != newMessage.Status ||
-                    currentMessage.ImageUrl != newMessage.ImageUrl ||
+                    currentMessage.ImageRemoteUrl != newMessage.ImageRemoteUrl ||
                     currentMessage.SenderName != newMessage.SenderName ||
                     currentMessage.SenderPhotoUrl != newMessage.SenderPhotoUrl ||
                     currentMessage.Body != newMessage.Body);

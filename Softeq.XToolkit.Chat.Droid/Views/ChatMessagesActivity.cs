@@ -1,9 +1,6 @@
 ﻿// Developed by Softeq Development Corporation
 // http://www.softeq.com
 
-using System;
-using System.IO;
-using System.Threading.Tasks;
 using Android.App;
 using Android.OS;
 using Android.Support.V7.Widget;
@@ -16,18 +13,16 @@ using Softeq.XToolkit.Chat.Droid.Adapters;
 using Softeq.XToolkit.Chat.Droid.Controls;
 using Softeq.XToolkit.Chat.Droid.LayoutManagers;
 using Softeq.XToolkit.Chat.Droid.Listeners;
-using Softeq.XToolkit.Chat.Models;
 using Softeq.XToolkit.Chat.ViewModels;
 using Softeq.XToolkit.Common.Command;
 using Softeq.XToolkit.Common.Droid.Converters;
 using Softeq.XToolkit.Common.EventArguments;
-using Softeq.XToolkit.Permissions;
 using Softeq.XToolkit.WhiteLabel;
 using Softeq.XToolkit.WhiteLabel.Droid;
 using Softeq.XToolkit.WhiteLabel.Droid.Controls;
 using Softeq.XToolkit.WhiteLabel.Droid.Services;
+using Softeq.XToolkit.WhiteLabel.ImagePicker;
 using Softeq.XToolkit.WhiteLabel.Threading;
-using Messenger = Softeq.XToolkit.WhiteLabel.Messenger.Messenger;
 
 namespace Softeq.XToolkit.Chat.Droid.Views
 {
@@ -321,10 +316,8 @@ namespace Softeq.XToolkit.Chat.Droid.Views
 
         private void Send()
         {
-            var args = _imagePicker.ViewModel.ImageCacheKey == null
-                                   ? null
-                                   : new GenericEventArgs<Func<(Task<Stream>, string)>>(_imagePicker.GetStreamFunc());
-            ViewModel.SendCommand.Execute(args);
+            var args = _imagePicker.GetPickerData();
+            ViewModel.SendCommand.Execute(new GenericEventArgs<ImagePickerArgs>(args));
             CloseEditImageContainer();
         }
     }

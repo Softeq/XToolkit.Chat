@@ -129,6 +129,24 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
             }
         }
 
+        public override void ObserveValue(NSString keyPath, NSObject ofObject, NSDictionary change, IntPtr context)
+        {
+            if (keyPath != ContentSizeKey)
+            {
+                base.ObserveValue(keyPath, ofObject, change, context);
+                return;
+            }
+
+            var oldSize = ((NSValue)new NSObservedChange(change).OldValue).CGSizeValue;
+            var newSize = ((NSValue)new NSObservedChange(change).NewValue).CGSizeValue;
+
+            if (ofObject is ASTableView)
+            {
+                TableViewContentSizeChanged(newSize, oldSize);
+                return;
+            }
+        }
+
         protected override void DoAttachBindings()
         {
             base.DoAttachBindings();
@@ -152,25 +170,7 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
                 InputBar.SetTextPlaceholdervisibility(string.IsNullOrEmpty(ViewModel.MessageToSendBody));
             }));
         }
-
-        public override void ObserveValue(NSString keyPath, NSObject ofObject, NSDictionary change, IntPtr context)
-        {
-            if (keyPath != ContentSizeKey)
-            {
-                base.ObserveValue(keyPath, ofObject, change, context);
-                return;
-            }
-
-            var oldSize = ((NSValue)new NSObservedChange(change).OldValue).CGSizeValue;
-            var newSize = ((NSValue)new NSObservedChange(change).NewValue).CGSizeValue;
-
-            if (ofObject is ASTableView)
-            {
-                TableViewContentSizeChanged(newSize, oldSize);
-                return;
-            }
-        }
-
+        
         private async Task InitTableViewAsync()
         {
             // delay is need to delay UI thread freezing while TableNode items are loaded
@@ -322,7 +322,7 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
             });
         }
 
-        class MessagesTableDelegate : GroupedTableDelegate
+        private class MessagesTableDelegate : GroupedTableDelegate
         {
             private GroupedTableDataSource<DateTimeOffset, ChatMessageViewModel> _source;
 
