@@ -3,14 +3,13 @@
 
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Net.Sockets;
 using System.Threading.Tasks;
 using Softeq.XToolkit.Chat.Exceptions;
 using Softeq.XToolkit.Chat.Models;
 using Softeq.XToolkit.Chat.ViewModels;
 using Softeq.XToolkit.Common.Collections;
+using Softeq.XToolkit.WhiteLabel.ImagePicker;
 
 namespace Softeq.XToolkit.Chat.Manager
 {
@@ -54,29 +53,29 @@ namespace Softeq.XToolkit.Chat.Manager
             return new List<ChatMessageViewModel>();
         }
 
-        public async Task SendMessageAsync(string chatId, string messageBody, Func<(Task<Stream>, string)> func)
+        public async Task SendMessageAsync(string chatId, string messageBody, ImagePickerArgs imagePickerArgs)
         {
-            string imageUrl = null;
-            if (func != null)
-            {
-                var result = func();
-                using (var stream = await result.Item1.ConfigureAwait(false))
-                {
-                    imageUrl = await _uploadImageService.UploadImageAsync(stream, result.Item2).ConfigureAwait(false);
-                }
-            }
-
             var messageModel = new ChatMessageModel
             {
                 DateTime = DateTimeOffset.UtcNow,
                 Body = messageBody,
                 ChannelId = chatId,
                 IsMine = true,
-                ImageUrl = imageUrl
+                ImageCacheKey = imagePickerArgs?.ImageCacheKey
             };
             
             var viewModel = AddLatestMessage(messageModel);
-            var updatedModel = await _chatService.SendMessageAsync(chatId, messageBody, messageModel.ImageUrl).ConfigureAwait(false);
+            
+            var imageUrl = default(string);
+            if (imagePickerArgs != null)
+            {
+                using (var stream = await imagePickerArgs.ImageStream().ConfigureAwait(false))
+                {                    
+                    imageUrl = await _uploadImageService.UploadImageAsync(stream, imagePickerArgs.Extension).ConfigureAwait(false);
+                }
+            }
+            
+            var updatedModel = await _chatService.SendMessageAsync(chatId, messageBody, imageUrl).ConfigureAwait(false);
             if (updatedModel != null)
             {
                 try

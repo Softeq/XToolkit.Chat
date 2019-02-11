@@ -169,7 +169,7 @@ namespace Softeq.XToolkit.Chat.HttpClient
                         SenderName = "User 2",
                         Body = "I’m excited about this trip this should be good. Haven’t been away in a while. I know it’s for work but still :)",
                         SenderPhotoUrl = Avatar1,
-                        ImageUrl = Img4
+                        ImageRemoteUrl = Img4
                     },
                     new ChatMessageModel
                     {
@@ -178,7 +178,7 @@ namespace Softeq.XToolkit.Chat.HttpClient
                         SenderName = "User 1",
                         Body = "You at the airport yet?",
                         SenderPhotoUrl = Avatar2,
-                        ImageUrl = Img2
+                        ImageRemoteUrl = Img2
                     },
                     new ChatMessageModel
                     {
@@ -187,7 +187,7 @@ namespace Softeq.XToolkit.Chat.HttpClient
                         SenderName = "User 1",
                         Body = "I’m in traffic. Wondering if we have to go through is customs in Toronto or San Francisco.",
                         SenderPhotoUrl = Avatar2,
-                        ImageUrl = Img3
+                        ImageRemoteUrl = Img3
                     },
                     new ChatMessageModel
                     {
@@ -196,7 +196,7 @@ namespace Softeq.XToolkit.Chat.HttpClient
                         SenderName = "User 2",
                         Body = "Customs in Toronto",
                         SenderPhotoUrl = Avatar1,
-                        ImageUrl = Img4
+                        ImageRemoteUrl = Img4
                     },
                     new ChatMessageModel
                     {
@@ -205,7 +205,7 @@ namespace Softeq.XToolkit.Chat.HttpClient
                         SenderName = "User 1",
                         Body = "Hey :)",
                         SenderPhotoUrl = Avatar2,
-                        ImageUrl = Img5
+                        ImageRemoteUrl = Img5
                     }
                 };
             }

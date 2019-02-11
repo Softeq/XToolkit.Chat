@@ -95,17 +95,40 @@ namespace Softeq.XToolkit.Chat.Droid.ViewHolders
                 });
             }));
 
+            AttachmentImageView.Visibility = ViewStates.Gone;
+            AttachmentImageView.SetImageDrawable(null);
+
             if (_viewModelRef.Target.HasAttachment)
             {
-                AttachmentImageView.Visibility = ViewStates.Visible;
-                ImageService.Instance.LoadUrl(_viewModelRef.Target.AttachmentImageUrl)
-                            .DownSampleInDip(90, 90)
-                            .IntoAsync(AttachmentImageView);
-            }
-            else
-            {
-                AttachmentImageView.Visibility = ViewStates.Gone;
+                var model = _viewModelRef.Target.Model;
+                var expr = default(TaskParameter);
+
                 AttachmentImageView.SetImageDrawable(null);
+
+                if (!string.IsNullOrEmpty(model.ImageCacheKey))
+                {
+                    expr = ImageService.Instance
+                        .LoadFile(model.ImageCacheKey);
+
+                }
+                else if (!string.IsNullOrEmpty(model.ImageRemoteUrl))
+                {
+                    expr = ImageService.Instance
+                        .LoadUrl(model.ImageRemoteUrl);
+                }
+
+                if (expr == null)
+                {
+                    return;
+                }
+
+                expr = expr.DownSampleInDip(90, 90)
+                    .Finish(x =>
+                    {
+                        Execute.BeginOnUIThread(() => { AttachmentImageView.Visibility = ViewStates.Visible; });
+                    });
+
+                expr.IntoAsync(AttachmentImageView);
             }
 
             if (_isIncomingMessageViewType && SenderPhotoImageView != null)
@@ -192,9 +215,15 @@ namespace Softeq.XToolkit.Chat.Droid.ViewHolders
 
         private void OnMessageImageClicked(object sender, EventArgs e)
         {
+            var url = _viewModelRef.Target?.Model?.ImageRemoteUrl;
+            if (url == null)
+            {
+                return;
+            }
+
             var options = new FullScreenImageOptions
             {
-                ImageUrl = _viewModelRef.Target?.Model?.ImageUrl,
+                ImageUrl = url,
                 DroidCloseButtonImageResId = Resource.Drawable.core_ic_close
             };
             _viewModelRef.Target?.ShowImage(options);

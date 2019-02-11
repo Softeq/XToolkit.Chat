@@ -17,7 +17,7 @@ using Softeq.XToolkit.WhiteLabel.Interfaces;
 using Softeq.XToolkit.WhiteLabel.Mvvm;
 using Softeq.XToolkit.WhiteLabel.Navigation;
 using Softeq.XToolkit.Chat.Models.Interfaces;
-using System.IO;
+using Softeq.XToolkit.WhiteLabel.ImagePicker;
 using Softeq.XToolkit.WhiteLabel.Threading;
 
 namespace Softeq.XToolkit.Chat.ViewModels
@@ -55,7 +55,7 @@ namespace Softeq.XToolkit.Chat.ViewModels
             ConnectionStatusViewModel = connectionStatusViewModel;
 
             BackCommand = new RelayCommand(_pageNavigationService.GoBack, () => _pageNavigationService.CanGoBack);
-            SendCommand = new RelayCommand<GenericEventArgs<Func<(Task<Stream>, string)>>>(SendMessageAsync);
+            SendCommand = new RelayCommand<GenericEventArgs<ImagePickerArgs>>(SendMessageAsync);
             CancelEditingMessageModeCommand = new RelayCommand(CancelEditingMessageMode);
             ShowInfoCommand = new RelayCommand(ShowInfo);
             LoadOlderMessagesCommand = new RelayCommand(() => LoadOlderMessagesAsync().SafeTaskWrapper());
@@ -98,7 +98,7 @@ namespace Softeq.XToolkit.Chat.ViewModels
         public string MessagePlaceholderText => _localizedStrings.YourMessage;
 
         public ICommand BackCommand { get; }
-        public RelayCommand<GenericEventArgs<Func<(Task<Stream>, string)>>> SendCommand { get; }
+        public RelayCommand<GenericEventArgs<ImagePickerArgs>> SendCommand { get; }
         public ICommand CancelEditingMessageModeCommand { get; }
         public ICommand ShowInfoCommand { get; }
         public ICommand MessageAddedCommand { get; set; }
@@ -272,7 +272,7 @@ namespace Softeq.XToolkit.Chat.ViewModels
             Messages.RemoveAllFromGroups(messagesToDelete);
         }
 
-        private async void SendMessageAsync(GenericEventArgs<Func<(Task<Stream>, string)>> e)
+        private async void SendMessageAsync(GenericEventArgs<ImagePickerArgs> e)
         {
             var photoSelector = e?.Value;
             var newMessageBody = MessageToSendBody?.Trim();
@@ -288,14 +288,15 @@ namespace Softeq.XToolkit.Chat.ViewModels
             {
                 IsInEditMessageMode = false;
 
-                await _chatManager.EditMessageAsync(_messageBeingEdited.Id, newMessageBody).ConfigureAwait(false);
+                await _chatManager.EditMessageAsync(_messageBeingEdited.Id, newMessageBody)
+                    .ConfigureAwait(false);
 
                 CancelEditingMessageMode();
             }
             else
             {
-                await _chatManager.SendMessageAsync(_chatSummaryViewModel.ChatId, newMessageBody, photoSelector)
-                                  .ConfigureAwait(false);
+                await _chatManager.SendMessageAsync(_chatSummaryViewModel.ChatId, newMessageBody, e?.Value)
+                    .ConfigureAwait(false);
             }
         }
 

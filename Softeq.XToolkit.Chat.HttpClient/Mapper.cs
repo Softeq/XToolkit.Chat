@@ -44,7 +44,7 @@ namespace Softeq.XToolkit.Chat.HttpClient
                 DateTime = dto.Created,
                 IsRead = dto.IsRead,
                 IsDelivered = true,
-                ImageUrl = dto.ImageUrl
+                ImageRemoteUrl = dto.ImageUrl
             };
         }
 

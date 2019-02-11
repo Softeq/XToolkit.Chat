@@ -60,8 +60,9 @@ namespace Softeq.XToolkit.Chat.ViewModels
         public string SenderName => Model.SenderName;
         public bool IsMine => Model.IsMine;
         public MessageType MessageType => Model.MessageType;
-        public string AttachmentImageUrl => Model?.ImageUrl;
-        public bool HasAttachment => !string.IsNullOrEmpty(AttachmentImageUrl?.Trim());
+
+        public bool HasAttachment => !string.IsNullOrEmpty(Model.ImageRemoteUrl) || !string.IsNullOrEmpty(Model.ImageCacheKey);
+
         public bool IsEarlierThan(ChatMessageViewModel message) => Model.IsEarlierThan(message?.Model);
         public bool IsEarlierOrEqualsThan(ChatMessageViewModel message) => Model.IsEarlierOrEqualsThan(message.Model);
         public bool IsLaterThan(ChatMessageViewModel message) => Model.IsLaterThan(message.Model);
@@ -100,7 +101,15 @@ namespace Softeq.XToolkit.Chat.ViewModels
 
         private void UpdateMessageModel(ChatMessageModel chatMessageModel)
         {
-            Model = chatMessageModel;
+            if (Model == null)
+            {
+                Model = chatMessageModel;
+            }
+            else
+            {
+                Model.UpdateMessage(chatMessageModel);
+            }
+
             Execute.BeginOnUIThread(() =>
             {
                 RaisePropertyChanged(nameof(SenderName));

@@ -49,7 +49,7 @@ namespace Softeq.XToolkit.Chat.SignalRClient
                 MessageType = DtoToMessageType(response.Type),
                 IsRead = response.IsRead,
                 IsDelivered = true,
-                ImageUrl = response.ImageUrl
+                ImageRemoteUrl = response.ImageUrl
             };
         }
 

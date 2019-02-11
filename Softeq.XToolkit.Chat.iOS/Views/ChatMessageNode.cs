@@ -18,6 +18,10 @@ using Softeq.XToolkit.Common.iOS.Helpers;
 using Softeq.XToolkit.WhiteLabel.iOS.Helpers;
 using Softeq.XToolkit.WhiteLabel.Threading;
 using Softeq.XToolkit.WhiteLabel.ViewModels;
+using FFImageLoading;
+using System.Threading.Tasks;
+using FFImageLoading.Work;
+using Softeq.XToolkit.WhiteLabel;
 
 namespace Softeq.XToolkit.Chat.iOS.Views
 {
@@ -86,14 +90,59 @@ namespace Softeq.XToolkit.Chat.iOS.Views
             _attachmentImageNode.ImageModificationBlock = image => image.MakeImageWithRoundedCorners(12);
             if (_viewModelRef.Target != null && _viewModelRef.Target.HasAttachment && _attachmentImageNode.Image == null)
             {
-                _attachmentImageNode.LoadImageAsync(_viewModelRef.Target.AttachmentImageUrl).ContinueWith((arg) =>
+                Task.Run(async () => 
                 {
-                    SetNeedsLayout();
-                    Layout();
+                    var model = _viewModelRef.Target.Model;
+                    if (model == null)
+                    {
+                        return;
+                    }
+
+                    var expr = default(TaskParameter);
+
+                    if (!string.IsNullOrEmpty(model.ImageCacheKey))
+                    {
+                        expr = ImageService.Instance
+                            .LoadFile(model.ImageCacheKey);
+         
+                    }
+                    else if (!string.IsNullOrEmpty(model.ImageRemoteUrl))
+                    {
+                        expr = ImageService.Instance
+                            .LoadUrl(model.ImageRemoteUrl);
+                    }
+
+                    expr = expr.DownSampleInDip(90, 90);
+
+                    var image = default(UIImage);
+
+                    try
+                    {
+                        image = await expr.AsUIImageAsync().ConfigureAwait(false);
+                    }
+                    catch (Exception ex) 
+                    {
+                        LogManager.LogError<ChatMessageNode>(ex);
+                    }
+
+                    if (image == null)
+                    {
+                        return;
+                    }
+
+                    Execute.BeginOnUIThread(() => 
+                    {
+                        _attachmentImageNode.Image = image;
+
+                        SetNeedsLayout();
+                        Layout();
+
+                        _attachmentImageNode.AddTarget(
+                            this,
+                            new Selector(nameof(OnAttachmentTapped)),
+                            ASControlNodeEvent.TouchUpInside);
+                    });
                 });
-                _attachmentImageNode.AddTarget(this,
-                                               new Selector(nameof(OnAttachmentTapped)),
-                                               ASControlNodeEvent.TouchUpInside);
             }
 
             _statusImageNode.ContentMode = UIViewContentMode.Center;
@@ -313,12 +362,19 @@ namespace Softeq.XToolkit.Chat.iOS.Views
         [Export("OnAttachmentTapped")]
         private void OnAttachmentTapped()
         {
+            var url = _viewModelRef.Target?.Model?.ImageRemoteUrl;
+            if (string.IsNullOrEmpty(url))
+            {
+                return;
+            }
+
             var options = new FullScreenImageOptions
             {
                 CloseButtonTintColor = Common.iOS.Extensions.UIColorExtensions.ToHex(StyleHelper.Style.ButtonTintColor),
-                ImageUrl = _viewModelRef.Target?.AttachmentImageUrl,
+                ImageUrl = url,
                 IosCloseButtonImageBoundleName = StyleHelper.Style.CloseButtonImageBoundleName
             };
+
             _viewModelRef.Target?.ShowImage(options);
         }
     }
