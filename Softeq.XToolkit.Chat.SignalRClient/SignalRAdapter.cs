@@ -7,7 +7,6 @@ using System.Net.WebSockets;
 using System.Reactive.Subjects;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.SignalR;
 using Softeq.XToolkit.Auth;
 using Softeq.XToolkit.Chat.Models;
 using Softeq.XToolkit.Chat.Models.Enum;
@@ -20,15 +19,12 @@ using Softeq.XToolkit.Common;
 using Softeq.XToolkit.Common.Extensions;
 using Softeq.XToolkit.Common.Interfaces;
 using Softeq.XToolkit.RemoteData;
-using Softeq.XToolkit.RemoteData.HttpClient;
 
 namespace Softeq.XToolkit.Chat.SignalRClient
 {
     public class SignalRAdapter : ISocketChatAdapter
     {
-        private readonly IAccountService _accountService;
         private readonly IRefreshTokenService _refreshTokenService;
-        private readonly IRestHttpClient _httpClient;
         private readonly ILogger _logger;
         private readonly SignalRClient _signalRClient;
 
@@ -48,15 +44,12 @@ namespace Softeq.XToolkit.Chat.SignalRClient
         public SignalRAdapter(
             IAccountService accountService,
             IRefreshTokenService refreshTokenService,
-            IRestHttpClient httpClient,
             ILogManager logManager,
             IChatConfig chatConfig)
         {
-            _accountService = accountService;
             _refreshTokenService = refreshTokenService;
-            _httpClient = httpClient;
             _logger = logManager.GetLogger<SignalRAdapter>();
-            _signalRClient = new SignalRClient(chatConfig.BaseUrl);
+            _signalRClient = new SignalRClient(chatConfig.BaseUrl, accountService);
 
             SubscribeToEvents();
 
@@ -215,7 +208,7 @@ namespace Softeq.XToolkit.Chat.SignalRClient
         {
             _signalRClient.AccessTokenExpired += () =>
             {
-                _refreshTokenService.RefreshToken(_httpClient);
+                _refreshTokenService.RefreshToken(null);
             };
 
             _signalRClient.MessageAdded += message =>
@@ -293,10 +286,6 @@ namespace Softeq.XToolkit.Chat.SignalRClient
                 _isConnected = false;
                 await CheckConnectionAndSendRequest(funcSendRequest).ConfigureAwait(false);
             }
-            catch (HubException ex)
-            {
-                _logger.Error(ex);
-            }
             catch (Exception ex)
             {
                 _logger.Error(ex);
@@ -325,10 +314,6 @@ namespace Softeq.XToolkit.Chat.SignalRClient
                 _isConnected = false;
                 return await CheckConnectionAndSendRequest(funcSendRequest).ConfigureAwait(false);
             }
-            catch (HubException ex)
-            {
-                _logger.Error(ex);
-            }
             catch (ChatValidationException ex)
             {
                 //TODO YP: need an approach how to handle this exception for user
@@ -343,14 +328,13 @@ namespace Softeq.XToolkit.Chat.SignalRClient
 
         private async Task ConnectIfNotConnectedAsync(bool isForceConnect = false)
         {
-            var accessToken = _accountService.AccessToken;
             await _semaphoreSlim.WaitAsync();
             try
             {
                 if (isForceConnect || !_isConnected)
                 {
                     UpdateConnectionStatus(SocketConnectionStatus.Connecting);
-                    var client = await _signalRClient.ConnectAsync(accessToken).ConfigureAwait(false);
+                    var client = await _signalRClient.ConnectAsync().ConfigureAwait(false);
 
                     //TODO: review this
                     if (client == null)
@@ -373,6 +357,7 @@ namespace Softeq.XToolkit.Chat.SignalRClient
             {
                 _semaphoreSlim.Release();
             }
+            
             if (!_isConnected)
             {
                 await Task.Delay(5000).ConfigureAwait(false);

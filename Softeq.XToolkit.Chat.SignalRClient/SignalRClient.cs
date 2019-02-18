@@ -15,6 +15,7 @@ using Softeq.XToolkit.Chat.SignalRClient.DTOs.Message;
 using Softeq.XToolkit.Common.Extensions;
 using System.Linq;
 using Softeq.XToolkit.Chat.Models.Exceptions;
+using Softeq.XToolkit.Auth;
 
 namespace Softeq.XToolkit.Chat.SignalRClient
 {
@@ -25,10 +26,12 @@ namespace Softeq.XToolkit.Chat.SignalRClient
 
         private HubConnection _connection;
         private IDisposable _accessTokenExpiredSubscription;
+        private readonly IAccountService _accountService;
 
-        public SignalRClient(string url)
+        public SignalRClient(string url, IAccountService accountService)
         {
             _chatHubUrl = url;
+            _accountService = accountService;
         }
 
         public event Action AccessTokenExpired;
@@ -53,14 +56,14 @@ namespace Softeq.XToolkit.Chat.SignalRClient
         public event Action<MemberSummary, ChannelSummaryResponse> MemberJoined;
         public event Action<MemberSummary, string> MemberLeft;
 
-        public async Task<ClientResponse> ConnectAsync(string accessToken)
+        public async Task<ClientResponse> ConnectAsync()
         {
             Console.WriteLine("Connecting to {0}", _chatHubUrl);
 
             _connection = new HubConnectionBuilder()
                 .WithUrl($"{_chatHubUrl}/chat", options =>
                 {
-                    options.Headers.Add("Authorization", "Bearer " + accessToken);
+                    options.AccessTokenProvider = () => { return Task.FromResult(_accountService.AccessToken); };
                 })
 #if DEBUG
                 .ConfigureLogging(logging =>
