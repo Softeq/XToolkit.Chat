@@ -7,7 +7,6 @@ using System.Net.WebSockets;
 using System.Reactive.Subjects;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.SignalR;
 using Softeq.XToolkit.Auth;
 using Softeq.XToolkit.Chat.Models;
 using Softeq.XToolkit.Chat.Models.Enum;
@@ -20,15 +19,12 @@ using Softeq.XToolkit.Common;
 using Softeq.XToolkit.Common.Extensions;
 using Softeq.XToolkit.Common.Interfaces;
 using Softeq.XToolkit.RemoteData;
-using Softeq.XToolkit.RemoteData.HttpClient;
 
 namespace Softeq.XToolkit.Chat.SignalRClient
 {
     public class SignalRAdapter : ISocketChatAdapter
     {
-        //TODO: remove reference to HttpClient
         private readonly IRefreshTokenService _refreshTokenService;
-        private readonly IRestHttpClient _httpClient;
         private readonly ILogger _logger;
         private readonly SignalRClient _signalRClient;
 
@@ -48,12 +44,10 @@ namespace Softeq.XToolkit.Chat.SignalRClient
         public SignalRAdapter(
             IAccountService accountService,
             IRefreshTokenService refreshTokenService,
-            IRestHttpClient httpClient,
             ILogManager logManager,
             IChatConfig chatConfig)
         {
             _refreshTokenService = refreshTokenService;
-            _httpClient = httpClient;
             _logger = logManager.GetLogger<SignalRAdapter>();
             _signalRClient = new SignalRClient(chatConfig.BaseUrl, accountService);
 
@@ -214,7 +208,7 @@ namespace Softeq.XToolkit.Chat.SignalRClient
         {
             _signalRClient.AccessTokenExpired += () =>
             {
-                _refreshTokenService.RefreshToken(_httpClient);
+                _refreshTokenService.RefreshToken(null);
             };
 
             _signalRClient.MessageAdded += message =>
@@ -292,10 +286,6 @@ namespace Softeq.XToolkit.Chat.SignalRClient
                 _isConnected = false;
                 await CheckConnectionAndSendRequest(funcSendRequest).ConfigureAwait(false);
             }
-            catch (HubException ex)
-            {
-                _logger.Error(ex);
-            }
             catch (Exception ex)
             {
                 _logger.Error(ex);
@@ -323,10 +313,6 @@ namespace Softeq.XToolkit.Chat.SignalRClient
                 _logger.Error(ex);
                 _isConnected = false;
                 return await CheckConnectionAndSendRequest(funcSendRequest).ConfigureAwait(false);
-            }
-            catch (HubException ex)
-            {
-                _logger.Error(ex);
             }
             catch (ChatValidationException ex)
             {
