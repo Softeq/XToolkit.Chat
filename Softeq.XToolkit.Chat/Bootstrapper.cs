@@ -31,7 +31,12 @@ namespace Softeq.XToolkit.Chat
             containerBuilder.RegisterType<FormatService>().As<IFormatService>().InstancePerLifetimeScope();
             containerBuilder.RegisterType<UploadImageService>().As<IUploadImageService>().InstancePerLifetimeScope();
 
+            // ViewModels
+            containerBuilder.RegisterType<ChatsListViewModel>().InstancePerDependency();
+            containerBuilder.RegisterType<CreateChatViewModel>().InstancePerDependency();
             containerBuilder.RegisterType<AddContactsViewModel>().InstancePerDependency();
+            containerBuilder.RegisterType<ChatMessagesViewModel>().InstancePerDependency();
+            containerBuilder.RegisterType<ChatDetailsViewModel>().InstancePerDependency();
             containerBuilder.RegisterType<ChatSummaryViewModel>().InstancePerDependency();
             containerBuilder.RegisterType<ChatMessageViewModel>().InstancePerDependency();
             containerBuilder.RegisterType<ConnectionStatusViewModel>().InstancePerDependency();
