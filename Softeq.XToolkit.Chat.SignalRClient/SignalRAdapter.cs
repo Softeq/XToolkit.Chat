@@ -26,7 +26,7 @@ namespace Softeq.XToolkit.Chat.SignalRClient
 {
     public class SignalRAdapter : ISocketChatAdapter
     {
-        private readonly IAccountService _accountService;
+        //TODO: remove reference to HttpClient
         private readonly IRefreshTokenService _refreshTokenService;
         private readonly IRestHttpClient _httpClient;
         private readonly ILogger _logger;
@@ -52,11 +52,10 @@ namespace Softeq.XToolkit.Chat.SignalRClient
             ILogManager logManager,
             IChatConfig chatConfig)
         {
-            _accountService = accountService;
             _refreshTokenService = refreshTokenService;
             _httpClient = httpClient;
             _logger = logManager.GetLogger<SignalRAdapter>();
-            _signalRClient = new SignalRClient(chatConfig.BaseUrl);
+            _signalRClient = new SignalRClient(chatConfig.BaseUrl, accountService);
 
             SubscribeToEvents();
 
@@ -343,14 +342,13 @@ namespace Softeq.XToolkit.Chat.SignalRClient
 
         private async Task ConnectIfNotConnectedAsync(bool isForceConnect = false)
         {
-            var accessToken = _accountService.AccessToken;
             await _semaphoreSlim.WaitAsync();
             try
             {
                 if (isForceConnect || !_isConnected)
                 {
                     UpdateConnectionStatus(SocketConnectionStatus.Connecting);
-                    var client = await _signalRClient.ConnectAsync(accessToken).ConfigureAwait(false);
+                    var client = await _signalRClient.ConnectAsync().ConfigureAwait(false);
 
                     //TODO: review this
                     if (client == null)
@@ -373,6 +371,7 @@ namespace Softeq.XToolkit.Chat.SignalRClient
             {
                 _semaphoreSlim.Release();
             }
+            
             if (!_isConnected)
             {
                 await Task.Delay(5000).ConfigureAwait(false);
