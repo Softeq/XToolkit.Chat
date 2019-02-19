@@ -42,5 +42,6 @@ namespace Softeq.XToolkit.Chat.iOS
         string UnCheckedBoundleName { get; }
         bool UseLogoInsteadOfConnectionStatus { get; }
         string LogoBoundleName { get; }
+        string ChatNewGroupAvatarBundleName { get; }
     }
 }

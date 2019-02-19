@@ -1,11 +1,11 @@
 ﻿using System;
-using FFImageLoading.Transformations;
 using Foundation;
-using Softeq.XToolkit.Bindings;
-using Softeq.XToolkit.Chat.ViewModels;
-using Softeq.XToolkit.WhiteLabel.iOS.Extensions;
 using UIKit;
+using FFImageLoading.Transformations;
+using Softeq.XToolkit.Bindings;
+using Softeq.XToolkit.WhiteLabel.iOS.Extensions;
 using Softeq.XToolkit.Common.iOS.Extensions;
+using Softeq.XToolkit.Chat.ViewModels;
 using Softeq.XToolkit.Chat.iOS.Controls;
 
 namespace Softeq.XToolkit.Chat.iOS.Views
@@ -25,7 +25,7 @@ namespace Softeq.XToolkit.Chat.iOS.Views
         protected override void Initialize()
         {
             OnlineIndicatorView.BackgroundColor = StyleHelper.Style.OnlineStatusColor;
-            OnlineIndicatorView.WithBorder(1f).AsCircle();
+            OnlineIndicatorView.WithBorder(2f).AsCircle();
         }
 
         protected override void DoAttachBindings()
@@ -49,6 +49,8 @@ namespace Softeq.XToolkit.Chat.iOS.Views
                 UserInteractionEnabled = isActive;
             }));
             Bindings.Add(this.SetBinding(() => ViewModel.Target.IsOnline, () => OnlineIndicatorView.Hidden)
+                .ConvertSourceToTarget(x => !x));
+            Bindings.Add(this.SetBinding(() => ViewModel.Target.IsSelectable, () => CheckBoxButton.Hidden)
                 .ConvertSourceToTarget(x => !x));
         }
     }

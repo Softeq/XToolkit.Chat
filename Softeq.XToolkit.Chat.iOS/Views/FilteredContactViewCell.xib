@@ -14,58 +14,58 @@
         <tableViewCell contentMode="scaleToFill" selectionStyle="none" indentationWidth="10" rowHeight="44" id="cxk-wN-pdQ" customClass="FilteredContactViewCell">
             <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-            <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="cxk-wN-pdQ" id="YTl-1W-gDM">
+            <tableViewCellContentView key="contentView" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="cxk-wN-pdQ" id="YTl-1W-gDM">
                 <rect key="frame" x="0.0" y="0.0" width="320" height="43.5"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
-                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="WrG-Rd-JiI" customClass="CheckBoxView">
-                        <rect key="frame" x="16" y="9" width="22" height="22"/>
+                    <button contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="WrG-Rd-JiI" customClass="CheckBoxView">
+                        <rect key="frame" x="282" y="11" width="22" height="22"/>
                         <constraints>
                             <constraint firstAttribute="height" constant="22" id="IXN-s7-lhE"/>
                             <constraint firstAttribute="width" constant="22" id="mjs-WU-rdP"/>
                         </constraints>
                     </button>
                     <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="tfO-N1-VNn" customClass="MvxCachedImageView">
-                        <rect key="frame" x="54" y="0.0" width="40" height="40"/>
+                        <rect key="frame" x="16" y="2" width="40" height="40"/>
                         <constraints>
                             <constraint firstAttribute="width" constant="40" id="I9J-cR-hyR"/>
                             <constraint firstAttribute="height" constant="40" id="vqu-75-VaU"/>
                         </constraints>
                     </imageView>
-                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="NZS-6w-7LB">
-                        <rect key="frame" x="102" y="9.5" width="42" height="21"/>
-                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                    <label userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="NZS-6w-7LB">
+                        <rect key="frame" x="72" y="11.5" width="202" height="21"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="17"/>
                         <nil key="textColor"/>
                         <nil key="highlightedColor"/>
                     </label>
                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="vTK-Ro-esZ" customClass="Add">
-                        <rect key="frame" x="86" y="20" width="12" height="12"/>
+                        <rect key="frame" x="44" y="28" width="14" height="14"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
-                            <constraint firstAttribute="width" constant="12" id="T27-4A-20O"/>
-                            <constraint firstAttribute="height" constant="12" id="q2E-dS-HjT"/>
+                            <constraint firstAttribute="width" constant="14" id="T27-4A-20O"/>
+                            <constraint firstAttribute="height" constant="14" id="q2E-dS-HjT"/>
                         </constraints>
                     </view>
                     <view hidden="YES" alpha="0.80000000000000004" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="KtC-9a-mK7">
-                        <rect key="frame" x="0.0" y="0.0" width="320" height="40"/>
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="43.5"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                     </view>
                 </subviews>
                 <constraints>
-                    <constraint firstItem="vTK-Ro-esZ" firstAttribute="trailing" secondItem="tfO-N1-VNn" secondAttribute="trailing" constant="4" id="3gI-cB-ZrN"/>
+                    <constraint firstItem="vTK-Ro-esZ" firstAttribute="trailing" secondItem="tfO-N1-VNn" secondAttribute="trailing" constant="2" id="3gI-cB-ZrN"/>
                     <constraint firstItem="KtC-9a-mK7" firstAttribute="leading" secondItem="YTl-1W-gDM" secondAttribute="leading" id="5Bz-uQ-I7c"/>
                     <constraint firstAttribute="bottom" secondItem="KtC-9a-mK7" secondAttribute="bottom" id="6bI-rd-AIV"/>
-                    <constraint firstItem="WrG-Rd-JiI" firstAttribute="leading" secondItem="YTl-1W-gDM" secondAttribute="leading" constant="16" id="BRx-pa-EPf"/>
-                    <constraint firstAttribute="bottom" secondItem="tfO-N1-VNn" secondAttribute="bottom" id="EOw-I7-MPf"/>
-                    <constraint firstItem="tfO-N1-VNn" firstAttribute="leading" secondItem="WrG-Rd-JiI" secondAttribute="trailing" constant="16" id="JLY-xd-Wbk"/>
-                    <constraint firstItem="NZS-6w-7LB" firstAttribute="leading" secondItem="tfO-N1-VNn" secondAttribute="trailing" constant="8" id="KpX-2F-hhz"/>
+                    <constraint firstItem="tfO-N1-VNn" firstAttribute="leading" secondItem="YTl-1W-gDM" secondAttribute="leading" constant="16" id="9xu-E5-ugx"/>
+                    <constraint firstAttribute="trailing" secondItem="WrG-Rd-JiI" secondAttribute="trailing" constant="16" id="JLY-xd-Wbk"/>
+                    <constraint firstItem="NZS-6w-7LB" firstAttribute="leading" secondItem="tfO-N1-VNn" secondAttribute="trailing" constant="16" id="KpX-2F-hhz"/>
                     <constraint firstItem="KtC-9a-mK7" firstAttribute="top" secondItem="YTl-1W-gDM" secondAttribute="top" id="MsP-xQ-9ts"/>
                     <constraint firstAttribute="trailing" secondItem="KtC-9a-mK7" secondAttribute="trailing" id="RM3-71-NJf"/>
                     <constraint firstItem="NZS-6w-7LB" firstAttribute="centerY" secondItem="YTl-1W-gDM" secondAttribute="centerY" id="YpM-4l-HcQ"/>
-                    <constraint firstItem="vTK-Ro-esZ" firstAttribute="bottom" secondItem="tfO-N1-VNn" secondAttribute="bottom" constant="-8" id="aB8-ec-9Ex"/>
+                    <constraint firstItem="vTK-Ro-esZ" firstAttribute="bottom" secondItem="tfO-N1-VNn" secondAttribute="bottom" id="aB8-ec-9Ex"/>
                     <constraint firstItem="WrG-Rd-JiI" firstAttribute="centerY" secondItem="YTl-1W-gDM" secondAttribute="centerY" id="aYz-oj-LZj"/>
                     <constraint firstItem="tfO-N1-VNn" firstAttribute="centerY" secondItem="YTl-1W-gDM" secondAttribute="centerY" id="j3D-jP-QyI"/>
-                    <constraint firstItem="tfO-N1-VNn" firstAttribute="top" secondItem="YTl-1W-gDM" secondAttribute="top" id="rd2-NY-T75"/>
+                    <constraint firstItem="WrG-Rd-JiI" firstAttribute="leading" secondItem="NZS-6w-7LB" secondAttribute="trailing" constant="8" id="xYM-l8-tAu"/>
                 </constraints>
             </tableViewCellContentView>
             <connections>

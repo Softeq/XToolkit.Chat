@@ -142,6 +142,14 @@
     <Compile Include="Controls\IBindableViewCell.cs" />
     <Compile Include="Controls\BindableCollectionViewCell.cs" />
     <Compile Include="TableSources\ActionableTableViewDelegate.cs" />
+    <Compile Include="ViewControllers\NewChatViewController.cs" />
+    <Compile Include="ViewControllers\NewChatViewController.designer.cs">
+      <DependentUpon>NewChatViewController.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Views\NewGroupView.cs" />
+    <Compile Include="Views\NewGroupView.designer.cs">
+      <DependentUpon>NewGroupView.cs</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <InterfaceDefinition Include="ViewControllers\ChatDetailsStoryboard.storyboard" />
@@ -157,6 +165,8 @@
     <InterfaceDefinition Include="ViewControllers\AddContactsStoryboard.storyboard" />
     <InterfaceDefinition Include="Views\SelectedMemberViewCell.xib" />
     <InterfaceDefinition Include="Views\FilteredContactViewCell.xib" />
+    <InterfaceDefinition Include="ViewControllers\NewChatStoryboard.storyboard" />
+    <InterfaceDefinition Include="Views\NewGroupView.xib" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\XToolkit\Softeq.XToolkit.Permissions\Softeq.XToolkit.Permissions.csproj">
