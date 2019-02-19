@@ -95,6 +95,7 @@
     <Compile Include="ViewHolders\SelectedContactViewHolder.cs" />
     <Compile Include="ViewHolders\FilteredItemViewHolder.cs" />
     <Compile Include="Listeners\LoadMoreScrollListener.cs" />
+    <Compile Include="Views\NewChatActivity.cs" />
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\layout\activity_chat_details.xml" />
@@ -119,6 +120,8 @@
     <AndroidResource Include="Resources\layout\view_holder_member.xml" />
     <AndroidResource Include="Resources\layout\view_holder_member_filter_item.xml" />
     <AndroidResource Include="Resources\drawable\chat_bg_contact_status_online.xml" />
+    <AndroidResource Include="Resources\layout\activity_chat_new.xml" />
+    <AndroidResource Include="Resources\drawable\chat_ic_search.xml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Views\" />

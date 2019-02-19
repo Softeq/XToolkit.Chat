@@ -143,7 +143,7 @@ namespace Softeq.XToolkit.Chat.ViewModels
 
             filteredContacts.Apply(x =>
             {
-                x.IsSelectable = true;
+                x.IsSelectable = x.IsActive;
                 x.SetSelectionCommand(_contactSelectedCommand);
             });
 

@@ -118,7 +118,10 @@ namespace Softeq.XToolkit.Chat.Droid.Views
                 (parent, i) =>
                 {
                     var v = LayoutInflater.From(parent.Context).Inflate(Resource.Layout.view_holder_member_filter_item, parent, false);
-                    return new FilteredItemViewHolder(v);
+                    return new FilteredItemViewHolder(v, new RelayCommand<ChatUserViewModel>(x =>
+                    {
+                        x.IsSelected = !x.IsSelected;
+                    }));
                 },
                 (holder, i, item) =>
                 {

@@ -1,17 +1,17 @@
-﻿using Softeq.XToolkit.WhiteLabel.Mvvm;
-using System.Collections.Generic;
-using Softeq.XToolkit.Chat.Models;
-using System.Threading.Tasks;
-using Softeq.XToolkit.Common.Models;
-using Softeq.XToolkit.Chat.Strategies.Search;
-using Softeq.XToolkit.Chat.Models.Interfaces;
-using Softeq.XToolkit.WhiteLabel.Threading;
+﻿using System.Collections.Generic;
 using System.Threading;
-using Softeq.XToolkit.Common.Extensions;
+using System.Threading.Tasks;
 using System.Windows.Input;
-using Softeq.XToolkit.Common.Command;
-using Softeq.XToolkit.WhiteLabel.Navigation;
+using Softeq.XToolkit.Chat.Models;
+using Softeq.XToolkit.Chat.Models.Interfaces;
 using Softeq.XToolkit.Chat.Services;
+using Softeq.XToolkit.Chat.Strategies.Search;
+using Softeq.XToolkit.Common.Command;
+using Softeq.XToolkit.Common.Extensions;
+using Softeq.XToolkit.Common.Models;
+using Softeq.XToolkit.WhiteLabel.Mvvm;
+using Softeq.XToolkit.WhiteLabel.Navigation;
+using Softeq.XToolkit.WhiteLabel.Threading;
 
 namespace Softeq.XToolkit.Chat.ViewModels
 {
@@ -44,7 +44,7 @@ namespace Softeq.XToolkit.Chat.ViewModels
             SearchCommand = new RelayCommand(DoSearch);
             CancelCommand = new RelayCommand(GoBack);
             CreateGroupChatCommand = new RelayCommand(() => _pageNavigationService.NavigateToViewModel<CreateChatViewModel>());
-            CreatePersonalChatCommand = new RelayCommand<ChatUserModel>(x =>
+            CreatePersonalChatCommand = new RelayCommand<ChatUserViewModel>(x =>
             {
                 // TODO YP: nav to personal chat page
             });
@@ -53,7 +53,7 @@ namespace Softeq.XToolkit.Chat.ViewModels
         public ICommand SearchCommand { get; }
         public ICommand CancelCommand { get; }
         public ICommand CreateGroupChatCommand { get; }
-        public RelayCommand<ChatUserModel> CreatePersonalChatCommand { get; }
+        public RelayCommand<ChatUserViewModel> CreatePersonalChatCommand { get; }
 
         public IChatLocalizedStrings LocalizedStrings { get; }
         public PaginationViewModel<ChatUserViewModel, ChatUserModel> PaginationViewModel { get; }

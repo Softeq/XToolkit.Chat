@@ -70,7 +70,7 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
 
         private void TableViewSourceItemTapped(object sender, GenericEventArgs<ChatUserViewModel> e)
         {
-            ViewModel.CreatePersonalChatCommand.Execute(e.Value.Parameter);
+            ViewModel.CreatePersonalChatCommand.Execute(e.Value);
         }
 
         private async void TableViewSourceLastItemRequested(object sender, EventArgs e)
