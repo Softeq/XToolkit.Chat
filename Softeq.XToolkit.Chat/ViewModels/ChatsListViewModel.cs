@@ -85,7 +85,7 @@ namespace Softeq.XToolkit.Chat.ViewModels
 
         private void CreateChat()
         {
-            _pageNavigationService.NavigateToViewModel<CreateChatViewModel>();
+            _pageNavigationService.NavigateToViewModel<NewChatViewModel>();
         }
 
         private async Task LeaveChatAsync(ChatSummaryViewModel chatViewModel)

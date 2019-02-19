@@ -18,6 +18,7 @@ using Softeq.XToolkit.WhiteLabel.Interfaces;
 using Softeq.XToolkit.WhiteLabel.Mvvm;
 using Softeq.XToolkit.Auth;
 using Softeq.XToolkit.WhiteLabel.Threading;
+using Softeq.XToolkit.Chat.Services;
 
 namespace Softeq.XToolkit.Chat.ViewModels
 {
@@ -109,7 +110,7 @@ namespace Softeq.XToolkit.Chat.ViewModels
         {
             base.OnAppearing();
 
-            Task.Run(async () => 
+            Task.Run(async () =>
             {
                 Execute.BeginOnUIThread(() => IsBusy = true);
 
@@ -164,19 +165,6 @@ namespace Softeq.XToolkit.Chat.ViewModels
             }
 
             RaisePropertyChanged(nameof(HasSelectedContacts));
-        }
-
-        private class ChatUserViewModelFactory : IViewModelFactoryService
-        {
-            public TViewModel ResolveViewModel<TViewModel, TParam>(TParam param) where TViewModel : ObservableObject, IViewModelParameter<TParam>
-            {
-                return new ChatUserViewModel { Parameter = param as ChatUserModel }  as TViewModel;
-            }
-
-            public TViewModel ResolveViewModel<TViewModel>() where TViewModel : ObservableObject
-            {
-                return new ChatUserViewModel() as TViewModel;
-            }
         }
     }
 }
