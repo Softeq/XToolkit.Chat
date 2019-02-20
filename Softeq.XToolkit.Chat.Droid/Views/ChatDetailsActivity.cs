@@ -1,6 +1,7 @@
 ﻿// Developed by Softeq Development Corporation
 // http://www.softeq.com
 
+using System;
 using System.Collections.Generic;
 using Android.App;
 using Android.Graphics;
@@ -28,7 +29,6 @@ using Softeq.XToolkit.WhiteLabel.Droid.Extensions;
 using Softeq.XToolkit.WhiteLabel.Threading;
 using Softeq.XToolkit.Common.Droid.Converters;
 using Softeq.XToolkit.WhiteLabel.Droid.Services;
-using System;
 
 namespace Softeq.XToolkit.Chat.Droid.Views
 {
@@ -40,7 +40,9 @@ namespace Softeq.XToolkit.Chat.Droid.Views
         private MvxCachedImageView _chatEditedPhotoImageView;
         private EditText _chatNameEditText;
         private TextView _chatMembersCountTextView;
-        private Button _addMemberButton;
+        private LinearLayout _addMemberContainer;
+        private ImageView _addmemberImageView;
+        private TextView _addMemberTextView;
         private RecyclerView _membersRecyclerView;
         private Button _changeChatPhotoButton;
         private ImagePicker _imagePicker;
@@ -73,9 +75,11 @@ namespace Softeq.XToolkit.Chat.Droid.Views
 
             _chatMembersCountTextView = FindViewById<TextView>(Resource.Id.tv_members_count);
 
-            _addMemberButton = FindViewById<Button>(Resource.Id.b_chat_add_member);
-            _addMemberButton.SetCommand(ViewModel.AddMembersCommand);
-            _addMemberButton.Text = ViewModel.LocalizedStrings.AddMembers;
+            _addMemberContainer = FindViewById<LinearLayout>(Resource.Id.activity_chat_details_add_member_container);
+            _addmemberImageView = FindViewById<ImageView>(Resource.Id.activity_chat_details_add_member_image);
+            _addmemberImageView.SetImageResource(StyleHelper.Style.AddMemberIcon);
+            _addMemberTextView = FindViewById<TextView>(Resource.Id.activity_chat_details_add_member_text);
+            _addMemberTextView.Text = ViewModel.LocalizedStrings.AddMembers;
 
             _membersRecyclerView = FindViewById<RecyclerView>(Resource.Id.rv_contacts_list);
 
@@ -184,6 +188,7 @@ namespace Softeq.XToolkit.Chat.Droid.Views
             }));
 
             _chatNameEditText.FocusChange += OnEditTextFocusChanged;
+            _addMemberContainer.Click += OnAddMemberClick;
         }
 
         protected override void DoDetachBindings()
@@ -191,6 +196,7 @@ namespace Softeq.XToolkit.Chat.Droid.Views
             base.DoDetachBindings();
 
             _chatNameEditText.FocusChange -= OnEditTextFocusChanged;
+            _addMemberContainer.Click -= OnAddMemberClick;
         }
 
         protected override void OnDestroy()
@@ -257,6 +263,11 @@ namespace Softeq.XToolkit.Chat.Droid.Views
         private void OpenImagePicker()
         {
             _imagePicker.OpenGallery();
+        }
+
+        private void OnAddMemberClick(object sender, EventArgs e)
+        {
+            ViewModel.AddMembersCommand.Execute(null);
         }
 
         private void OnSaveClick()
