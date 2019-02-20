@@ -97,7 +97,7 @@ namespace Softeq.XToolkit.Chat
 
         public virtual async Task<IList<ChatSummaryModel>> GetChatsListAsync()
         {
-            var models = await _httpChatAdapter.GetChatsListAsync().ConfigureAwait(false);
+            var models = await _httpChatAdapter.GetChannelsAsync().ConfigureAwait(false);
             if (models == null)
             {
                 return null;

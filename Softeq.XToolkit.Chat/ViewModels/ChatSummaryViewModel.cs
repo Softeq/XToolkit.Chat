@@ -62,10 +62,10 @@ namespace Softeq.XToolkit.Chat.ViewModels
 
         public string ChatPhotoUrl
         {
-            get => _chatSummary.AvatarUrl;
+            get => _chatSummary.PhotoUrl;
             set
             {
-                _chatSummary.AvatarUrl = value;
+                _chatSummary.PhotoUrl = value;
                 RaisePropertyChanged();
             }
         }

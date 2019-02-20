@@ -90,7 +90,7 @@ namespace Softeq.XToolkit.Chat.ViewModels
             {
                 if (Set(ref _avatarUrl, value))
                 {
-                    Summary.AvatarUrl = value;
+                    Summary.PhotoUrl = value;
                 }
             }
         }
@@ -131,7 +131,7 @@ namespace Softeq.XToolkit.Chat.ViewModels
             base.OnInitialize();
 
             ChatName = Summary.Name;
-            AvatarUrl = Summary.AvatarUrl;
+            AvatarUrl = Summary.PhotoUrl;
 
             AddMembersCommand = new RelayCommand(AddMembers);
             BackCommand = new RelayCommand(_pageNavigationService.GoBack, () => _pageNavigationService.CanGoBack);

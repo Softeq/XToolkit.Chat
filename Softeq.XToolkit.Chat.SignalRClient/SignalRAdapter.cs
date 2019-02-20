@@ -196,7 +196,7 @@ namespace Softeq.XToolkit.Chat.SignalRClient
                 {
                     ChannelId = x.Id,
                     Name = x.Name,
-                    PhotoUrl = x.AvatarUrl,
+                    PhotoUrl = x.PhotoUrl,
                     WelcomeMessage = x.WelcomeMessage,
                 };
 

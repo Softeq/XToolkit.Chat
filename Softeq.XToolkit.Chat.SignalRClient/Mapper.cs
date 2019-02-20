@@ -21,7 +21,7 @@ namespace Softeq.XToolkit.Chat.SignalRClient
             {
                 Id = response.Id.ToString(),
                 Name = response.Name,
-                AvatarUrl = response.PhotoUrl,
+                PhotoUrl = response.PhotoUrl,
                 LastMessage = lastMessage,
                 IsMuted = response.IsMuted,
                 CreatedDate = response.Created,
