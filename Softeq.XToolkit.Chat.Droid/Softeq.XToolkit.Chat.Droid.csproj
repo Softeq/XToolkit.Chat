@@ -122,6 +122,7 @@
     <AndroidResource Include="Resources\drawable\chat_bg_contact_status_online.xml" />
     <AndroidResource Include="Resources\layout\activity_chat_new.xml" />
     <AndroidResource Include="Resources\drawable\chat_ic_search.xml" />
+    <AndroidResource Include="Resources\layout\item_chat_new_contact.xml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Views\" />

@@ -104,7 +104,7 @@ namespace Softeq.XToolkit.Chat.Droid.Views
                 ViewModel.PaginationViewModel.Items,
                 (parent, i) =>
                 {
-                    var v = LayoutInflater.From(parent.Context).Inflate(Resource.Layout.view_holder_member_filter_item, parent, false);
+                    var v = LayoutInflater.From(parent.Context).Inflate(Resource.Layout.item_chat_new_contact, parent, false);
                     return new FilteredItemViewHolder(v, ViewModel.CreatePersonalChatCommand);
                 },
                 (holder, i, item) =>

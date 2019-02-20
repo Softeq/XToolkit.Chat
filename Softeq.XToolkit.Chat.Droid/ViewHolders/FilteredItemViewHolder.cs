@@ -56,23 +56,25 @@ namespace Softeq.XToolkit.Chat.Droid.ViewHolders
 
             _view.Clickable = _viewModel.IsActive;
 
-            _checkboxImageView.Visibility = BoolToViewStateConverter.ConvertInvisible(_viewModel.IsSelectable);
             _inactiveOverlay.Visibility = BoolToViewStateConverter.ConvertGone(!_viewModel.IsActive);
             _onlineStatusView.Visibility = BoolToViewStateConverter.ConvertGone(_viewModel.IsOnline);
 
-            _selectedBinding?.Detach();
-            _selectedBinding = this.SetBinding(() => _viewModel.IsSelected).WhenSourceChanges(() =>
+            if (_checkboxImageView != null) // reused for few layouts
             {
-                var resId = _viewModel.IsSelected ? StyleHelper.Style.CheckedIcon : StyleHelper.Style.UnCheckedIcon;
-                _checkboxImageView.SetImageResource(resId);
-            });
+                _checkboxImageView.Visibility = BoolToViewStateConverter.ConvertInvisible(_viewModel.IsSelectable);
+
+                _selectedBinding?.Detach();
+                _selectedBinding = this.SetBinding(() => _viewModel.IsSelected).WhenSourceChanges(() =>
+                {
+                    var resId = _viewModel.IsSelected ? StyleHelper.Style.CheckedIcon : StyleHelper.Style.UnCheckedIcon;
+                    _checkboxImageView.SetImageResource(resId);
+                });
+            }
         }
 
         protected override void Dispose(bool disposing)
         {
-            _view.Click -= OnClick;
-
-            _selectedBinding.Detach();
+            _selectedBinding?.Detach();
 
             base.Dispose(disposing);
         }

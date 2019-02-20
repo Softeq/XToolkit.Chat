@@ -5,19 +5,12 @@
     android:layout_height="55dp"
     android:background="?attr/selectableItemBackground"
     android:orientation="horizontal">
-    <ImageView
-        android:id="@+id/view_holder_member_filter_item_indicator"
-        android:layout_width="22dp"
-        android:layout_height="22dp"
-        android:layout_centerVertical="true"
-        android:layout_marginLeft="16dp" />
     <ffimageloading.views.ImageViewAsync
         android:id="@+id/view_holder_member_filter_item_avatar"
         android:layout_width="40dp"
         android:layout_height="40dp"
         android:layout_centerVertical="true"
-        android:layout_marginLeft="16dp"
-        android:layout_toRightOf="@+id/view_holder_member_filter_item_indicator" />
+        android:layout_marginLeft="16dp" />
     <View
         android:id="@+id/view_holder_member_filter_item_online"
         android:layout_width="12dp"
@@ -34,7 +27,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
-        android:layout_marginLeft="17dp"
+        android:layout_marginLeft="16dp"
         android:layout_marginRight="8dp"
         android:layout_toRightOf="@+id/view_holder_member_filter_item_avatar"
         android:ellipsize="end"
