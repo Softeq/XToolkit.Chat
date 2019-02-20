@@ -6,6 +6,7 @@ using Android.Views;
 using Android.Widget;
 using Softeq.XToolkit.Bindings;
 using Softeq.XToolkit.Bindings.Droid;
+using Softeq.XToolkit.Chat.Droid.Controls;
 using Softeq.XToolkit.Chat.Droid.Listeners;
 using Softeq.XToolkit.Chat.Droid.ViewHolders;
 using Softeq.XToolkit.Chat.ViewModels;
@@ -98,8 +99,9 @@ namespace Softeq.XToolkit.Chat.Droid.Views
         private void InitRecyclerView()
         {
             _recyclerView = FindViewById<RecyclerView>(Resource.Id.activity_chat_new_filtered_members);
+            _recyclerView.HasFixedSize = true;
             _recyclerView.SetLayoutManager(new LinearLayoutManager(this));
-            _recyclerView.AddItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.Vertical));
+            _recyclerView.AddItemDecoration(new LeftOffsetItemDecoration(this, Resource.Color.chat_divider_color, 72));
             _recyclerViewAdapter = new ObservableRecyclerViewAdapter<ChatUserViewModel>(
                 ViewModel.PaginationViewModel.Items,
                 (parent, i) =>

@@ -10,6 +10,7 @@ using Android.Support.V7.Widget.Helper;
 using Android.Views;
 using Softeq.XToolkit.Bindings;
 using Softeq.XToolkit.Chat.Droid.Adapters;
+using Softeq.XToolkit.Chat.Droid.Controls;
 using Softeq.XToolkit.Chat.Droid.ItemTouchCallbacks;
 using Softeq.XToolkit.Chat.Droid.LayoutManagers;
 using Softeq.XToolkit.Chat.Droid.ViewHolders;
@@ -93,6 +94,7 @@ namespace Softeq.XToolkit.Chat.Droid.Views
         {
             _chatsRecyclerView.HasFixedSize = true;
             _chatsRecyclerView.SetLayoutManager(new GuardedLinearLayoutManager(Activity));
+            _chatsRecyclerView.AddItemDecoration(new LeftOffsetItemDecoration(Activity, Resource.Color.chat_divider_color, 72));
             _chatsRecyclerView.SetAdapter(new ChatObservableRecyclerViewAdapter(ViewModel.Chats,
                 CreateChatViewHolder, _chatsRecyclerView.SmoothScrollToPosition));
 

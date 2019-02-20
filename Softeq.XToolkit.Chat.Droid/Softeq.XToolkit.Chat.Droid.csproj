@@ -96,6 +96,7 @@
     <Compile Include="ViewHolders\FilteredItemViewHolder.cs" />
     <Compile Include="Listeners\LoadMoreScrollListener.cs" />
     <Compile Include="Views\NewChatActivity.cs" />
+    <Compile Include="Controls\LeftOffsetItemDecoration.cs" />
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\layout\activity_chat_details.xml" />

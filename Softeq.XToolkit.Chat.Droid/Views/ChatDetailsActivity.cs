@@ -29,6 +29,7 @@ using Softeq.XToolkit.WhiteLabel.Droid.Extensions;
 using Softeq.XToolkit.WhiteLabel.Threading;
 using Softeq.XToolkit.Common.Droid.Converters;
 using Softeq.XToolkit.WhiteLabel.Droid.Services;
+using Softeq.XToolkit.Chat.Droid.Controls;
 
 namespace Softeq.XToolkit.Chat.Droid.Views
 {
@@ -214,7 +215,7 @@ namespace Softeq.XToolkit.Chat.Droid.Views
 
             _membersRecyclerView.HasFixedSize = true;
             _membersRecyclerView.SetLayoutManager(new GuardedLinearLayoutManager(this));
-            _membersRecyclerView.AddItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.Vertical));
+            _membersRecyclerView.AddItemDecoration(new LeftOffsetItemDecoration(this, Resource.Color.chat_divider_color, 72));
             _membersRecyclerView.SetAdapter(new BaseChatObservableRecyclerViewAdapter<ChatUserViewModel>(
                 ViewModel.Members,
                 x =>

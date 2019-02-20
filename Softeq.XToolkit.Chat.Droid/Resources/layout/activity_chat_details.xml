@@ -138,6 +138,7 @@
         <View
             android:layout_below="@+id/activity_chat_details_add_member_container"
             android:layout_width="match_parent"
+            android:layout_marginLeft="72dp"
             android:layout_height="1dp"
             android:background="#1f000000" />
 
