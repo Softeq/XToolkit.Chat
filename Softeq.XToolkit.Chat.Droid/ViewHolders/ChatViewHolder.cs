@@ -74,7 +74,7 @@ namespace Softeq.XToolkit.Chat.Droid.ViewHolders
                     new AvatarPlaceholderDrawable.AvatarStyles
                     {
                         BackgroundHexColors = StyleHelper.Style.ChatAvatarStyles.BackgroundHexColors,
-                        Size = new System.Drawing.Size(45, 45)
+                        Size = new System.Drawing.Size(44, 44)
                     },
                     x => x.Transform(new CircleTransformation()));
             }));
