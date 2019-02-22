@@ -214,6 +214,7 @@ namespace Softeq.XToolkit.Chat.ViewModels
             }
 
             IsBusy = true;
+            IsInEditMode = false;
 
             var imagePath = await UploadChatAvatarAsync(getImageFunc);
 
@@ -227,7 +228,6 @@ namespace Softeq.XToolkit.Chat.ViewModels
             Execute.BeginOnUIThread(() =>
             {
                 IsBusy = false;
-                IsInEditMode = false;
             });
         }
 
