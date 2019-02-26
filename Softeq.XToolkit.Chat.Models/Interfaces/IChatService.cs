@@ -26,6 +26,7 @@ namespace Softeq.XToolkit.Chat.Models.Interfaces
 
         Task<IList<ChatSummaryModel>> GetChatsListAsync();
         Task<ChatSummaryModel> CreateChatAsync(string chatName, IList<string> participantsIds, string imagePath);
+        Task<ChatSummaryModel> CreateDirectChatAsync(string memberId);
         Task CloseChatAsync(string chatId);
         Task LeaveChatAsync(string chatId);
         Task InviteMembersAsync(string chatId, IList<string> participantsIds);

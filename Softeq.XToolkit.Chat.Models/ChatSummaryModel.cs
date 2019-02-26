@@ -17,6 +17,7 @@ namespace Softeq.XToolkit.Chat.Models
         public bool IsMuted { get; set; }
         public bool IsPinned { get; set; }
         public string CreatorId { get; set; }
+        public ChatUserModel DirectMember { get; set; }
         public string Description { get; set; }
         public string WelcomeMessage { get; set; }
         public ChannelType Type { get; set; }
@@ -30,6 +31,19 @@ namespace Softeq.XToolkit.Chat.Models
         public void UpdateIsCreatedByMeStatus(string currentUserId)
         {
             IsCreatedByMe = CreatorId == currentUserId;
+
+            UpdateModelByType(); // TODO YP: think of better approach
+        }
+
+        public void UpdateModelByType()
+        {
+            if (Type == ChannelType.Direct && DirectMember != null)
+            {
+                Name = DirectMember.Username;
+                PhotoUrl = DirectMember.PhotoUrl;
+
+                IsCreatedByMe = false;
+            }
         }
     }
 }

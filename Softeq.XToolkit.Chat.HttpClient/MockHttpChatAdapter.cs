@@ -332,5 +332,10 @@ namespace Softeq.XToolkit.Chat.HttpClient
         {
             throw new NotImplementedException();
         }
+
+        public Task<ChatSummaryModel> CreateDirectChatAsync(string memberId)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

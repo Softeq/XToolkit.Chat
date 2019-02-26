@@ -25,6 +25,7 @@ namespace Softeq.XToolkit.Chat.HttpClient
                 IsMuted = dto.IsMuted,
                 IsPinned = dto.IsPinned,
                 CreatorId = dto.Creator?.Id,
+                DirectMember = DtoToChatUser(dto.DirectMember),
                 Description = dto.Description,
                 WelcomeMessage = dto.WelcomeMessage,
                 Type = (ChannelType)dto.Type,
@@ -47,7 +48,8 @@ namespace Softeq.XToolkit.Chat.HttpClient
                 DateTime = dto.Created,
                 IsRead = dto.IsRead,
                 IsDelivered = true,
-                ImageRemoteUrl = dto.ImageUrl
+                ImageRemoteUrl = dto.ImageUrl,
+                ChannelType = (ChannelType)dto.ChannelType
             };
         }
 

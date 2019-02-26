@@ -12,7 +12,7 @@ using Softeq.XToolkit.WhiteLabel.Threading;
 
 namespace Softeq.XToolkit.Chat.ViewModels
 {
-    public class ChatSummaryViewModel : ViewModelBase,
+    public class ChatSummaryViewModel : ObservableObject,
         IViewModelParameter<ChatSummaryModel>,
         IEquatable<ChatSummaryViewModel>
     {
@@ -46,7 +46,6 @@ namespace Softeq.XToolkit.Chat.ViewModels
         public ChatMessageStatus LastMessageStatus => _chatSummary.LastMessage?.Status ?? ChatMessageStatus.Other;
         public string LastMessageDateTime => _formatService.ToShortTimeFormat(_chatSummary.LastMessage?.DateTime.LocalDateTime);
 
-
         public int UnreadMessageCount
         {
             get => _chatSummary.UnreadMessagesCount;
@@ -73,10 +72,7 @@ namespace Softeq.XToolkit.Chat.ViewModels
         public bool IsMuted => _chatSummary.IsMuted;
         public bool IsCreatedByMe => _chatSummary.IsCreatedByMe;
 
-        public DateTimeOffset LastUpdateDate => _chatSummary.LastMessage != null
-                                                            ? _chatSummary.LastMessage.DateTime
-                                                            : _chatSummary.UpdatedDate
-                                                            ?? _chatSummary.CreatedDate;
+        public DateTimeOffset LastUpdateDate => GetLastUpdateDate();
 
         public IList<string> TypingUsersNames
         {
@@ -152,6 +148,16 @@ namespace Softeq.XToolkit.Chat.ViewModels
         public override int GetHashCode()
         {
             return ChatId == null ? 0 : ChatId.GetHashCode();
+        }
+
+        private DateTimeOffset GetLastUpdateDate()
+        {
+            if (_chatSummary.LastMessage != null)
+            {
+                return _chatSummary.LastMessage.DateTime;
+            }
+
+            return _chatSummary.UpdatedDate ?? _chatSummary.CreatedDate;
         }
     }
 }

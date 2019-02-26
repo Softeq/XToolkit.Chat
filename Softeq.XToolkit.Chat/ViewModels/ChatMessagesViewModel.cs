@@ -241,7 +241,7 @@ namespace Softeq.XToolkit.Chat.ViewModels
             Messages.Where(x => x.Any(WasUpdated))
                     .SelectMany(x => x)
                     .Where(WasUpdated)
-                    .Apply(x => x.Parameter = messageModel);
+                    .Apply(x => x.UpdateMessageModel(messageModel));
         }
 
         private void OnMessagesBatchUpdated(IList<ChatMessageModel> messagesModels)

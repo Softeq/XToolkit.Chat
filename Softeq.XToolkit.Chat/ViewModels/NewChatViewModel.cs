@@ -12,6 +12,7 @@ using Softeq.XToolkit.Common.Models;
 using Softeq.XToolkit.WhiteLabel.Mvvm;
 using Softeq.XToolkit.WhiteLabel.Navigation;
 using Softeq.XToolkit.WhiteLabel.Threading;
+using Softeq.XToolkit.Chat.Interfaces;
 
 namespace Softeq.XToolkit.Chat.ViewModels
 {
@@ -20,6 +21,7 @@ namespace Softeq.XToolkit.Chat.ViewModels
         private const int DefaultSearchResultsPageSize = 20;
 
         private readonly CreateChatSearchContactsStrategy _searchContactsStrategy;
+        private readonly IChatsListManager _chatsListManager;
         private readonly IPageNavigationService _pageNavigationService;
 
         private CancellationTokenSource _lastSearchCancelSource = new CancellationTokenSource();
@@ -27,11 +29,12 @@ namespace Softeq.XToolkit.Chat.ViewModels
 
         public NewChatViewModel(
             IChatService chatService,
+            IChatsListManager chatsListManager,
             IChatLocalizedStrings localizedStrings,
             IPageNavigationService pageNavigationService)
         {
             _searchContactsStrategy = new CreateChatSearchContactsStrategy(chatService);
-
+            _chatsListManager = chatsListManager;
             LocalizedStrings = localizedStrings;
             _pageNavigationService = pageNavigationService;
 
@@ -44,10 +47,7 @@ namespace Softeq.XToolkit.Chat.ViewModels
             SearchCommand = new RelayCommand(DoSearch);
             CancelCommand = new RelayCommand(GoBack);
             CreateGroupChatCommand = new RelayCommand(() => _pageNavigationService.NavigateToViewModel<CreateChatViewModel>());
-            CreatePersonalChatCommand = new RelayCommand<ChatUserViewModel>(x =>
-            {
-                // TODO YP: nav to personal chat page
-            });
+            CreatePersonalChatCommand = new RelayCommand<ChatUserViewModel>(CreatePersonalChat);
         }
 
         public ICommand SearchCommand { get; }
@@ -112,6 +112,23 @@ namespace Softeq.XToolkit.Chat.ViewModels
             {
                 _pageNavigationService.GoBack();
             }
+        }
+
+        private async void CreatePersonalChat(ChatUserViewModel chatUserModelView)
+        {
+            var chatViewModel = await _chatsListManager.FindOrCreateDirectChatAsync(chatUserModelView.Id).ConfigureAwait(false);
+
+            if (chatViewModel == null)
+            {
+                // TODO YP: log error
+                return;
+            }
+
+            _pageNavigationService.GoBack(); // TODO YP: think of better approach
+
+            _pageNavigationService.For<ChatMessagesViewModel>()
+                    .WithParam(x => x.Parameter, chatViewModel)
+                    .Navigate();
         }
     }
 }

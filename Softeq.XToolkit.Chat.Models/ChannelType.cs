@@ -3,6 +3,7 @@
     public enum ChannelType
     {
         Public,
-        Private
+        Private,
+        Direct
     }
 }

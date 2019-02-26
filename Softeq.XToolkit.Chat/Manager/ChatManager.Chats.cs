@@ -108,6 +108,29 @@ namespace Softeq.XToolkit.Chat.Manager
             return ChatsCollection.FirstOrDefault(x => x.ChatId == chatId);
         }
 
+        public async Task<ChatSummaryViewModel> FindOrCreateDirectChatAsync(string memberId)
+        {
+            var directChatWithMember = ChatsCollection.FirstOrDefault(x =>
+                x.Parameter.Type == ChannelType.Direct &&
+                x.Parameter.DirectMember.Id == memberId);
+
+            if (directChatWithMember != null)
+            {
+                return directChatWithMember;
+            }
+
+            var directChatModel = await _chatService.CreateDirectChatAsync(memberId).ConfigureAwait(false);
+
+            if (directChatModel == null)
+            {
+                return null;
+            }
+
+            var directChatViewModel = _viewModelFactoryService.ResolveViewModel<ChatSummaryViewModel, ChatSummaryModel>(directChatModel);
+
+            return directChatViewModel;
+        }
+
         private bool TryAddChat(ChatSummaryModel chatSummary)
         {
             return ModifyChatsSafely(() =>

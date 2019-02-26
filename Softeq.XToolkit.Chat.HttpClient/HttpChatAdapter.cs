@@ -57,6 +57,7 @@ namespace Softeq.XToolkit.Chat.HttpClient
             return _httpClient.TrySendAsync(request, _logger);
         }
 
+        [Obsolete("Used SignalR method.")]
         public Task<ChatSummaryModel> CreateChatAsync(IEnumerable<string> participantsIds)
         {
             var dto = new CreateChatDto
@@ -65,6 +66,18 @@ namespace Softeq.XToolkit.Chat.HttpClient
             };
 
             var request = new PostCreateChatRequest(_chatConfig.ApiUrl, _jsonSerializer, dto);
+
+            return _httpClient.GetModelAsync<ChatSummaryModel, ChatSummaryDto>(request, _logger, Mapper.DtoToChatSummary);
+        }
+
+        public Task<ChatSummaryModel> CreateDirectChatAsync(string memberId)
+        {
+            var dto = new CreateDirectChatDto
+            {
+                MemberId = memberId
+            };
+
+            var request = new PostCreateDirectChatRequest(_chatConfig.ApiUrl, _jsonSerializer, dto);
 
             return _httpClient.GetModelAsync<ChatSummaryModel, ChatSummaryDto>(request, _logger, Mapper.DtoToChatSummary);
         }

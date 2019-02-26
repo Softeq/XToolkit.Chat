@@ -16,6 +16,7 @@ namespace Softeq.XToolkit.Chat.HttpClient.Dtos
         public bool IsMuted { get; set; }
         public bool IsPinned { get; set; }
         public ChatUserDto Creator { get; set; }
+        public ChatUserDto DirectMember { get; set; }
         public string Description { get; set; }
         public string WelcomeMessage { get; set; }
         public int Type { get; set; }

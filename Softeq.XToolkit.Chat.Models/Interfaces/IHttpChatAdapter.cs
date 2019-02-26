@@ -36,5 +36,7 @@ namespace Softeq.XToolkit.Chat.Models.Interfaces
 
         Task<PagingModel<ChatUserModel>> GetContactsForInviteAsync(string chatId,
             string nameFilter, int pageSize, int pageNumber);
+
+        Task<ChatSummaryModel> CreateDirectChatAsync(string memberId);
     }
 }
