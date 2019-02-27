@@ -100,7 +100,7 @@ namespace Softeq.XToolkit.Chat.ViewModels
             if (result != null)
             {
                 var contacts = result.SelectedContacts;
-                contacts.Apply(x => x.SetSelectionCommand(_updateContactsCountCommand));
+                //contacts.Apply(x => x.SetSelectionCommand(_updateContactsCountCommand));
                 Contacts.AddRange(contacts);
 
                 _updateContactsCountCommand.Execute(null);

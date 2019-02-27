@@ -13,7 +13,6 @@ using Softeq.XToolkit.WhiteLabel.iOS.Extensions;
 using Softeq.XToolkit.WhiteLabel.iOS.ImagePicker;
 using Softeq.XToolkit.WhiteLabel;
 using Softeq.XToolkit.Permissions;
-using Softeq.XToolkit.Common.EventArguments;
 using Softeq.XToolkit.Chat.iOS.Controls;
 using CoreGraphics;
 
@@ -67,16 +66,12 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
                     _chatDetailsHeaderView.SetEditedChatAvatar(_previewImageKey);
                 }));
 
-            _tableViewSource.ItemTapped += TableViewSourceItemTapped;
-
             TableView.AddGestureRecognizer(_hideKeyboardByTapGestureRecognizer);
         }
 
         protected override void DoDetachBindings()
         {
             base.DoDetachBindings();
-
-            _tableViewSource.ItemTapped -= TableViewSourceItemTapped;
 
             TableView.RemoveGestureRecognizer(_hideKeyboardByTapGestureRecognizer);
 
@@ -116,7 +111,7 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
         private void InitChatMembersTableView()
         {
             TableView.RegisterNibForCellReuse(ChatUserViewCell.Nib, ChatUserViewCell.Key);
-            TableView.RowHeight = 50;
+            TableView.RowHeight = 60;
             TableView.KeyboardDismissMode = UIScrollViewKeyboardDismissMode.Interactive;
             TableView.TableHeaderView = _chatDetailsHeaderView;
 
@@ -148,11 +143,6 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
         private void AddChat()
         {
             ViewModel.SaveCommand.Execute(_simpleImagePicker.StreamFunc);
-        }
-
-        private void TableViewSourceItemTapped(object sender, GenericEventArgs<ChatUserViewModel> e)
-        {
-            e.Value.IsSelected = !e.Value.IsSelected;
         }
     }
 }
