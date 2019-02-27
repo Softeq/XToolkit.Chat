@@ -13,6 +13,7 @@ using Softeq.XToolkit.WhiteLabel.Mvvm;
 using Softeq.XToolkit.WhiteLabel.Navigation;
 using Softeq.XToolkit.WhiteLabel.Threading;
 using Softeq.XToolkit.Chat.Interfaces;
+using Softeq.XToolkit.Common.Interfaces;
 
 namespace Softeq.XToolkit.Chat.ViewModels
 {
@@ -23,6 +24,7 @@ namespace Softeq.XToolkit.Chat.ViewModels
         private readonly CreateChatSearchContactsStrategy _searchContactsStrategy;
         private readonly IChatsListManager _chatsListManager;
         private readonly IPageNavigationService _pageNavigationService;
+        private readonly ILogger _logger;
 
         private CancellationTokenSource _lastSearchCancelSource = new CancellationTokenSource();
         private string _searchQuery;
@@ -31,12 +33,14 @@ namespace Softeq.XToolkit.Chat.ViewModels
             IChatService chatService,
             IChatsListManager chatsListManager,
             IChatLocalizedStrings localizedStrings,
-            IPageNavigationService pageNavigationService)
+            IPageNavigationService pageNavigationService,
+            ILogManager logManager)
         {
             _searchContactsStrategy = new CreateChatSearchContactsStrategy(chatService);
             _chatsListManager = chatsListManager;
             LocalizedStrings = localizedStrings;
             _pageNavigationService = pageNavigationService;
+            _logger = logManager.GetLogger<NewChatViewModel>();
 
             PaginationViewModel = new PaginationViewModel<ChatUserViewModel, ChatUserModel>(
                 new ChatUserViewModelFactory(),
@@ -120,7 +124,7 @@ namespace Softeq.XToolkit.Chat.ViewModels
 
             if (chatViewModel == null)
             {
-                // TODO YP: log error
+                _logger.Error($"Attempt to create a direct chat with myself (id={chatUserModelView.Id})");
                 return;
             }
 
