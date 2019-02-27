@@ -116,7 +116,7 @@ namespace Softeq.XToolkit.Chat.ViewModels
 
             IsBusy = true;
 
-            var imagePath = await UploadChatAvatarAsync(getImageFunc);
+            var imagePath = await _uploadImageService.UploadImageAsync(getImageFunc);
 
             try
             {
@@ -145,23 +145,6 @@ namespace Softeq.XToolkit.Chat.ViewModels
             {
                 IsBusy = false;
             }
-        }
-
-        private async Task<string> UploadChatAvatarAsync(Func<(Task<Stream> GetImageTask, string Extension)> getImageFunc)
-        {
-            var (GetImageTask, Extension) = getImageFunc();
-            var imagePath = default(string);
-
-            using (var image = await GetImageTask.ConfigureAwait(false))
-            {
-                if (image != null)
-                {
-                    imagePath = await _uploadImageService.UploadImageAsync(image, Extension)
-                        .ConfigureAwait(false);
-                }
-            }
-
-            return imagePath;
         }
     }
 }

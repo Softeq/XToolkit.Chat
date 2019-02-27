@@ -216,7 +216,7 @@ namespace Softeq.XToolkit.Chat.ViewModels
             IsBusy = true;
             IsInEditMode = false;
 
-            var imagePath = await UploadChatAvatarAsync(getImageFunc);
+            var imagePath = await _uploadImageService.UploadImageAsync(getImageFunc);
 
             if (!string.IsNullOrEmpty(imagePath))
             {
@@ -272,24 +272,6 @@ namespace Softeq.XToolkit.Chat.ViewModels
             {
                 member.IsRemovable = Summary.IsCreatedByMe && member.Id != Summary.CreatorId;
             });
-        }
-
-        // TODO YP: dublicate CreateChatViewModel logic
-        private async Task<string> UploadChatAvatarAsync(Func<(Task<Stream> GetImageTask, string Extension)> getImageFunc)
-        {
-            var (GetImageTask, Extension) = getImageFunc();
-            var imagePath = default(string);
-
-            using (var image = await GetImageTask.ConfigureAwait(false))
-            {
-                if (image != null)
-                {
-                    imagePath = await _uploadImageService.UploadImageAsync(image, Extension)
-                        .ConfigureAwait(false);
-                }
-            }
-
-            return imagePath;
         }
     }
 }

@@ -67,12 +67,12 @@ namespace Softeq.XToolkit.Chat.Manager
             var viewModel = AddLatestMessage(messageModel);
 
             var imageUrl = default(string);
+
             if (imagePickerArgs != null)
             {
-                using (var stream = await imagePickerArgs.ImageStream().ConfigureAwait(false))
-                {
-                    imageUrl = await _uploadImageService.UploadImageAsync(stream, imagePickerArgs.Extension).ConfigureAwait(false);
-                }
+                imageUrl = await _uploadImageService
+                    .UploadImageAsync(() => (imagePickerArgs.ImageStream(), imagePickerArgs.Extension))
+                    .ConfigureAwait(false);
             }
 
             var updatedModel = await _chatService.SendMessageAsync(chatId, messageBody, imageUrl).ConfigureAwait(false);
