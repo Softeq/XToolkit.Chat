@@ -1,5 +1,6 @@
 ﻿using System;
 using Android.App;
+using Android.Graphics;
 using Android.OS;
 using Android.Support.V7.Widget;
 using Android.Views;
@@ -77,6 +78,7 @@ namespace Softeq.XToolkit.Chat.Droid.Views
             _navigationBarView = FindViewById<NavigationBarView>(Resource.Id.activity_chat_new_nav_bar);
             _navigationBarView.SetLeftButton(StyleHelper.Style.NavigationBarBackButtonIcon, ViewModel.CancelCommand);
             _navigationBarView.SetTitle(ViewModel.LocalizedStrings.NewChat);
+            _navigationBarView.SetBackground(Resource.Color.chat_content_color);
         }
 
         private void InitSearchBar()

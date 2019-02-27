@@ -16,6 +16,7 @@
         android:layout_below="@+id/activity_chat_new_nav_bar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@drawable/chat_underlined_bg"
         android:orientation="horizontal"
         android:paddingLeft="17dp"
         android:paddingRight="24dp">
@@ -25,7 +26,7 @@
             android:layout_height="24dp"
             android:layout_below="@+id/activity_chat_new_nav_bar"
             android:layout_centerVertical="false"
-            android:layout_marginRight="30dp"
+            android:layout_marginRight="32dp"
             android:layout_gravity="center_vertical"
             android:background="@drawable/chat_ic_search" />
 
@@ -33,23 +34,15 @@
             android:id="@+id/activity_chat_new_search_text"
             android:layout_width="match_parent"
             android:layout_height="48dp"
-            android:layout_below="@+id/activity_chat_new_search_container"
             android:background="@android:color/transparent"
             android:hint="Search"
             android:inputType="text"
             android:maxLines="1" />
     </LinearLayout>
 
-    <View
-        android:id="@+id/activity_chat_new_delimiter"
-        android:layout_below="@+id/activity_chat_new_search_container"
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="#e2e2e2" />
-
     <LinearLayout
         android:id="@+id/activity_chat_new_group_container"
-        android:layout_below="@+id/activity_chat_new_delimiter"
+        android:layout_below="@+id/activity_chat_new_search_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
