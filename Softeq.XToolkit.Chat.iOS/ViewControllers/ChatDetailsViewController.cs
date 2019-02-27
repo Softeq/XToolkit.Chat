@@ -153,7 +153,7 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
         private void InitChatMembersTableView()
         {
             TableView.RegisterNibForCellReuse(ChatUserViewCell.Nib, ChatUserViewCell.Key);
-            TableView.RowHeight = 50;
+            TableView.RowHeight = 60;
             TableView.TableHeaderView = _chatDetailsHeaderView;
             TableView.TableFooterView = new UIView();
 
