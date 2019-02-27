@@ -88,6 +88,8 @@ namespace Softeq.XToolkit.Chat.ViewModels
 
         public string EditedMessageOriginalBody => _messageBeingEdited?.Body;
 
+        public bool HasInfo => !_chatSummaryViewModel.IsDirect;
+
         public bool IsInEditMessageMode
         {
             get => _isInEditMessageMode;
@@ -241,7 +243,7 @@ namespace Softeq.XToolkit.Chat.ViewModels
             Messages.Where(x => x.Any(WasUpdated))
                     .SelectMany(x => x)
                     .Where(WasUpdated)
-                    .Apply(x => x.Parameter = messageModel);
+                    .Apply(x => x.UpdateMessageModel(messageModel));
         }
 
         private void OnMessagesBatchUpdated(IList<ChatMessageModel> messagesModels)

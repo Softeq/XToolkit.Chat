@@ -44,5 +44,8 @@ namespace Softeq.XToolkit.Chat.Models.Interfaces
         string LeaveChatConfirmationMessage { get; }
         string Yes { get; }
         string No { get; }
+        string Cancel { get; }
+        string NewChat { get; }
+        string NewGroup { get; }
     }
 }

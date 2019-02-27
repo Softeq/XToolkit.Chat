@@ -97,7 +97,8 @@ namespace Softeq.XToolkit.Chat
             var collection = GetMessagesCollectionForChat(updatedMessage.ChannelId);
             ModifyCollection(collection, x =>
             {
-                x.Where(y => y.Equals(updatedMessage)).Apply(y => y.UpdateMessage(updatedMessage));
+                x.Where(y => y.Equals(updatedMessage))
+                 .Apply(y => y.UpdateMessage(updatedMessage));
             });
         }
 
@@ -114,7 +115,8 @@ namespace Softeq.XToolkit.Chat
 
             lock (chatMessages)
             {
-                chatMessageModel = chatMessages.FirstOrDefault(x => (x.Id == null || x.Id == message.Id) &&
+                chatMessageModel = chatMessages.FirstOrDefault(x =>
+                    (x.Id == null || x.Id == message.Id) &&
                     x.Body == message.Body &&
                     x.IsMine == message.IsMine);
             }

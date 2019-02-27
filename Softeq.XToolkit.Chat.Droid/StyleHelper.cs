@@ -41,6 +41,8 @@ namespace Softeq.XToolkit.Chat.Droid
         int UnreadMutedMessagesCountColor { get; }
         bool UseLogoInsteadOfConnectionStatus { get; }
         int LogoIcon { get; }
+        int NewGroupAvatarIcon { get; }
+        int AddMemberIcon { get; }
     }
 
     public abstract class ChatDroidStyleBase : IChatDroidStyle
@@ -70,5 +72,7 @@ namespace Softeq.XToolkit.Chat.Droid
         public abstract int UnreadMutedMessagesCountColor { get; }
         public abstract bool UseLogoInsteadOfConnectionStatus { get; }
         public abstract int LogoIcon { get; }
+        public abstract int NewGroupAvatarIcon { get; }
+        public abstract int AddMemberIcon { get; }
     }
 }

@@ -27,7 +27,7 @@ namespace Softeq.XToolkit.Chat.HttpClient
             _httpClient = httpClient;
             _logger = logManager.GetLogger<UploadImageService>();
         }
-        
+
         public async Task<string> UploadImageAsync(Stream image, string extension)
         {
             var getTokenRequest = new GetAzureTokenRequest(_chatConfig.ApiUrl);
@@ -50,6 +50,22 @@ namespace Softeq.XToolkit.Chat.HttpClient
             var uploadResult = await _httpClient.TrySendAsync(uploadRequest, _logger).ConfigureAwait(false);
 
             return uploadResult ? uploadRequest.FilePath : null;
+        }
+
+        public async Task<string> UploadImageAsync(Func<(Task<Stream> GetStreamTask, string Extension)> func)
+        {
+            var (GetImageTask, Extension) = func();
+            var imagePath = default(string);
+
+            using (var image = await GetImageTask.ConfigureAwait(false))
+            {
+                if (image != null)
+                {
+                    imagePath = await UploadImageAsync(image, Extension).ConfigureAwait(false);
+                }
+            }
+
+            return imagePath;
         }
     }
 }

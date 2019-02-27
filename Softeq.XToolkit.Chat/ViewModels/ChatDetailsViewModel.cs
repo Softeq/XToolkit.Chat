@@ -90,7 +90,7 @@ namespace Softeq.XToolkit.Chat.ViewModels
             {
                 if (Set(ref _avatarUrl, value))
                 {
-                    Summary.AvatarUrl = value;
+                    Summary.PhotoUrl = value;
                 }
             }
         }
@@ -131,7 +131,7 @@ namespace Softeq.XToolkit.Chat.ViewModels
             base.OnInitialize();
 
             ChatName = Summary.Name;
-            AvatarUrl = Summary.AvatarUrl;
+            AvatarUrl = Summary.PhotoUrl;
 
             AddMembersCommand = new RelayCommand(AddMembers);
             BackCommand = new RelayCommand(_pageNavigationService.GoBack, () => _pageNavigationService.CanGoBack);
@@ -214,8 +214,9 @@ namespace Softeq.XToolkit.Chat.ViewModels
             }
 
             IsBusy = true;
+            IsInEditMode = false;
 
-            var imagePath = await UploadChatAvatarAsync(getImageFunc);
+            var imagePath = await _uploadImageService.UploadImageAsync(getImageFunc);
 
             if (!string.IsNullOrEmpty(imagePath))
             {
@@ -227,7 +228,6 @@ namespace Softeq.XToolkit.Chat.ViewModels
             Execute.BeginOnUIThread(() =>
             {
                 IsBusy = false;
-                IsInEditMode = false;
             });
         }
 
@@ -272,24 +272,6 @@ namespace Softeq.XToolkit.Chat.ViewModels
             {
                 member.IsRemovable = Summary.IsCreatedByMe && member.Id != Summary.CreatorId;
             });
-        }
-
-        // TODO YP: dublicate CreateChatViewModel logic
-        private async Task<string> UploadChatAvatarAsync(Func<(Task<Stream> GetImageTask, string Extension)> getImageFunc)
-        {
-            var (GetImageTask, Extension) = getImageFunc();
-            var imagePath = default(string);
-
-            using (var image = await GetImageTask.ConfigureAwait(false))
-            {
-                if (image != null)
-                {
-                    imagePath = await _uploadImageService.UploadImageAsync(image, Extension)
-                        .ConfigureAwait(false);
-                }
-            }
-
-            return imagePath;
         }
     }
 }

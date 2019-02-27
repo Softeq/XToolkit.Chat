@@ -63,18 +63,18 @@ namespace Softeq.XToolkit.Chat.Manager
                 IsMine = true,
                 ImageCacheKey = imagePickerArgs?.ImageCacheKey
             };
-            
+
             var viewModel = AddLatestMessage(messageModel);
-            
+
             var imageUrl = default(string);
+
             if (imagePickerArgs != null)
             {
-                using (var stream = await imagePickerArgs.ImageStream().ConfigureAwait(false))
-                {                    
-                    imageUrl = await _uploadImageService.UploadImageAsync(stream, imagePickerArgs.Extension).ConfigureAwait(false);
-                }
+                imageUrl = await _uploadImageService
+                    .UploadImageAsync(() => (imagePickerArgs.ImageStream(), imagePickerArgs.Extension))
+                    .ConfigureAwait(false);
             }
-            
+
             var updatedModel = await _chatService.SendMessageAsync(chatId, messageBody, imageUrl).ConfigureAwait(false);
             if (updatedModel != null)
             {
@@ -87,7 +87,7 @@ namespace Softeq.XToolkit.Chat.Manager
                     _logger.Error(e);
                 }
 
-                viewModel.Parameter = updatedModel;
+                viewModel.UpdateMessageModel(updatedModel);
             }
         }
 
@@ -212,7 +212,9 @@ namespace Softeq.XToolkit.Chat.Manager
 
         private ChatMessageViewModel CreateMessageViewModel(ChatMessageModel model)
         {
-            return _viewModelFactoryService.ResolveViewModel<ChatMessageViewModel, ChatMessageModel>(model);
+            var viewModel = _viewModelFactoryService.ResolveViewModel<ChatMessageViewModel>();
+            viewModel.UpdateMessageModel(model);
+            return viewModel;
         }
     }
 }

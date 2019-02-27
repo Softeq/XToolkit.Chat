@@ -1,0 +1,41 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="55dp"
+    android:background="?attr/selectableItemBackground"
+    android:orientation="horizontal">
+    <ffimageloading.views.ImageViewAsync
+        android:id="@+id/view_holder_member_filter_item_avatar"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="16dp" />
+    <View
+        android:id="@+id/view_holder_member_filter_item_online"
+        android:layout_width="12dp"
+        android:layout_height="12dp"
+        android:layout_alignBottom="@+id/view_holder_member_filter_item_avatar"
+        android:layout_alignRight="@+id/view_holder_member_filter_item_avatar"
+        android:layout_marginBottom="2dp"
+        android:layout_marginRight="-2dp"
+        android:background="@drawable/chat_bg_contact_status_online"
+        android:visibility="invisible" />
+    <TextView
+        android:id="@+id/view_holder_member_filter_item_title"
+        style="@style/ChatMemberTextStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="8dp"
+        android:layout_toRightOf="@+id/view_holder_member_filter_item_avatar"
+        android:ellipsize="end"
+        android:maxLines="1" />
+    <View
+        android:id="@+id/view_holder_member_filter_item_inactive_overlay"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#99ffffff"
+        android:visibility="invisible" />
+</RelativeLayout>

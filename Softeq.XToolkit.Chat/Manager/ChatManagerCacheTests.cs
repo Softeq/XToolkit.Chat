@@ -18,22 +18,29 @@ namespace Softeq.XToolkit.Chat.Manager
         {
             var viewModelFactoryService = Dependencies.IocContainer.Resolve<IViewModelFactoryService>();
 
+            ChatMessageViewModel CreateViewModel(ChatMessageModel model)
+            {
+                var vm = viewModelFactoryService.ResolveViewModel<ChatMessageViewModel>();
+                vm.UpdateMessageModel(model);
+                return vm;
+            }
+
             var col1 = new ObservableRangeCollection<ChatMessageViewModel>
             {
-                viewModelFactoryService.ResolveViewModel<ChatMessageViewModel, ChatMessageModel>(new ChatMessageModel { Body = "1", Id = "1"}),
-                viewModelFactoryService.ResolveViewModel<ChatMessageViewModel, ChatMessageModel>(new ChatMessageModel { Body = "2", Id = "2"}),
+                CreateViewModel(new ChatMessageModel { Body = "1", Id = "1" }),
+                CreateViewModel(new ChatMessageModel { Body = "2", Id = "2" }),
                 null,
                 null,
                 null,
-                viewModelFactoryService.ResolveViewModel<ChatMessageViewModel, ChatMessageModel>(new ChatMessageModel { Body = "3", Id = "3"}),
+                CreateViewModel(new ChatMessageModel { Body = "3", Id = "3" }),
             };
 
             var col2 = new List<ChatMessageViewModel>
             {
-                viewModelFactoryService.ResolveViewModel<ChatMessageViewModel, ChatMessageModel>(new ChatMessageModel { Body = "22", Id = "2"}),
+                CreateViewModel(new ChatMessageModel { Body = "22", Id = "2" }),
                 null,
-                viewModelFactoryService.ResolveViewModel<ChatMessageViewModel, ChatMessageModel>(new ChatMessageModel { Body = "333", Id = "3"}),
-                viewModelFactoryService.ResolveViewModel<ChatMessageViewModel, ChatMessageModel>(new ChatMessageModel { Body = "4", Id = "4"}),
+                CreateViewModel(new ChatMessageModel { Body = "333", Id = "3" }),
+                CreateViewModel(new ChatMessageModel { Body = "4", Id = "4" }),
             };
 
             var messagesToDelete = col1.Except(col2).ToList();

@@ -49,7 +49,6 @@ namespace Softeq.XToolkit.Chat.SignalRClient
         public event Action<string, string> AttachmentDeleted;
 
         public event Action<string> TypingStarted;
-        public event Action<string> TypingEnded;
 
         public event Action<string> LastReadMessageChanged;
 
@@ -349,12 +348,6 @@ namespace Softeq.XToolkit.Chat.SignalRClient
                 username =>
                 {
                     TypingStarted?.Invoke(username);
-                }));
-
-            _subscriptions.Add(_connection.On<string>(ClientEvents.TypingEnded,
-                username =>
-                {
-                    TypingEnded?.Invoke(username);
                 }));
 
             _subscriptions.Add(_connection.On<string>(ClientEvents.LastReadMessageChanged,

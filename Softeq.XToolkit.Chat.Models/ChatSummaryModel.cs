@@ -13,19 +13,37 @@ namespace Softeq.XToolkit.Chat.Models
         public DateTimeOffset? UpdatedDate { get; set; }
         public string Name { get; set; }
         public int UnreadMessagesCount { get; set; }
+        public bool IsClosed { get; set; }
         public bool IsMuted { get; set; }
         public bool IsPinned { get; set; }
         public string CreatorId { get; set; }
-        public bool IsCreatedByMe { get; private set; }
-        public string AvatarUrl { get; set; }
+        public ChatUserModel DirectMember { get; set; }
+        public string Description { get; set; }
+        public string WelcomeMessage { get; set; }
+        public ChannelType Type { get; set; }
         public ChatMessageModel LastMessage { get; set; }
+        public string PhotoUrl { get; set; }
+
         public IList<string> TypingUsersNames { get; set; }
         public bool AreMoreThanThreeUsersTyping { get; set; }
-        public string WelcomeMessage { get; set; }
+        public bool IsCreatedByMe { get; private set; }
 
         public void UpdateIsCreatedByMeStatus(string currentUserId)
         {
             IsCreatedByMe = CreatorId == currentUserId;
+
+            UpdateModelByType(); // TODO YP: think of better approach
+        }
+
+        public void UpdateModelByType()
+        {
+            if (Type == ChannelType.Direct && DirectMember != null)
+            {
+                Name = DirectMember.Username;
+                PhotoUrl = DirectMember.PhotoUrl;
+
+                IsCreatedByMe = false;
+            }
         }
     }
 }

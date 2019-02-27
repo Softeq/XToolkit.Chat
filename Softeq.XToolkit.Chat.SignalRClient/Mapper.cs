@@ -21,7 +21,7 @@ namespace Softeq.XToolkit.Chat.SignalRClient
             {
                 Id = response.Id.ToString(),
                 Name = response.Name,
-                AvatarUrl = response.PhotoUrl,
+                PhotoUrl = response.PhotoUrl,
                 LastMessage = lastMessage,
                 IsMuted = response.IsMuted,
                 CreatedDate = response.Created,
@@ -49,7 +49,8 @@ namespace Softeq.XToolkit.Chat.SignalRClient
                 MessageType = DtoToMessageType(response.Type),
                 IsRead = response.IsRead,
                 IsDelivered = true,
-                ImageRemoteUrl = response.ImageUrl
+                ImageRemoteUrl = response.ImageUrl,
+                ChannelType = (Models.ChannelType)response.ChannelType
             };
         }
 

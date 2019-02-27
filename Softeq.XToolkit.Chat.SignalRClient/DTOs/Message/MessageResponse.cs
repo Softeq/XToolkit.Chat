@@ -17,5 +17,6 @@ namespace Softeq.XToolkit.Chat.SignalRClient.DTOs.Message
         public MessageType Type { get; set; }
         public bool IsRead { get; set; }
         public string ImageUrl { get; set; }
+        public int ChannelType { get; set; }
     }
 }

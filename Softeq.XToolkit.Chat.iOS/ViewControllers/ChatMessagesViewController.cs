@@ -55,10 +55,14 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
                 UIImage.FromBundle(StyleHelper.Style.BackButtonBundleName),
                 ViewModel.BackCommand,
                 true);
-            CustomNavigationItem.SetCommand(
-                UIImage.FromBundle(StyleHelper.Style.ChatDetailsButtonBundleName),
-                ViewModel.ShowInfoCommand,
-                false);
+
+            if (ViewModel.HasInfo)
+            {
+                CustomNavigationItem.SetCommand(
+                    UIImage.FromBundle(StyleHelper.Style.ChatDetailsButtonBundleName),
+                    ViewModel.ShowInfoCommand,
+                    false);
+            }
 
             InitTableViewAsync().SafeTaskWrapper();
 
@@ -170,7 +174,7 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
                 InputBar.SetTextPlaceholdervisibility(string.IsNullOrEmpty(ViewModel.MessageToSendBody));
             }));
         }
-        
+
         private async Task InitTableViewAsync()
         {
             // delay is need to delay UI thread freezing while TableNode items are loaded

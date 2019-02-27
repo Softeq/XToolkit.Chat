@@ -17,16 +17,20 @@ namespace Softeq.XToolkit.Chat.HttpClient
             return dto == null ? null : new ChatSummaryModel
             {
                 Id = dto.Id,
-                Name = dto.Name,
+                CreatedDate = dto.Created,
+                UpdatedDate = dto.Updated,
                 UnreadMessagesCount = dto.UnreadMessagesCount,
+                Name = dto.Name,
+                IsClosed = dto.IsClosed,
                 IsMuted = dto.IsMuted,
                 IsPinned = dto.IsPinned,
                 CreatorId = dto.Creator?.Id,
-                AvatarUrl = dto.PhotoUrl,
-                LastMessage = DtoToChatMessage(dto.LastMessage),
-                CreatedDate = dto.Created,
-                UpdatedDate = dto.Updated,
+                DirectMember = DtoToChatUser(dto.DirectMember),
+                Description = dto.Description,
                 WelcomeMessage = dto.WelcomeMessage,
+                Type = (ChannelType)dto.Type,
+                LastMessage = DtoToChatMessage(dto.LastMessage),
+                PhotoUrl = dto.PhotoUrl
             };
         }
 
@@ -44,7 +48,8 @@ namespace Softeq.XToolkit.Chat.HttpClient
                 DateTime = dto.Created,
                 IsRead = dto.IsRead,
                 IsDelivered = true,
-                ImageRemoteUrl = dto.ImageUrl
+                ImageRemoteUrl = dto.ImageUrl,
+                ChannelType = (ChannelType)dto.ChannelType
             };
         }
 

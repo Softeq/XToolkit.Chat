@@ -20,6 +20,8 @@ namespace Softeq.XToolkit.Chat.Interfaces
         Task InviteMembersAsync(string chatId, IList<string> participantsIds);
         Task<IList<ChatUserViewModel>> GetChatMembersAsync(string chatId);
 
+        Task<ChatSummaryViewModel> FindOrCreateDirectChatAsync(string id);
+
         void RefreshChatsListOnBackgroundAsync();
     }
 }

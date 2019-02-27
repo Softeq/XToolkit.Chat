@@ -111,6 +111,7 @@ namespace Softeq.XToolkit.Chat.Droid.Views
         private void InitFilteredRecyclerView(View view)
         {
             _filteredMembers = view.FindViewById<RecyclerView>(Resource.Id.dialog_select_members_filtered_members);
+            _filteredMembers.HasFixedSize = true;
             _filteredMembers.SetLayoutManager(new LinearLayoutManager(Context));
             _filteredMembers.AddItemDecoration(new DividerItemDecoration(Context, DividerItemDecoration.Vertical));
             _filteredAdapter = new ObservableRecyclerViewAdapter<ChatUserViewModel>(
@@ -118,7 +119,10 @@ namespace Softeq.XToolkit.Chat.Droid.Views
                 (parent, i) =>
                 {
                     var v = LayoutInflater.From(parent.Context).Inflate(Resource.Layout.view_holder_member_filter_item, parent, false);
-                    return new FilteredItemViewHolder(v);
+                    return new FilteredItemViewHolder(v, new RelayCommand<ChatUserViewModel>(x =>
+                    {
+                        x.IsSelected = !x.IsSelected;
+                    }));
                 },
                 (holder, i, item) =>
                 {

@@ -10,13 +10,13 @@
         android:layout_width="22dp"
         android:layout_height="22dp"
         android:layout_centerVertical="true"
-        android:layout_marginLeft="15dp" />
+        android:layout_marginLeft="16dp" />
     <ffimageloading.views.ImageViewAsync
         android:id="@+id/view_holder_member_filter_item_avatar"
         android:layout_width="40dp"
         android:layout_height="40dp"
         android:layout_centerVertical="true"
-        android:layout_marginLeft="17dp"
+        android:layout_marginLeft="16dp"
         android:layout_toRightOf="@+id/view_holder_member_filter_item_indicator" />
     <View
         android:id="@+id/view_holder_member_filter_item_online"

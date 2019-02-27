@@ -67,7 +67,7 @@ namespace Softeq.XToolkit.Chat.HttpClient
             return new ChatSummaryModel
             {
                 Id = id,
-                AvatarUrl = Avatar1,
+                PhotoUrl = Avatar1,
                 IsMuted = true,
                 UnreadMessagesCount = 0,
                 Name = "Chat " + id,
@@ -81,14 +81,14 @@ namespace Softeq.XToolkit.Chat.HttpClient
             };
         }
 
-        public async Task<IList<ChatSummaryModel>> GetChatsListAsync()
+        public async Task<IList<ChatSummaryModel>> GetChannelsAsync()
         {
             return new List<ChatSummaryModel>
             {
                 new ChatSummaryModel
                 {
                     Id = "1",
-                    AvatarUrl = Avatar1,
+                    PhotoUrl = Avatar1,
                     IsMuted = false,
                     UnreadMessagesCount = 0,
                     Name = "Chat 1",
@@ -103,7 +103,7 @@ namespace Softeq.XToolkit.Chat.HttpClient
                 new ChatSummaryModel
                 {
                     Id = "2",
-                    AvatarUrl = Avatar2,
+                    PhotoUrl = Avatar2,
                     IsMuted = false,
                     UnreadMessagesCount = 0,
                     Name = "Chat 2",
@@ -117,7 +117,7 @@ namespace Softeq.XToolkit.Chat.HttpClient
                 new ChatSummaryModel
                 {
                     Id = "3",
-                    AvatarUrl = Avatar3,
+                    PhotoUrl = Avatar3,
                     IsMuted = true,
                     UnreadMessagesCount = 1,
                     Name = "Chat 3",
@@ -329,6 +329,11 @@ namespace Softeq.XToolkit.Chat.HttpClient
         }
 
         public Task UnMuteChatAsync(string chatId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<ChatSummaryModel> CreateDirectChatAsync(string memberId)
         {
             throw new NotImplementedException();
         }

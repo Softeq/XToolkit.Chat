@@ -99,17 +99,26 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
 
             public override UITableViewRowAction[] EditActionsForRow(UITableView tableView, NSIndexPath indexPath)
             {
-                var isCreatedByMe = _sourceRef.Target?.DataSource[indexPath.Row] != null
-                                              && _sourceRef.Target.DataSource[indexPath.Row].IsCreatedByMe;
-                var buttons = new List<UITableViewRowAction>
-                {
-                    UITableViewRowAction.Create(
-                        UITableViewRowActionStyle.Default,
-                        _viewModelRef.Target?.LocalizedStrings.Leave,
-                        (row, index) => OnClickLeave(row, index, tableView))
-                };
+                var buttons = new List<UITableViewRowAction>();
+                var itemViewModel = _sourceRef.Target?.DataSource[indexPath.Row];
 
-                if (isCreatedByMe)
+                if (itemViewModel == null)
+                {
+                    return buttons.ToArray();
+                }
+
+                if (!itemViewModel.HasActions)
+                {
+                    return buttons.ToArray();
+                }
+
+                var createButton = UITableViewRowAction.Create(
+                    UITableViewRowActionStyle.Default,
+                    _viewModelRef.Target?.LocalizedStrings.Leave,
+                    (row, index) => OnClickLeave(row, index, tableView));
+                buttons.Add(createButton);
+
+                if (itemViewModel.IsCreatedByMe)
                 {
                     var closeButton = UITableViewRowAction.Create(
                         UITableViewRowActionStyle.Default,

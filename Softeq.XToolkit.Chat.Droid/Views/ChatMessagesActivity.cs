@@ -62,7 +62,10 @@ namespace Softeq.XToolkit.Chat.Droid.Views
 
             _navigationBarView = FindViewById<NavigationBarView>(Resource.Id.activity_chat_conversations_navigation_bar);
             _navigationBarView.SetLeftButton(StyleHelper.Style.NavigationBarBackButtonIcon, ViewModel.BackCommand);
-            _navigationBarView.SetRightButton(StyleHelper.Style.NavigationBarDetailsButtonIcon, ViewModel.ShowInfoCommand);
+            if (ViewModel.HasInfo)
+            {
+                _navigationBarView.SetRightButton(StyleHelper.Style.NavigationBarDetailsButtonIcon, ViewModel.ShowInfoCommand);
+            }
 
             _conversationsRecyclerView = FindViewById<RecyclerView>(Resource.Id.rv_conversations_list);
 
