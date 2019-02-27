@@ -25,6 +25,7 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
         private ChatDetailsHeaderView _chatDetailsHeaderView;
         private SimpleImagePicker _simpleImagePicker;
         private string _previewImageKey;
+        private bool _isChangeChatPhotoInitialized;
 
         public ChatDetailsViewController(IntPtr handle) : base(handle) { }
 
@@ -94,11 +95,16 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
                     return;
                 }
 
-                _chatDetailsHeaderView.SetChangeChatPhotoCommand(new RelayCommand(OpenPicker), ViewModel.LocalizedStrings.ChangePhoto);
-                _chatDetailsHeaderView.SetChangeChatName(new RelayCommand(() =>
+                if (!_isChangeChatPhotoInitialized)
                 {
-                    ViewModel.IsInEditMode = true;
-                }));
+                    _chatDetailsHeaderView.SetChangeChatPhotoCommand(new RelayCommand(OpenPicker), ViewModel.LocalizedStrings.ChangePhoto);
+                    _chatDetailsHeaderView.SetChangeChatName(new RelayCommand(() =>
+                    {
+                        ViewModel.IsInEditMode = true;
+                    }));
+
+                    _isChangeChatPhotoInitialized = true;
+                }
             }));
             Bindings.Add(this.SetBinding(() => ViewModel.IsInEditMode).WhenSourceChanges(() =>
             {
