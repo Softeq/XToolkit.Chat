@@ -88,6 +88,8 @@ namespace Softeq.XToolkit.Chat.ViewModels
 
         public string EditedMessageOriginalBody => _messageBeingEdited?.Body;
 
+        public bool HasInfo => !_chatSummaryViewModel.IsDirect;
+
         public bool IsInEditMessageMode
         {
             get => _isInEditMessageMode;
