@@ -17,7 +17,7 @@ namespace Softeq.XToolkit.Chat.HttpClient.Requests
             _apiUrl = apiUrl;
         }
 
-        public override string EndpointUrl => $"{_apiUrl}/channel/api/channel/direct";
+        public override string EndpointUrl => $"{_apiUrl}/channel/direct";
 
         public override bool UseOriginalEndpoint => true;
     }
