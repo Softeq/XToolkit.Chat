@@ -7,13 +7,14 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Softeq.XToolkit.Chat.Interfaces;
+using Softeq.XToolkit.Chat.Messages;
 using Softeq.XToolkit.Chat.Models.Enum;
 using Softeq.XToolkit.Chat.Models.Interfaces;
 using Softeq.XToolkit.Chat.Strategies.Search;
 using Softeq.XToolkit.Common.Collections;
 using Softeq.XToolkit.Common.Command;
-using Softeq.XToolkit.Common.Extensions;
 using Softeq.XToolkit.WhiteLabel;
+using Softeq.XToolkit.WhiteLabel.Messenger;
 using Softeq.XToolkit.WhiteLabel.Model;
 using Softeq.XToolkit.WhiteLabel.Mvvm;
 using Softeq.XToolkit.WhiteLabel.Navigation;
@@ -134,7 +135,7 @@ namespace Softeq.XToolkit.Chat.ViewModels
                 {
                     ChatName = string.Empty;
 
-                    _pageNavigationService.GoBack();
+                    Messenger.Default.Send(new OpenChatsListMessage());
                 });
             }
             catch (Exception ex)

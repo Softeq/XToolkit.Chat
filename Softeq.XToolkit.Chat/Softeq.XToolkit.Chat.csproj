@@ -20,5 +20,6 @@
     <Folder Include="Manager\" />
     <Folder Include="Exceptions\" />
     <Folder Include="Services\" />
+    <Folder Include="Messages\" />
   </ItemGroup>
 </Project>
