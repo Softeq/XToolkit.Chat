@@ -14,6 +14,8 @@ using Softeq.XToolkit.WhiteLabel.Navigation;
 using Softeq.XToolkit.WhiteLabel.Threading;
 using Softeq.XToolkit.Chat.Interfaces;
 using Softeq.XToolkit.Common.Interfaces;
+using Softeq.XToolkit.WhiteLabel.Messenger;
+using Softeq.XToolkit.Chat.Messages;
 
 namespace Softeq.XToolkit.Chat.ViewModels
 {
@@ -128,11 +130,7 @@ namespace Softeq.XToolkit.Chat.ViewModels
                 return;
             }
 
-            _pageNavigationService.GoBack(); // TODO YP: think of better approach
-
-            _pageNavigationService.For<ChatMessagesViewModel>()
-                    .WithParam(x => x.Parameter, chatViewModel)
-                    .Navigate();
+            Messenger.Default.Send(new OpenNewChatMessage(chatViewModel));
         }
     }
 }
