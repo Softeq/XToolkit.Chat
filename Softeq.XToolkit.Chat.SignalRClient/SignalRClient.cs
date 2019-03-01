@@ -80,41 +80,7 @@ namespace Softeq.XToolkit.Chat.SignalRClient
                 return Task.CompletedTask;
             };
 
-            // Handle the connected connection
-            while (true)
-            {
-                try
-                {
-                    await _connection.StartAsync().ConfigureAwait(false);
-                    Console.WriteLine("Connected to {0}", _chatHubUrl);
-                    break;
-                }
-                catch (IOException ex)
-                {
-                    // Process being shutdown
-                    Console.WriteLine(ex);
-                    break;
-                }
-                catch (OperationCanceledException ex)
-                {
-                    // The connection closed
-                    Console.WriteLine(ex);
-                    break;
-                }
-                catch (ObjectDisposedException ex)
-                {
-                    // We're shutting down the client
-                    Console.WriteLine(ex);
-                    break;
-                }
-                catch (Exception ex)
-                {
-                    // Send could have failed because the connection closed
-                    Console.WriteLine(ex);
-                    Console.WriteLine("Failed to connect, trying again in 5000(ms)");
-                    await Task.Delay(5000).ConfigureAwait(false);
-                }
-            }
+            await _connection.StartAsync().ConfigureAwait(false);
 
             _accessTokenExpiredSubscription?.Dispose();
             _accessTokenExpiredSubscription = _connection.On<string>(ClientEvents.AccessTokenExpired, requestId =>
