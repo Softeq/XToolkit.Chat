@@ -35,6 +35,7 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
             InitNavigationBar();
             InitDetailsHeader();
             InitChatMembersTableView();
+            InitProgressIndicator();
 
             _hideKeyboardByTapGestureRecognizer = new UITapGestureRecognizer(() =>
             {
@@ -65,6 +66,17 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
                     _previewImageKey = key;
                     _chatDetailsHeaderView.SetEditedChatAvatar(_previewImageKey);
                 }));
+            Bindings.Add(this.SetBinding(() => ViewModel.IsBusy).WhenSourceChanges(() =>
+            {
+                if (ViewModel.IsBusy)
+                {
+                    ProgressIndicator.StartAnimating();
+                }
+                else
+                {
+                    ProgressIndicator.StopAnimating();
+                }
+            }));
 
             TableView.AddGestureRecognizer(_hideKeyboardByTapGestureRecognizer);
         }
@@ -124,6 +136,12 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
             }, ChatUserViewCell.Key);
 
             TableView.Source = _tableViewSource;
+        }
+
+        private void InitProgressIndicator()
+        {
+            ProgressIndicator.Color = StyleHelper.Style.AccentColor;
+            ProgressIndicator.HidesWhenStopped = true;
         }
 
         private void ResetSelectedRow()

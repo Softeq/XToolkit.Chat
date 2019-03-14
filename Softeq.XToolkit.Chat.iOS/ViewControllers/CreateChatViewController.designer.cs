@@ -19,6 +19,9 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
 		UIKit.UINavigationItem CustomNavigationItem { get; set; }
 
 		[Outlet]
+		UIKit.UIActivityIndicatorView ProgressIndicator { get; set; }
+
+		[Outlet]
 		[GeneratedCode ("iOS Designer", "1.0")]
 		UIKit.UITableView TableView { get; set; }
 		
@@ -37,6 +40,11 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
 			if (TableView != null) {
 				TableView.Dispose ();
 				TableView = null;
+			}
+
+			if (ProgressIndicator != null) {
+				ProgressIndicator.Dispose ();
+				ProgressIndicator = null;
 			}
 		}
 	}

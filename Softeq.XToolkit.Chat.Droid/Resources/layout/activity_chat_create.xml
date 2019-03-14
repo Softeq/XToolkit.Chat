@@ -1,17 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
+
     <com.softeq.xtoolkit.whitelabel.droid.NavigationBarView
         android:layout_width="match_parent"
         android:layout_height="56dp"
         android:id="@+id/activity_chat_create_navigation_bar" />
+
     <RelativeLayout
         android:id="@+id/rl_chat_create"
+        android:layout_below="@+id/activity_chat_create_navigation_bar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
-        
+
         <ffimageloading.cross.MvxCachedImageView
             android:id="@+id/iv_chat_photo"
             android:layout_width="64dp"
@@ -19,7 +21,7 @@
             android:layout_margin="16dp"
             android:layout_alignParentLeft="true"
             android:layout_alignParentTop="true" />
-        
+
         <ffimageloading.cross.MvxCachedImageView
             android:id="@+id/iv_chat_photo_edited"
             android:layout_width="64dp"
@@ -50,7 +52,7 @@
             android:textColor="@color/chat_brand_color" />
 
         <LinearLayout
-            android:id="@+id/view"
+            android:id="@+id/activity_chat_create_members_count_container"
             android:layout_width="match_parent"
             android:layout_height="34dp"
             android:layout_below="@+id/b_chat_change_photo"
@@ -68,21 +70,29 @@
                 android:textSize="11sp" />
         </LinearLayout>
 
+        <Button
+            android:id="@+id/activity_chat_create_add_member"
+            android:layout_below="@+id/activity_chat_create_members_count_container"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="16dp"
+            android:paddingLeft="8dp"
+            android:paddingRight="8dp"
+            android:background="?attr/selectableItemBackground"
+            android:textColor="@color/chat_brand_color" />
+
     </RelativeLayout>
-    
-    <Button
-        android:id="@+id/activity_chat_create_add_member"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="16dp"
-        android:paddingLeft="8dp"
-        android:paddingRight="8dp"
-        android:background="?attr/selectableItemBackground"
-        android:textColor="@color/chat_brand_color" />
-    
+
     <android.support.v7.widget.RecyclerView
         android:id="@+id/rv_contacts_list"
+        android:layout_below="@+id/rl_chat_create"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <com.softeq.xtoolkit.whitelabel.droid.BusyOverlayView
+        android:id="@+id/activity_chat_create_busy_view"
+        android:layout_below="@+id/activity_chat_create_navigation_bar"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_weight="1" />
-</LinearLayout>
+        android:visibility="gone" />
+</RelativeLayout>

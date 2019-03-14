@@ -122,15 +122,25 @@ namespace Softeq.XToolkit.Chat.ViewModels
 
         private async void CreatePersonalChat(ChatUserViewModel chatUserModelView)
         {
+            if (IsBusy)
+            {
+                return;
+            }
+
+            Execute.BeginOnUIThread(() => IsBusy = true);
+
             var chatViewModel = await _chatsListManager.FindOrCreateDirectChatAsync(chatUserModelView.Id).ConfigureAwait(false);
 
             if (chatViewModel == null)
             {
                 _logger.Error($"Attempt to create a direct chat with myself (id={chatUserModelView.Id})");
-                return;
+            }
+            else
+            {
+                Messenger.Default.Send(new OpenNewChatMessage(chatViewModel));
             }
 
-            Messenger.Default.Send(new OpenNewChatMessage(chatViewModel));
+            Execute.BeginOnUIThread(() => IsBusy = false);
         }
     }
 }
