@@ -151,7 +151,7 @@ namespace Softeq.XToolkit.Chat.Droid.Views
                 }));
             Bindings.Add(this.SetBinding(() => ViewModel.IsMuted, () => _muteNotificationsSwitch.Checked)
                 .ConvertSourceToTarget(x => !x));
-            Bindings.Add(this.SetBinding(() => ViewModel.IsBusy, () => _muteNotificationsSwitch.Enabled)
+            Bindings.Add(this.SetBinding(() => ViewModel.IsBusy, () => _muteNotificationsSwitch.Clickable)
                 .ConvertSourceToTarget(x => !x));
             Bindings.Add(this.SetBinding(() => ViewModel.IsLoading).WhenSourceChanges(() =>
             {
