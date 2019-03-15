@@ -101,18 +101,14 @@ namespace Softeq.XToolkit.Chat.Manager
             return _chatService.DeleteMessageAsync(chatId, messageId);
         }
 
-        public async Task MarkMessageAsReadAsync(string messageId, ChatSummaryViewModel chatSummary)
+        public async Task MarkMessageAsReadAsync(string chatId, string messageId)
         {
-            if (messageId == null)
+            if (string.IsNullOrEmpty(chatId) || string.IsNullOrEmpty(messageId))
             {
                 return;
             }
-            if (chatSummary != null)
-            {
-                chatSummary.UnreadMessageCount = 0;
-            }
 
-            await _chatService.MarkMessageAsReadAsync(chatSummary.ChatId, messageId).ConfigureAwait(false);
+            await _chatService.MarkMessageAsReadAsync(chatId, messageId).ConfigureAwait(false);
         }
 
         private void OnMessageAdded(ChatMessageModel chatMessage)
