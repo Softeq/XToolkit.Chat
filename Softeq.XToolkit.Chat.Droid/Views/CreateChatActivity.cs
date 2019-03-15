@@ -16,6 +16,7 @@ using Softeq.XToolkit.Chat.Droid.LayoutManagers;
 using Softeq.XToolkit.Chat.Droid.ViewHolders;
 using Softeq.XToolkit.Chat.ViewModels;
 using Softeq.XToolkit.Common.Command;
+using Softeq.XToolkit.Common.Droid.Converters;
 using Softeq.XToolkit.WhiteLabel;
 using Softeq.XToolkit.WhiteLabel.Droid;
 using Softeq.XToolkit.WhiteLabel.Droid.Controls;
@@ -28,7 +29,6 @@ namespace Softeq.XToolkit.Chat.Droid.Views
     public class CreateChatActivity : ActivityBase<CreateChatViewModel>
     {
         private NavigationBarView _navigationBarView;
-        private RelativeLayout _chatHeaderLayout;
         private MvxCachedImageView _chatPhotoImageView;
         private MvxCachedImageView _chatEditedPhotoImageView;
         private EditText _chatNameEditTextView;
@@ -38,6 +38,7 @@ namespace Softeq.XToolkit.Chat.Droid.Views
         private string _previewImageKey;
         private Button _changeChatPhotoButton;
         private Button _addMembers;
+        private BusyOverlayView _busyOverlayView;
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -60,7 +61,6 @@ namespace Softeq.XToolkit.Chat.Droid.Views
             }));
             _navigationBarView.RightTextButton.SetBackgroundColor(Color.Transparent);
 
-            _chatHeaderLayout = FindViewById<RelativeLayout>(Resource.Id.rl_chat_create);
             _chatPhotoImageView = FindViewById<MvxCachedImageView>(Resource.Id.iv_chat_photo);
             _chatEditedPhotoImageView = FindViewById<MvxCachedImageView>(Resource.Id.iv_chat_photo_edited);
             _chatNameEditTextView = FindViewById<EditText>(Resource.Id.et_chat_name);
@@ -84,9 +84,9 @@ namespace Softeq.XToolkit.Chat.Droid.Views
             _addMembers.Text = ViewModel.LocalizedStrings.AddMembers;
             _addMembers.SetCommand(ViewModel.AddMembersCommand);
 
-            _chatHeaderLayout.Visibility = ViewStates.Visible;
-
             _chatNameEditTextView.Hint = ViewModel.LocalizedStrings.ChatName;
+
+            _busyOverlayView = FindViewById<BusyOverlayView>(Resource.Id.activity_chat_create_busy_view);
         }
 
         protected override void DoAttachBindings()
@@ -116,6 +116,8 @@ namespace Softeq.XToolkit.Chat.Droid.Views
                             .IntoAsync(_chatEditedPhotoImageView);
                     });
                 }));
+            Bindings.Add(this.SetBinding(() => ViewModel.IsBusy, () => _busyOverlayView.Visibility)
+                .ConvertSourceToTarget(BoolToViewStateConverter.ConvertGone));
         }
 
         protected override void OnDestroy()

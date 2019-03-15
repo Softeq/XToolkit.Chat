@@ -31,7 +31,6 @@ namespace Softeq.XToolkit.Chat.ViewModels
         private readonly IUploadImageService _uploadImageService;
         private readonly IDialogsService _dialogsService;
 
-        private ICommand _updateContactsCountCommand;
         private string _chatName;
 
         public CreateChatViewModel(
@@ -77,8 +76,6 @@ namespace Softeq.XToolkit.Chat.ViewModels
         {
             base.OnInitialize();
 
-            _updateContactsCountCommand = new RelayCommand(() => RaisePropertyChanged(nameof(ContactsCountText)));
-
             BackCommand = new RelayCommand(_pageNavigationService.GoBack, () => _pageNavigationService.CanGoBack);
             AddMembersCommand = new RelayCommand(OpenDialogForAddMembers);
             SaveCommand = new RelayCommand<Func<(Task<Stream>, string)>>(SaveAsync);
@@ -104,7 +101,7 @@ namespace Softeq.XToolkit.Chat.ViewModels
                 //contacts.Apply(x => x.SetSelectionCommand(_updateContactsCountCommand));
                 Contacts.AddRange(contacts);
 
-                _updateContactsCountCommand.Execute(null);
+                RaisePropertyChanged(nameof(ContactsCountText));
             }
         }
 
@@ -115,9 +112,9 @@ namespace Softeq.XToolkit.Chat.ViewModels
                 return;
             }
 
-            IsBusy = true;
+            Execute.BeginOnUIThread(() => IsBusy = true);
 
-            var imagePath = await _uploadImageService.UploadImageAsync(getImageFunc);
+            var imagePath = await _uploadImageService.UploadImageAsync(getImageFunc).ConfigureAwait(false);
 
             try
             {
@@ -144,7 +141,7 @@ namespace Softeq.XToolkit.Chat.ViewModels
             }
             finally
             {
-                IsBusy = false;
+                Execute.BeginOnUIThread(() => IsBusy = false);
             }
         }
     }

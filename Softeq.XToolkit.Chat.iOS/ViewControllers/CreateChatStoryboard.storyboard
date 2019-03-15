@@ -36,6 +36,9 @@
                                     <navigationItem id="hbe-ad-hc1"/>
                                 </items>
                             </navigationBar>
+                            <activityIndicatorView hidden="YES" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" style="whiteLarge" translatesAutoresizingMaskIntoConstraints="NO" id="beh-Le-VqP">
+                                <rect key="frame" x="169" y="347" width="37" height="37"/>
+                            </activityIndicatorView>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
@@ -44,6 +47,8 @@
                             <constraint firstItem="D22-7T-QtJ" firstAttribute="leading" secondItem="9s2-VM-wWl" secondAttribute="leading" id="MFA-Ll-WsZ"/>
                             <constraint firstItem="9s2-VM-wWl" firstAttribute="trailing" secondItem="an6-aD-F8r" secondAttribute="trailing" id="Nb1-4z-hxf"/>
                             <constraint firstItem="an6-aD-F8r" firstAttribute="leading" secondItem="9s2-VM-wWl" secondAttribute="leading" id="Twd-KH-gHE"/>
+                            <constraint firstItem="beh-Le-VqP" firstAttribute="centerY" secondItem="ieT-ce-gli" secondAttribute="centerY" constant="32" id="eUA-uK-JNJ"/>
+                            <constraint firstItem="beh-Le-VqP" firstAttribute="centerX" secondItem="ieT-ce-gli" secondAttribute="centerX" id="v2d-bd-NMQ"/>
                             <constraint firstItem="D22-7T-QtJ" firstAttribute="top" secondItem="9s2-VM-wWl" secondAttribute="top" id="vNe-Si-moD"/>
                             <constraint firstItem="an6-aD-F8r" firstAttribute="top" secondItem="D22-7T-QtJ" secondAttribute="bottom" id="ywK-6E-hst"/>
                         </constraints>
@@ -52,6 +57,7 @@
                     <connections>
                         <outlet property="CustomNavigationBar" destination="D22-7T-QtJ" id="D6G-gq-s7c"/>
                         <outlet property="CustomNavigationItem" destination="hbe-ad-hc1" id="Ilj-pT-sIH"/>
+                        <outlet property="ProgressIndicator" destination="beh-Le-VqP" id="H8G-VM-ATB"/>
                         <outlet property="TableView" destination="an6-aD-F8r" id="TC5-vB-WWN"/>
                     </connections>
                 </viewController>
