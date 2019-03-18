@@ -12,8 +12,8 @@ using Softeq.XToolkit.Common.Command;
 using Softeq.XToolkit.Common.EventArguments;
 using Softeq.XToolkit.Common.Extensions;
 using Softeq.XToolkit.WhiteLabel.Mvvm;
-using Softeq.XToolkit.Chat.Manager;
 using Softeq.XToolkit.Chat.Models;
+using Softeq.XToolkit.Chat.Interfaces;
 
 namespace Softeq.XToolkit.Chat.ViewModels
 {
@@ -24,7 +24,7 @@ namespace Softeq.XToolkit.Chat.ViewModels
         private const int OlderMessagesBatchCount = 50;
 
         private readonly string _chatId;
-        private readonly ChatManager _chatManager;
+        private readonly IChatMessagesManager _chatManager;
         private readonly Action _messageAdded;
         private readonly IList<IDisposable> _subscriptions = new List<IDisposable>();
 
@@ -32,7 +32,7 @@ namespace Softeq.XToolkit.Chat.ViewModels
 
         public ChatMessagesListViewModel(
             string chatId,
-            ChatManager chatManager,
+            IChatMessagesManager chatManager,
             Action messageAdded)
         {
             _chatId = chatId;
@@ -64,13 +64,14 @@ namespace Softeq.XToolkit.Chat.ViewModels
                 _areLatestMessagesLoaded = true;
             }
 
-            _chatManager.MakeChatActive(_chatId);
             Messages.ItemsChanged += OnMessagesAddedToCollection;
             MarkMessagesAsRead();
         }
 
         public void OnDisappearing()
         {
+            RemoveAllSubscriptions();
+
             Messages.ItemsChanged -= OnMessagesAddedToCollection;
         }
 
@@ -79,11 +80,11 @@ namespace Softeq.XToolkit.Chat.ViewModels
             DeleteAllMessages(x => x.Id == deletedMessageId);
         }
 
-        public void OnMessageReceived(ChatMessageViewModel chatMessage)
+        public void OnMessageReceived(ChatMessageViewModel messageViewModel)
         {
-            if (chatMessage.ChatId == _chatId)
+            if (messageViewModel.ChatId == _chatId)
             {
-                AddNewMessages(new List<ChatMessageViewModel> { chatMessage });
+                AddNewMessages(new List<ChatMessageViewModel> { messageViewModel });
             }
         }
 
@@ -148,11 +149,8 @@ namespace Softeq.XToolkit.Chat.ViewModels
 
         private void OnMessagesAddedToCollection(object sender, NotifyKeyGroupsCollectionChangedEventArgs e)
         {
-            if (e.Action == NotifyCollectionChangedAction.Add)
-            {
-                MarkMessagesAsRead();
-            }
-            else if (e.Action == NotifyCollectionChangedAction.Reset)
+            if (e.Action == NotifyCollectionChangedAction.Add ||
+                e.Action == NotifyCollectionChangedAction.Reset)
             {
                 MarkMessagesAsRead();
             }
@@ -167,16 +165,17 @@ namespace Softeq.XToolkit.Chat.ViewModels
             var lastMessage = Messages.SelectMany(x => x).Last();
             if (!lastMessage.IsRead)
             {
-                await _chatManager.MarkMessageAsReadAsync(lastMessage.Id, _chatId).ConfigureAwait(false);
+                await _chatManager.MarkMessageAsReadAsync(_chatId, lastMessage.Id).ConfigureAwait(false);
             }
         }
 
-        private void ClearMessages()
-        {
-            _areLatestMessagesLoaded = false;
-            Messages.ItemsChanged -= OnMessagesAddedToCollection;
-            Messages.ClearAll();
-        }
+        // TODO YP: unused
+        //private void ClearMessages()
+        //{
+        //    _areLatestMessagesLoaded = false;
+        //    Messages.ItemsChanged -= OnMessagesAddedToCollection;
+        //    Messages.ClearAll();
+        //}
 
         private void DeleteAllMessages(Func<ChatMessageViewModel, bool> predicate)
         {

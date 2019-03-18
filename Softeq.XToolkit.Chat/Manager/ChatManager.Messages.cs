@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Softeq.XToolkit.Chat.Exceptions;
+using Softeq.XToolkit.Chat.Interfaces;
 using Softeq.XToolkit.Chat.Models;
 using Softeq.XToolkit.Chat.ViewModels;
 using Softeq.XToolkit.Common.Collections;
@@ -13,7 +14,7 @@ using Softeq.XToolkit.WhiteLabel.ImagePicker;
 
 namespace Softeq.XToolkit.Chat.Manager
 {
-    public partial class ChatManager
+    public partial class ChatManager : IChatMessagesManager
     {
         public async Task<IList<ChatMessageViewModel>> LoadInitialMessagesAsync(string chatId, int count)
         {
@@ -55,7 +56,7 @@ namespace Softeq.XToolkit.Chat.Manager
 
         public async Task SendMessageAsync(string chatId, string messageBody, ImagePickerArgs imagePickerArgs)
         {
-            var messageModel = new ChatMessageModel
+            var tempMessage = new ChatMessageModel
             {
                 DateTime = DateTimeOffset.UtcNow,
                 Body = messageBody,
@@ -64,8 +65,23 @@ namespace Softeq.XToolkit.Chat.Manager
                 ImageCacheKey = imagePickerArgs?.ImageCacheKey
             };
 
-            var viewModel = AddLatestMessage(messageModel);
 
+            var tempMessageViewModel = CreateCachedMessageViewModel(tempMessage);
+
+            var imageUrl = await UploadImageAsync(imagePickerArgs);
+
+            var sentMessage = await _chatService.SendMessageAsync(chatId, messageBody, imageUrl).ConfigureAwait(false);
+
+            if (sentMessage != null)
+            {
+                UpdateTempMessageViewModelAfterSend(tempMessageViewModel, sentMessage);
+            }
+        }
+
+        // TODO YP: improve: upload photo before send message (immediately after select)
+        // when message canceled - send request for remove temp image
+        private async Task<string> UploadImageAsync(ImagePickerArgs imagePickerArgs)
+        {
             var imageUrl = default(string);
 
             if (imagePickerArgs != null)
@@ -75,19 +91,20 @@ namespace Softeq.XToolkit.Chat.Manager
                     .ConfigureAwait(false);
             }
 
-            var updatedModel = await _chatService.SendMessageAsync(chatId, messageBody, imageUrl).ConfigureAwait(false);
-            if (updatedModel != null)
-            {
-                try
-                {
-                    _messagesCache.UpdateSentMessage(messageModel, updatedModel);
-                }
-                catch (ChatCacheException e)
-                {
-                    _logger.Error(e);
-                }
+            return imageUrl;
+        }
 
-                viewModel.UpdateMessageModel(updatedModel);
+        private void UpdateTempMessageViewModelAfterSend(ChatMessageViewModel tempMessageViewModel, ChatMessageModel sentMessage)
+        {
+            try
+            {
+                _messagesCache.UpdateSentMessage(tempMessageViewModel.Model, sentMessage);
+
+                tempMessageViewModel.UpdateMessageModel(sentMessage);
+            }
+            catch (ChatCacheException e)
+            {
+                _logger.Error(e);
             }
         }
 
@@ -154,45 +171,75 @@ namespace Softeq.XToolkit.Chat.Manager
             });
         }
 
-        private ChatMessageViewModel AddLatestMessage(ChatMessageModel messageModel)
+        private ChatMessageViewModel CreateCachedMessageViewModel(ChatMessageModel message)
         {
-            if (messageModel == null)
+            var messageViewModel = CreateMessageViewModel(message);
+
+            if (TryAddMessageToCache(message))
             {
-                throw new ArgumentNullException(nameof(messageModel));
+                _messageAdded.OnNext(messageViewModel);
+
+                FindChatForUpdateLastMessage(message);
             }
 
-            var messageViewModel = CreateMessageViewModel(messageModel);
+            return messageViewModel;
+        }
 
-            if (_messagesCache.FindDuplicateMessage(messageModel) != null)
+        private void AddLatestMessage(ChatMessageModel message)
+        {
+            if (message == null)
             {
-                return messageViewModel;
+                throw new ArgumentNullException(nameof(message));
             }
 
-            _messagesCache.TryAddMessage(messageModel);
+            var messageViewModel = CreateMessageViewModel(message);
 
-            _messageAdded.OnNext(messageViewModel);
-
-            if (TryAddChat(new ChatSummaryModel { Id = messageViewModel.ChatId }))
+            if (TryAddMessageToCache(message))
             {
-                UpdateChatsListFromNetworkAsync();
+                _messageAdded.OnNext(messageViewModel);
+
+                var chat = new ChatSummaryModel { Id = messageViewModel.ChatId };
+
+                if (TryAddChat(chat))
+                {
+                    UpdateChatsListFromNetworkAsync();
+                }
+
+                FindChatForUpdateLastMessage(message);
             }
+        }
+
+        private bool TryAddMessageToCache(ChatMessageModel message)
+        {
+            if (_messagesCache.FindDuplicateMessage(message) == null)
+            {
+                _messagesCache.TryAddMessage(message);
+                return true;
+            }
+            return false;
+        }
+
+        private void FindChatForUpdateLastMessage(ChatMessageModel messageModel)
+        {
             ModifyChatsSafely(() =>
             {
-                foreach (var chatSummary in ChatsCollection.Where(x => x.ChatId == messageViewModel.ChatId))
+                var chatViewModel = GetChatById(messageModel.ChannelId);
+
+                if (chatViewModel != null)
                 {
-                    chatSummary.UpdateLastMessage(messageModel);
+                    chatViewModel.UpdateLastMessage(messageModel);
+
                     if (messageModel.IsMine)
                     {
-                        chatSummary.UnreadMessageCount = 0;
+                        chatViewModel.UnreadMessageCount = 0;
                     }
                     else
                     {
-                        chatSummary.UnreadMessageCount++;
+                        chatViewModel.UnreadMessageCount++;
                     }
                 }
                 ChatsCollection.Sort((x, y) => y.LastUpdateDate.CompareTo(x.LastUpdateDate));
             });
-            return messageViewModel;
         }
 
         private Task UpdateMessagesCacheAsync()

@@ -22,7 +22,7 @@ namespace Softeq.XToolkit.Chat.Manager
     public partial class ChatManager : IChatConnectionManager
     {
         private const string ChatsCacheKey = "chat_chats";
-        
+
         private readonly IChatService _chatService;
         private readonly IMessagesCache _messagesCache;
         private readonly IViewModelFactoryService _viewModelFactoryService;
@@ -132,7 +132,7 @@ namespace Softeq.XToolkit.Chat.Manager
             await Task.WhenAll(UpdateChatsListFromNetworkAsync(), UpdateMessagesCacheAsync()).ConfigureAwait(false);
             ConnectionStatus = ConnectionStatus.Online;
         }
-       
+
         private void OnCacheUpdated(
             string chatId,
             IList<ChatMessageModel> addedMessages,

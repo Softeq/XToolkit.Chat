@@ -85,10 +85,12 @@ namespace Softeq.XToolkit.Chat.ViewModels
         {
             base.OnAppearing();
 
+            _chatManager.MakeChatActive(_chatSummaryViewModel.ChatId);
+
             ConnectionStatus.Initialize(ChatName);
             MessagesList.OnAppearing();
 
-            // TODO YP: it was when call markAsRead after open page
+            // fast reset unread indicator
             _chatSummaryViewModel.UnreadMessageCount = 0;
         }
 

@@ -110,24 +110,24 @@ namespace Softeq.XToolkit.Chat
 
         public ChatMessageModel FindDuplicateMessage(ChatMessageModel message)
         {
-            var chatMessages = GetMessagesCollectionForChat(message.ChannelId);
-            ChatMessageModel chatMessageModel = null;
+            var messages = GetMessagesCollectionForChat(message.ChannelId);
+            ChatMessageModel duplicatedMessage = null;
 
-            lock (chatMessages)
+            lock (messages)
             {
-                chatMessageModel = chatMessages.FirstOrDefault(x =>
+                duplicatedMessage = messages.FirstOrDefault(x =>
                     (x.Id == null || x.Id == message.Id) &&
                     x.Body == message.Body &&
                     x.IsMine == message.IsMine);
             }
 
-            return chatMessageModel;
+            return duplicatedMessage;
         }
 
         public void UpdateSentMessage(ChatMessageModel sentMessage, ChatMessageModel deliveredMessage)
         {
-            var collection = GetMessagesCollectionForChat(sentMessage.ChannelId);
-            ModifyCollection(collection, x =>
+            var messages = GetMessagesCollectionForChat(sentMessage.ChannelId);
+            ModifyCollection(messages, x =>
             {
                 var messagesToUpdate = x.Where(y => y.Equals(sentMessage)).ToList();
                 if (messagesToUpdate.Count != 1)
@@ -138,10 +138,10 @@ namespace Softeq.XToolkit.Chat
             });
         }
 
-        public Task SaveMessagesAsync(string chatId, IList<ChatMessageModel> messages)
+        public Task SaveMessagesAsync(string chatId, IList<ChatMessageModel> newMessages)
         {
-            var collection = GetMessagesCollectionForChat(chatId);
-            ModifyCollection(collection, x => AddNewMessages(x, messages));
+            var messages = GetMessagesCollectionForChat(chatId);
+            ModifyCollection(messages, x => AddNewMessages(x, newMessages));
             return Task.FromResult(true);
         }
 
