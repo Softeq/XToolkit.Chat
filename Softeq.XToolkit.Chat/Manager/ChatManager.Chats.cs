@@ -71,8 +71,7 @@ namespace Softeq.XToolkit.Chat.Manager
             var chatModel = await _chatService.CreateChatAsync(chatName, participantsIds, imagePath).ConfigureAwait(false);
             if (chatModel != null)
             {
-                TryAddChat(chatModel);
-                return true;
+                return TryAddChat(chatModel);
             }
             return false;
         }

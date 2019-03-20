@@ -27,7 +27,7 @@ namespace Softeq.XToolkit.Chat
 
         private TaskReference<string, string, DateTimeOffset, IList<ChatMessageModel>> _getMessagesAsync;
 
-        public event Action<string, IList<ChatMessageModel>, IList<ChatMessageModel>, IList<string>> CacheUpdated;
+        public event Action<CacheUpdatedResults> CacheUpdated;
 
         public InMemoryMessagesCache(ILogManager logManager)
         {
@@ -51,36 +51,52 @@ namespace Softeq.XToolkit.Chat
                 var lastReadMessageIndex = collection.FindLastIndex(x => x.IsRead);
                 if (lastReadMessageIndex < 0)
                 {
-                    return messagesCollection;
+                    return collection; // all unread messages
                 }
-                var result = new List<ChatMessageModel>();
-                var indexFrom = Math.Max(0, lastReadMessageIndex - count + 1);
-                for (int i = indexFrom; i < collection.Count; i++)
-                {
-                    result.Add(collection[i]);
-                }
-                return result;
+
+                return collection.Skip(lastReadMessageIndex - count + 1).ToList();
+
+                //var result = new List<ChatMessageModel>();
+                //var indexFrom = Math.Max(0, lastReadMessageIndex - count + 1);
+                //for (int i = indexFrom; i < collection.Count; i++)
+                //{
+                //    result.Add(collection[i]);
+                //}
+                //return result;
             }));
         }
 
-        public Task<List<ChatMessageModel>> GetOlderMessagesAsync(string chatId, string messageFromId, DateTimeOffset messageFromDateTime, int count)
+        public Task<List<ChatMessageModel>> GetOlderMessagesAsync(
+            string chatId,
+            string messageFromId,
+            DateTimeOffset messageFromDateTime,
+            int count)
         {
             var messagesCollection = GetMessagesCollectionForChat(chatId);
             return Task.FromResult(ModifyCollection(messagesCollection, collection =>
             {
+                // find older message than
                 var indexFrom = collection.FindIndex(x => x.Id == messageFromId);
                 if (indexFrom < 0)
                 {
-                    indexFrom = collection.FindLastIndex(x => x.DateTime.DateTime.IsEarlierOrEqualThan(messageFromDateTime.DateTime));
+                    indexFrom = collection.FindLastIndex(x =>
+                        x.DateTime.DateTime.IsEarlierOrEqualThan(messageFromDateTime.DateTime));
                 }
+
                 if (indexFrom > count)
                 {
-                    var result = new List<ChatMessageModel>();
-                    for (int i = indexFrom - 1; i >= indexFrom - count; i--)
-                    {
-                        result.Insert(0, collection[i]);
-                    }
-                    return result;
+                    return collection.Skip(indexFrom - count).Take(count).ToList();
+                    //var result = new List<ChatMessageModel>();
+                    //for (int i = indexFrom - 1; i >= indexFrom - count; i--)
+                    //{
+                    //    result.Insert(0, collection[i]);
+                    //}
+                    //return result;
+                }
+
+                if (indexFrom > 0)
+                {
+                    return collection.Take(indexFrom).ToList();
                 }
                 return new List<ChatMessageModel>();
             }));
@@ -110,24 +126,24 @@ namespace Softeq.XToolkit.Chat
 
         public ChatMessageModel FindDuplicateMessage(ChatMessageModel message)
         {
-            var chatMessages = GetMessagesCollectionForChat(message.ChannelId);
-            ChatMessageModel chatMessageModel = null;
+            var messages = GetMessagesCollectionForChat(message.ChannelId);
+            ChatMessageModel duplicatedMessage = null;
 
-            lock (chatMessages)
+            lock (messages)
             {
-                chatMessageModel = chatMessages.FirstOrDefault(x =>
+                duplicatedMessage = messages.FirstOrDefault(x =>
                     (x.Id == null || x.Id == message.Id) &&
                     x.Body == message.Body &&
                     x.IsMine == message.IsMine);
             }
 
-            return chatMessageModel;
+            return duplicatedMessage;
         }
 
         public void UpdateSentMessage(ChatMessageModel sentMessage, ChatMessageModel deliveredMessage)
         {
-            var collection = GetMessagesCollectionForChat(sentMessage.ChannelId);
-            ModifyCollection(collection, x =>
+            var messages = GetMessagesCollectionForChat(sentMessage.ChannelId);
+            ModifyCollection(messages, x =>
             {
                 var messagesToUpdate = x.Where(y => y.Equals(sentMessage)).ToList();
                 if (messagesToUpdate.Count != 1)
@@ -138,10 +154,10 @@ namespace Softeq.XToolkit.Chat
             });
         }
 
-        public Task SaveMessagesAsync(string chatId, IList<ChatMessageModel> messages)
+        public Task SaveMessagesAsync(string chatId, IList<ChatMessageModel> newMessages)
         {
-            var collection = GetMessagesCollectionForChat(chatId);
-            ModifyCollection(collection, x => AddNewMessages(x, messages));
+            var messages = GetMessagesCollectionForChat(chatId);
+            ModifyCollection(messages, x => AddNewMessages(x, newMessages));
             return Task.FromResult(true);
         }
 
@@ -167,7 +183,12 @@ namespace Softeq.XToolkit.Chat
             try
             {
                 await _semaphoreSlim.WaitAsync().ConfigureAwait(false);
-                var tasks = chatIds.Where(x => x != null && _messages.ContainsKey(x)).Select(UpdateChatMessages).ToList();
+
+                var tasks = chatIds
+                    .Where(x => x != null && _messages.ContainsKey(x))
+                    .Select(UpdateChatMessages)
+                    .ToList();
+
                 await Task.WhenAll(tasks).ConfigureAwait(false);
             }
             catch (Exception ex)
@@ -182,11 +203,11 @@ namespace Softeq.XToolkit.Chat
 
         private async Task UpdateChatMessages(string chatId)
         {
-            var messagesCollection = GetMessagesCollectionForChat(chatId);
+            var messages = GetMessagesCollectionForChat(chatId);
 
             var oldestMessage = default(ChatMessageModel);
             var newestMessage = default(ChatMessageModel);
-            ModifyCollection(messagesCollection, collection =>
+            ModifyCollection(messages, collection =>
             {
                 oldestMessage = collection.FirstOrDefault();
                 if (oldestMessage != null)
@@ -199,23 +220,18 @@ namespace Softeq.XToolkit.Chat
                 return;
             }
 
-            var upToDateMessages = default(IList<ChatMessageModel>);
-            try
-            {
-                upToDateMessages = await _getMessagesAsync.RunAsync(chatId, oldestMessage.Id, oldestMessage.DateTime).ConfigureAwait(false);
-            }
-            catch (Exception ex)
-            {
-                _logger.Error(ex);
-            }
+            var upToDateMessages = await TryLoadLatestMessagesAsync(chatId,
+                oldestMessage.Id, oldestMessage.DateTime).ConfigureAwait(false);
+
             if (upToDateMessages == null)
             {
-                await UpdateChatMessages(chatId);
+                await UpdateChatMessages(chatId); // TODO YP: check recursion
                 return;
             }
 
-            ModifyCollection(messagesCollection, collection =>
+            ModifyCollection(messages, collection =>
             {
+                // find messages for delete
                 var messagesToDelete = collection
                     .Where(x => x.MessageType != MessageType.Info)
                     .Except(upToDateMessages)
@@ -225,13 +241,40 @@ namespace Softeq.XToolkit.Chat
                 messagesToDelete.AddRange(collection.Where(x => x == null));
                 collection.RemoveAll(x => messagesToDelete.Contains(x));
 
+                // find messages for update
                 var updatedMessages = GetUpdatedMessagesWithUpdateCollection(collection, upToDateMessages);
 
+                // find new messages
                 var newMessages = upToDateMessages.Except(collection).Where(x => x != null).ToList();
                 AddNewMessages(collection, newMessages);
 
-                NotifyCacheUpdated(chatId, newMessages, updatedMessages, messagesToDelete.Select(x => x.Id).ToList());
+                var updatedResults = new CacheUpdatedResults
+                {
+                    ChatId = chatId,
+                    NewMessages = newMessages,
+                    UpdatedMessages = updatedMessages,
+                    DeletedMessagesIds = messagesToDelete.Select(x => x.Id).ToList()
+                };
+
+                CacheUpdated?.Invoke(updatedResults);
             });
+        }
+
+        private async Task<IList<ChatMessageModel>> TryLoadLatestMessagesAsync(
+            string chatId,
+            string oldestMessageId,
+            DateTimeOffset oldestMessageDate)
+        {
+            var messages = default(IList<ChatMessageModel>);
+            try
+            {
+                messages = await _getMessagesAsync.RunAsync(chatId, oldestMessageId, oldestMessageDate).ConfigureAwait(false);
+            }
+            catch (Exception ex)
+            {
+                _logger.Error(ex);
+            }
+            return messages;
         }
 
         private IList<ChatMessageModel> GetUpdatedMessagesWithUpdateCollection(
@@ -288,15 +331,6 @@ namespace Softeq.XToolkit.Chat
                 _messages.TryAdd(chatId, new List<ChatMessageModel>());
             }
             return _messages[chatId];
-        }
-
-        private void NotifyCacheUpdated(
-            string chatId,
-            IList<ChatMessageModel> addedMessages,
-            IList<ChatMessageModel> updatedMessages,
-            IList<string> deletedMessagesIds)
-        {
-            CacheUpdated?.Invoke(chatId, addedMessages, updatedMessages, deletedMessagesIds);
         }
 
         private static void ModifyCollection(List<ChatMessageModel> collection, Action<List<ChatMessageModel>> modify)

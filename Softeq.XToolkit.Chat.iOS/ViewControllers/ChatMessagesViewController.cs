@@ -75,11 +75,13 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
 
             InputBar.ViewDidLoad(this);
 
-            InputBar.SetCommandWithArgs(nameof(InputBar.SendRaised), ViewModel.SendCommand);
+            InputBar.SetCommandWithArgs(nameof(InputBar.SendRaised), ViewModel.MessageInput.SendMessageCommand);
             InputBar.SetCommand(nameof(InputBar.PickerWillOpen), new RelayCommand(UnregisterKeyboardObservers));
-            InputBar.EditingClose.SetCommand(ViewModel.CancelEditingMessageModeCommand);
+            InputBar.EditingClose.SetCommand(ViewModel.MessageInput.CancelEditingCommand);
             InputBar.EditingClose.SetImage(UIImage.FromBundle(StyleHelper.Style.CloseButtonImageBoundleName), UIControlState.Normal);
-            InputBar.SetLabels(ViewModel.EditMessageLabelText, ViewModel.MessagePlaceholderText);
+            InputBar.SetLabels(
+                ViewModel.MessageInput.EditMessageHeaderString,
+                ViewModel.MessageInput.EnterMessagePlaceholderString);
 
             ScrollToBottomButton.SetCommand(new RelayCommand(() => ScrollToBottom(true)));
             ScrollToBottomButton.SetBackgroundImage(UIImage.FromBundle(StyleHelper.Style.ScrollDownBoundleName), UIControlState.Normal);
@@ -155,23 +157,23 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
         {
             base.DoAttachBindings();
 
-            Bindings.Add(this.SetBinding(() => ViewModel.MessageToSendBody, () => InputBar.Input.Text, BindingMode.TwoWay));
-            Bindings.Add(this.SetBinding(() => ViewModel.IsInEditMessageMode).WhenSourceChanges(() =>
+            Bindings.Add(this.SetBinding(() => ViewModel.MessageInput.MessageBody, () => InputBar.Input.Text, BindingMode.TwoWay));
+            Bindings.Add(this.SetBinding(() => ViewModel.MessageInput.IsInEditMessageMode).WhenSourceChanges(() =>
             {
-                if (ViewModel.IsInEditMessageMode)
+                if (ViewModel.MessageInput.IsInEditMessageMode)
                 {
-                    InputBar.StartEditing(ViewModel.EditedMessageOriginalBody);
+                    InputBar.StartEditing(ViewModel.MessageInput.EditedMessageOriginalBody);
                 }
-                InputBar.ChangeEditingMode(ViewModel.IsInEditMessageMode);
+                InputBar.ChangeEditingMode(ViewModel.MessageInput.IsInEditMessageMode);
             }));
-            Bindings.Add(this.SetBinding(() => ViewModel.Messages, () => _dataSourceRef.Target.DataSource));
-            Bindings.Add(this.SetBinding(() => ViewModel.ConnectionStatusViewModel.ConnectionStatusText).WhenSourceChanges(() =>
+            Bindings.Add(this.SetBinding(() => ViewModel.MessagesList.Messages, () => _dataSourceRef.Target.DataSource));
+            Bindings.Add(this.SetBinding(() => ViewModel.ConnectionStatus.ConnectionStatusText).WhenSourceChanges(() =>
             {
-                _customTitleView.Update(ViewModel.ConnectionStatusViewModel);
+                _customTitleView.Update(ViewModel.ConnectionStatus);
             }));
-            Bindings.Add(this.SetBinding(() => ViewModel.MessageToSendBody).WhenSourceChanges(() =>
+            Bindings.Add(this.SetBinding(() => ViewModel.MessageInput.MessageBody).WhenSourceChanges(() =>
             {
-                InputBar.SetTextPlaceholdervisibility(string.IsNullOrEmpty(ViewModel.MessageToSendBody));
+                InputBar.SetTextPlaceholdervisibility(string.IsNullOrEmpty(ViewModel.MessageInput.MessageBody));
             }));
         }
 
@@ -201,7 +203,7 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
 
             TableNode.Inverted = true;
             var tableSource = new GroupedTableDataSource<DateTimeOffset, ChatMessageViewModel>(
-                ViewModel.Messages,
+                ViewModel.MessagesList.Messages,
                 TableNode.View,
                 viewModel => new ChatMessageNode(viewModel, _contextMenuComponent),
                 TableNode.Inverted);
@@ -231,10 +233,10 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
         private UIView GetHeader(UITableView tableView, nint section)
         {
             var sectionFooter = (MessagesDateHeaderViewCell)tableView.DequeueReusableHeaderFooterView(MessagesDateHeaderViewCell.Key);
-            if (section < ViewModel.Messages.Count)
+            if (section < ViewModel.MessagesList.Messages.Count)
             {
-                var adjustedSectionIndex = TableNode.Inverted ? ViewModel.Messages.Count - 1 - section : section;
-                var date = ViewModel.Messages[(int)adjustedSectionIndex].Key;
+                var adjustedSectionIndex = TableNode.Inverted ? ViewModel.MessagesList.Messages.Count - 1 - section : section;
+                var date = ViewModel.MessagesList.Messages[(int)adjustedSectionIndex].Key;
                 sectionFooter.Title = ViewModel.GetDateString(date);
             }
             return sectionFooter;
@@ -242,7 +244,7 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
 
         private async void OnMoreDataRequested(ASBatchContext obj)
         {
-            await ViewModel.LoadOlderMessagesAsync();
+            await ViewModel.MessagesList.LoadOlderMessagesAsync();
             obj.CompleteBatchFetching(true);
         }
 

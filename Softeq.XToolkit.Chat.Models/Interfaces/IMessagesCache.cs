@@ -12,7 +12,7 @@ namespace Softeq.XToolkit.Chat.Models.Interfaces
     {
         void Init(TaskReference<string, string, DateTimeOffset, IList<ChatMessageModel>> getMessagesAsync);
 
-        event Action<string, IList<ChatMessageModel>, IList<ChatMessageModel>, IList<string>> CacheUpdated;
+        event Action<CacheUpdatedResults> CacheUpdated;
 
         Task<List<ChatMessageModel>> GetLatestMessagesAsync(string chatId, int count);
         Task<List<ChatMessageModel>> GetOlderMessagesAsync(string chatId, string messageFromId, DateTimeOffset messageFromDateTime, int count);

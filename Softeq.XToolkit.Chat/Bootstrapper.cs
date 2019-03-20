@@ -25,6 +25,7 @@ namespace Softeq.XToolkit.Chat
             containerBuilder.RegisterType<ChatManager>()
                 .As<ChatManager>()
                 .As<IChatsListManager>()
+                .As<IChatMessagesManager>()
                 .As<IChatConnectionManager>()
                 .InstancePerLifetimeScope();
             containerBuilder.RegisterType<InMemoryMessagesCache>().As<IMessagesCache>().InstancePerLifetimeScope();
