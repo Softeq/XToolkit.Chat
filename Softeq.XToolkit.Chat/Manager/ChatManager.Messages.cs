@@ -23,10 +23,13 @@ namespace Softeq.XToolkit.Chat.Manager
             {
                 return CreateMessagesViewModels(models);
             }
+
             var olderMessagesModels = await _chatService.GetLatestMessagesAsync(chatId).ConfigureAwait(false);
             if (olderMessagesModels != null && olderMessagesModels.Any())
             {
                 await _messagesCache.SaveMessagesAsync(chatId, olderMessagesModels).ConfigureAwait(false);
+
+                // TODO YP: check recursion
                 return await LoadInitialMessagesAsync(chatId, count).ConfigureAwait(false);
             }
             return new List<ChatMessageViewModel>();
@@ -38,17 +41,22 @@ namespace Softeq.XToolkit.Chat.Manager
             DateTimeOffset messageFromDateTime,
             int count)
         {
-            var models = await _messagesCache.GetOlderMessagesAsync(chatId, messageFromId, messageFromDateTime, count)
-                                             .ConfigureAwait(false);
+            var models = await _messagesCache.GetOlderMessagesAsync(chatId,
+                messageFromId, messageFromDateTime, count).ConfigureAwait(false);
+
             if (models.Count > 0)
             {
                 return CreateMessagesViewModels(models);
             }
-            var olderMessagesModels = await _chatService.GetOlderMessagesAsync(chatId, messageFromId, messageFromDateTime, count)
-                                                        .ConfigureAwait(false);
+
+            var olderMessagesModels = await _chatService.GetOlderMessagesAsync(chatId,
+                messageFromId, messageFromDateTime, count).ConfigureAwait(false);
+
             if (olderMessagesModels != null && olderMessagesModels.Any())
             {
                 await _messagesCache.SaveMessagesAsync(chatId, olderMessagesModels).ConfigureAwait(false);
+
+                // TODO YP: check recursion
                 return await LoadOlderMessagesAsync(chatId, messageFromId, messageFromDateTime, count).ConfigureAwait(false);
             }
             return new List<ChatMessageViewModel>();
@@ -65,8 +73,7 @@ namespace Softeq.XToolkit.Chat.Manager
                 ImageCacheKey = imagePickerArgs?.ImageCacheKey
             };
 
-
-            var tempMessageViewModel = CreateCachedMessageViewModel(tempMessage);
+            var tempMessageViewModel = CreateAndAddNewTempMessage(tempMessage);
 
             var imageUrl = await UploadImageAsync(imagePickerArgs);
 
@@ -74,7 +81,7 @@ namespace Softeq.XToolkit.Chat.Manager
 
             if (sentMessage != null)
             {
-                UpdateTempMessageViewModelAfterSend(tempMessageViewModel, sentMessage);
+                TryUpdateTempMessageAfterSend(tempMessageViewModel, sentMessage);
             }
         }
 
@@ -94,7 +101,8 @@ namespace Softeq.XToolkit.Chat.Manager
             return imageUrl;
         }
 
-        private void UpdateTempMessageViewModelAfterSend(ChatMessageViewModel tempMessageViewModel, ChatMessageModel sentMessage)
+        private void TryUpdateTempMessageAfterSend(ChatMessageViewModel tempMessageViewModel,
+            ChatMessageModel sentMessage)
         {
             try
             {
@@ -126,11 +134,6 @@ namespace Softeq.XToolkit.Chat.Manager
             }
 
             await _chatService.MarkMessageAsReadAsync(chatId, messageId).ConfigureAwait(false);
-        }
-
-        private void OnMessageAdded(ChatMessageModel chatMessage)
-        {
-            AddLatestMessage(chatMessage);
         }
 
         private void OnMessageEdited(ChatMessageModel updatedMessage)
@@ -171,7 +174,7 @@ namespace Softeq.XToolkit.Chat.Manager
             });
         }
 
-        private ChatMessageViewModel CreateCachedMessageViewModel(ChatMessageModel message)
+        private ChatMessageViewModel CreateAndAddNewTempMessage(ChatMessageModel message)
         {
             var messageViewModel = CreateMessageViewModel(message);
 
@@ -245,6 +248,7 @@ namespace Softeq.XToolkit.Chat.Manager
         private Task UpdateMessagesCacheAsync()
         {
             var chatsIds = ChatsCollection.Select(x => x.ChatId).ToList();
+
             return _messagesCache.PerformFullUpdate(chatsIds);
         }
 

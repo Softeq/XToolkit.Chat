@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using System.Reactive.Subjects;
 using System.Threading.Tasks;
 using Softeq.XToolkit.Chat.Interfaces;
@@ -32,13 +33,13 @@ namespace Softeq.XToolkit.Chat.Manager
 
         private readonly IList<IDisposable> _subscriptions = new List<IDisposable>();
 
-        private readonly Subject<ChatMessageViewModel> _messageAdded = new Subject<ChatMessageViewModel>();
-        private readonly Subject<ChatMessageModel> _messageEdited = new Subject<ChatMessageModel>();
-        private readonly Subject<string> _messageDeleted = new Subject<string>();
-        private readonly Subject<IList<ChatMessageViewModel>> _messagesBatchAdded = new Subject<IList<ChatMessageViewModel>>();
-        private readonly Subject<IList<ChatMessageModel>> _messagesBatchUpdated = new Subject<IList<ChatMessageModel>>();
-        private readonly Subject<IList<string>> _messagesBatchDeleted = new Subject<IList<string>>();
-        private readonly Subject<ConnectionStatus> _connectionStatusChanged = new Subject<ConnectionStatus>();
+        private readonly ISubject<ChatMessageViewModel> _messageAdded = new Subject<ChatMessageViewModel>();
+        private readonly ISubject<ChatMessageModel> _messageEdited = new Subject<ChatMessageModel>();
+        private readonly ISubject<string> _messageDeleted = new Subject<string>();
+        private readonly ISubject<IList<ChatMessageViewModel>> _messagesBatchAdded = new Subject<IList<ChatMessageViewModel>>();
+        private readonly ISubject<IList<ChatMessageModel>> _messagesBatchUpdated = new Subject<IList<ChatMessageModel>>();
+        private readonly ISubject<IList<string>> _messagesBatchDeleted = new Subject<IList<string>>();
+        private readonly ISubject<ConnectionStatus> _connectionStatusChanged = new Subject<ConnectionStatus>();
 
         private ConnectionStatus _connectionStatus = ConnectionStatus.Online;
         private string _activeChatId;
@@ -65,7 +66,7 @@ namespace Softeq.XToolkit.Chat.Manager
             }));
             _messagesCache.CacheUpdated += OnCacheUpdated;
 
-            _subscriptions.Add(_chatService.MessageReceived.Subscribe(OnMessageAdded));
+            _subscriptions.Add(_chatService.MessageReceived.Subscribe(AddLatestMessage));
             _subscriptions.Add(_chatService.MessageEdited.Subscribe(OnMessageEdited));
             _subscriptions.Add(_chatService.MessageDeleted.Subscribe(OnMessageDeleted));
             _subscriptions.Add(_chatService.ChatAdded.Subscribe(x => TryAddChat(x)));
@@ -129,36 +130,35 @@ namespace Softeq.XToolkit.Chat.Manager
         private async Task UpdateCacheAsync()
         {
             ConnectionStatus = ConnectionStatus.Updating;
-            await Task.WhenAll(UpdateChatsListFromNetworkAsync(), UpdateMessagesCacheAsync()).ConfigureAwait(false);
+
+            await UpdateChatsListFromNetworkAsync().ConfigureAwait(false);
+            await UpdateMessagesCacheAsync().ConfigureAwait(false);
+
             ConnectionStatus = ConnectionStatus.Online;
         }
 
-        private void OnCacheUpdated(
-            string chatId,
-            IList<ChatMessageModel> addedMessages,
-            IList<ChatMessageModel> updatedMessages,
-            IList<string> deletedMessagesIds)
+        private void OnCacheUpdated(CacheUpdatedResults cacheUpdatedResults)
         {
-            if (chatId != _activeChatId)
+            if (cacheUpdatedResults.ChatId != _activeChatId)
             {
                 return;
             }
 
-            var addedMessagesViewModels = CreateMessagesViewModels(addedMessages);
+            var addedMessagesViewModels = CreateMessagesViewModels(cacheUpdatedResults.NewMessages);
 
-            if (addedMessagesViewModels.Count > 0)
+            if (addedMessagesViewModels.Any())
             {
                 _messagesBatchAdded.OnNext(addedMessagesViewModels);
             }
 
-            if (updatedMessages.Count > 0)
+            if (cacheUpdatedResults.UpdatedMessages.Any())
             {
-                _messagesBatchUpdated.OnNext(updatedMessages);
+                _messagesBatchUpdated.OnNext(cacheUpdatedResults.UpdatedMessages);
             }
 
-            if (deletedMessagesIds.Count > 0)
+            if (cacheUpdatedResults.DeletedMessagesIds.Any())
             {
-                _messagesBatchDeleted.OnNext(deletedMessagesIds);
+                _messagesBatchDeleted.OnNext(cacheUpdatedResults.DeletedMessagesIds);
             }
         }
     }

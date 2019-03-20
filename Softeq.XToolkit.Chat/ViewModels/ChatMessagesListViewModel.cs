@@ -17,7 +17,6 @@ using Softeq.XToolkit.Chat.Interfaces;
 
 namespace Softeq.XToolkit.Chat.ViewModels
 {
-    //TODO YP: hard refactoring needed
     public class ChatMessagesListViewModel : ObservableObject
     {
         private const int InitialReadMessagesBatchCount = 20;
@@ -29,6 +28,7 @@ namespace Softeq.XToolkit.Chat.ViewModels
         private readonly IList<IDisposable> _subscriptions = new List<IDisposable>();
 
         private bool _areLatestMessagesLoaded;
+        private bool _areOlderMessagesLoaded;
 
         public ChatMessagesListViewModel(
             string chatId,
@@ -125,8 +125,14 @@ namespace Softeq.XToolkit.Chat.ViewModels
             MarkMessagesAsRead();
         }
 
+        // TODO YP: check frequency of call this method
         public async Task LoadOlderMessagesAsync()
         {
+            if (_areOlderMessagesLoaded)
+            {
+                return;
+            }
+
             var oldestMessage = Messages.FirstOrDefaultValue();
             if (oldestMessage == null)
             {
@@ -138,7 +144,16 @@ namespace Softeq.XToolkit.Chat.ViewModels
                 oldestMessage.Id,
                 oldestMessage.DateTime,
                 OlderMessagesBatchCount);
-            Messages.AddRangeToGroupsSorted(olderMessages);
+
+            if (olderMessages.Any())
+            {
+                Messages.AddRangeToGroupsSorted(olderMessages);
+            }
+            else
+            {
+                // empty list = no old messages
+                _areOlderMessagesLoaded = true;
+            }
         }
 
         private async Task LoadInitialMessagesAsync()
