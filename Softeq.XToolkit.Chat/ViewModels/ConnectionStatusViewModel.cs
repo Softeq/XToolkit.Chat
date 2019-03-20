@@ -57,6 +57,8 @@ namespace Softeq.XToolkit.Chat.ViewModels
                 throw new ChatException("Need to call Initialize() method before.");
             }
 
+            IsOnline = status == ConnectionStatus.Online;
+
             switch (status)
             {
                 case ConnectionStatus.Online:
@@ -74,8 +76,6 @@ namespace Softeq.XToolkit.Chat.ViewModels
                 default:
                     throw new InvalidEnumArgumentException();
             }
-
-            IsOnline = status == ConnectionStatus.Online;
         }
 
         private void Dispose(bool disposing)
