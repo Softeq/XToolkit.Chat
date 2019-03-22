@@ -22,6 +22,7 @@ using FFImageLoading;
 using System.Threading.Tasks;
 using FFImageLoading.Work;
 using Softeq.XToolkit.WhiteLabel;
+using Softeq.XToolkit.WhiteLabel.Interfaces;
 
 namespace Softeq.XToolkit.Chat.iOS.Views
 {
@@ -218,7 +219,16 @@ namespace Softeq.XToolkit.Chat.iOS.Views
         {
             var attrText = _viewModelRef.Target.Body
                 .BuildAttributedString()
-                .Font(UIFont.SystemFontOfSize(17));
+                .Font(UIFont.SystemFontOfSize(17))
+                .DetectLinks(StyleHelper.Style.AccentColor, NSUnderlineStyle.Single, true, out var links);
+            
+            if (links != null)
+            {
+                _descriptionTextNode.Delegate = new LinksDelegate();
+                _descriptionTextNode.UserInteractionEnabled = true;
+                _descriptionTextNode.LinkAttributeNames = links;
+            }
+            
             _descriptionTextNode.AttributedText = attrText;
         }
 
@@ -376,6 +386,22 @@ namespace Softeq.XToolkit.Chat.iOS.Views
             };
 
             _viewModelRef.Target?.ShowImage(options);
+        }
+        
+        private class LinksDelegate : ASTextNodeDelegate
+        {
+            public override void TappedLinkAttribute(ASTextNode textNode, string attribute, NSObject value, CGPoint point,
+                NSRange textRange)
+            {
+                var launcherService = Dependencies.IocContainer.Resolve<ILauncherService>();
+                launcherService.OpenUrl(((NSUrl) value).AbsoluteString);
+            }
+
+            public override bool ShouldHighlightLinkAttribute(ASTextNode textNode, string attribute, NSObject value,
+                CGPoint point)
+            {
+                return true;
+            }
         }
     }
 }
