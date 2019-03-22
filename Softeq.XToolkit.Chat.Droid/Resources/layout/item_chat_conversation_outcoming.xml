@@ -30,6 +30,7 @@
             android:id="@+id/tv_message_body"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:autoLink="web"
             android:text="[message long long long]"
             android:textSize="17sp"
             android:textColor="@android:color/black" />
