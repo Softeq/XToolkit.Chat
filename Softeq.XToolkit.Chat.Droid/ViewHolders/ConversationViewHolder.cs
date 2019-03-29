@@ -19,6 +19,8 @@ using Softeq.XToolkit.WhiteLabel.Droid.Extensions;
 using Softeq.XToolkit.WhiteLabel.Threading;
 using Softeq.XToolkit.WhiteLabel.ViewModels;
 using PopupMenu = Android.Support.V7.Widget.PopupMenu;
+using Softeq.XToolkit.Common.Droid.Extensions;
+using Android.Content;
 
 namespace Softeq.XToolkit.Chat.Droid.ViewHolders
 {
@@ -44,6 +46,9 @@ namespace Softeq.XToolkit.Chat.Droid.ViewHolders
             MessageDateTimeTextView = itemView.FindViewById<TextView>(Resource.Id.tv_message_date_time);
             AttachmentImageView = itemView.FindViewById<MvxCachedImageView>(Resource.Id.iv_message_attachment);
             AttachmentImageView.Click += OnMessageImageClicked;
+
+            AttachmentImageView.SetAdjustViewBounds(true);
+            AttachmentImageView.SetScaleType(ImageView.ScaleType.CenterCrop);
 
             var resourceId = _isIncomingMessageViewType
                 ? StyleHelper.Style.IncomingMessageBg
@@ -107,14 +112,11 @@ namespace Softeq.XToolkit.Chat.Droid.ViewHolders
 
                 if (!string.IsNullOrEmpty(model.ImageCacheKey))
                 {
-                    expr = ImageService.Instance
-                        .LoadFile(model.ImageCacheKey);
-
+                    expr = ImageService.Instance.LoadFile(model.ImageCacheKey);
                 }
                 else if (!string.IsNullOrEmpty(model.ImageRemoteUrl))
                 {
-                    expr = ImageService.Instance
-                        .LoadUrl(model.ImageRemoteUrl);
+                    expr = ImageService.Instance.LoadUrl(model.ImageRemoteUrl);
                 }
 
                 if (expr == null)
@@ -122,13 +124,19 @@ namespace Softeq.XToolkit.Chat.Droid.ViewHolders
                     return;
                 }
 
-                expr = expr.DownSampleInDip(90, 90)
+                expr.DownSampleInDip(90, 90)
                     .Finish(x =>
                     {
-                        Execute.BeginOnUIThread(() => { AttachmentImageView.Visibility = ViewStates.Visible; });
-                    });
+                        Execute.BeginOnUIThread(() =>
+                        {
+                            var lp = AttachmentImageView.LayoutParameters;
+                            (lp.Width, lp.Height) = CalculateAttachmentImageViewSize();
+                            AttachmentImageView.LayoutParameters = lp;
 
-                expr.IntoAsync(AttachmentImageView);
+                            AttachmentImageView.Visibility = ViewStates.Visible;
+                        });
+                    })
+                    .IntoAsync(AttachmentImageView);
             }
 
             if (_isIncomingMessageViewType && SenderPhotoImageView != null)
@@ -136,11 +144,12 @@ namespace Softeq.XToolkit.Chat.Droid.ViewHolders
                 SenderPhotoImageView.LoadImageWithTextPlaceholder(
                     _viewModelRef.Target.SenderPhotoUrl,
                     _viewModelRef.Target.SenderName,
-                    new WhiteLabel.Droid.Controls.AvatarPlaceholderDrawable.AvatarStyles {
+                    new WhiteLabel.Droid.Controls.AvatarPlaceholderDrawable.AvatarStyles
+                    {
                         BackgroundHexColors = StyleHelper.Style.ChatAvatarStyles.BackgroundHexColors,
                         Size = new System.Drawing.Size(35, 35)
                     },
-                    (TaskParameter x) => x.Transform(new CircleTransformation()));
+                    x => x.Transform(new CircleTransformation()));
             }
 
             if (!_isIncomingMessageViewType && MessageStatusView != null)
@@ -227,6 +236,53 @@ namespace Softeq.XToolkit.Chat.Droid.ViewHolders
                 DroidCloseButtonImageResId = Resource.Drawable.core_ic_close
             };
             _viewModelRef.Target?.ShowImage(options);
+        }
+
+        protected virtual (int Width, int Height) CalculateAttachmentImageViewSize()
+        {
+            var context = ItemView.Context;
+
+            var originalImageWidth = context.ToPixels(AttachmentImageView.Drawable.IntrinsicWidth);
+            var originalImageHeight = context.ToPixels(AttachmentImageView.Drawable.IntrinsicHeight);
+
+            if (originalImageWidth <= 0 || originalImageHeight <= 0)
+            {
+                return (ViewGroup.LayoutParams.MatchParent, ViewGroup.LayoutParams.WrapContent);
+            }
+
+            var maxImageWidth = GetAttachmentImageViewMaxWidth(context);
+
+            var ratio = originalImageWidth / originalImageHeight;
+
+            var isLandscape = originalImageWidth > originalImageHeight;
+
+            if (isLandscape)
+            {
+                var calculatedHeight = maxImageWidth / ratio;
+                return (maxImageWidth, (int)calculatedHeight);
+            }
+            else
+            {
+                var calculatedWidth = maxImageWidth * ratio;
+                return ((int)calculatedWidth, maxImageWidth);
+            }
+        }
+
+        protected virtual int GetAttachmentImageViewMaxWidth(Context context)
+        {
+            var displayWidth = context.ApplicationContext.Resources.DisplayMetrics.WidthPixels;
+            var paddingsAndMarginsOfContainer = 64;
+
+            if (_isIncomingMessageViewType)
+            {
+                paddingsAndMarginsOfContainer += 35 + 16 + 24 + 12;
+            }
+            else
+            {
+                paddingsAndMarginsOfContainer += 20 + 20 + 8;
+            }
+
+            return displayWidth - (int)context.ToPixels(paddingsAndMarginsOfContainer);
         }
     }
 }
