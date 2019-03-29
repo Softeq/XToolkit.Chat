@@ -20,6 +20,7 @@ using Softeq.XToolkit.WhiteLabel.Threading;
 using Softeq.XToolkit.WhiteLabel.ViewModels;
 using PopupMenu = Android.Support.V7.Widget.PopupMenu;
 using Softeq.XToolkit.Common.Droid.Extensions;
+using Android.Content;
 
 namespace Softeq.XToolkit.Chat.Droid.ViewHolders
 {
@@ -129,8 +130,7 @@ namespace Softeq.XToolkit.Chat.Droid.ViewHolders
                         Execute.BeginOnUIThread(() =>
                         {
                             var lp = AttachmentImageView.LayoutParameters;
-                            lp.Width = CalculateAttachmentImageViewWidth();
-                            //lp.Height = ClaculateAttachmentImageViewHeight();
+                            (lp.Width, lp.Height) = CalculateAttachmentImageViewSize();
                             AttachmentImageView.LayoutParameters = lp;
 
                             AttachmentImageView.Visibility = ViewStates.Visible;
@@ -238,25 +238,51 @@ namespace Softeq.XToolkit.Chat.Droid.ViewHolders
             _viewModelRef.Target?.ShowImage(options);
         }
 
-        protected virtual int CalculateAttachmentImageViewWidth()
+        protected virtual (int Width, int Height) CalculateAttachmentImageViewSize()
         {
             var context = ItemView.Context;
-            var paddingsAndMarginsOfContainer = (int)context.ToPixels(64 + 20 + 20 + 8);
 
-            return ItemView.Width - paddingsAndMarginsOfContainer;
+            var originalImageWidth = context.ToPixels(AttachmentImageView.Drawable.IntrinsicWidth);
+            var originalImageHeight = context.ToPixels(AttachmentImageView.Drawable.IntrinsicHeight);
+
+            if (originalImageWidth <= 0 || originalImageHeight <= 0)
+            {
+                return (ViewGroup.LayoutParams.MatchParent, ViewGroup.LayoutParams.WrapContent);
+            }
+
+            var maxImageWidth = GetAttachmentImageViewMaxWidth(context);
+
+            var ratio = originalImageWidth / originalImageHeight;
+
+            var isLandscape = originalImageWidth > originalImageHeight;
+
+            if (isLandscape)
+            {
+                var calculatedHeight = maxImageWidth / ratio;
+                return (maxImageWidth, (int)calculatedHeight);
+            }
+            else
+            {
+                var calculatedWidth = maxImageWidth * ratio;
+                return ((int)calculatedWidth, maxImageWidth);
+            }
         }
 
-        //protected virtual int ClaculateAttachmentImageViewHeight()
-        //{
-        //    if (AttachmentImageView.Drawable == null)
-        //    {
-        //        return 0;
-        //    }
+        protected virtual int GetAttachmentImageViewMaxWidth(Context context)
+        {
+            var displayWidth = context.ApplicationContext.Resources.DisplayMetrics.WidthPixels;
+            var paddingsAndMarginsOfContainer = 64;
 
-        //    var scaledDpHeight = AttachmentImageView.Drawable.IntrinsicHeight * 0.8;
-        //    var context = ItemView.Context;
+            if (_isIncomingMessageViewType)
+            {
+                paddingsAndMarginsOfContainer += 35 + 16 + 24 + 12;
+            }
+            else
+            {
+                paddingsAndMarginsOfContainer += 20 + 20 + 8;
+            }
 
-        //    return (int)context.ToPixels(scaledDpHeight);
-        //}
+            return displayWidth - (int)context.ToPixels(paddingsAndMarginsOfContainer);
+        }
     }
 }
