@@ -95,27 +95,28 @@ namespace Softeq.XToolkit.Chat.Droid.Views
 
             Bindings.Add(this.SetBinding(() => ViewModel.ChatName, () => _chatNameEditTextView.Text, BindingMode.TwoWay));
             Bindings.Add(this.SetBinding(() => ViewModel.ContactsCountText, () => _membersCountTextView.Text));
-            Bindings.Add(this.SetBinding(() => _imagePicker.ViewModel.ImageCacheKey)
-                .WhenSourceChanges(() =>
+            Bindings.Add(this.SetBinding(() => _imagePicker.ViewModel.ImageCacheKey).WhenSourceChanges(() =>
+            {
+                var newImageCacheKey = _imagePicker.ViewModel.ImageCacheKey;
+
+                if (string.IsNullOrEmpty(newImageCacheKey) || newImageCacheKey == _previewImageKey)
                 {
-                    var key = _imagePicker.ViewModel.ImageCacheKey;
-                    if (key == _previewImageKey)
-                    {
-                        return;
-                    }
+                    return;
+                }
 
-                    _previewImageKey = key;
+                _previewImageKey = newImageCacheKey;
 
-                    Execute.BeginOnUIThread(() =>
-                    {
-                        _chatEditedPhotoImageView.Visibility = ViewStates.Visible;
-                        ImageService.Instance
-                            .LoadFile(_imagePicker.ViewModel.ImageCacheKey)
-                            .DownSampleInDip(95, 95)
-                            .Transform(new CircleTransformation())
-                            .IntoAsync(_chatEditedPhotoImageView);
-                    });
-                }));
+                Execute.BeginOnUIThread(() =>
+                {
+                    _chatEditedPhotoImageView.Visibility = ViewStates.Visible;
+                });
+
+                ImageService.Instance
+                    .LoadFile(_previewImageKey)
+                    .DownSampleInDip(95, 95)
+                    .Transform(new CircleTransformation())
+                    .IntoAsync(_chatEditedPhotoImageView);
+            }));
             Bindings.Add(this.SetBinding(() => ViewModel.IsBusy, () => _busyOverlayView.Visibility)
                 .ConvertSourceToTarget(BoolToViewStateConverter.ConvertGone));
         }
