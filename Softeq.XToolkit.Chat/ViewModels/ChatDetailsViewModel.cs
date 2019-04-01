@@ -2,7 +2,6 @@
 // http://www.softeq.com
 
 using System;
-using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
@@ -33,9 +32,6 @@ namespace Softeq.XToolkit.Chat.ViewModels
         private readonly IChatService _chatService;
 
         private bool _isLoading;
-        private bool _isInEditMode;
-        private string _chatName;
-        private string _avatarUrl;
 
         public ChatDetailsViewModel(
             IChatsListManager chatsListManager,
@@ -48,14 +44,17 @@ namespace Softeq.XToolkit.Chat.ViewModels
         {
             _chatsListManager = chatsListManager;
             _pageNavigationService = pageNavigationService;
-            LocalizedStrings = localizedStrings;
             _formatService = formatService;
             _uploadImageService = uploadImageService;
             _dialogsService = dialogsService;
             _chatService = chatService;
+
+            LocalizedStrings = localizedStrings;
         }
 
         public ChatSummaryModel Summary { get; set; }
+
+        public ChatDetailsHeaderViewModel HeaderViewModel { get; private set; }
 
         public IChatLocalizedStrings LocalizedStrings { get; }
 
@@ -63,36 +62,6 @@ namespace Softeq.XToolkit.Chat.ViewModels
         {
             get => _isLoading;
             set => Set(ref _isLoading, value);
-        }
-
-        public bool IsInEditMode
-        {
-            get => _isInEditMode;
-            set => Set(ref _isInEditMode, value);
-        }
-
-        public string ChatName
-        {
-            get => _chatName;
-            set
-            {
-                if (Set(ref _chatName, value))
-                {
-                    Summary.Name = value;
-                }
-            }
-        }
-
-        public string AvatarUrl
-        {
-            get => _avatarUrl;
-            set
-            {
-                if (Set(ref _avatarUrl, value))
-                {
-                    Summary.PhotoUrl = value;
-                }
-            }
         }
 
         public bool CanEdit => Summary.IsCreatedByMe;
@@ -103,41 +72,21 @@ namespace Softeq.XToolkit.Chat.ViewModels
         public string MembersCountText => _formatService.PluralizeWithQuantity(Members.Count,
             LocalizedStrings.MembersPlural, LocalizedStrings.MemberSingular);
 
-        public bool IsMuted
-        {
-            get => Summary.IsMuted;
-            set
-            {
-                if (Summary.IsMuted != value)
-                {
-                    Summary.IsMuted = value;
-                    RaisePropertyChanged(nameof(IsMuted));
-                }
-            }
-        }
-
         public ICommand AddMembersCommand { get; private set; }
 
         public ICommand BackCommand { get; private set; }
 
-        public ICommand ChangeMuteNotificationsCommand { get; private set; }
-
         public ICommand RemoveMemberCommand { get; private set; }
-
-        public ICommand SaveCommand { get; private set; }
 
         public override void OnInitialize()
         {
             base.OnInitialize();
 
-            ChatName = Summary.Name;
-            AvatarUrl = Summary.PhotoUrl;
+            HeaderViewModel = new ChatDetailsHeaderViewModel(Summary, _uploadImageService, _chatsListManager);
 
             AddMembersCommand = new RelayCommand(AddMembers);
             BackCommand = new RelayCommand(_pageNavigationService.GoBack, () => _pageNavigationService.CanGoBack);
             RemoveMemberCommand = new RelayCommand<ChatUserViewModel>(x => RemoveMemberAsync(x).SafeTaskWrapper());
-            ChangeMuteNotificationsCommand = new RelayCommand(() => ChangeMuteNotificationsAsync().SafeTaskWrapper());
-            SaveCommand = new RelayCommand<Func<(Task<Stream>, string)>>(x => SaveAsync(x).SafeTaskWrapper());
         }
 
         public override void OnAppearing()
@@ -175,60 +124,9 @@ namespace Softeq.XToolkit.Chat.ViewModels
             }
 
             Members.Remove(memberViewModel);
+            RaisePropertyChanged(nameof(MembersCountText));
 
             await _chatService.DeleteMemberAsync(Summary.Id, memberViewModel.Id).ConfigureAwait(false);
-
-            RaisePropertyChanged(nameof(MembersCountText));
-        }
-
-        private async Task ChangeMuteNotificationsAsync()
-        {
-            if (IsBusy)
-            {
-                return;
-            }
-
-            IsBusy = true;
-
-            if (IsMuted)
-            {
-                await _chatService.UnMuteChatAsync(Summary.Id).ConfigureAwait(false);
-            }
-            else
-            {
-                await _chatService.MuteChatAsync(Summary.Id).ConfigureAwait(false);
-            }
-
-            Execute.OnUIThread(() =>
-            {
-                IsMuted = !IsMuted;
-                IsBusy = false;
-            });
-        }
-
-        public async Task SaveAsync(Func<(Task<Stream> GetImageTask, string Extension)> getImageFunc)
-        {
-            if (IsBusy)
-            {
-                return;
-            }
-
-            IsBusy = true;
-            IsInEditMode = false;
-
-            var imagePath = await _uploadImageService.UploadImageAsync(getImageFunc);
-
-            if (!string.IsNullOrEmpty(imagePath))
-            {
-                AvatarUrl = imagePath;
-            }
-
-            await _chatsListManager.EditChatAsync(Summary).ConfigureAwait(false);
-
-            Execute.BeginOnUIThread(() =>
-            {
-                IsBusy = false;
-            });
         }
 
         private async void AddMembers()
@@ -270,7 +168,7 @@ namespace Softeq.XToolkit.Chat.ViewModels
         {
             members.Apply(member =>
             {
-                member.IsRemovable = Summary.IsCreatedByMe && member.Id != Summary.CreatorId;
+                member.IsRemovable = CanEdit && member.Id != Summary.CreatorId;
             });
         }
     }

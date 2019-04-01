@@ -49,23 +49,19 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
 
             Bindings.Add(this.SetBinding(() => ViewModel.ChatName, () => _chatDetailsHeaderView.ChatNameField.Text, BindingMode.TwoWay));
             Bindings.Add(this.SetBinding(() => ViewModel.ContactsCountText, () => _chatDetailsHeaderView.ChatMembersCount));
-            Bindings.Add(this.SetBinding(() => _simpleImagePicker.ViewModel.ImageCacheKey)
-                .WhenSourceChanges(() =>
+            Bindings.Add(this.SetBinding(() => _simpleImagePicker.ViewModel.ImageCacheKey).WhenSourceChanges(() =>
+            {
+                var newImageCacheKey = _simpleImagePicker.ViewModel.ImageCacheKey;
+
+                if (string.IsNullOrEmpty(newImageCacheKey) || newImageCacheKey == _previewImageKey)
                 {
-                    if (string.IsNullOrEmpty(_simpleImagePicker.ViewModel.ImageCacheKey))
-                    {
-                        return;
-                    }
+                    return;
+                }
 
-                    var key = _simpleImagePicker.ViewModel.ImageCacheKey;
-                    if (key == _previewImageKey)
-                    {
-                        return;
-                    }
+                _previewImageKey = newImageCacheKey;
 
-                    _previewImageKey = key;
-                    _chatDetailsHeaderView.SetEditedChatAvatar(_previewImageKey);
-                }));
+                _chatDetailsHeaderView.SetEditedChatAvatar(_previewImageKey);
+            }));
             Bindings.Add(this.SetBinding(() => ViewModel.IsBusy).WhenSourceChanges(() =>
             {
                 if (ViewModel.IsBusy)
