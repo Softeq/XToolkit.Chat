@@ -28,11 +28,12 @@ namespace Softeq.XToolkit.Chat.Models
         public bool AreMoreThanThreeUsersTyping { get; set; }
         public bool IsCreatedByMe { get; private set; }
 
+        // TODO YP: move to backend side
         public void UpdateIsCreatedByMeStatus(string currentUserId)
         {
             IsCreatedByMe = CreatorId == currentUserId;
 
-            UpdateModelByType(); // TODO YP: think of better approach
+            UpdateModelByType();
         }
 
         public void UpdateModelByType()
