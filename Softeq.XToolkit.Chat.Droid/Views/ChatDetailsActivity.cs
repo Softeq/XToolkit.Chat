@@ -91,7 +91,7 @@ namespace Softeq.XToolkit.Chat.Droid.Views
             _muteNotificationsLabel = FindViewById<TextView>(Resource.Id.activity_chat_details_mute_label);
             _muteNotificationsLabel.Text = ViewModel.LocalizedStrings.Notifications;
             _muteNotificationsSwitch = FindViewById<SwitchCompat>(Resource.Id.activity_chat_details_mute_switch);
-            _muteNotificationsSwitch.SetCommand(ViewModel.ChangeMuteNotificationsCommand);
+            _muteNotificationsSwitch.SetCommand(ViewModel.HeaderViewModel.ChangeMuteNotificationsCommand);
 
             InitializeMembersRecyclerView();
 
@@ -110,15 +110,15 @@ namespace Softeq.XToolkit.Chat.Droid.Views
         {
             base.DoAttachBindings();
 
-            Bindings.Add(this.SetBinding(() => ViewModel.ChatName, () => _chatNameEditText.Text, BindingMode.TwoWay));
+            Bindings.Add(this.SetBinding(() => ViewModel.HeaderViewModel.ChatName, () => _chatNameEditText.Text, BindingMode.TwoWay));
             Bindings.Add(this.SetBinding(() => ViewModel.MembersCountText, () => _chatMembersCountTextView.Text));
-            Bindings.Add(this.SetBinding(() => ViewModel.AvatarUrl).WhenSourceChanges(() =>
+            Bindings.Add(this.SetBinding(() => ViewModel.HeaderViewModel.AvatarUrl).WhenSourceChanges(() =>
             {
                 Execute.BeginOnUIThread(() =>
                 {
                     _chatPhotoImageView.LoadImageWithTextPlaceholder(
-                        ViewModel.AvatarUrl,
-                        ViewModel.ChatName,
+                        ViewModel.HeaderViewModel.AvatarUrl,
+                        ViewModel.HeaderViewModel.ChatName,
                         new AvatarPlaceholderDrawable.AvatarStyles
                         {
                             BackgroundHexColors = StyleHelper.Style.ChatAvatarStyles.BackgroundHexColors,
@@ -127,29 +127,29 @@ namespace Softeq.XToolkit.Chat.Droid.Views
                         x => x.Transform(new CircleTransformation()));
                 });
             }));
-            Bindings.Add(this.SetBinding(() => _imagePicker.ViewModel.ImageCacheKey)
-                .WhenSourceChanges(() =>
+            Bindings.Add(this.SetBinding(() => _imagePicker.ViewModel.ImageCacheKey).WhenSourceChanges(() =>
+            {
+                var newImageCacheKey = _imagePicker.ViewModel.ImageCacheKey;
+
+                if (string.IsNullOrEmpty(newImageCacheKey) || newImageCacheKey == _previewImageKey)
                 {
-                    var key = _imagePicker.ViewModel.ImageCacheKey;
-                    if (key == _previewImageKey)
-                    {
-                        return;
-                    }
+                    return;
+                }
 
-                    _previewImageKey = key;
+                _previewImageKey = newImageCacheKey;
 
-                    Execute.BeginOnUIThread(() =>
-                    {
-                        ViewModel.IsInEditMode = true;
+                Execute.BeginOnUIThread(() =>
+                {
+                    ViewModel.HeaderViewModel.StartEditingCommand.Execute(null);
+                });
 
-                        ImageService.Instance
-                            .LoadFile(_imagePicker.ViewModel.ImageCacheKey)
-                            .DownSampleInDip(95, 95)
-                            .Transform(new CircleTransformation())
-                            .IntoAsync(_chatEditedPhotoImageView);
-                    });
-                }));
-            Bindings.Add(this.SetBinding(() => ViewModel.IsMuted, () => _muteNotificationsSwitch.Checked)
+                ImageService.Instance
+                    .LoadFile(_previewImageKey)
+                    .DownSampleInDip(95, 95)
+                    .Transform(new CircleTransformation())
+                    .IntoAsync(_chatEditedPhotoImageView);
+            }));
+            Bindings.Add(this.SetBinding(() => ViewModel.HeaderViewModel.IsMuted, () => _muteNotificationsSwitch.Checked)
                 .ConvertSourceToTarget(x => !x));
             Bindings.Add(this.SetBinding(() => ViewModel.IsBusy, () => _muteNotificationsSwitch.Clickable)
                 .ConvertSourceToTarget(x => !x));
@@ -168,9 +168,9 @@ namespace Softeq.XToolkit.Chat.Droid.Views
                     _chatNameEditText.SetBackgroundColor(Color.Transparent);
                 }
             }));
-            Bindings.Add(this.SetBinding(() => ViewModel.IsInEditMode).WhenSourceChanges(() =>
+            Bindings.Add(this.SetBinding(() => ViewModel.HeaderViewModel.IsInEditMode).WhenSourceChanges(() =>
             {
-                if (ViewModel.IsInEditMode)
+                if (ViewModel.HeaderViewModel.IsInEditMode)
                 {
                     _navigationBarView.RightTextButton.Visibility = ViewStates.Visible;
                     _chatEditedPhotoImageView.Visibility = ViewStates.Visible;
@@ -179,7 +179,6 @@ namespace Softeq.XToolkit.Chat.Droid.Views
                 {
                     _previewImageKey = null;
                     _navigationBarView.RightTextButton.Visibility = ViewStates.Gone;
-                    _chatEditedPhotoImageView.Visibility = ViewStates.Gone;
 
                     _chatNameEditText.ClearFocus();
                     _chatNameEditText.ClearComposingText();
@@ -257,7 +256,7 @@ namespace Softeq.XToolkit.Chat.Droid.Views
         {
             if (e.HasFocus)
             {
-                ViewModel.IsInEditMode = true;
+                ViewModel.HeaderViewModel.StartEditingCommand.Execute(null);
             }
         }
 
@@ -273,7 +272,7 @@ namespace Softeq.XToolkit.Chat.Droid.Views
 
         private void OnSaveClick()
         {
-            ViewModel.SaveCommand.Execute(_imagePicker.GetStreamFunc());
+            ViewModel.HeaderViewModel.SaveCommand.Execute(_imagePicker.GetStreamFunc());
         }
     }
 }

@@ -88,6 +88,16 @@ namespace Softeq.XToolkit.Chat.Manager
             return _chatService.LeaveChatAsync(chatId);
         }
 
+        public Task MuteChatAsync(string chatId)
+        {
+            return _chatService.MuteChatAsync(chatId);
+        }
+
+        public Task UnMuteChatAsync(string chatId)
+        {
+            return _chatService.UnMuteChatAsync(chatId);
+        }
+
         public Task InviteMembersAsync(string chatId, IList<string> participantsIds)
         {
             return _chatService.InviteMembersAsync(chatId, participantsIds);
@@ -126,6 +136,9 @@ namespace Softeq.XToolkit.Chat.Manager
             {
                 return null;
             }
+
+            // TODO YP: need chat name (backend side)
+            directChatModel.UpdateModelByType();
 
             var directChatViewModel = _viewModelFactoryService.ResolveViewModel<ChatSummaryViewModel, ChatSummaryModel>(directChatModel);
 

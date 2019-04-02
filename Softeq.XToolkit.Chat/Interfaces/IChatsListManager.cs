@@ -14,6 +14,8 @@ namespace Softeq.XToolkit.Chat.Interfaces
         Task EditChatAsync(ChatSummaryModel chatSummary);
         Task CloseChatAsync(string chatId);
         Task LeaveChatAsync(string chatId);
+        Task MuteChatAsync(string chatId);
+        Task UnMuteChatAsync(string chatId);
 
         ChatSummaryViewModel GetChatById(string chatId);
 

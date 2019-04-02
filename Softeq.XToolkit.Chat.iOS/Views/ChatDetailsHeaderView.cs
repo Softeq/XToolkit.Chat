@@ -14,6 +14,7 @@ using UIKit;
 
 namespace Softeq.XToolkit.Chat.iOS.Views
 {
+    // TODO YP: used on chat create & details pages, need to refactoring
     public partial class ChatDetailsHeaderView : NotifyingView
     {
         public ChatDetailsHeaderView(CGRect frame) : base(frame)
@@ -101,32 +102,27 @@ namespace Softeq.XToolkit.Chat.iOS.Views
         public void EndEditing()
         {
             ChatNameTextField.ResignFirstResponder();
-
-            SetEditedChatAvatar(null);
         }
 
         public void SetEditedChatAvatar(string key)
         {
-            Execute.BeginOnUIThread(() =>
+            if (string.IsNullOrEmpty(key))
             {
-                if (key == null)
-                {
-                    EditedChatAvatarImageView.Hidden = true;
-                    ChatAvatarImageView.Hidden = false;
-                }
-                else
-                {
-                    EditedChatAvatarImageView.Hidden = false;
-                    ChatAvatarImageView.Hidden = true;
+                return;
+            }
 
-                    var imageSize = StyleHelper.Style.GroupDetailsAvatarStyles.Size;
-                    ImageService.Instance
-                        .LoadFile(key)
-                        .DownSampleInDip(imageSize.Width, imageSize.Height)
-                        .Transform(new CircleTransformation())
-                        .IntoAsync(EditedChatAvatarImageView);
-                }
+            Execute.OnUIThread(() =>
+            {
+                EditedChatAvatarImageView.Hidden = false;
+                ChatAvatarImageView.Hidden = true;
             });
+
+            var imageSize = StyleHelper.Style.GroupDetailsAvatarStyles.Size;
+            ImageService.Instance
+                .LoadFile(key)
+                .DownSampleInDip(imageSize.Width, imageSize.Height)
+                .Transform(new CircleTransformation())
+                .IntoAsync(EditedChatAvatarImageView);
         }
 
         protected override void Initialize()

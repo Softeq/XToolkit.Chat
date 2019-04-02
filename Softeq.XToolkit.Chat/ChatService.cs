@@ -215,6 +215,7 @@ namespace Softeq.XToolkit.Chat
             _cachedUserId = string.Empty;
         }
 
+        // TODO YP: move to backend side
         private async Task<string> GetUserIdAsync()
         {
             var result = _cachedUserId;

@@ -39,6 +39,7 @@ namespace Softeq.XToolkit.Chat.Models
             }
         }
 
+        // TODO YP: move to backend side
         public void UpdateIsMineStatus(string currentUserId)
         {
             IsMine = SenderId == currentUserId;
