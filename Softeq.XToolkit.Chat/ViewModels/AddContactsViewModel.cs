@@ -43,8 +43,7 @@ namespace Softeq.XToolkit.Chat.ViewModels
 
         public AddContactsViewModel(
             IAccountService accountService,
-            IChatLocalizedStrings chatLocalizedStrings,
-            IViewModelFactoryService viewModelFactoryService)
+            IChatLocalizedStrings chatLocalizedStrings)
         {
             _accountService = accountService;
             Resources = chatLocalizedStrings;

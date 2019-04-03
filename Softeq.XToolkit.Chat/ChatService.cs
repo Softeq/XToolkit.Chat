@@ -74,7 +74,8 @@ namespace Softeq.XToolkit.Chat
                 return null;
             }
 
-            result.UpdateModelByType();
+            var userId = await GetUserIdAsync().ConfigureAwait(false);
+            result.UpdateIsCreatedByMeStatus(userId);
 
             return result;
         }

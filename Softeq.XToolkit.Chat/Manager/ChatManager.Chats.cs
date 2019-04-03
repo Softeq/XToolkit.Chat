@@ -137,9 +137,6 @@ namespace Softeq.XToolkit.Chat.Manager
                 return null;
             }
 
-            // TODO YP: need chat name (backend side)
-            directChatModel.UpdateModelByType();
-
             var directChatViewModel = _viewModelFactoryService.ResolveViewModel<ChatSummaryViewModel, ChatSummaryModel>(directChatModel);
 
             return directChatViewModel;

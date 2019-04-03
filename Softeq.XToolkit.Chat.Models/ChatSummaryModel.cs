@@ -17,6 +17,7 @@ namespace Softeq.XToolkit.Chat.Models
         public bool IsMuted { get; set; }
         public bool IsPinned { get; set; }
         public string CreatorId { get; set; }
+        public ChatUserModel Creator { get; set; }
         public ChatUserModel DirectMember { get; set; }
         public string Description { get; set; }
         public string WelcomeMessage { get; set; }
@@ -28,7 +29,7 @@ namespace Softeq.XToolkit.Chat.Models
         public bool AreMoreThanThreeUsersTyping { get; set; }
         public bool IsCreatedByMe { get; private set; }
 
-        // TODO YP: move to backend side
+        // TODO YP: move to backend
         public void UpdateIsCreatedByMeStatus(string currentUserId)
         {
             IsCreatedByMe = CreatorId == currentUserId;
@@ -36,12 +37,25 @@ namespace Softeq.XToolkit.Chat.Models
             UpdateModelByType();
         }
 
-        public void UpdateModelByType()
+        private void UpdateModelByType()
         {
-            if (Type == ChannelType.Direct && DirectMember != null)
+            // TODO YP: move to backend
+            // - different Creator & DirectMemer models for Direct chats
+            //   depends on chat creator user
+            // - currently each channel user received the same event about new channel,
+            //   need to send two different event about this
+            if (Type == ChannelType.Direct)
             {
-                Name = DirectMember.Username;
-                PhotoUrl = DirectMember.PhotoUrl;
+                if (IsCreatedByMe && DirectMember != null)
+                {
+                    Name = DirectMember.Username;
+                    PhotoUrl = DirectMember.PhotoUrl;
+                }
+                else if (Creator != null)
+                {
+                    Name = Creator.Username;
+                    PhotoUrl = Creator.PhotoUrl;
+                }
 
                 IsCreatedByMe = false;
             }

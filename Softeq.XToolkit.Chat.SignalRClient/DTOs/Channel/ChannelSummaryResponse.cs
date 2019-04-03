@@ -19,9 +19,10 @@ namespace Softeq.XToolkit.Chat.SignalRClient.DTOs.Channel
         public bool IsPinned { get; set; }
         public string Description { get; set; }
         public string WelcomeMessage { get; set; }
-        public ChannelTypeDto Type { get; set; }
+        public int Type { get; set; }
         public MessageResponse LastMessage { get; set; }
         public string PhotoUrl { get; set; }
         public MemberSummary Creator { get; set; }
+        public MemberSummary DirectMember { get; set; }
     }
 }
