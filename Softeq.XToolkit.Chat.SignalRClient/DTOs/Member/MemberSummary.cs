@@ -12,6 +12,7 @@ namespace Softeq.XToolkit.Chat.SignalRClient.DTOs.Member
         public UserRole Role { get; set; }
         public UserStatus Status { get; set; }
         public bool IsAfk { get; set; }
+        public bool IsActive { get; set; }
         public DateTimeOffset LastActivity { get; set; }
         public string Email { get; set; }
         public string AvatarUrl { get; set; }

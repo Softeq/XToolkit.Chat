@@ -5,6 +5,7 @@ using System.ComponentModel;
 using Softeq.XToolkit.Chat.Models;
 using Softeq.XToolkit.Chat.SignalRClient.DTOs.Channel;
 using Softeq.XToolkit.Chat.SignalRClient.DTOs.Message;
+using Softeq.XToolkit.Chat.SignalRClient.DTOs.Member;
 
 namespace Softeq.XToolkit.Chat.SignalRClient
 {
@@ -27,7 +28,10 @@ namespace Softeq.XToolkit.Chat.SignalRClient
                 CreatedDate = response.Created,
                 UpdatedDate = response.Updated,
                 UnreadMessagesCount = response.UnreadMessagesCount,
-                CreatorId = response.Creator?.Id.ToString()
+                CreatorId = response.Creator?.Id.ToString(),
+                Type = (Models.ChannelType)response.Type,
+                Creator = DtoToChatUser(response.Creator),
+                DirectMember = DtoToChatUser(response.DirectMember)
             };
         }
 
@@ -64,6 +68,19 @@ namespace Softeq.XToolkit.Chat.SignalRClient
                     return Models.MessageType.Info;
                 default: throw new InvalidEnumArgumentException();
             }
+        }
+
+        public static ChatUserModel DtoToChatUser(MemberSummary dto)
+        {
+            return dto == null ? null : new ChatUserModel
+            {
+                Id = dto.Id.ToString(),
+                Username = dto.UserName,
+                PhotoUrl = dto.AvatarUrl,
+                LastActivity = dto.LastActivity,
+                IsOnline = dto.Status == UserStatus.Online,
+                IsActive = dto.IsActive
+            };
         }
     }
 }

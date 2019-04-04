@@ -2,7 +2,6 @@
 // http://www.softeq.com
 
 using System;
-using Softeq.XToolkit.Chat.SignalRClient.DTOs;
 
 namespace Softeq.XToolkit.Chat.SignalRClient.DTOs.Channel
 {
