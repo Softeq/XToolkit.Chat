@@ -112,17 +112,15 @@ namespace Softeq.XToolkit.Chat.Droid.Views
         private void ConfigureSwipeForViewHolder(RecyclerView.ViewHolder viewHolder, int position,
                                                  ICollection<SwipeCallback.ISwipeActionView> actions)
         {
-            if (!ViewModel.Chats[position].HasActions)
+            if (ViewModel.Chats[position].CanLeave)
             {
-                return;
+                actions.Add(new SimpleSwipeActionView(ViewModel.LocalizedStrings.Leave, _swipeLeaveActionViewOptions, pos =>
+                {
+                    ViewModel.LeaveChatCommand.Execute(ViewModel.Chats[pos]);
+                }));
             }
 
-            actions.Add(new SimpleSwipeActionView(ViewModel.LocalizedStrings.Leave, _swipeLeaveActionViewOptions, pos =>
-            {
-                ViewModel.LeaveChatCommand.Execute(ViewModel.Chats[pos]);
-            }));
-
-            if (ViewModel.Chats[position].IsCreatedByMe)
+            if (ViewModel.Chats[position].CanClose)
             {
                 actions.Add(new SimpleSwipeActionView(ViewModel.LocalizedStrings.Delete, _swipeCloseActionViewOptions, pos =>
                 {

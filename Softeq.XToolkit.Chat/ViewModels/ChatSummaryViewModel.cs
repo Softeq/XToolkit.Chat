@@ -72,7 +72,9 @@ namespace Softeq.XToolkit.Chat.ViewModels
         public bool IsMuted => _chatSummary.IsMuted;
         public bool IsCreatedByMe => _chatSummary.IsCreatedByMe;
         public bool IsDirect => _chatSummary.Type == ChannelType.Direct;
-        public bool HasActions => !IsDirect;
+
+        public bool CanLeave => !IsDirect;
+        public bool CanClose => IsCreatedByMe || IsDirect;
 
         public DateTimeOffset LastUpdateDate => GetLastUpdateDate();
 

@@ -107,18 +107,16 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
                     return buttons.ToArray();
                 }
 
-                if (!itemViewModel.HasActions)
+                if (itemViewModel.CanLeave)
                 {
-                    return buttons.ToArray();
+                    var createButton = UITableViewRowAction.Create(
+                        UITableViewRowActionStyle.Default,
+                        _viewModelRef.Target?.LocalizedStrings.Leave,
+                        (row, index) => OnClickLeave(row, index, tableView));
+                    buttons.Add(createButton);
                 }
 
-                var createButton = UITableViewRowAction.Create(
-                    UITableViewRowActionStyle.Default,
-                    _viewModelRef.Target?.LocalizedStrings.Leave,
-                    (row, index) => OnClickLeave(row, index, tableView));
-                buttons.Add(createButton);
-
-                if (itemViewModel.IsCreatedByMe)
+                if (itemViewModel.CanClose)
                 {
                     var closeButton = UITableViewRowAction.Create(
                         UITableViewRowActionStyle.Default,
