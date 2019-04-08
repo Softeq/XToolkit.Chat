@@ -117,10 +117,13 @@ namespace Softeq.XToolkit.Chat.Droid.Views
                 return;
             }
 
-            actions.Add(new SimpleSwipeActionView(ViewModel.LocalizedStrings.Leave, _swipeLeaveActionViewOptions, pos =>
+            if (!ViewModel.Chats[position].IsDirect)
             {
-                ViewModel.LeaveChatCommand.Execute(ViewModel.Chats[pos]);
-            }));
+                actions.Add(new SimpleSwipeActionView(ViewModel.LocalizedStrings.Leave, _swipeLeaveActionViewOptions, pos =>
+                {
+                    ViewModel.LeaveChatCommand.Execute(ViewModel.Chats[pos]);
+                }));
+            }
 
             if (ViewModel.Chats[position].IsCreatedByMe)
             {

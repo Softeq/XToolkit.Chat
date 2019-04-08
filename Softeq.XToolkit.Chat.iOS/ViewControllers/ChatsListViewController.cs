@@ -112,11 +112,14 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
                     return buttons.ToArray();
                 }
 
-                var createButton = UITableViewRowAction.Create(
-                    UITableViewRowActionStyle.Default,
-                    _viewModelRef.Target?.LocalizedStrings.Leave,
-                    (row, index) => OnClickLeave(row, index, tableView));
-                buttons.Add(createButton);
+                if (!itemViewModel.IsDirect)
+                {
+                    var createButton = UITableViewRowAction.Create(
+                        UITableViewRowActionStyle.Default,
+                        _viewModelRef.Target?.LocalizedStrings.Leave,
+                        (row, index) => OnClickLeave(row, index, tableView));
+                    buttons.Add(createButton);
+                }
 
                 if (itemViewModel.IsCreatedByMe)
                 {
