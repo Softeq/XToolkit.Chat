@@ -107,12 +107,7 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
                     return buttons.ToArray();
                 }
 
-                if (!itemViewModel.HasActions)
-                {
-                    return buttons.ToArray();
-                }
-
-                if (!itemViewModel.IsDirect)
+                if (itemViewModel.CanLeave)
                 {
                     var createButton = UITableViewRowAction.Create(
                         UITableViewRowActionStyle.Default,
@@ -121,7 +116,7 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
                     buttons.Add(createButton);
                 }
 
-                if (itemViewModel.IsCreatedByMe)
+                if (itemViewModel.CanClose)
                 {
                     var closeButton = UITableViewRowAction.Create(
                         UITableViewRowActionStyle.Default,
