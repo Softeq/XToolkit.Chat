@@ -39,6 +39,7 @@ namespace Softeq.XToolkit.Chat.Droid.Views
         private NavigationBarView _navigationBarView;
         private MvxCachedImageView _chatPhotoImageView;
         private MvxCachedImageView _chatEditedPhotoImageView;
+        private TextView _chatNameText;
         private EditText _chatNameEditText;
         private TextView _chatMembersCountTextView;
         private LinearLayout _addMemberContainer;
@@ -72,7 +73,8 @@ namespace Softeq.XToolkit.Chat.Droid.Views
 
             _chatEditedPhotoImageView = FindViewById<MvxCachedImageView>(Resource.Id.iv_chat_photo_edited);
 
-            _chatNameEditText = FindViewById<EditText>(Resource.Id.activity_chat_details_chat_name);
+            _chatNameText = FindViewById<TextView>(Resource.Id.activity_chat_details_chat_name);
+            _chatNameEditText = FindViewById<EditText>(Resource.Id.activity_chat_details_chat_name_edit);
 
             _chatMembersCountTextView = FindViewById<TextView>(Resource.Id.tv_members_count);
 
@@ -111,6 +113,7 @@ namespace Softeq.XToolkit.Chat.Droid.Views
             base.DoAttachBindings();
 
             Bindings.Add(this.SetBinding(() => ViewModel.HeaderViewModel.ChatName, () => _chatNameEditText.Text, BindingMode.TwoWay));
+            Bindings.Add(this.SetBinding(() => ViewModel.HeaderViewModel.ChatName, () => _chatNameText.Text));
             Bindings.Add(this.SetBinding(() => ViewModel.MembersCountText, () => _chatMembersCountTextView.Text));
             Bindings.Add(this.SetBinding(() => ViewModel.HeaderViewModel.AvatarUrl).WhenSourceChanges(() =>
             {
@@ -160,12 +163,21 @@ namespace Softeq.XToolkit.Chat.Droid.Views
             }));
             Bindings.Add(this.SetBinding(() => ViewModel.CanEdit, BindingMode.OneTime).WhenSourceChanges(() =>
             {
-                _changeChatPhotoButton.Visibility = BoolToViewStateConverter.ConvertGone(ViewModel.CanEdit);
-                _chatNameEditText.Enabled = ViewModel.CanEdit;
-
-                if (!ViewModel.CanEdit)
+                if (ViewModel.CanEdit)
                 {
-                    _chatNameEditText.SetBackgroundColor(Color.Transparent);
+                    _changeChatPhotoButton.Visibility = ViewStates.Visible;
+
+                    _chatNameEditText.Visibility = ViewStates.Visible;
+                    _chatNameText.Visibility = ViewStates.Gone;
+                }
+                else
+                {
+                    _changeChatPhotoButton.Visibility = ViewStates.Gone;
+
+                    _chatNameEditText.Visibility = ViewStates.Gone;
+                    _chatNameText.Visibility = ViewStates.Visible;
+
+                    _chatNameText.Selected = true;
                 }
             }));
             Bindings.Add(this.SetBinding(() => ViewModel.HeaderViewModel.IsInEditMode).WhenSourceChanges(() =>
