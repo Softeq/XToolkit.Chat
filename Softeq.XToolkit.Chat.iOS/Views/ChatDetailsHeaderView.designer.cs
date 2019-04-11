@@ -25,6 +25,9 @@ namespace Softeq.XToolkit.Chat.iOS.Views
 		FFImageLoading.Cross.MvxCachedImageView ChatAvatarImageView { get; set; }
 
 		[Outlet]
+		UIKit.UILabel ChatNameLabel { get; set; }
+
+		[Outlet]
 		UIKit.UITextField ChatNameTextField { get; set; }
 
 		[Outlet]
@@ -64,6 +67,11 @@ namespace Softeq.XToolkit.Chat.iOS.Views
 				ChatAvatarImageView = null;
 			}
 
+			if (ChatNameLabel != null) {
+				ChatNameLabel.Dispose ();
+				ChatNameLabel = null;
+			}
+
 			if (ChatNameTextField != null) {
 				ChatNameTextField.Dispose ();
 				ChatNameTextField = null;
@@ -84,14 +92,14 @@ namespace Softeq.XToolkit.Chat.iOS.Views
 				MuteChatSwitch = null;
 			}
 
-			if (MuteLabel != null) {
-				MuteLabel.Dispose ();
-				MuteLabel = null;
-			}
-
 			if (MuteContainer != null) {
 				MuteContainer.Dispose ();
 				MuteContainer = null;
+			}
+
+			if (MuteLabel != null) {
+				MuteLabel.Dispose ();
+				MuteLabel = null;
 			}
 		}
 	}

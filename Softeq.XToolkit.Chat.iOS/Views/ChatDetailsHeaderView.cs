@@ -23,6 +23,8 @@ namespace Softeq.XToolkit.Chat.iOS.Views
 
         public UITextField ChatNameField => ChatNameTextField;
 
+        public UILabel ChatNameTextView => ChatNameLabel;
+
         public bool IsNotificationsMuted
         {
             get => !MuteChatSwitch.On;
@@ -54,7 +56,8 @@ namespace Softeq.XToolkit.Chat.iOS.Views
 
         public void EnableEditMode(bool isEditMode)
         {
-            ChatNameTextField.Enabled = isEditMode;
+            ChatNameLabel.Hidden = !isEditMode;
+            ChatNameTextField.Hidden = isEditMode;
             MuteContainer.Hidden = isEditMode;
         }
 

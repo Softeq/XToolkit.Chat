@@ -47,6 +47,7 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
                 _chatDetailsHeaderView.SetChatAvatar(ViewModel.HeaderViewModel.AvatarUrl, ViewModel.HeaderViewModel.ChatName);
             }));
             Bindings.Add(this.SetBinding(() => ViewModel.HeaderViewModel.ChatName, () => _chatDetailsHeaderView.ChatNameField.Text, BindingMode.TwoWay));
+            Bindings.Add(this.SetBinding(() => ViewModel.HeaderViewModel.ChatName, () => _chatDetailsHeaderView.ChatNameTextView.Text));
             Bindings.Add(this.SetBinding(() => ViewModel.HeaderViewModel.IsMuted, () => _chatDetailsHeaderView.IsNotificationsMuted));
             Bindings.Add(this.SetBinding(() => ViewModel.HeaderViewModel.IsBusy, () => _chatDetailsHeaderView.IsMuteNotificationsAvailable)
                 .ConvertSourceToTarget(x => !x));

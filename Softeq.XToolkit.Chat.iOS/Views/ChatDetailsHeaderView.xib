@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="14460.31" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="14490.70" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
     <device id="retina4_7" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14460.20"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14490.49"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
@@ -15,6 +15,7 @@
                 <outlet property="ChangeChatPhotoButton" destination="PX3-XX-QyD" id="HtN-1G-YRW"/>
                 <outlet property="ChatAvatarImageView" destination="VLO-PG-7Ro" id="U2q-SK-1uz"/>
                 <outlet property="ChatAvatarcontainer" destination="dtf-rt-YgU" id="NEn-mF-ZyE"/>
+                <outlet property="ChatNameLabel" destination="7f0-i7-967" id="XcB-4t-jvL"/>
                 <outlet property="ChatNameTextField" destination="xWM-HM-1I0" id="1Pq-xu-F7G"/>
                 <outlet property="EditedChatAvatarImageView" destination="BNJ-Yk-CTN" id="rvM-sI-iKT"/>
                 <outlet property="MembersCountLabel" destination="U3h-dX-rLS" id="lkK-Jc-Dqg"/>
@@ -58,6 +59,15 @@
                     <fontDescription key="fontDescription" type="system" pointSize="20"/>
                     <textInputTraits key="textInputTraits"/>
                 </textField>
+                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Group Name" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="7f0-i7-967">
+                    <rect key="frame" x="127" y="55.5" width="232" height="24"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="24" id="EPl-eL-Tqr"/>
+                    </constraints>
+                    <fontDescription key="fontDescription" type="system" pointSize="20"/>
+                    <nil key="textColor"/>
+                    <nil key="highlightedColor"/>
+                </label>
                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="5Tk-aa-mcd">
                     <rect key="frame" x="127" y="83.5" width="248" height="1"/>
                     <color key="backgroundColor" red="0.67843137249999996" green="0.67843137249999996" blue="0.67843137249999996" alpha="1" colorSpace="calibratedRGB"/>
@@ -147,9 +157,12 @@
                 <constraint firstItem="xWM-HM-1I0" firstAttribute="leading" secondItem="dtf-rt-YgU" secondAttribute="trailing" constant="16" id="9E8-Av-a07"/>
                 <constraint firstItem="7x9-6s-ysb" firstAttribute="leading" secondItem="1" secondAttribute="leading" id="Afx-o8-0j9"/>
                 <constraint firstItem="7x9-6s-ysb" firstAttribute="top" secondItem="6NX-bH-me7" secondAttribute="bottom" id="BKd-9E-Nn9"/>
+                <constraint firstItem="7f0-i7-967" firstAttribute="leading" secondItem="dtf-rt-YgU" secondAttribute="trailing" constant="16" id="Ddj-9n-jjb"/>
+                <constraint firstItem="7f0-i7-967" firstAttribute="centerY" secondItem="BNJ-Yk-CTN" secondAttribute="centerY" id="Eg1-ct-PZn"/>
                 <constraint firstAttribute="trailing" secondItem="5Tk-aa-mcd" secondAttribute="trailing" id="IgB-dv-uQl"/>
                 <constraint firstItem="2bJ-7c-9oy" firstAttribute="top" secondItem="7x9-6s-ysb" secondAttribute="bottom" constant="4" id="Iu3-1A-My8"/>
                 <constraint firstItem="2bJ-7c-9oy" firstAttribute="leading" secondItem="1" secondAttribute="leading" constant="16" id="JU0-Vq-iiF"/>
+                <constraint firstAttribute="trailing" secondItem="7f0-i7-967" secondAttribute="trailing" constant="16" id="LC3-q1-JR4"/>
                 <constraint firstAttribute="trailing" secondItem="9vW-yX-OQe" secondAttribute="trailing" id="LDK-s9-3Zh"/>
                 <constraint firstItem="dtf-rt-YgU" firstAttribute="leading" secondItem="1" secondAttribute="leading" constant="16" id="M5d-uk-Itk"/>
                 <constraint firstItem="6NX-bH-me7" firstAttribute="leading" secondItem="1" secondAttribute="leading" constant="16" id="QCq-Py-rOg"/>
