@@ -15,7 +15,8 @@
                 <outlet property="ChangeChatPhotoButton" destination="PX3-XX-QyD" id="HtN-1G-YRW"/>
                 <outlet property="ChatAvatarImageView" destination="VLO-PG-7Ro" id="U2q-SK-1uz"/>
                 <outlet property="ChatAvatarcontainer" destination="dtf-rt-YgU" id="NEn-mF-ZyE"/>
-                <outlet property="ChatNameLabel" destination="7f0-i7-967" id="XcB-4t-jvL"/>
+                <outlet property="ChatNameLabel" destination="pcu-GG-wOF" id="Azo-0a-UGG"/>
+                <outlet property="ChatNameLabelHeight" destination="MWm-DC-U5h" id="bqp-pH-zYE"/>
                 <outlet property="ChatNameTextField" destination="xWM-HM-1I0" id="1Pq-xu-F7G"/>
                 <outlet property="EditedChatAvatarImageView" destination="BNJ-Yk-CTN" id="rvM-sI-iKT"/>
                 <outlet property="MembersCountLabel" destination="U3h-dX-rLS" id="lkK-Jc-Dqg"/>
@@ -59,15 +60,13 @@
                     <fontDescription key="fontDescription" type="system" pointSize="20"/>
                     <textInputTraits key="textInputTraits"/>
                 </textField>
-                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Group Name" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="7f0-i7-967">
+                <view hidden="YES" clipsSubviews="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="pcu-GG-wOF" customClass="AutoScrollLabel">
                     <rect key="frame" x="127" y="55.5" width="232" height="24"/>
+                    <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                     <constraints>
-                        <constraint firstAttribute="height" constant="24" id="EPl-eL-Tqr"/>
+                        <constraint firstAttribute="height" constant="24" id="MWm-DC-U5h"/>
                     </constraints>
-                    <fontDescription key="fontDescription" type="system" pointSize="20"/>
-                    <nil key="textColor"/>
-                    <nil key="highlightedColor"/>
-                </label>
+                </view>
                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="5Tk-aa-mcd">
                     <rect key="frame" x="127" y="83.5" width="248" height="1"/>
                     <color key="backgroundColor" red="0.67843137249999996" green="0.67843137249999996" blue="0.67843137249999996" alpha="1" colorSpace="calibratedRGB"/>
@@ -157,24 +156,24 @@
                 <constraint firstItem="xWM-HM-1I0" firstAttribute="leading" secondItem="dtf-rt-YgU" secondAttribute="trailing" constant="16" id="9E8-Av-a07"/>
                 <constraint firstItem="7x9-6s-ysb" firstAttribute="leading" secondItem="1" secondAttribute="leading" id="Afx-o8-0j9"/>
                 <constraint firstItem="7x9-6s-ysb" firstAttribute="top" secondItem="6NX-bH-me7" secondAttribute="bottom" id="BKd-9E-Nn9"/>
-                <constraint firstItem="7f0-i7-967" firstAttribute="leading" secondItem="dtf-rt-YgU" secondAttribute="trailing" constant="16" id="Ddj-9n-jjb"/>
-                <constraint firstItem="7f0-i7-967" firstAttribute="centerY" secondItem="BNJ-Yk-CTN" secondAttribute="centerY" id="Eg1-ct-PZn"/>
                 <constraint firstAttribute="trailing" secondItem="5Tk-aa-mcd" secondAttribute="trailing" id="IgB-dv-uQl"/>
                 <constraint firstItem="2bJ-7c-9oy" firstAttribute="top" secondItem="7x9-6s-ysb" secondAttribute="bottom" constant="4" id="Iu3-1A-My8"/>
                 <constraint firstItem="2bJ-7c-9oy" firstAttribute="leading" secondItem="1" secondAttribute="leading" constant="16" id="JU0-Vq-iiF"/>
-                <constraint firstAttribute="trailing" secondItem="7f0-i7-967" secondAttribute="trailing" constant="16" id="LC3-q1-JR4"/>
                 <constraint firstAttribute="trailing" secondItem="9vW-yX-OQe" secondAttribute="trailing" id="LDK-s9-3Zh"/>
                 <constraint firstItem="dtf-rt-YgU" firstAttribute="leading" secondItem="1" secondAttribute="leading" constant="16" id="M5d-uk-Itk"/>
                 <constraint firstItem="6NX-bH-me7" firstAttribute="leading" secondItem="1" secondAttribute="leading" constant="16" id="QCq-Py-rOg"/>
                 <constraint firstAttribute="trailing" secondItem="7x9-6s-ysb" secondAttribute="trailing" id="VOC-az-8YD"/>
                 <constraint firstAttribute="trailing" secondItem="2bJ-7c-9oy" secondAttribute="trailing" constant="16" id="WRy-Sm-A7b"/>
                 <constraint firstItem="9vW-yX-OQe" firstAttribute="top" secondItem="dtf-rt-YgU" secondAttribute="bottom" constant="16" id="dVy-Y4-P84"/>
+                <constraint firstAttribute="trailing" secondItem="pcu-GG-wOF" secondAttribute="trailing" constant="16" id="hWy-Oa-Joy"/>
                 <constraint firstItem="xWM-HM-1I0" firstAttribute="centerY" secondItem="dtf-rt-YgU" secondAttribute="centerY" id="hmh-h8-ANB"/>
                 <constraint firstItem="5Tk-aa-mcd" firstAttribute="leading" secondItem="dtf-rt-YgU" secondAttribute="trailing" constant="16" id="o0G-wj-g36"/>
+                <constraint firstItem="pcu-GG-wOF" firstAttribute="leading" secondItem="1" secondAttribute="leading" constant="127" id="oAE-G1-RIg"/>
                 <constraint firstItem="5Tk-aa-mcd" firstAttribute="top" secondItem="xWM-HM-1I0" secondAttribute="bottom" constant="4" id="ocj-00-0jF"/>
                 <constraint firstItem="9vW-yX-OQe" firstAttribute="leading" secondItem="1" secondAttribute="leading" constant="16" id="pOB-Sr-g1k"/>
                 <constraint firstItem="dtf-rt-YgU" firstAttribute="top" secondItem="1" secondAttribute="top" constant="20" id="qcJ-mR-Qub"/>
                 <constraint firstItem="6NX-bH-me7" firstAttribute="top" secondItem="9vW-yX-OQe" secondAttribute="bottom" constant="8" id="vev-9J-iEF"/>
+                <constraint firstItem="pcu-GG-wOF" firstAttribute="centerY" secondItem="BNJ-Yk-CTN" secondAttribute="centerY" id="weN-Ac-FZO"/>
                 <constraint firstAttribute="trailing" secondItem="6NX-bH-me7" secondAttribute="trailing" constant="16" id="zeY-oF-aWT"/>
             </constraints>
             <point key="canvasLocation" x="23.199999999999999" y="50.824587706146929"/>

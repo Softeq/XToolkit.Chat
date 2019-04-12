@@ -6,6 +6,7 @@ using CoreGraphics;
 using FFImageLoading;
 using FFImageLoading.Transformations;
 using Softeq.XToolkit.Bindings;
+using Softeq.XToolkit.Chat.iOS.Controls;
 using Softeq.XToolkit.Chat.iOS.Extensions;
 using Softeq.XToolkit.WhiteLabel.iOS.Controls;
 using Softeq.XToolkit.WhiteLabel.iOS.Extensions;
@@ -23,7 +24,7 @@ namespace Softeq.XToolkit.Chat.iOS.Views
 
         public UITextField ChatNameField => ChatNameTextField;
 
-        public UILabel ChatNameTextView => ChatNameLabel;
+        public AutoScrollLabel ChatNameTextView => ChatNameLabel;
 
         public bool IsNotificationsMuted
         {
@@ -56,8 +57,9 @@ namespace Softeq.XToolkit.Chat.iOS.Views
 
         public void EnableEditMode(bool isEditMode)
         {
-            ChatNameLabel.Hidden = !isEditMode;
-            ChatNameTextField.Hidden = isEditMode;
+            ChatNameLabel.Hidden = isEditMode;
+            //ChatNameLabelHeight.Constant = isEditMode ?
+            //ChatNameTextField.Hidden = !isEditMode;
             MuteContainer.Hidden = isEditMode;
         }
 

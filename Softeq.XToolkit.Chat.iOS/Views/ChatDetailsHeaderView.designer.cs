@@ -25,7 +25,10 @@ namespace Softeq.XToolkit.Chat.iOS.Views
 		FFImageLoading.Cross.MvxCachedImageView ChatAvatarImageView { get; set; }
 
 		[Outlet]
-		UIKit.UILabel ChatNameLabel { get; set; }
+		Softeq.XToolkit.Chat.iOS.Controls.AutoScrollLabel ChatNameLabel { get; set; }
+
+		[Outlet]
+		UIKit.NSLayoutConstraint ChatNameLabelHeight { get; set; }
 
 		[Outlet]
 		UIKit.UITextField ChatNameTextField { get; set; }
@@ -70,6 +73,11 @@ namespace Softeq.XToolkit.Chat.iOS.Views
 			if (ChatNameLabel != null) {
 				ChatNameLabel.Dispose ();
 				ChatNameLabel = null;
+			}
+
+			if (ChatNameLabelHeight != null) {
+				ChatNameLabelHeight.Dispose ();
+				ChatNameLabelHeight = null;
 			}
 
 			if (ChatNameTextField != null) {
