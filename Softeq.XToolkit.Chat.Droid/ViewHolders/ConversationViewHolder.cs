@@ -102,14 +102,14 @@ namespace Softeq.XToolkit.Chat.Droid.ViewHolders
             }));
 
             AttachmentImageView.Visibility = ViewStates.Gone;
-            AttachmentImageView.SetImageDrawable(null);
 
             if (_viewModelRef.Target.HasAttachment)
             {
                 var model = _viewModelRef.Target.Model;
                 var expr = default(TaskParameter);
 
-                AttachmentImageView.SetImageDrawable(null);
+                AttachmentImageView.SetImageResource(StyleHelper.Style.AttachmentImagePlaceholder);
+                UpdateAttachmentImageViewSizeAndVisibility();
 
                 if (!string.IsNullOrEmpty(model.ImageCacheKey))
                 {
@@ -128,14 +128,7 @@ namespace Softeq.XToolkit.Chat.Droid.ViewHolders
                 expr.DownSampleInDip(90, 90)
                     .Finish(x =>
                     {
-                        Execute.BeginOnUIThread(() =>
-                        {
-                            var lp = AttachmentImageView.LayoutParameters;
-                            (lp.Width, lp.Height) = CalculateAttachmentImageViewSize();
-                            AttachmentImageView.LayoutParameters = lp;
-
-                            AttachmentImageView.Visibility = ViewStates.Visible;
-                        });
+                        Execute.BeginOnUIThread(UpdateAttachmentImageViewSizeAndVisibility);
                     })
                     .IntoAsync(AttachmentImageView);
             }
@@ -237,6 +230,15 @@ namespace Softeq.XToolkit.Chat.Droid.ViewHolders
                 DroidCloseButtonImageResId = Resource.Drawable.core_ic_close
             };
             _viewModelRef.Target?.ShowImage(options);
+        }
+
+        private void UpdateAttachmentImageViewSizeAndVisibility()
+        {
+            var lp = AttachmentImageView.LayoutParameters;
+            (lp.Width, lp.Height) = CalculateAttachmentImageViewSize();
+            AttachmentImageView.LayoutParameters = lp;
+
+            AttachmentImageView.Visibility = ViewStates.Visible;
         }
 
         protected virtual (int Width, int Height) CalculateAttachmentImageViewSize()
