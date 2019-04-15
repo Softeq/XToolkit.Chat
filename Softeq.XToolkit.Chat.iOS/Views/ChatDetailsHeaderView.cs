@@ -58,9 +58,17 @@ namespace Softeq.XToolkit.Chat.iOS.Views
         public void EnableEditMode(bool isEditMode)
         {
             ChatNameLabel.Hidden = isEditMode;
-            //ChatNameLabelHeight.Constant = isEditMode ?
-            //ChatNameTextField.Hidden = !isEditMode;
-            MuteContainer.Hidden = isEditMode;
+            ChatNameLabelHeight.Constant = isEditMode ? 0 : 24;
+
+            ChatNameTextField.Hidden = !isEditMode;
+            ChatNameTextField.Enabled = isEditMode;
+
+            ChatNameUnderline.Hidden = !isEditMode;
+        }
+
+        public void HideMuteContainer()
+        {
+            MuteContainer.Hidden = true;
         }
 
         public void SetAddMembersCommand(ICommand command, string label)
@@ -141,7 +149,8 @@ namespace Softeq.XToolkit.Chat.iOS.Views
             };
 
             EditedChatAvatarImageView.Hidden = true;
-            MuteContainer.Hidden = true;
+
+            ChatNameLabel.AnimationDuration = 5;
 
             ChangeChatPhotoButton.SetTitleColor(StyleHelper.Style.AccentColor, UIControlState.Normal);
             AddMembersButton.SetTitleColor(StyleHelper.Style.AccentColor, UIControlState.Normal);

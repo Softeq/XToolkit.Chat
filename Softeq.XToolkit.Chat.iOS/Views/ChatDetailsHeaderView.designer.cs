@@ -34,6 +34,9 @@ namespace Softeq.XToolkit.Chat.iOS.Views
 		UIKit.UITextField ChatNameTextField { get; set; }
 
 		[Outlet]
+		UIKit.UIView ChatNameUnderline { get; set; }
+
+		[Outlet]
 		FFImageLoading.Cross.MvxCachedImageView EditedChatAvatarImageView { get; set; }
 
 		[Outlet]
@@ -78,6 +81,11 @@ namespace Softeq.XToolkit.Chat.iOS.Views
 			if (ChatNameLabelHeight != null) {
 				ChatNameLabelHeight.Dispose ();
 				ChatNameLabelHeight = null;
+			}
+
+			if (ChatNameUnderline != null) {
+				ChatNameUnderline.Dispose ();
+				ChatNameUnderline = null;
 			}
 
 			if (ChatNameTextField != null) {

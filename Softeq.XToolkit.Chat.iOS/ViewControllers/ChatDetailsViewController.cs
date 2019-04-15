@@ -95,6 +95,7 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
             Bindings.Add(this.SetBinding(() => ViewModel.CanEdit).WhenSourceChanges(() =>
             {
                 _chatDetailsHeaderView.HideChangeChatPhoto(!ViewModel.CanEdit);
+                _chatDetailsHeaderView.EnableEditMode(ViewModel.CanEdit);
 
                 if (!ViewModel.CanEdit)
                 {

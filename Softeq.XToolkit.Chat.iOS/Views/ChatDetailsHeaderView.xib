@@ -18,6 +18,7 @@
                 <outlet property="ChatNameLabel" destination="pcu-GG-wOF" id="Azo-0a-UGG"/>
                 <outlet property="ChatNameLabelHeight" destination="MWm-DC-U5h" id="bqp-pH-zYE"/>
                 <outlet property="ChatNameTextField" destination="xWM-HM-1I0" id="1Pq-xu-F7G"/>
+                <outlet property="ChatNameUnderline" destination="5Tk-aa-mcd" id="r7T-2i-Wax"/>
                 <outlet property="EditedChatAvatarImageView" destination="BNJ-Yk-CTN" id="rvM-sI-iKT"/>
                 <outlet property="MembersCountLabel" destination="U3h-dX-rLS" id="lkK-Jc-Dqg"/>
                 <outlet property="MuteChatSwitch" destination="KsY-vB-Wea" id="m0h-Mh-2q4"/>
@@ -54,7 +55,7 @@
                         <constraint firstAttribute="bottom" secondItem="BNJ-Yk-CTN" secondAttribute="bottom" id="ybp-vP-DBL"/>
                     </constraints>
                 </view>
-                <textField opaque="NO" contentMode="scaleToFill" enabled="NO" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="Group Name" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="xWM-HM-1I0">
+                <textField opaque="NO" contentMode="scaleToFill" enabled="NO" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="Group Name" textAlignment="natural" adjustsFontSizeToFit="NO" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="xWM-HM-1I0">
                     <rect key="frame" x="127" y="55.5" width="232" height="24"/>
                     <nil key="textColor"/>
                     <fontDescription key="fontDescription" type="system" pointSize="20"/>

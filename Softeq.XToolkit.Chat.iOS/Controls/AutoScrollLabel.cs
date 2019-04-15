@@ -5,6 +5,7 @@ using UIKit;
 
 namespace Softeq.XToolkit.Chat.iOS.Controls
 {
+    // TODO YP: Experimental control
     [Register("AutoScrollLabel")]
     public class AutoScrollLabel : UIScrollView
     {
@@ -46,11 +47,11 @@ namespace Softeq.XToolkit.Chat.iOS.Controls
             UpdateSizes();
         }
 
-        public void StopAnimation()
-        {
-            Layer.RemoveAllAnimations();
-            // TODO YP: stop - start ... - don't work
-        }
+        // TODO YP: stop - start ... - don't work
+        //public void StopAnimation()
+        //{
+        //    Layer.RemoveAllAnimations();
+        //}
 
         private void Initialize()
         {
