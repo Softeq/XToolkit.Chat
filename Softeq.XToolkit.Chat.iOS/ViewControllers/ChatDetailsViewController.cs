@@ -47,6 +47,15 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
                 _chatDetailsHeaderView.SetChatAvatar(ViewModel.HeaderViewModel.AvatarUrl, ViewModel.HeaderViewModel.ChatName);
             }));
             Bindings.Add(this.SetBinding(() => ViewModel.HeaderViewModel.ChatName, () => _chatDetailsHeaderView.ChatNameField.Text, BindingMode.TwoWay));
+            Bindings.Add(this.SetBinding(() => ViewModel.HeaderViewModel.ChatName).WhenSourceChanges(() =>
+            {
+                var chatName = ViewModel.HeaderViewModel.ChatName;
+                if (!string.IsNullOrEmpty(chatName) && !ViewModel.CanEdit)
+                {
+                    _chatDetailsHeaderView.ChatNameTextView.Text = chatName;
+                    _chatDetailsHeaderView.ChatNameTextView.EnableAutoScroll();
+                }
+            }));
             Bindings.Add(this.SetBinding(() => ViewModel.HeaderViewModel.IsMuted, () => _chatDetailsHeaderView.IsNotificationsMuted));
             Bindings.Add(this.SetBinding(() => ViewModel.HeaderViewModel.IsBusy, () => _chatDetailsHeaderView.IsMuteNotificationsAvailable)
                 .ConvertSourceToTarget(x => !x));
@@ -86,6 +95,7 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
             Bindings.Add(this.SetBinding(() => ViewModel.CanEdit).WhenSourceChanges(() =>
             {
                 _chatDetailsHeaderView.HideChangeChatPhoto(!ViewModel.CanEdit);
+                _chatDetailsHeaderView.EnableEditMode(ViewModel.CanEdit);
 
                 if (!ViewModel.CanEdit)
                 {

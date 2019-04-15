@@ -150,6 +150,7 @@
     <Compile Include="Views\NewGroupView.designer.cs">
       <DependentUpon>NewGroupView.cs</DependentUpon>
     </Compile>
+    <Compile Include="Controls\AutoScrollLabel.cs" />
   </ItemGroup>
   <ItemGroup>
     <InterfaceDefinition Include="ViewControllers\ChatDetailsStoryboard.storyboard" />

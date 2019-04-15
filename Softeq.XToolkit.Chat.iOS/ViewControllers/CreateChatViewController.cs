@@ -104,6 +104,7 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
         {
             _chatDetailsHeaderView = new ChatDetailsHeaderView(new CGRect(0, 0, 200, 250));
             _chatDetailsHeaderView.EnableEditMode(true);
+            _chatDetailsHeaderView.HideMuteContainer();
             _chatDetailsHeaderView.ChatNamePlaceholder = ViewModel.LocalizedStrings.ChatName;
             _chatDetailsHeaderView.SetChangeChatPhotoCommand(new RelayCommand(OpenPicker), ViewModel.LocalizedStrings.ChangePhoto);
             _chatDetailsHeaderView.SetAddMembersCommand(ViewModel.AddMembersCommand, ViewModel.LocalizedStrings.AddMembers);
