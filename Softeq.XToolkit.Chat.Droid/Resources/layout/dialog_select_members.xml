@@ -1,22 +1,30 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:focusable="true" 
+    android:focusable="true"
     android:focusableInTouchMode="true"
     android:orientation="vertical">
     <com.softeq.xtoolkit.whitelabel.droid.NavigationBarView
         android:id="@+id/dialog_select_members_nav_bar"
         android:layout_width="match_parent"
         android:layout_height="56dp" />
-    <RelativeLayout
-        android:id="@+id/dialog_select_members_serch_container"
+    <LinearLayout
+        android:id="@+id/dialog_select_members_search_container"
         android:layout_width="match_parent"
-        android:layout_height="48dp">
+        android:layout_height="48dp"
+        android:orientation="horizontal">
+        <ImageView
+            android:id="@+id/dialog_select_members_search_icon"
+            android:background="@drawable/chat_ic_search"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="10dp"
+            android:layout_gravity="center_vertical" />
         <EditText
-            android:id="@+id/dialog_select_members_serch_text"
+            android:id="@+id/dialog_select_members_search_text"
             android:layout_marginLeft="24dp"
             android:layout_marginRight="24dp"
             android:layout_width="match_parent"
@@ -25,7 +33,7 @@
             android:maxLines="1"
             android:inputType="text"
             android:hint="Search" />
-    </RelativeLayout>
+    </LinearLayout>
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -47,5 +55,5 @@
             android:id="@+id/dialog_select_members_busy_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
-    </RelativeLayout>  
+    </RelativeLayout>
 </LinearLayout>

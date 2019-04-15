@@ -43,10 +43,10 @@ namespace Softeq.XToolkit.Chat.Droid.Views
 
             InitNavigationBarView(view);
 
-            var searchContainer = View.FindViewById<View>(Resource.Id.dialog_select_members_serch_container);
+            var searchContainer = View.FindViewById<View>(Resource.Id.dialog_select_members_search_container);
             searchContainer.SetBackgroundResource(StyleHelper.Style.UnderlinedBg);
 
-            _editText = View.FindViewById<EditText>(Resource.Id.dialog_select_members_serch_text);
+            _editText = View.FindViewById<EditText>(Resource.Id.dialog_select_members_search_text);
             _editText.Hint = ViewModel.Resources.Search;
 
             InitSelectedRecyclerView(view);
