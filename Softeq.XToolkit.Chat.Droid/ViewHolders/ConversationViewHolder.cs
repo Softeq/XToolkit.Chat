@@ -21,6 +21,7 @@ using Softeq.XToolkit.WhiteLabel.ViewModels;
 using PopupMenu = Android.Support.V7.Widget.PopupMenu;
 using Softeq.XToolkit.Common.Droid.Extensions;
 using Android.Content;
+using Plugin.CurrentActivity;
 
 namespace Softeq.XToolkit.Chat.Droid.ViewHolders
 {
@@ -240,7 +241,7 @@ namespace Softeq.XToolkit.Chat.Droid.ViewHolders
 
         protected virtual (int Width, int Height) CalculateAttachmentImageViewSize()
         {
-            var context = ItemView.Context;
+            var context = CrossCurrentActivity.Current.AppContext;
 
             var originalImageWidth = context.ToPixels(AttachmentImageView.Drawable.IntrinsicWidth);
             var originalImageHeight = context.ToPixels(AttachmentImageView.Drawable.IntrinsicHeight);
