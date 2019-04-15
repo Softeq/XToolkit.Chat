@@ -89,6 +89,11 @@ namespace Softeq.XToolkit.Chat.Droid.ViewHolders
                 // TODO: check
                 Execute.OnUIThread(() =>
                 {
+                    if (string.IsNullOrEmpty(_viewModelRef.Target.Body) && _viewModelRef.Target.HasAttachment)
+                    {
+                        MessageBodyTextView.Visibility = ViewStates.Gone;
+                        return;
+                    }
                     MessageBodyTextView.Text = _viewModelRef.Target.Body;
                 });
             }));
