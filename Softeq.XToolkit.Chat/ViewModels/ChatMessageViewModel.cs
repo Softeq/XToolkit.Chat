@@ -67,6 +67,16 @@ namespace Softeq.XToolkit.Chat.ViewModels
             UpdateMessageModel(chatMessageViewModel.Model);
         }
 
+        public void MarkAsRead()
+        {
+            Model.IsRead = true;
+
+            Execute.BeginOnUIThread(() =>
+            {
+                RaisePropertyChanged(nameof(Status));
+            });
+        }
+
         public bool Equals(ChatMessageViewModel other)
         {
             if (other is null)

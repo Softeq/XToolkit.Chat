@@ -321,9 +321,9 @@ namespace Softeq.XToolkit.Chat.SignalRClient
                 }));
 
             _subscriptions.Add(_connection.On<string>(ClientEvents.LastReadMessageChanged,
-                chatName =>
+                channelId =>
                 {
-                    LastReadMessageChanged?.Invoke(chatName);
+                    LastReadMessageChanged?.Invoke(channelId);
                 }));
         }
     }

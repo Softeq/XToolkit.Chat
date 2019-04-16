@@ -22,8 +22,8 @@ namespace Softeq.XToolkit.Chat
         private readonly IHttpChatAdapter _httpChatAdapter;
         private readonly ILogger _logger;
 
-        private readonly Subject<ChatMessageModel> _messageReceived = new Subject<ChatMessageModel>();
-        private readonly Subject<ChatMessageModel> _messageEdited = new Subject<ChatMessageModel>();
+        private readonly ISubject<ChatMessageModel> _messageReceived = new Subject<ChatMessageModel>();
+        private readonly ISubject<ChatMessageModel> _messageEdited = new Subject<ChatMessageModel>();
 
         private readonly SemaphoreSlim _semaphoreSlim = new SemaphoreSlim(1, 1);
         private string _cachedUserId;
@@ -49,6 +49,7 @@ namespace Softeq.XToolkit.Chat
         public IObservable<(string ChatId, bool IsMuted)> IsChatMutedChanged => _socketChatAdapter.IsChatMutedChanged;
         public IObservable<(string ChatId, int NewCount)> UnreadMessageCountChanged => _socketChatAdapter.UnreadMessageCountChanged;
         public IObservable<string> ChatRemoved => _socketChatAdapter.ChatRemoved;
+        public IObservable<string> ChatRead => _socketChatAdapter.ChatRead;
         public IObservable<SocketConnectionStatus> ConnectionStatusChanged => _socketChatAdapter.ConnectionStatusChanged;
 
         public SocketConnectionStatus ConnectionStatus => _socketChatAdapter.ConnectionStatus;

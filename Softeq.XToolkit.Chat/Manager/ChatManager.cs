@@ -96,6 +96,7 @@ namespace Softeq.XToolkit.Chat.Manager
         public IObservable<IList<ChatMessageModel>> MessagesBatchUpdated => _messagesBatchUpdated;
         public IObservable<IList<string>> MessagesBatchDeleted => _messagesBatchDeleted;
         public IObservable<ConnectionStatus> ConnectionStatusChanged => _connectionStatusChanged;
+        public IObservable<string> ChatRead => _chatService.ChatRead;
 
         public ObservableRangeCollection<ChatSummaryViewModel> ChatsCollection { get; }
             = new ObservableRangeCollection<ChatSummaryViewModel>();

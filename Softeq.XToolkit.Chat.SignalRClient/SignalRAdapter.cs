@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.Net.WebSockets;
+using System.Reactive.Linq;
 using System.Reactive.Subjects;
 using System.Threading;
 using System.Threading.Tasks;
@@ -29,13 +30,13 @@ namespace Softeq.XToolkit.Chat.SignalRClient
         private readonly SignalRClient _signalRClient;
 
         private readonly SemaphoreSlim _semaphoreSlim = new SemaphoreSlim(1, 1);
-        private readonly Subject<ChatMessageModel> _messageReceived = new Subject<ChatMessageModel>();
-        private readonly Subject<ChatMessageModel> _messageEdited = new Subject<ChatMessageModel>();
-        private readonly Subject<(string DeletedMessageId, ChatSummaryModel UpdatedChatSummary)> _messageDeleted
+        private readonly ISubject<ChatMessageModel> _messageReceived = new Subject<ChatMessageModel>();
+        private readonly ISubject<ChatMessageModel> _messageEdited = new Subject<ChatMessageModel>();
+        private readonly ISubject<(string DeletedMessageId, ChatSummaryModel UpdatedChatSummary)> _messageDeleted
             = new Subject<(string DeletedMessageId, ChatSummaryModel UpdatedChatSummary)>();
-        private readonly Subject<ChatSummaryModel> _chatAdded = new Subject<ChatSummaryModel>();
-        private readonly Subject<string> _chatRemoved = new Subject<string>();
-        private readonly Subject<SocketConnectionStatus> _connectionStatusChanged = new Subject<SocketConnectionStatus>();
+        private readonly ISubject<ChatSummaryModel> _chatAdded = new Subject<ChatSummaryModel>();
+        private readonly ISubject<string> _chatRemoved = new Subject<string>();
+        private readonly ISubject<SocketConnectionStatus> _connectionStatusChanged = new Subject<SocketConnectionStatus>();
 
         private string _memberId;
         private bool _isConnected = false;
@@ -66,6 +67,8 @@ namespace Softeq.XToolkit.Chat.SignalRClient
         public IObservable<ChatSummaryModel> ChatAdded => _chatAdded;
 
         public IObservable<string> ChatRemoved => _chatRemoved;
+
+        public IObservable<string> ChatRead { get; private set; }
 
         public IObservable<string> MessageRead => null;
 
@@ -248,6 +251,11 @@ namespace Softeq.XToolkit.Chat.SignalRClient
             {
                 _chatRemoved.OnNext(channel.Id.ToString());
             };
+
+            ChatRead = Observable.FromEvent<string>(
+                h => _signalRClient.LastReadMessageChanged += h,
+                h => _signalRClient.LastReadMessageChanged -= h);
+
             _signalRClient.MemberLeft += (user, channelId) =>
             {
                 if (user == null)
