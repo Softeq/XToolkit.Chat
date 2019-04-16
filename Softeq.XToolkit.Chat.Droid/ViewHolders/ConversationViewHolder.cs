@@ -227,7 +227,7 @@ namespace Softeq.XToolkit.Chat.Droid.ViewHolders
         {
             if (sender is MvxCachedImageView mvxCachedImage && mvxCachedImage.Drawable is VectorDrawable)
             {
-                return; // skip for placeholder
+                return; // ignore placeholder
             }
 
             var url = _viewModelRef.Target?.Model?.ImageRemoteUrl;
