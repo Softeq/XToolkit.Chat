@@ -22,6 +22,8 @@ using PopupMenu = Android.Support.V7.Widget.PopupMenu;
 using Softeq.XToolkit.Common.Droid.Extensions;
 using Android.Content;
 using Plugin.CurrentActivity;
+using Softeq.XToolkit.Common.Droid.Converters;
+using Android.Graphics.Drawables;
 
 namespace Softeq.XToolkit.Chat.Droid.ViewHolders
 {
@@ -89,11 +91,8 @@ namespace Softeq.XToolkit.Chat.Droid.ViewHolders
                 // TODO: check
                 Execute.OnUIThread(() =>
                 {
-                    if (string.IsNullOrEmpty(_viewModelRef.Target.Body) && _viewModelRef.Target.HasAttachment)
-                    {
-                        MessageBodyTextView.Visibility = ViewStates.Gone;
-                        return;
-                    }
+                    var hideMessageBody = string.IsNullOrEmpty(_viewModelRef.Target.Body) && _viewModelRef.Target.HasAttachment;
+                    MessageBodyTextView.Visibility = BoolToViewStateConverter.ConvertGone(hideMessageBody == false);
                     MessageBodyTextView.Text = _viewModelRef.Target.Body;
                 });
             }));
@@ -105,8 +104,6 @@ namespace Softeq.XToolkit.Chat.Droid.ViewHolders
                     MessageDateTimeTextView.Text = _viewModelRef.Target.TextDateTime;
                 });
             }));
-
-            AttachmentImageView.Visibility = ViewStates.Gone;
 
             if (_viewModelRef.Target.HasAttachment)
             {
@@ -136,6 +133,11 @@ namespace Softeq.XToolkit.Chat.Droid.ViewHolders
                         Execute.BeginOnUIThread(UpdateAttachmentImageViewSizeAndVisibility);
                     })
                     .IntoAsync(AttachmentImageView);
+            }
+            else
+            {
+                AttachmentImageView.SetImageDrawable(null);
+                AttachmentImageView.Visibility = ViewStates.Gone;
             }
 
             if (_isIncomingMessageViewType && SenderPhotoImageView != null)
@@ -223,6 +225,11 @@ namespace Softeq.XToolkit.Chat.Droid.ViewHolders
 
         private void OnMessageImageClicked(object sender, EventArgs e)
         {
+            if (sender is MvxCachedImageView mvxCachedImage && mvxCachedImage.Drawable is VectorDrawable)
+            {
+                return; // skip for placeholder
+            }
+
             var url = _viewModelRef.Target?.Model?.ImageRemoteUrl;
             if (url == null)
             {
