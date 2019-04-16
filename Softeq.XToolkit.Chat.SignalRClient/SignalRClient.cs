@@ -3,7 +3,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.SignalR.Client;
 using Microsoft.Extensions.Logging;
@@ -98,6 +97,11 @@ namespace Softeq.XToolkit.Chat.SignalRClient
         public Task<ChannelSummaryResponse> CreateChannelAsync(CreateChannelRequest request)
         {
             return SendAndHandleExceptionsAsync<ChannelSummaryResponse>(ServerMethods.CreateChannelAsync, request);
+        }
+
+        public Task<ChannelSummaryResponse> CreateDirectChannelAsync(CreateDirectChannelRequest request)
+        {
+            return SendAndHandleExceptionsAsync<ChannelSummaryResponse>(ServerMethods.CreateDirectChannelAsync, request);
         }
 
         public Task<ChannelSummaryResponse> UpdateChannelAsync(UpdateChannelRequest request)

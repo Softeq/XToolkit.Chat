@@ -22,6 +22,8 @@ using PopupMenu = Android.Support.V7.Widget.PopupMenu;
 using Softeq.XToolkit.Common.Droid.Extensions;
 using Android.Content;
 using Plugin.CurrentActivity;
+using Softeq.XToolkit.Common.Droid.Converters;
+using Android.Graphics.Drawables;
 
 namespace Softeq.XToolkit.Chat.Droid.ViewHolders
 {
@@ -89,6 +91,8 @@ namespace Softeq.XToolkit.Chat.Droid.ViewHolders
                 // TODO: check
                 Execute.OnUIThread(() =>
                 {
+                    var hideMessageBody = string.IsNullOrEmpty(_viewModelRef.Target.Body) && _viewModelRef.Target.HasAttachment;
+                    MessageBodyTextView.Visibility = BoolToViewStateConverter.ConvertGone(hideMessageBody == false);
                     MessageBodyTextView.Text = _viewModelRef.Target.Body;
                 });
             }));
@@ -101,15 +105,13 @@ namespace Softeq.XToolkit.Chat.Droid.ViewHolders
                 });
             }));
 
-            AttachmentImageView.Visibility = ViewStates.Gone;
-            AttachmentImageView.SetImageDrawable(null);
-
             if (_viewModelRef.Target.HasAttachment)
             {
                 var model = _viewModelRef.Target.Model;
                 var expr = default(TaskParameter);
 
-                AttachmentImageView.SetImageDrawable(null);
+                AttachmentImageView.SetImageResource(StyleHelper.Style.AttachmentImagePlaceholder);
+                UpdateAttachmentImageViewSizeAndVisibility();
 
                 if (!string.IsNullOrEmpty(model.ImageCacheKey))
                 {
@@ -128,16 +130,14 @@ namespace Softeq.XToolkit.Chat.Droid.ViewHolders
                 expr.DownSampleInDip(90, 90)
                     .Finish(x =>
                     {
-                        Execute.BeginOnUIThread(() =>
-                        {
-                            var lp = AttachmentImageView.LayoutParameters;
-                            (lp.Width, lp.Height) = CalculateAttachmentImageViewSize();
-                            AttachmentImageView.LayoutParameters = lp;
-
-                            AttachmentImageView.Visibility = ViewStates.Visible;
-                        });
+                        Execute.BeginOnUIThread(UpdateAttachmentImageViewSizeAndVisibility);
                     })
                     .IntoAsync(AttachmentImageView);
+            }
+            else
+            {
+                AttachmentImageView.SetImageDrawable(null);
+                AttachmentImageView.Visibility = ViewStates.Gone;
             }
 
             if (_isIncomingMessageViewType && SenderPhotoImageView != null)
@@ -225,6 +225,11 @@ namespace Softeq.XToolkit.Chat.Droid.ViewHolders
 
         private void OnMessageImageClicked(object sender, EventArgs e)
         {
+            if (sender is MvxCachedImageView mvxCachedImage && mvxCachedImage.Drawable is VectorDrawable)
+            {
+                return; // ignore placeholder
+            }
+
             var url = _viewModelRef.Target?.Model?.ImageRemoteUrl;
             if (url == null)
             {
@@ -237,6 +242,15 @@ namespace Softeq.XToolkit.Chat.Droid.ViewHolders
                 DroidCloseButtonImageResId = Resource.Drawable.core_ic_close
             };
             _viewModelRef.Target?.ShowImage(options);
+        }
+
+        private void UpdateAttachmentImageViewSizeAndVisibility()
+        {
+            var lp = AttachmentImageView.LayoutParameters;
+            (lp.Width, lp.Height) = CalculateAttachmentImageViewSize();
+            AttachmentImageView.LayoutParameters = lp;
+
+            AttachmentImageView.Visibility = ViewStates.Visible;
         }
 
         protected virtual (int Width, int Height) CalculateAttachmentImageViewSize()

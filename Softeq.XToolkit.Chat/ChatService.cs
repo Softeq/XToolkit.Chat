@@ -67,7 +67,7 @@ namespace Softeq.XToolkit.Chat
 
         public async Task<ChatSummaryModel> CreateDirectChatAsync(string memberId)
         {
-            var result = await _httpChatAdapter.CreateDirectChatAsync(memberId).ConfigureAwait(false);
+            var result = await _socketChatAdapter.CreateDirectChatAsync(memberId).ConfigureAwait(false);
 
             if (result == null)
             {

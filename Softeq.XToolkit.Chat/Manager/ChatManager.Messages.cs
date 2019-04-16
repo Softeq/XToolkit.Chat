@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Softeq.XToolkit.Chat.Exceptions;
@@ -85,17 +86,26 @@ namespace Softeq.XToolkit.Chat.Manager
             }
         }
 
-        // TODO YP: improve: upload photo before send message (immediately after select)
-        // when message canceled - send request for remove temp image
+        // TODO YP: need change current approach for upload photo (before sending message)
+        // Better way:
+        // - start upload immediately after select
+        // - when message canceled - send request for remove temp image
         private async Task<string> UploadImageAsync(ImagePickerArgs imagePickerArgs)
         {
             var imageUrl = default(string);
 
             if (imagePickerArgs != null)
             {
-                imageUrl = await _uploadImageService
-                    .UploadImageAsync(() => (imagePickerArgs.ImageStream(), imagePickerArgs.Extension))
-                    .ConfigureAwait(false);
+                try
+                {
+                    imageUrl = await _uploadImageService
+                        .UploadImageAsync(() => (imagePickerArgs.ImageStream(), imagePickerArgs.Extension))
+                        .ConfigureAwait(false);
+                }
+                catch (InvalidDataException ex)
+                {
+                    _logger.Error(ex);
+                }
             }
 
             return imageUrl;
