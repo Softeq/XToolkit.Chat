@@ -109,6 +109,19 @@ namespace Softeq.XToolkit.Chat.SignalRClient
             }));
         }
 
+        public Task<ChatSummaryModel> CreateDirectChatAsync(string memberId)
+        {
+            return CheckConnectionAndSendRequest(new TaskReference<ChatSummaryModel>(async () =>
+            {
+                var createChannelRequest = new CreateDirectChannelRequest
+                {
+                    MemberId = memberId
+                };
+                var dto = await _signalRClient.CreateDirectChannelAsync(createChannelRequest).ConfigureAwait(false);
+                return Mapper.DtoToChatSummary(dto);
+            }));
+        }
+
         public Task InviteMembersAsync(string chatId, IList<string> participantsIds)
         {
             return CheckConnectionAndSendRequest(new TaskReference(() =>
@@ -357,7 +370,7 @@ namespace Softeq.XToolkit.Chat.SignalRClient
             {
                 _semaphoreSlim.Release();
             }
-            
+
             if (!_isConnected)
             {
                 await Task.Delay(5000).ConfigureAwait(false);

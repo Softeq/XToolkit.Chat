@@ -24,6 +24,7 @@ namespace Softeq.XToolkit.Chat.Models.Interfaces
         SocketConnectionStatus ConnectionStatus { get; }
 
         Task<ChatSummaryModel> CreateChatAsync(string chatName, IList<string> participantsIds, string chatAvatar);
+        Task<ChatSummaryModel> CreateDirectChatAsync(string memberId);
         Task CloseChatAsync(string chatId);
         Task LeaveChatAsync(string chatId);
         Task InviteMembersAsync(string chatId, IList<string> participantsIds);

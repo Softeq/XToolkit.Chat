@@ -31,6 +31,7 @@ namespace Softeq.XToolkit.Chat.SignalRClient
         public const string JoinToChannelAsync = "JoinToChannelAsync";
 
         public const string CreateChannelAsync = "CreateChannelAsync";
+        public const string CreateDirectChannelAsync = "CreateDirectChannelAsync";
         public const string UpdateChannelAsync = "UpdateChannelAsync";
         public const string CloseChannelAsync = "CloseChannelAsync";
 
