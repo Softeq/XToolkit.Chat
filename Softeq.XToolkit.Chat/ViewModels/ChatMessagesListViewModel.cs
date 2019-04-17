@@ -57,6 +57,7 @@ namespace Softeq.XToolkit.Chat.ViewModels
             Subscribe(_chatManager.MessagesBatchAdded, OnMessagesBatchReceived);
             Subscribe(_chatManager.MessagesBatchUpdated, OnMessagesBatchUpdated);
             Subscribe(_chatManager.MessagesBatchDeleted, OnMessagesBatchDeleted);
+            Subscribe(_chatManager.ChatRead, OnChatRead);
 
             if (!_areLatestMessagesLoaded)
             {
@@ -114,6 +115,18 @@ namespace Softeq.XToolkit.Chat.ViewModels
         public void OnMessagesBatchDeleted(IList<string> deletedMessagesIds)
         {
             DeleteAllMessages(x => deletedMessagesIds.Contains(x.Id));
+        }
+
+        public void OnChatRead(string chatId)
+        {
+            if (chatId != _chatId)
+            {
+                return;
+            }
+
+            Messages.SelectMany(x => x)
+                    .Where(x => !x.IsRead)
+                    .Apply(x => x.MarkAsRead());
         }
 
         private void AddNewMessages(IList<ChatMessageViewModel> messages)
@@ -178,7 +191,7 @@ namespace Softeq.XToolkit.Chat.ViewModels
                 return;
             }
             var lastMessage = Messages.SelectMany(x => x).Last();
-            if (!lastMessage.IsRead)
+            if (!lastMessage.IsRead && !lastMessage.IsMine)
             {
                 await _chatManager.MarkMessageAsReadAsync(_chatId, lastMessage.Id).ConfigureAwait(false);
             }

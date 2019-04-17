@@ -72,6 +72,7 @@
     <Folder Include="Extensions\" />
     <Folder Include="TableSources\" />
     <Folder Include="Controls\" />
+    <Folder Include="Converters\" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -151,6 +152,7 @@
       <DependentUpon>NewGroupView.cs</DependentUpon>
     </Compile>
     <Compile Include="Controls\AutoScrollLabel.cs" />
+    <Compile Include="Converters\ChatMessageStatusToImageConverter.cs" />
   </ItemGroup>
   <ItemGroup>
     <InterfaceDefinition Include="ViewControllers\ChatDetailsStoryboard.storyboard" />

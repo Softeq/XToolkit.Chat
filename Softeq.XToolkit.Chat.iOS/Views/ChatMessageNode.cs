@@ -23,6 +23,7 @@ using System.Threading.Tasks;
 using FFImageLoading.Work;
 using Softeq.XToolkit.WhiteLabel;
 using Softeq.XToolkit.WhiteLabel.Interfaces;
+using Softeq.XToolkit.Chat.iOS.Converters;
 
 namespace Softeq.XToolkit.Chat.iOS.Views
 {
@@ -39,6 +40,7 @@ namespace Softeq.XToolkit.Chat.iOS.Views
         private readonly ASImageNode _avatarImageNode = new ASImageNode();
         private readonly ASImageNode _attachmentImageNode = new ASImageNode();
         private readonly ASImageNode _statusImageNode = new ASImageNode();
+        private readonly ChatMessageStatusToImageConverter _statusToImageConverter = new ChatMessageStatusToImageConverter();
 
         private Binding _messageBodyBinding;
         private Binding _messageStatusBinding;
@@ -120,28 +122,10 @@ namespace Softeq.XToolkit.Chat.iOS.Views
 
             _messageStatusBinding = this.SetBinding(() => _viewModelRef.Target.Status).WhenSourceChanges(() =>
             {
-                if (_viewModelRef.Target == null)
+                if (_viewModelRef.Target != null)
                 {
-                    return;
+                    _statusImageNode.Image = _statusToImageConverter.ConvertValue(_viewModelRef.Target.Status);
                 }
-                var statusImage = default(UIImage);
-                //TODO VPY: need refactor this
-                switch (_viewModelRef.Target.Status)
-                {
-                    case Models.ChatMessageStatus.Sending:
-                        statusImage = UIImage.FromBundle(StyleHelper.Style.MessageSendingBoundleName);
-                        break;
-                    case Models.ChatMessageStatus.Delivered:
-                        statusImage = UIImage.FromBundle(StyleHelper.Style.MessageDeliveredBoundleName);
-                        break;
-                    case Models.ChatMessageStatus.Read:
-                        statusImage = UIImage.FromBundle(StyleHelper.Style.MessageReadBoundleName);
-                        break;
-                    case Models.ChatMessageStatus.Other:
-                        break;
-                    default: throw new InvalidEnumArgumentException();
-                }
-                _statusImageNode.Image = statusImage;
             });
         }
 

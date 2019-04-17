@@ -15,6 +15,8 @@ namespace Softeq.XToolkit.Chat.Interfaces
         IObservable<IList<ChatMessageModel>> MessagesBatchUpdated { get; }
         IObservable<IList<string>> MessagesBatchDeleted { get; }
 
+        IObservable<string> ChatRead { get; }
+
         Task<IList<ChatMessageViewModel>> LoadInitialMessagesAsync(string chatId, int count);
 
         Task<IList<ChatMessageViewModel>> LoadOlderMessagesAsync(

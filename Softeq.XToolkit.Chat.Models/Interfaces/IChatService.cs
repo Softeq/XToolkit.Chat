@@ -18,6 +18,7 @@ namespace Softeq.XToolkit.Chat.Models.Interfaces
 
         IObservable<ChatSummaryModel> ChatAdded { get; }
         IObservable<string> ChatRemoved { get; }
+        IObservable<string> ChatRead { get; }
         IObservable<(string ChatId, bool IsMuted)> IsChatMutedChanged { get; }
         IObservable<(string ChatId, int NewCount)> UnreadMessageCountChanged { get; }
 
