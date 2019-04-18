@@ -20,6 +20,7 @@ using Softeq.XToolkit.WhiteLabel.Messenger;
 
 namespace Softeq.XToolkit.Chat.Manager
 {
+    // TODO YP: hard refactoring needed
     public partial class ChatManager : IChatConnectionManager
     {
         private const string ChatsCacheKey = "chat_chats";
@@ -71,6 +72,7 @@ namespace Softeq.XToolkit.Chat.Manager
             _subscriptions.Add(_chatService.MessageDeleted.Subscribe(OnMessageDeleted));
             _subscriptions.Add(_chatService.ChatAdded.Subscribe(x => TryAddChat(x)));
             _subscriptions.Add(_chatService.ChatRemoved.Subscribe(OnChatRemoved));
+            _subscriptions.Add(_chatService.ChatRead.Subscribe(OnChatRead));
 
             _subscriptions.Add(_chatService.ConnectionStatusChanged.Subscribe(OnConnectionStatusChanged));
             OnConnectionStatusChanged(_chatService.ConnectionStatus);

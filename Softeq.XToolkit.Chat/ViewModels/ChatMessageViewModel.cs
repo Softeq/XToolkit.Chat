@@ -69,7 +69,7 @@ namespace Softeq.XToolkit.Chat.ViewModels
 
         public void MarkAsRead()
         {
-            Model.IsRead = true;
+            Model.ReadMessage();
 
             Execute.BeginOnUIThread(() =>
             {

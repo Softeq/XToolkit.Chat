@@ -66,6 +66,11 @@ namespace Softeq.XToolkit.Chat.Models
             ChannelType = chatMessageModel.ChannelType;
         }
 
+        public void ReadMessage()
+        {
+            IsRead = true;
+        }
+
         public bool IsEarlierThan(ChatMessageModel message)
         {
             return message != null && DateTime.DateTime.IsEarlierThan(message.DateTime.DateTime);

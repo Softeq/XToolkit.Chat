@@ -26,6 +26,7 @@ namespace Softeq.XToolkit.Chat.Models.Interfaces
 
         Task SaveMessagesAsync(string chatId, IList<ChatMessageModel> messages);
         Task RemoveMessagesAsync(string chatId);
+        void ReadMyLatestMessages(string chatId);
 
         Task PerformFullUpdate(IList<string> chatIds);
 
