@@ -16,6 +16,7 @@ using Softeq.XToolkit.Common.Interfaces;
 
 namespace Softeq.XToolkit.Chat
 {
+    // TODO YP: hard refactoring needed
     public class InMemoryMessagesCache : IMessagesCache
     {
         private readonly ILogger _logger;
@@ -55,14 +56,6 @@ namespace Softeq.XToolkit.Chat
                 }
 
                 return collection.Skip(lastReadMessageIndex - count + 1).ToList();
-
-                //var result = new List<ChatMessageModel>();
-                //var indexFrom = Math.Max(0, lastReadMessageIndex - count + 1);
-                //for (int i = indexFrom; i < collection.Count; i++)
-                //{
-                //    result.Add(collection[i]);
-                //}
-                //return result;
             }));
         }
 
@@ -86,12 +79,6 @@ namespace Softeq.XToolkit.Chat
                 if (indexFrom > count)
                 {
                     return collection.Skip(indexFrom - count).Take(count).ToList();
-                    //var result = new List<ChatMessageModel>();
-                    //for (int i = indexFrom - 1; i >= indexFrom - count; i--)
-                    //{
-                    //    result.Insert(0, collection[i]);
-                    //}
-                    //return result;
                 }
 
                 if (indexFrom > 0)
@@ -172,6 +159,16 @@ namespace Softeq.XToolkit.Chat
                 _messages.TryRemove(chatId, out List<ChatMessageModel> _);
             }
             return Task.FromResult(true);
+        }
+
+        public void ReadMyLatestMessages(string chatId)
+        {
+            var messages = GetMessagesCollectionForChat(chatId);
+            ModifyCollection(messages, x =>
+            {
+                x.Where(y => y.IsMine && !y.IsRead)
+                 .Apply(y => y.ReadMessage());
+            });
         }
 
         public async Task PerformFullUpdate(IList<string> chatIds)

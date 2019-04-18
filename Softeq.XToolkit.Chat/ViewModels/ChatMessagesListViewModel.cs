@@ -1,6 +1,6 @@
-﻿// Developed for [customer name] by Softeq Development Corporation
+﻿// Developed by Softeq Development Corporation
 // http://www.softeq.com
-//
+
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
@@ -125,7 +125,7 @@ namespace Softeq.XToolkit.Chat.ViewModels
             }
 
             Messages.SelectMany(x => x)
-                    .Where(x => !x.IsRead)
+                    .Where(x => x.IsMine)
                     .Apply(x => x.MarkAsRead());
         }
 

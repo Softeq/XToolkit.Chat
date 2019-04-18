@@ -184,6 +184,11 @@ namespace Softeq.XToolkit.Chat.Manager
             });
         }
 
+        private void OnChatRead(string chatId)
+        {
+            _messagesCache.ReadMyLatestMessages(chatId);
+        }
+
         private ChatMessageViewModel CreateAndAddNewTempMessage(ChatMessageModel message)
         {
             var messageViewModel = CreateMessageViewModel(message);
