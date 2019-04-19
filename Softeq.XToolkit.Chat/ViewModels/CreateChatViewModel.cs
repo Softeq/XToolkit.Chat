@@ -55,9 +55,9 @@ namespace Softeq.XToolkit.Chat.ViewModels
         
         public ICommand SaveCommand { get; private set; }
 
-        public ICommand AddMembersCommand { get; private set; }
+        public ICommand BackCommand { get; private set; }
 
-        public ICommand SaveCommand { get; private set; }
+        public ICommand AddMembersCommand { get; private set; }
 
         public string ContactsCountText => _formatService.PluralizeWithQuantity(Contacts.Count(x => x.IsSelected),
             LocalizedStrings.MembersPlural,
@@ -77,8 +77,8 @@ namespace Softeq.XToolkit.Chat.ViewModels
             base.OnInitialize();
 
             BackCommand = new RelayCommand(_pageNavigationService.GoBack, () => _pageNavigationService.CanGoBack);
-            AddMembersCommand = new RelayCommand(OpenDialogForAddMembers);
-            SaveCommand = new RelayCommand<Func<(Task<Stream>, string)>>(SaveAsync);
+            AddMembersCommand = new AsyncCommand(OpenDialogForAddMembersAsync);
+            SaveCommand = new AsyncCommand<Func<(Task<Stream>, string)>>(SaveAsync);
         }
 
         private async Task OpenDialogForAddMembersAsync()

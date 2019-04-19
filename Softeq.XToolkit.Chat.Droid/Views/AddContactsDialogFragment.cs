@@ -14,6 +14,7 @@ using Softeq.XToolkit.WhiteLabel.Droid.Dialogs;
 using Softeq.XToolkit.Chat.Droid.Listeners;
 using Softeq.XToolkit.Common;
 using Softeq.XToolkit.Common.Droid.Converters;
+using Softeq.XToolkit.Common.Command;
 
 namespace Softeq.XToolkit.Chat.Droid.Views
 {

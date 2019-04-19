@@ -84,7 +84,7 @@ namespace Softeq.XToolkit.Chat.ViewModels
 
             HeaderViewModel = new ChatDetailsHeaderViewModel(Summary, _uploadImageService, _chatsListManager);
 
-            AddMembersCommand = new RelayCommand(AddMembers);
+            AddMembersCommand = new AsyncCommand(AddMembers);
             BackCommand = new RelayCommand(_pageNavigationService.GoBack, () => _pageNavigationService.CanGoBack);
             RemoveMemberCommand = new RelayCommand<ChatUserViewModel>(x => RemoveMemberAsync(x).SafeTaskWrapper());
         }
