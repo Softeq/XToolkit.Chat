@@ -11,10 +11,10 @@ using Softeq.XToolkit.Chat.Models;
 using Softeq.XToolkit.Chat.Models.Enum;
 using Softeq.XToolkit.Chat.Models.Interfaces;
 using Softeq.XToolkit.Common.Collections;
-using Softeq.XToolkit.Common.Command;
 using Softeq.XToolkit.WhiteLabel.Mvvm;
 using Softeq.XToolkit.WhiteLabel.Navigation;
 using Softeq.XToolkit.Chat.Strategies.Search;
+using Softeq.XToolkit.Common.Command;
 using Softeq.XToolkit.Common.Extensions;
 using Softeq.XToolkit.WhiteLabel;
 using Softeq.XToolkit.WhiteLabel.Model;
@@ -129,7 +129,7 @@ namespace Softeq.XToolkit.Chat.ViewModels
             await _chatService.DeleteMemberAsync(Summary.Id, memberViewModel.Id).ConfigureAwait(false);
         }
 
-        private async void AddMembers()
+        private async Task AddMembers()
         {
             var result = await _dialogsService.ShowForViewModel<AddContactsViewModel, AddContactParameters>(
                 new AddContactParameters

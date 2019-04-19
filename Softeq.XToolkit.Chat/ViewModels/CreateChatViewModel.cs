@@ -52,8 +52,8 @@ namespace Softeq.XToolkit.Chat.ViewModels
         }
 
         public IChatLocalizedStrings LocalizedStrings { get; }
-
-        public ICommand BackCommand { get; private set; }
+        
+        public ICommand SaveCommand { get; private set; }
 
         public ICommand AddMembersCommand { get; private set; }
 
@@ -81,7 +81,7 @@ namespace Softeq.XToolkit.Chat.ViewModels
             SaveCommand = new RelayCommand<Func<(Task<Stream>, string)>>(SaveAsync);
         }
 
-        private async void OpenDialogForAddMembers()
+        private async Task OpenDialogForAddMembersAsync()
         {
             var result = await _dialogsService.ShowForViewModel<AddContactsViewModel, AddContactParameters>(
                 new AddContactParameters
@@ -105,7 +105,7 @@ namespace Softeq.XToolkit.Chat.ViewModels
             }
         }
 
-        private async void SaveAsync(Func<(Task<Stream> GetImageTask, string Extension)> getImageFunc)
+        private async Task SaveAsync(Func<(Task<Stream> GetImageTask, string Extension)> getImageFunc)
         {
             if (IsBusy || string.IsNullOrEmpty(ChatName))
             {

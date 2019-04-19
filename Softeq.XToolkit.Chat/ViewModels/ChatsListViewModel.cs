@@ -36,8 +36,8 @@ namespace Softeq.XToolkit.Chat.ViewModels
             Chats = _chatsListManager.ChatsCollection;
 
             CreateChatCommand = new RelayCommand(CreateChat);
-            LeaveChatCommand = new RelayCommand<ChatSummaryViewModel>(x => LeaveChatAsync(x).SafeTaskWrapper());
-            DeleteChatCommand = new RelayCommand<ChatSummaryViewModel>(x => DeleteChatAsync(x).SafeTaskWrapper());
+            LeaveChatCommand = new AsyncCommand<ChatSummaryViewModel>(LeaveChatAsync);
+            DeleteChatCommand = new AsyncCommand<ChatSummaryViewModel>(DeleteChatAsync);
         }
 
         public ICommand CreateChatCommand { get; }

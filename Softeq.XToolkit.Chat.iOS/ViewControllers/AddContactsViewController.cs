@@ -47,6 +47,7 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
                     SelectedMembersCollectionViewTopConstraint.Constant = ViewModel.HasSelectedContacts
                         ? DefaultSelectedMembersCollectionTopConstraint + SelectedMembersCollectionView.Frame.Height
                         : DefaultSelectedMembersCollectionTopConstraint;
+
                     SelectedMembersCollectionView.LayoutIfNeeded();
                 });
             }));
