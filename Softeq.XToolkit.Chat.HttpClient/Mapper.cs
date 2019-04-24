@@ -24,7 +24,7 @@ namespace Softeq.XToolkit.Chat.HttpClient
                 IsClosed = dto.IsClosed,
                 IsMuted = dto.IsMuted,
                 IsPinned = dto.IsPinned,
-                CreatorId = dto.Creator?.SaasUserId,
+                CreatorId = dto.Creator?.Id,
                 DirectMember = DtoToChatUser(dto.DirectMember),
                 Description = dto.Description,
                 WelcomeMessage = dto.WelcomeMessage,
@@ -40,7 +40,7 @@ namespace Softeq.XToolkit.Chat.HttpClient
             {
                 Id = dto.Id.ToString(),
                 ChannelId = dto.ChannelId,
-                SenderId = dto.Sender?.SaasUserId,
+                SenderId = dto.Sender?.Id,
                 SenderName = dto.Sender?.UserName,
                 SenderPhotoUrl = dto.Sender?.AvatarUrl,
                 MessageType = DtoToMessageType(dto.Type),
@@ -57,7 +57,7 @@ namespace Softeq.XToolkit.Chat.HttpClient
         {
             return dto == null ? null : new ChatUserModel
             {
-                Id = dto.SaasUserId,
+                Id = dto.Id,
                 Username = dto.UserName,
                 PhotoUrl = dto.AvatarUrl,
                 LastActivity = dto.LastActivity,
