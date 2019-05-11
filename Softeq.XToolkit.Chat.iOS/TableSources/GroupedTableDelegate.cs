@@ -5,6 +5,7 @@ using System;
 using System.ComponentModel;
 using AsyncDisplayKitBindings;
 using CoreGraphics;
+using Foundation;
 using UIKit;
 
 namespace Softeq.XToolkit.Chat.iOS.TableSources
@@ -13,7 +14,7 @@ namespace Softeq.XToolkit.Chat.iOS.TableSources
     {
         private readonly bool _isInverted;
         public event PropertyChangedEventHandler PropertyChanged;
-        public event Action<ASBatchContext> MoreDataRequested;
+        public event Action<int> WillDisplayCell;
 
         public GroupedTableDelegate(bool isInverted = false)
         {
@@ -81,10 +82,9 @@ namespace Softeq.XToolkit.Chat.iOS.TableSources
             return new UIView();
         }
 
-        public override void WillBeginBatchFetchWithContext(ASTableNode tableNode, ASBatchContext context)
+        public override void WillDisplayNode(ASTableView tableView, ASCellNode node, NSIndexPath indexPath)
         {
-            context.BeginBatchFetching();
-            MoreDataRequested?.Invoke(context);
+            WillDisplayCell?.Invoke(indexPath.Row);
         }
 
         protected virtual void RaisePropertyChanged(string propertyName)

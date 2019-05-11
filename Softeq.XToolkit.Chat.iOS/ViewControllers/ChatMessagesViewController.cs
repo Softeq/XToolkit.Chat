@@ -2,7 +2,6 @@
 // http://www.softeq.com
 
 using System;
-using System.Linq;
 using System.Threading.Tasks;
 using AsyncDisplayKitBindings;
 using CoreGraphics;
@@ -18,37 +17,40 @@ using Softeq.XToolkit.Common.Extensions;
 using Softeq.XToolkit.WhiteLabel.iOS;
 using Softeq.XToolkit.WhiteLabel.iOS.Extensions;
 using Softeq.XToolkit.WhiteLabel.Threading;
+using System.Linq;
 using UIKit;
 
 namespace Softeq.XToolkit.Chat.iOS.ViewControllers
 {
-    //TODO VPY: hard refactoring needed
     public partial class ChatMessagesViewController : ViewControllerBase<ChatMessagesViewModel>
     {
-        private const int DefaultScrollDownBottomConstraintValue = 8;
         private const int MinCellHeight = 50;
         private const string ContentSizeKey = "contentSize";
 
-        protected readonly ASTableNode TableNode = new ASTableNode(UITableViewStyle.Grouped);
-
+        private NSLayoutConstraint _inputBottomConstraint;
+        private NSLayoutConstraint _scrollToBottomConstraint;
         private WeakReferenceEx<GroupedTableDataSource<DateTimeOffset, ChatMessageViewModel>> _dataSourceRef;
         private WeakReferenceEx<MessagesTableDelegate> _tableDelegateRef;
         private bool _isAutoScrollAvailable;
         private bool _isAutoScrollToBottomEnabled = true;
         private bool _shouldUpdateTableViewContentOffset;
-        private NSLayoutConstraint _tableViewBottomConstraint;
         private ContextMenuComponent _contextMenuComponent;
         private ConnectionStatusView _customTitleView;
 
         public ChatMessagesViewController(IntPtr handle) : base(handle) { }
 
+        protected ASTableNode TableNode { get; private set; }
+
+        protected ChatInputView Input { get; private set; }
+
         public override void ViewDidLoad()
         {
             base.ViewDidLoad();
 
-            SetupInputAccessoryView();
-
             _customTitleView = new ConnectionStatusView(CGRect.Empty);
+
+            TableNode = new ASTableNode(UITableViewStyle.Grouped);
+            Input = new ChatInputView() { TranslatesAutoresizingMaskIntoConstraints = false };
 
             CustomNavigationItem.AddTitleView(_customTitleView);
             CustomNavigationItem.SetCommand(
@@ -64,6 +66,9 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
                     false);
             }
 
+            MainView.InsertSubview(TableNode.View, 1);
+            MainView.InsertSubview(Input, 2);
+            InitializeInput();
             InitTableViewAsync().SafeTaskWrapper();
 
             _contextMenuComponent = new ContextMenuComponent();
@@ -73,13 +78,9 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
             UIMenuController.SharedMenuController.MenuItems = _contextMenuComponent.BuildMenuItems();
             UIMenuController.SharedMenuController.Update();
 
-            InputBar.ViewDidLoad(this);
-
-            InputBar.SetCommandWithArgs(nameof(InputBar.SendRaised), ViewModel.MessageInput.SendMessageCommand);
-            InputBar.SetCommand(nameof(InputBar.PickerWillOpen), new RelayCommand(UnregisterKeyboardObservers));
-            InputBar.EditingClose.SetCommand(ViewModel.MessageInput.CancelEditingCommand);
-            InputBar.EditingClose.SetImage(UIImage.FromBundle(StyleHelper.Style.CloseButtonImageBoundleName), UIControlState.Normal);
-            InputBar.SetLabels(
+            Input.SetCommandWithArgs(nameof(Input.SendRaised), ViewModel.MessageInput.SendMessageCommand);
+            Input.EditingCloseButton.SetCommand(ViewModel.MessageInput.CancelEditingCommand);
+            Input.SetLabels(
                 ViewModel.MessageInput.EditMessageHeaderString,
                 ViewModel.MessageInput.EnterMessagePlaceholderString);
 
@@ -89,8 +90,6 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
 
         public override void ViewWillAppear(bool animated)
         {
-            RegisterKeyboardObservers();
-
             base.ViewWillAppear(animated);
 
             ViewModel.MessageAddedCommand = new RelayCommand(OnMessageAdded);
@@ -99,11 +98,6 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
         public override void ViewDidAppear(bool animated)
         {
             base.ViewDidAppear(animated);
-
-            if (SafeAreaBottomOffset > 0)
-            {
-                InputBar.InvalidateIntrinsicContentSize();
-            }
 
             if (_tableDelegateRef.Target != null)
             {
@@ -115,19 +109,12 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
         {
             base.ViewWillDisappear(animated);
 
-            if (_isKeyboardOpened)
-            {
-                HideKeyboard();
-            }
-
             ViewModel.MessageAddedCommand = null;
 
             if (!NavigationController.ViewControllers.Contains(this))
             {
                 _dataSourceRef.Target?.UnsubscribeItemsChanged();
             }
-
-            UnregisterKeyboardObservers();
 
             if (_tableDelegateRef.Target != null)
             {
@@ -157,14 +144,14 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
         {
             base.DoAttachBindings();
 
-            Bindings.Add(this.SetBinding(() => ViewModel.MessageInput.MessageBody, () => InputBar.Input.Text, BindingMode.TwoWay));
+            Bindings.Add(this.SetBinding(() => ViewModel.MessageInput.MessageBody, () => Input.TextView.Text, BindingMode.TwoWay));
             Bindings.Add(this.SetBinding(() => ViewModel.MessageInput.IsInEditMessageMode).WhenSourceChanges(() =>
             {
                 if (ViewModel.MessageInput.IsInEditMessageMode)
                 {
-                    InputBar.StartEditing(ViewModel.MessageInput.EditedMessageOriginalBody);
+                    Input.StartEditing(ViewModel.MessageInput.EditedMessageOriginalBody);
                 }
-                InputBar.ChangeEditingMode(ViewModel.MessageInput.IsInEditMessageMode);
+                Input.ChangeEditingMode(ViewModel.MessageInput.IsInEditMessageMode);
             }));
             Bindings.Add(this.SetBinding(() => ViewModel.MessagesList.Messages, () => _dataSourceRef.Target.DataSource));
             Bindings.Add(this.SetBinding(() => ViewModel.ConnectionStatus.ConnectionStatusText).WhenSourceChanges(() =>
@@ -173,8 +160,28 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
             }));
             Bindings.Add(this.SetBinding(() => ViewModel.MessageInput.MessageBody).WhenSourceChanges(() =>
             {
-                InputBar.SetTextPlaceholdervisibility(string.IsNullOrEmpty(ViewModel.MessageInput.MessageBody));
+                Input.SetTextPlaceholdervisibility(string.IsNullOrEmpty(ViewModel.MessageInput.MessageBody));
             }));
+        }
+
+        private void InitializeInput()
+        {
+            _inputBottomConstraint = MainView.SafeAreaLayoutGuide.BottomAnchor.ConstraintEqualTo(Input.BottomAnchor);
+            _scrollToBottomConstraint = ScrollToBottomButton.BottomAnchor.ConstraintEqualTo(TableNode.View.BottomAnchor);
+            _scrollToBottomConstraint.Constant = -16;
+            NSLayoutConstraint.ActivateConstraints(new[]
+            {
+                TableNode.View.RightAnchor.ConstraintEqualTo(MainView.RightAnchor),
+                TableNode.View.LeftAnchor.ConstraintEqualTo(MainView.LeftAnchor),
+                Input.RightAnchor.ConstraintEqualTo(MainView.RightAnchor),
+                Input.LeftAnchor.ConstraintEqualTo(MainView.LeftAnchor),
+                TableNode.View.TopAnchor.ConstraintEqualTo(MainView.SafeAreaLayoutGuide.TopAnchor),
+                TableNode.View.BottomAnchor.ConstraintEqualTo(Input.TopAnchor),
+                _scrollToBottomConstraint,
+                _inputBottomConstraint
+            });
+
+            Input.Init(this, new ChatInputKeyboardDelegate(_inputBottomConstraint));
         }
 
         private async Task InitTableViewAsync()
@@ -184,20 +191,10 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
             await Task.Delay(1);
 
             TableNode.View.KeyboardDismissMode = UIScrollViewKeyboardDismissMode.Interactive;
-            TableNode.View.AddGestureRecognizer(new UITapGestureRecognizer(HideKeyboard));
+            TableNode.View.AddGestureRecognizer(new UITapGestureRecognizer(() => View.EndEditing(false)));
             TableNode.View.TranslatesAutoresizingMaskIntoConstraints = false;
             TableNode.View.BackgroundColor = UIColor.FromRGB(245, 245, 245);
             MainView.InsertSubview(TableNode.View, 1);
-
-            _tableViewBottomConstraint = TableNode.View.BottomAnchor.ConstraintEqualTo(MainView.BottomAnchor, -InputBarHeight);
-
-            NSLayoutConstraint.ActivateConstraints(new[]
-            {
-                TableNode.View.RightAnchor.ConstraintEqualTo(MainView.RightAnchor),
-                TableNode.View.LeftAnchor.ConstraintEqualTo(MainView.LeftAnchor),
-                TableNode.View.TopAnchor.ConstraintEqualTo(MainView.SafeAreaLayoutGuide.TopAnchor),
-                _tableViewBottomConstraint
-            });
 
             TableNode.View.RegisterNibForHeaderFooterViewReuse(MessagesDateHeaderViewCell.Nib, MessagesDateHeaderViewCell.Key);
 
@@ -212,7 +209,7 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
                 SectionHeaderHeight = 35f,
                 GetViewForHeaderDelegate = GetHeader
             };
-            tableDelegate.MoreDataRequested += OnMoreDataRequested;
+            tableDelegate.WillDisplayCell += OnWillDisplayCell;
             TableNode.ShouldAnimateSizeChanges = false;
             TableNode.LayerBacked = true;
             TableNode.RasterizationScale = 1;
@@ -242,10 +239,12 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
             return sectionFooter;
         }
 
-        private async void OnMoreDataRequested(ASBatchContext obj)
+        private void OnWillDisplayCell(int row)
         {
-            await ViewModel.MessagesList.LoadOlderMessagesAsync();
-            obj.CompleteBatchFetching(true);
+            if (row == ViewModel.MessagesList.Messages.SelectMany(x => x).Count() - 1)
+            {
+                ViewModel.MessagesList.LoadOlderMessagesAsync().SafeTaskWrapper();
+            }
         }
 
         private void TableViewContentSizeChanged(CGSize newSize, CGSize oldSize)
@@ -258,8 +257,6 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
 
                 TableNode.SetContentOffset(new CGPoint(0, TableNode.ContentOffset.Y + deltaHeight), false);
             }
-
-            //Console.WriteLine($"XXX: {newSize.Height} - {oldSize.Height} = {deltaHeight}, isAutoScroll:{_isAutoScrollToBottomEnabled}");
         }
 
         private void TableViewDelegateScrollPositionChanged(object sender, nfloat scrollPosition)
@@ -281,8 +278,6 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
 
                 _isAutoScrollToBottomEnabled = isAutoScrollAvailable;
             }
-
-            UpdateScrollDownButtonPosition();
         }
 
         private void OnMessageAdded()
@@ -301,30 +296,6 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
             {
                 var index = NSIndexPath.FromRowSection(0, 0);
                 TableNode.ScrollToRowAtIndexPath(index, UITableViewScrollPosition.None, isAnimated);
-            });
-        }
-
-        private void UpdateScrollDownButtonPosition()
-        {
-            if (InputBar.Superview == null || View.Superview == null)
-            {
-                return;
-            }
-
-            var newScrollDownBottomOffset = View.Superview.Frame.Height - InputBar.Superview.Frame.Y;
-            if (newScrollDownBottomOffset < InputBarHeight)
-            {
-                newScrollDownBottomOffset += SafeAreaBottomOffset;
-            }
-            ScrollDownBottomConstraint.Constant = newScrollDownBottomOffset + DefaultScrollDownBottomConstraintValue;
-        }
-
-        private void UpdateScrollDownButtonPositionWithAnimation()
-        {
-            UIView.Animate(0.1, () =>
-            {
-                UpdateScrollDownButtonPosition();
-                MainView.LayoutIfNeeded();
             });
         }
 

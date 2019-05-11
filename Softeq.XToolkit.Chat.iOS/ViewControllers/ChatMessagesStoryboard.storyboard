@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14460.31" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14490.70" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="retina5_9" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14460.20"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14490.49"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -28,7 +28,7 @@
                                     <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" animating="YES" style="gray" translatesAutoresizingMaskIntoConstraints="NO" id="cs2-Vj-07f">
                                         <rect key="frame" x="177.66666666666666" y="352" width="20" height="20"/>
                                     </activityIndicatorView>
-                                    <button hidden="YES" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="TSq-is-kiR">
+                                    <button hidden="YES" opaque="NO" contentMode="scaleToFill" ambiguous="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="TSq-is-kiR">
                                         <rect key="frame" x="309" y="666" width="50" height="50"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="50" id="hcr-JY-8m6"/>
@@ -40,7 +40,6 @@
                                 <constraints>
                                     <constraint firstAttribute="trailing" secondItem="TSq-is-kiR" secondAttribute="trailing" constant="16" id="38N-yR-bGU"/>
                                     <constraint firstItem="cs2-Vj-07f" firstAttribute="centerX" secondItem="5Z8-CY-Xex" secondAttribute="centerX" id="BVe-M2-ebz"/>
-                                    <constraint firstAttribute="bottom" secondItem="TSq-is-kiR" secondAttribute="bottom" constant="8" id="tmG-xS-jnD"/>
                                     <constraint firstItem="cs2-Vj-07f" firstAttribute="centerY" secondItem="5Z8-CY-Xex" secondAttribute="centerY" id="tvA-Ty-tIB"/>
                                 </constraints>
                             </view>
@@ -75,7 +74,6 @@
                         <outlet property="CustomNavigationItem" destination="gRt-yY-8pd" id="KJ3-1l-iAz"/>
                         <outlet property="MainView" destination="5Z8-CY-Xex" id="nfG-lh-GIo"/>
                         <outlet property="MainViewBottomConstraint" destination="D3j-6p-3aK" id="a24-gc-ggZ"/>
-                        <outlet property="ScrollDownBottomConstraint" destination="tmG-xS-jnD" id="G5y-Zj-9qI"/>
                         <outlet property="ScrollToBottomButton" destination="TSq-is-kiR" id="D4V-gp-0Bq"/>
                     </connections>
                 </viewController>

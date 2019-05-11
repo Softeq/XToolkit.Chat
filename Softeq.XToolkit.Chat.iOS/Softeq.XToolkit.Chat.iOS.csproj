@@ -122,7 +122,6 @@
     <Compile Include="Views\ChatMessagesInputBarView.designer.cs">
       <DependentUpon>ChatMessagesInputBarView.cs</DependentUpon>
     </Compile>
-    <Compile Include="ViewControllers\ChatMessagesViewController.InputAndKeyboard.cs" />
     <Compile Include="Controls\ContextMenuComponent.cs" />
     <Compile Include="Controls\ContextMenuActions.cs" />
     <Compile Include="StyleHelper.cs" />
@@ -153,6 +152,11 @@
     </Compile>
     <Compile Include="Controls\AutoScrollLabel.cs" />
     <Compile Include="Converters\ChatMessageStatusToImageConverter.cs" />
+    <Compile Include="Views\ChatInputKeyboardDelegate.cs" />
+    <Compile Include="Views\ChatInputView.cs" />
+    <Compile Include="Views\ChatInputView.designer.cs">
+      <DependentUpon>ChatInputView.cs</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <InterfaceDefinition Include="ViewControllers\ChatDetailsStoryboard.storyboard" />
@@ -170,6 +174,7 @@
     <InterfaceDefinition Include="Views\FilteredContactViewCell.xib" />
     <InterfaceDefinition Include="ViewControllers\NewChatStoryboard.storyboard" />
     <InterfaceDefinition Include="Views\NewGroupView.xib" />
+    <InterfaceDefinition Include="Views\ChatInputView.xib" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Softeq.XToolkit.Chat\Softeq.XToolkit.Chat.csproj">
