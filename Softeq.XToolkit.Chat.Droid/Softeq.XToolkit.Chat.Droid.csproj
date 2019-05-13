@@ -97,6 +97,7 @@
     <Compile Include="Listeners\LoadMoreScrollListener.cs" />
     <Compile Include="Views\NewChatActivity.cs" />
     <Compile Include="Controls\LeftOffsetItemDecoration.cs" />
+    <Compile Include="Controls\ChatInputView.cs" />
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\layout\activity_chat_details.xml" />
@@ -125,6 +126,7 @@
     <AndroidResource Include="Resources\drawable\chat_ic_search.xml" />
     <AndroidResource Include="Resources\layout\item_chat_new_contact.xml" />
     <AndroidResource Include="Resources\drawable\chat_underlined_bg.xml" />
+    <AndroidResource Include="Resources\layout\view_chat_input.xml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Views\" />

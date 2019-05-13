@@ -19,7 +19,7 @@
             android:layout_height="0dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintBottom_toTopOf="@+id/v_conversations_divider"
+            app:layout_constraintBottom_toTopOf="@+id/ll_chat_input_view"
             app:layout_constraintTop_toBottomOf="@+id/activity_chat_conversations_navigation_bar"/>
         <ImageButton
             android:id="@+id/ib_conversations_scroll_down"
@@ -30,140 +30,12 @@
             android:background="@android:color/transparent"
             android:layout_marginRight="16dp"
             android:layout_marginBottom="12dp"
-            app:layout_constraintBottom_toTopOf="@+id/ll_conversations_message_input"
+            app:layout_constraintBottom_toTopOf="@+id/ll_chat_input_view"
             app:layout_constraintRight_toRightOf="parent" />
-        
-        <View
-            android:id="@+id/v_conversations_divider"
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="#dfdfdf"
-            app:layout_constraintBottom_toTopOf="@+id/edit_container" />
-        
-        <LinearLayout
-            android:id="@+id/edit_container"
+        <com.softeq.xtoolkit.chat.droid.ChatInputView 
+            android:id="@+id/ll_chat_input_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_above="@+id/ll_conversations_message_input"
-            app:layout_constraintBottom_toTopOf="@+id/ll_conversations_message_input"
-            android:background="@android:color/white">
-            
-            <RelativeLayout
-                android:layout_marginLeft="16dp"
-                android:layout_marginTop="8dp"
-                android:id="@+id/activity_chat_conversations_image_preview_container"
-                android:layout_width="60dp"
-                android:layout_height="60dp">
-                
-                <FFImageLoading.Views.ImageViewAsync
-                    android:layout_width="60dp"
-                    android:layout_height="60dp"
-                    android:scaleType="centerCrop"
-                    android:id="@+id/activity_chat_conversations_preview_image" />
-                
-                <ImageButton
-                    android:id="@+id/activity_chat_conversations_remove_image_button"
-                    android:background="@android:color/transparent"
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:layout_alignParentRight="true" />
-                
-            </RelativeLayout>
-            
-            <RelativeLayout
-                android:id="@+id/rl_conversations_editing_message"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:paddingTop="8dp"
-                android:visibility="visible">
-
-                <View
-                    android:id="@+id/v_conversations_editing_indicator"
-                    android:layout_width="4dp"
-                    android:layout_height="44dp"
-                    android:layout_alignParentLeft="true"
-                    android:layout_alignParentTop="true"
-                    android:layout_centerVertical="true"
-                    android:layout_marginLeft="16dp"
-                    android:background="@drawable/chat_bg_conversation_editing_indicator" />
-
-                <TextView
-                    android:id="@+id/tv_conversations_editing_message_header"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentLeft="false"
-                    android:layout_alignParentTop="true"
-                    android:layout_marginLeft="8dp"
-                    android:layout_toLeftOf="@+id/ib_conversations_editing_message_close"
-                    android:layout_toRightOf="@+id/v_conversations_editing_indicator"
-                    android:textColor="@color/chat_brand_color"
-                    android:textSize="15sp" />
-
-                <TextView
-                    android:id="@+id/tv_editing_message_body"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentLeft="false"
-                    android:layout_below="@+id/tv_conversations_editing_message_header"
-                    android:layout_marginLeft="8dp"
-                    android:layout_toRightOf="@+id/v_conversations_editing_indicator"
-                    android:text="[Some text]"
-                    android:maxLines="1"
-                    android:ellipsize="end"
-                    android:textColor="@android:color/black"
-                    android:textSize="15sp" />
-
-                <ImageButton
-                    android:id="@+id/ib_conversations_editing_message_close"
-                    android:layout_width="16dp"
-                    android:layout_height="16dp"
-                    android:layout_marginRight="16dp"
-                    android:layout_alignParentRight="true"
-                    android:layout_alignParentTop="true"
-                    android:background="?attr/selectableItemBackground" />
-            </RelativeLayout>
-            
-        </LinearLayout>
-        
-        <LinearLayout
-            android:id="@+id/ll_conversations_message_input"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="#ffffff"
-            android:minHeight="48dp"
-            android:orientation="horizontal"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent">
-            <EditText
-                android:id="@+id/et_conversations_message"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginLeft="16dp"
-                android:layout_marginRight="16dp"
-                android:layout_weight="1"
-                android:background="@android:color/transparent"
-                android:maxLines="6" />
-            <ImageButton
-                android:id="@+id/ib_conversations_take_attachment"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:background="?attr/selectableItemBackground"
-                android:clickable="true" />
-            <ImageButton
-                android:id="@+id/ib_conversations_add_attachment"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:background="?attr/selectableItemBackground"
-                android:clickable="true" />
-            <ImageButton
-                android:id="@+id/ib_conversations_send"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:layout_marginLeft="8dp"
-                android:background="?attr/selectableItemBackground"
-                android:clickable="true" />
-        </LinearLayout>
+            app:layout_constraintBottom_toBottomOf="parent" />
     </android.support.constraint.ConstraintLayout>
 </android.support.design.widget.CoordinatorLayout>
