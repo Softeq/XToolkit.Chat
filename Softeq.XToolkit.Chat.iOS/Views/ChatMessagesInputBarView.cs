@@ -18,6 +18,7 @@ using UIKit;
 namespace Softeq.XToolkit.Chat.iOS.Views
 {
     //TODO VPY: we need to review this class
+    [Obsolete("Use ChatInputView class")]
     public partial class ChatMessagesInputBarView : CustomViewBase
     {
         private Binding _attachedImageBinding;

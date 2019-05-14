@@ -75,7 +75,8 @@ namespace Softeq.XToolkit.Chat.HttpClient
                 case MessageTypeDto.Notification:
                     return MessageType.Info;
                 default:
-                    throw new InvalidEnumArgumentException("messageType", (int)dto, typeof(MessageTypeDto));
+                    return MessageType.Unknown;
+                    //throw new InvalidEnumArgumentException("messageType", (int)dto, typeof(MessageTypeDto));
             }
         }
 
