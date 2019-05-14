@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -57,13 +57,13 @@
       <Version>1.3.2</Version>
     </PackageReference>
     <PackageReference Include="AsyncDisplayKitBindings">
-      <Version>2.5.0</Version>
+      <Version>2.5.1</Version>
     </PackageReference>
     <PackageReference Include="Xamarin.FFImageLoading">
-      <Version>2.4.3.840</Version>
+      <Version>2.4.4.859</Version>
     </PackageReference>
     <PackageReference Include="Xamarin.FFImageLoading.Transformations">
-      <Version>2.4.3.840</Version>
+      <Version>2.4.4.859</Version>
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
@@ -72,6 +72,7 @@
     <Folder Include="Extensions\" />
     <Folder Include="TableSources\" />
     <Folder Include="Controls\" />
+    <Folder Include="Converters\" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -87,9 +88,9 @@
     <Compile Include="ViewControllers\ChatMessagesViewController.designer.cs">
       <DependentUpon>ChatMessagesViewController.cs</DependentUpon>
     </Compile>
-    <Compile Include="ViewControllers\SelectContactsViewController.cs" />
-    <Compile Include="ViewControllers\SelectContactsViewController.designer.cs">
-      <DependentUpon>SelectContactsViewController.cs</DependentUpon>
+    <Compile Include="ViewControllers\CreateChatViewController.cs" />
+    <Compile Include="ViewControllers\CreateChatViewController.designer.cs">
+      <DependentUpon>CreateChatViewController.cs</DependentUpon>
     </Compile>
     <Compile Include="Views\ChatDetailsHeaderView.cs" />
     <Compile Include="Views\ChatDetailsHeaderView.designer.cs">
@@ -134,12 +135,30 @@
       <DependentUpon>SelectedMemberViewCell.cs</DependentUpon>
     </Compile>
     <Compile Include="Views\CheckBoxView.cs" />
+    <Compile Include="Views\FilteredContactViewCell.cs" />
+    <Compile Include="Views\FilteredContactViewCell.designer.cs">
+      <DependentUpon>FilteredContactViewCell.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\BindableTableViewCell.cs" />
+    <Compile Include="Controls\IBindableViewCell.cs" />
+    <Compile Include="Controls\BindableCollectionViewCell.cs" />
+    <Compile Include="TableSources\ActionableTableViewDelegate.cs" />
+    <Compile Include="ViewControllers\NewChatViewController.cs" />
+    <Compile Include="ViewControllers\NewChatViewController.designer.cs">
+      <DependentUpon>NewChatViewController.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Views\NewGroupView.cs" />
+    <Compile Include="Views\NewGroupView.designer.cs">
+      <DependentUpon>NewGroupView.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\AutoScrollLabel.cs" />
+    <Compile Include="Converters\ChatMessageStatusToImageConverter.cs" />
   </ItemGroup>
   <ItemGroup>
     <InterfaceDefinition Include="ViewControllers\ChatDetailsStoryboard.storyboard" />
     <InterfaceDefinition Include="ViewControllers\ChatsListStoryboard.storyboard" />
     <InterfaceDefinition Include="ViewControllers\ChatMessagesStoryboard.storyboard" />
-    <InterfaceDefinition Include="ViewControllers\SelectContactsStoryboard.storyboard" />
+    <InterfaceDefinition Include="ViewControllers\CreateChatStoryboard.storyboard" />
     <InterfaceDefinition Include="Views\ChatDetailsHeaderView.xib" />
     <InterfaceDefinition Include="Views\ChatSummaryViewCell.xib" />
     <InterfaceDefinition Include="Views\ChatUserViewCell.xib" />
@@ -148,43 +167,46 @@
     <InterfaceDefinition Include="Views\ChatMessagesInputBarView.xib" />
     <InterfaceDefinition Include="ViewControllers\AddContactsStoryboard.storyboard" />
     <InterfaceDefinition Include="Views\SelectedMemberViewCell.xib" />
+    <InterfaceDefinition Include="Views\FilteredContactViewCell.xib" />
+    <InterfaceDefinition Include="ViewControllers\NewChatStoryboard.storyboard" />
+    <InterfaceDefinition Include="Views\NewGroupView.xib" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\XToolkit\Softeq.XToolkit.Permissions\Softeq.XToolkit.Permissions.csproj">
-      <Project>{424eabdc-dcc0-4616-b603-93582d9a9ad4}</Project>
-      <Name>Softeq.XToolkit.Permissions</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Softeq.XToolkit.Chat\Softeq.XToolkit.Chat.csproj">
-      <Project>{BEC592D8-0A24-446C-B130-1D4A03255C22}</Project>
+      <Project>{B0A49876-1ED1-4545-A763-22E9A452C80D}</Project>
       <Name>Softeq.XToolkit.Chat</Name>
     </ProjectReference>
     <ProjectReference Include="..\Softeq.XToolkit.Chat.Models\Softeq.XToolkit.Chat.Models.csproj">
-      <Project>{8CA8A57B-4F07-469A-B2DD-8420483380D7}</Project>
+      <Project>{F88419DF-EE33-446F-915A-B4191112D592}</Project>
       <Name>Softeq.XToolkit.Chat.Models</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\XToolkit\Softeq.XToolkit.Bindings\Softeq.XToolkit.Bindings.csproj">
-      <Project>{78833174-8D1D-4C67-AD54-4C9EEEDFBBDB}</Project>
-      <Name>Softeq.XToolkit.Bindings</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\XToolkit\Softeq.XToolkit.Bindings.iOS\Softeq.XToolkit.Bindings.iOS.csproj">
-      <Project>{2D399BA9-1878-43E2-AF05-6873EAE9151B}</Project>
-      <Name>Softeq.XToolkit.Bindings.iOS</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\XToolkit\Softeq.XToolkit.Common\Softeq.XToolkit.Common.csproj">
-      <Project>{B4208549-9B41-4EB2-9F80-8E60D75E6BFA}</Project>
-      <Name>Softeq.XToolkit.Common</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\XToolkit.WhiteLabel\Softeq.XToolkit.WhiteLabel.iOS\Softeq.XToolkit.WhiteLabel.iOS.csproj">
       <Project>{CC89DBC6-E68A-4C85-91C4-E276D3BC3C2E}</Project>
       <Name>Softeq.XToolkit.WhiteLabel.iOS</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\XToolkit\Softeq.XToolkit.Common.iOS\Softeq.XToolkit.Common.iOS.csproj">
+    <ProjectReference Include="..\..\XToolkit.WhiteLabel\Softeq.XToolkit.WhiteLabel\Softeq.XToolkit.WhiteLabel.csproj">
+      <Project>{051C065C-DF97-4406-BEAB-F2F91842275C}</Project>
+      <Name>Softeq.XToolkit.WhiteLabel</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\XToolkit.WhiteLabel\XToolkit.Bindings\Softeq.XToolkit.Bindings\Softeq.XToolkit.Bindings.csproj">
+      <Project>{556D5257-68D9-43B6-B06D-DAA137E2A9FD}</Project>
+      <Name>Softeq.XToolkit.Bindings</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\XToolkit.WhiteLabel\XToolkit.Bindings\Softeq.XToolkit.Bindings.iOS\Softeq.XToolkit.Bindings.iOS.csproj">
+      <Project>{2D399BA9-1878-43E2-AF05-6873EAE9151B}</Project>
+      <Name>Softeq.XToolkit.Bindings.iOS</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\XToolkit.WhiteLabel\XToolkit.Permissions\Softeq.XToolkit.Permissions\Softeq.XToolkit.Permissions.csproj">
+      <Project>{33058D2B-E6F2-41D2-98BF-6C1C89B89225}</Project>
+      <Name>Softeq.XToolkit.Permissions</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\XToolkit.WhiteLabel\XToolkit.Bindings\XToolkit.Common\Softeq.XToolkit.Common\Softeq.XToolkit.Common.csproj">
+      <Project>{93F44531-29C0-4FDE-AD7B-DE391727C174}</Project>
+      <Name>Softeq.XToolkit.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\XToolkit.WhiteLabel\XToolkit.Bindings\XToolkit.Common\Softeq.XToolkit.Common.iOS\Softeq.XToolkit.Common.iOS.csproj">
       <Project>{6BCB2009-2E46-458C-BCAA-AFC27A631924}</Project>
       <Name>Softeq.XToolkit.Common.iOS</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\XToolkit.WhiteLabel\Softeq.XToolkit.WhiteLabel\Softeq.XToolkit.WhiteLabel.csproj">
-      <Project>{690D58CB-A04C-418F-863B-F4ED17775120}</Project>
-      <Name>Softeq.XToolkit.WhiteLabel</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

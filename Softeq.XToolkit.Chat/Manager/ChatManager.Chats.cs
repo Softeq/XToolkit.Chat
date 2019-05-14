@@ -66,13 +66,16 @@ namespace Softeq.XToolkit.Chat.Manager
             UpdateChatsListFromNetworkAsync().SafeTaskWrapper();
         }
 
-        public async Task CreateChatAsync(string chatName, IList<string> participantsIds, string imagePath)
+        public async Task<bool> CreateChatAsync(string chatName, IList<string> participantsIds, string imagePath)
         {
             var chatModel = await _chatService.CreateChatAsync(chatName, participantsIds, imagePath).ConfigureAwait(false);
             if (chatModel != null)
             {
                 TryAddChat(chatModel);
+
+                return true;
             }
+            return false;
         }
 
         public Task CloseChatAsync(string chatId)
@@ -85,6 +88,16 @@ namespace Softeq.XToolkit.Chat.Manager
             return _chatService.LeaveChatAsync(chatId);
         }
 
+        public Task MuteChatAsync(string chatId)
+        {
+            return _chatService.MuteChatAsync(chatId);
+        }
+
+        public Task UnMuteChatAsync(string chatId)
+        {
+            return _chatService.UnMuteChatAsync(chatId);
+        }
+
         public Task InviteMembersAsync(string chatId, IList<string> participantsIds)
         {
             return _chatService.InviteMembersAsync(chatId, participantsIds);
@@ -93,12 +106,40 @@ namespace Softeq.XToolkit.Chat.Manager
         public async Task<IList<ChatUserViewModel>> GetChatMembersAsync(string chatId)
         {
             var models = await _chatService.GetChatMembersAsync(chatId).ConfigureAwait(false);
-            return models?.Select(_viewModelFactoryService.ResolveViewModel<ChatUserViewModel, ChatUserModel>).ToList();
+            return models?.Select(x => new ChatUserViewModel { Parameter = x }).ToList();
         }
 
         public Task EditChatAsync(ChatSummaryModel chatSummary)
         {
             return _chatService.EditChatAsync(chatSummary);
+        }
+
+        public ChatSummaryViewModel GetChatById(string chatId)
+        {
+            return ChatsCollection.FirstOrDefault(x => x.ChatId == chatId);
+        }
+
+        public async Task<ChatSummaryViewModel> FindOrCreateDirectChatAsync(string memberId)
+        {
+            var directChatWithMember = ChatsCollection.FirstOrDefault(x =>
+                x.Parameter.Type == ChannelType.Direct &&
+                x.Parameter.DirectMember.Id == memberId);
+
+            if (directChatWithMember != null)
+            {
+                return directChatWithMember;
+            }
+
+            var directChatModel = await _chatService.CreateDirectChatAsync(memberId).ConfigureAwait(false);
+
+            if (directChatModel == null)
+            {
+                return null;
+            }
+
+            var directChatViewModel = _viewModelFactoryService.ResolveViewModel<ChatSummaryViewModel, ChatSummaryModel>(directChatModel);
+
+            return directChatViewModel;
         }
 
         private bool TryAddChat(ChatSummaryModel chatSummary)

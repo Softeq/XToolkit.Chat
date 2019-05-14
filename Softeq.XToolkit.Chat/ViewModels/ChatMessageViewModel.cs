@@ -4,7 +4,6 @@
 using System;
 using Softeq.XToolkit.Chat.Models;
 using Softeq.XToolkit.Chat.Models.Interfaces;
-using Softeq.XToolkit.WhiteLabel.Interfaces;
 using Softeq.XToolkit.WhiteLabel.Mvvm;
 using Softeq.XToolkit.WhiteLabel.Threading;
 using Softeq.XToolkit.WhiteLabel.Navigation;
@@ -12,9 +11,7 @@ using Softeq.XToolkit.WhiteLabel.ViewModels;
 
 namespace Softeq.XToolkit.Chat.ViewModels
 {
-    public class ChatMessageViewModel : ObservableObject,
-        IViewModelParameter<ChatMessageModel>,
-        IEquatable<ChatMessageViewModel>
+    public class ChatMessageViewModel : ObservableObject, IEquatable<ChatMessageViewModel>
     {
         private readonly IFormatService _formatService;
         private readonly IDialogsService _dialogsService;
@@ -25,13 +22,6 @@ namespace Softeq.XToolkit.Chat.ViewModels
         {
             _formatService = formatService;
             _dialogsService = dialogsService;
-        }
-
-        //TODO Yauhen Sampir: Remove Parameter and navigate with parameter exactly on Model with execution Method UpdateMessageModel() if needed
-        public ChatMessageModel Parameter
-        {
-            get => null;
-            set => UpdateMessageModel(value);
         }
 
         public ChatMessageModel Model { get; private set; }
@@ -60,8 +50,9 @@ namespace Softeq.XToolkit.Chat.ViewModels
         public string SenderName => Model.SenderName;
         public bool IsMine => Model.IsMine;
         public MessageType MessageType => Model.MessageType;
-        public string AttachmentImageUrl => Model?.ImageUrl;
-        public bool HasAttachment => !string.IsNullOrEmpty(AttachmentImageUrl?.Trim());
+
+        public bool HasAttachment => !string.IsNullOrEmpty(Model.ImageRemoteUrl) || !string.IsNullOrEmpty(Model.ImageCacheKey);
+
         public bool IsEarlierThan(ChatMessageViewModel message) => Model.IsEarlierThan(message?.Model);
         public bool IsEarlierOrEqualsThan(ChatMessageViewModel message) => Model.IsEarlierOrEqualsThan(message.Model);
         public bool IsLaterThan(ChatMessageViewModel message) => Model.IsLaterThan(message.Model);
@@ -74,6 +65,16 @@ namespace Softeq.XToolkit.Chat.ViewModels
                 return;
             }
             UpdateMessageModel(chatMessageViewModel.Model);
+        }
+
+        public void MarkAsRead()
+        {
+            Model.ReadMessage();
+
+            Execute.BeginOnUIThread(() =>
+            {
+                RaisePropertyChanged(nameof(Status));
+            });
         }
 
         public bool Equals(ChatMessageViewModel other)
@@ -98,9 +99,17 @@ namespace Softeq.XToolkit.Chat.ViewModels
             _dialogsService.ShowForViewModel<FullScreenImageViewModel, FullScreenImageOptions>(options);
         }
 
-        private void UpdateMessageModel(ChatMessageModel chatMessageModel)
+        public void UpdateMessageModel(ChatMessageModel chatMessageModel)
         {
-            Model = chatMessageModel;
+            if (Model == null)
+            {
+                Model = chatMessageModel;
+            }
+            else
+            {
+                Model.UpdateMessage(chatMessageModel);
+            }
+
             Execute.BeginOnUIThread(() =>
             {
                 RaisePropertyChanged(nameof(SenderName));

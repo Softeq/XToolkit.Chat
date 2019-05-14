@@ -16,17 +16,20 @@ namespace Softeq.XToolkit.Chat.ViewModels
     public class ChatsListViewModel : ViewModelBase
     {
         private readonly IPageNavigationService _pageNavigationService;
+        private readonly IDialogsService _dialogsService;
         private readonly IChatsListManager _chatsListManager;
 
         public ChatsListViewModel(
             IPageNavigationService pageNavigationService,
+            IDialogsService dialogsService,
             IChatLocalizedStrings localizedStrings,
             IChatsListManager chatsListManager,
             ConnectionStatusViewModel connectionStatusViewModel)
         {
             _pageNavigationService = pageNavigationService;
+            _dialogsService = dialogsService;
             _chatsListManager = chatsListManager;
-            
+
             LocalizedStrings = localizedStrings;
             ConnectionStatusViewModel = connectionStatusViewModel;
 
@@ -46,14 +49,14 @@ namespace Softeq.XToolkit.Chat.ViewModels
         public ConnectionStatusViewModel ConnectionStatusViewModel { get; }
 
         public IChatLocalizedStrings LocalizedStrings { get; }
-        
+
         public ChatSummaryViewModel SelectedChat
         {
             get => null;
             set
             {
                 RaisePropertyChanged();
-                
+
                 if (value != null)
                 {
                     _pageNavigationService
@@ -69,25 +72,34 @@ namespace Softeq.XToolkit.Chat.ViewModels
             base.OnAppearing();
 
             ConnectionStatusViewModel.Initialize(LocalizedStrings.ChatsTitle);
-            
+
             _chatsListManager.RefreshChatsListOnBackgroundAsync();
         }
 
         public override void OnDisappearing()
         {
             base.OnDisappearing();
-            
+
             ConnectionStatusViewModel.Dispose();
         }
 
         private void CreateChat()
         {
-            _pageNavigationService.NavigateToViewModel<SelectContactsViewModel>();
+            _pageNavigationService.NavigateToViewModel<NewChatViewModel>();
         }
 
-        private Task LeaveChatAsync(ChatSummaryViewModel chatViewModel)
+        private async Task LeaveChatAsync(ChatSummaryViewModel chatViewModel)
         {
-            return _chatsListManager.LeaveChatAsync(chatViewModel.ChatId);
+            var hasLeaveConfirmation = await _dialogsService.ShowDialogAsync(
+                LocalizedStrings.LeaveChatConfirmationTitle,
+                LocalizedStrings.LeaveChatConfirmationMessage,
+                LocalizedStrings.Yes,
+                LocalizedStrings.No);
+
+            if (hasLeaveConfirmation)
+            {
+                await _chatsListManager.LeaveChatAsync(chatViewModel.ChatId);
+            }
         }
 
         private Task DeleteChatAsync(ChatSummaryViewModel chatViewModel)

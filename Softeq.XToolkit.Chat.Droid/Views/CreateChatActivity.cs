@@ -16,7 +16,7 @@ using Softeq.XToolkit.Chat.Droid.LayoutManagers;
 using Softeq.XToolkit.Chat.Droid.ViewHolders;
 using Softeq.XToolkit.Chat.ViewModels;
 using Softeq.XToolkit.Common.Command;
-using Softeq.XToolkit.Permissions;
+using Softeq.XToolkit.Common.Droid.Converters;
 using Softeq.XToolkit.WhiteLabel;
 using Softeq.XToolkit.WhiteLabel.Droid;
 using Softeq.XToolkit.WhiteLabel.Droid.Controls;
@@ -26,10 +26,9 @@ using Softeq.XToolkit.WhiteLabel.Threading;
 namespace Softeq.XToolkit.Chat.Droid.Views
 {
     [Activity]
-    public class SelectContactsActivity : ActivityBase<SelectContactsViewModel>
+    public class CreateChatActivity : ActivityBase<CreateChatViewModel>
     {
         private NavigationBarView _navigationBarView;
-        private RelativeLayout _chatHeaderLayout;
         private MvxCachedImageView _chatPhotoImageView;
         private MvxCachedImageView _chatEditedPhotoImageView;
         private EditText _chatNameEditTextView;
@@ -39,6 +38,7 @@ namespace Softeq.XToolkit.Chat.Droid.Views
         private string _previewImageKey;
         private Button _changeChatPhotoButton;
         private Button _addMembers;
+        private BusyOverlayView _busyOverlayView;
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -52,8 +52,8 @@ namespace Softeq.XToolkit.Chat.Droid.Views
 
             _navigationBarView = FindViewById<NavigationBarView>(Resource.Id.activity_chat_create_navigation_bar);
             _navigationBarView.SetLeftButton(StyleHelper.Style.NavigationBarBackButtonIcon, ViewModel.BackCommand);
-            _navigationBarView.SetTitle(ViewModel.Title);
-            _navigationBarView.SetRightButton(ViewModel.ActionButtonName, new RelayCommand(() =>
+            _navigationBarView.SetTitle(ViewModel.LocalizedStrings.CreateGroup);
+            _navigationBarView.SetRightButton(ViewModel.LocalizedStrings.Create, new RelayCommand(() =>
             {
                 KeyboardService.HideSoftKeyboard(_chatNameEditTextView);
 
@@ -61,7 +61,6 @@ namespace Softeq.XToolkit.Chat.Droid.Views
             }));
             _navigationBarView.RightTextButton.SetBackgroundColor(Color.Transparent);
 
-            _chatHeaderLayout = FindViewById<RelativeLayout>(Resource.Id.rl_chat_create);
             _chatPhotoImageView = FindViewById<MvxCachedImageView>(Resource.Id.iv_chat_photo);
             _chatEditedPhotoImageView = FindViewById<MvxCachedImageView>(Resource.Id.iv_chat_photo_edited);
             _chatNameEditTextView = FindViewById<EditText>(Resource.Id.et_chat_name);
@@ -69,6 +68,7 @@ namespace Softeq.XToolkit.Chat.Droid.Views
             _membersCountTextView = FindViewById<TextView>(Resource.Id.tv_members_count);
             _changeChatPhotoButton = FindViewById<Button>(Resource.Id.b_chat_change_photo);
             _changeChatPhotoButton.SetCommand(new RelayCommand(ChangePhoto));
+            _changeChatPhotoButton.Text = ViewModel.LocalizedStrings.ChangePhoto;
 
             InitializeContactsRecyclerView();
 
@@ -79,41 +79,46 @@ namespace Softeq.XToolkit.Chat.Droid.Views
 
             _chatPhotoImageView.SetImageResource(StyleHelper.Style.ChatGroupNoAvatarIcon);
             _chatEditedPhotoImageView.Visibility = ViewStates.Gone;
+
             _addMembers = FindViewById<Button>(Resource.Id.activity_chat_create_add_member);
-            _addMembers.Text = ViewModel.AddMembersText;
+            _addMembers.Text = ViewModel.LocalizedStrings.AddMembers;
             _addMembers.SetCommand(ViewModel.AddMembersCommand);
 
-            _chatHeaderLayout.Visibility = ViewStates.Visible;
+            _chatNameEditTextView.Hint = ViewModel.LocalizedStrings.ChatName;
+
+            _busyOverlayView = FindViewById<BusyOverlayView>(Resource.Id.activity_chat_create_busy_view);
         }
 
         protected override void DoAttachBindings()
         {
             base.DoAttachBindings();
 
-            Bindings.Add(this.SetBinding(() => ViewModel.ActionButtonName, () => SupportActionBar.Title));
             Bindings.Add(this.SetBinding(() => ViewModel.ChatName, () => _chatNameEditTextView.Text, BindingMode.TwoWay));
             Bindings.Add(this.SetBinding(() => ViewModel.ContactsCountText, () => _membersCountTextView.Text));
-            Bindings.Add(this.SetBinding(() => _imagePicker.ViewModel.ImageCacheKey)
-                .WhenSourceChanges(() =>
+            Bindings.Add(this.SetBinding(() => _imagePicker.ViewModel.ImageCacheKey).WhenSourceChanges(() =>
+            {
+                var newImageCacheKey = _imagePicker.ViewModel.ImageCacheKey;
+
+                if (string.IsNullOrEmpty(newImageCacheKey) || newImageCacheKey == _previewImageKey)
                 {
-                    var key = _imagePicker.ViewModel.ImageCacheKey;
-                    if (key == _previewImageKey)
-                    {
-                        return;
-                    }
+                    return;
+                }
 
-                    _previewImageKey = key;
+                _previewImageKey = newImageCacheKey;
 
-                    Execute.BeginOnUIThread(() =>
-                    {
-                        _chatEditedPhotoImageView.Visibility = ViewStates.Visible;
-                        ImageService.Instance
-                            .LoadFile(_imagePicker.ViewModel.ImageCacheKey)
-                            .DownSampleInDip(95, 95)
-                            .Transform(new CircleTransformation())
-                            .IntoAsync(_chatEditedPhotoImageView);
-                    });
-                }));
+                Execute.BeginOnUIThread(() =>
+                {
+                    _chatEditedPhotoImageView.Visibility = ViewStates.Visible;
+                });
+
+                ImageService.Instance
+                    .LoadFile(_previewImageKey)
+                    .DownSampleInDip(95, 95)
+                    .Transform(new CircleTransformation())
+                    .IntoAsync(_chatEditedPhotoImageView);
+            }));
+            Bindings.Add(this.SetBinding(() => ViewModel.IsBusy, () => _busyOverlayView.Visibility)
+                .ConvertSourceToTarget(BoolToViewStateConverter.ConvertGone));
         }
 
         protected override void OnDestroy()

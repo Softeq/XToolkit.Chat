@@ -9,29 +9,44 @@ using System.CodeDom.Compiler;
 
 namespace Softeq.XToolkit.Chat.iOS.ViewControllers
 {
-	[Register ("SelectContactsViewController")]
-	partial class SelectContactsViewController
+	[Register ("NewChatViewController")]
+	partial class NewChatViewController
 	{
 		[Outlet]
 		UIKit.UINavigationBar CustomNavigationBar { get; set; }
 
 		[Outlet]
-		UIKit.UINavigationItem CustomNavigationItem { get; set; }
+		UIKit.UINavigationItem CustomNavigationBarItem { get; set; }
 
 		[Outlet]
-		[GeneratedCode ("iOS Designer", "1.0")]
+		UIKit.UIActivityIndicatorView ProgressIndicator { get; set; }
+
+		[Outlet]
+		UIKit.UISearchBar SearchBar { get; set; }
+
+		[Outlet]
 		UIKit.UITableView TableView { get; set; }
 		
 		void ReleaseDesignerOutlets ()
 		{
+			if (CustomNavigationBarItem != null) {
+				CustomNavigationBarItem.Dispose ();
+				CustomNavigationBarItem = null;
+			}
+
+			if (ProgressIndicator != null) {
+				ProgressIndicator.Dispose ();
+				ProgressIndicator = null;
+			}
+
+			if (SearchBar != null) {
+				SearchBar.Dispose ();
+				SearchBar = null;
+			}
+
 			if (TableView != null) {
 				TableView.Dispose ();
 				TableView = null;
-			}
-
-			if (CustomNavigationItem != null) {
-				CustomNavigationItem.Dispose ();
-				CustomNavigationItem = null;
 			}
 
 			if (CustomNavigationBar != null) {

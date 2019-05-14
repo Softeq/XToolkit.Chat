@@ -3,17 +3,11 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Reactive.Subjects;
 using System.Threading.Tasks;
-using Softeq.XToolkit.Chat.HttpClient.Dtos;
-using Softeq.XToolkit.Chat.HttpClient.Requests;
 using Softeq.XToolkit.Chat.Models;
 using Softeq.XToolkit.Chat.Models.Interfaces;
-using Softeq.XToolkit.Common;
 using Softeq.XToolkit.Common.Models;
-using Softeq.XToolkit.RemoteData;
-using Softeq.XToolkit.RemoteData.HttpClient;
 
 namespace Softeq.XToolkit.Chat.HttpClient
 {
@@ -73,7 +67,7 @@ namespace Softeq.XToolkit.Chat.HttpClient
             return new ChatSummaryModel
             {
                 Id = id,
-                AvatarUrl = Avatar1,
+                PhotoUrl = Avatar1,
                 IsMuted = true,
                 UnreadMessagesCount = 0,
                 Name = "Chat " + id,
@@ -87,14 +81,14 @@ namespace Softeq.XToolkit.Chat.HttpClient
             };
         }
 
-        public async Task<IList<ChatSummaryModel>> GetChatsListAsync()
+        public async Task<IList<ChatSummaryModel>> GetChannelsAsync()
         {
             return new List<ChatSummaryModel>
             {
                 new ChatSummaryModel
                 {
                     Id = "1",
-                    AvatarUrl = Avatar1,
+                    PhotoUrl = Avatar1,
                     IsMuted = false,
                     UnreadMessagesCount = 0,
                     Name = "Chat 1",
@@ -109,7 +103,7 @@ namespace Softeq.XToolkit.Chat.HttpClient
                 new ChatSummaryModel
                 {
                     Id = "2",
-                    AvatarUrl = Avatar2,
+                    PhotoUrl = Avatar2,
                     IsMuted = false,
                     UnreadMessagesCount = 0,
                     Name = "Chat 2",
@@ -123,7 +117,7 @@ namespace Softeq.XToolkit.Chat.HttpClient
                 new ChatSummaryModel
                 {
                     Id = "3",
-                    AvatarUrl = Avatar3,
+                    PhotoUrl = Avatar3,
                     IsMuted = true,
                     UnreadMessagesCount = 1,
                     Name = "Chat 3",
@@ -149,7 +143,7 @@ namespace Softeq.XToolkit.Chat.HttpClient
 
         public async Task MarkMessageAsReadAsync(string chatId, string messageId)
         {
-            
+
         }
 
         public Task<PagingModel<ChatUserModel>> GetContactsAsync(string nameFilter, int pageSize, int pageNumber)
@@ -175,7 +169,7 @@ namespace Softeq.XToolkit.Chat.HttpClient
                         SenderName = "User 2",
                         Body = "I’m excited about this trip this should be good. Haven’t been away in a while. I know it’s for work but still :)",
                         SenderPhotoUrl = Avatar1,
-                        ImageUrl = Img4
+                        ImageRemoteUrl = Img4
                     },
                     new ChatMessageModel
                     {
@@ -184,7 +178,7 @@ namespace Softeq.XToolkit.Chat.HttpClient
                         SenderName = "User 1",
                         Body = "You at the airport yet?",
                         SenderPhotoUrl = Avatar2,
-                        ImageUrl = Img2
+                        ImageRemoteUrl = Img2
                     },
                     new ChatMessageModel
                     {
@@ -193,7 +187,7 @@ namespace Softeq.XToolkit.Chat.HttpClient
                         SenderName = "User 1",
                         Body = "I’m in traffic. Wondering if we have to go through is customs in Toronto or San Francisco.",
                         SenderPhotoUrl = Avatar2,
-                        ImageUrl = Img3
+                        ImageRemoteUrl = Img3
                     },
                     new ChatMessageModel
                     {
@@ -202,7 +196,7 @@ namespace Softeq.XToolkit.Chat.HttpClient
                         SenderName = "User 2",
                         Body = "Customs in Toronto",
                         SenderPhotoUrl = Avatar1,
-                        ImageUrl = Img4
+                        ImageRemoteUrl = Img4
                     },
                     new ChatMessageModel
                     {
@@ -211,7 +205,7 @@ namespace Softeq.XToolkit.Chat.HttpClient
                         SenderName = "User 1",
                         Body = "Hey :)",
                         SenderPhotoUrl = Avatar2,
-                        ImageUrl = Img5
+                        ImageRemoteUrl = Img5
                     }
                 };
             }
@@ -325,6 +319,21 @@ namespace Softeq.XToolkit.Chat.HttpClient
         }
 
         public Task<IList<ChatMessageModel>> GetMessagesFromAsync(string chatId, string messageFromId, DateTimeOffset messageFromDateTime, int? count = null)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task MuteChatAsync(string chatId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task UnMuteChatAsync(string chatId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<ChatSummaryModel> CreateDirectChatAsync(string memberId)
         {
             throw new NotImplementedException();
         }

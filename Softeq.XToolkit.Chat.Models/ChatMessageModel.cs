@@ -19,7 +19,9 @@ namespace Softeq.XToolkit.Chat.Models
         public MessageType MessageType { get; set; }
         public string Body { get; set; }
         public DateTimeOffset DateTime { get; set; }
-        public string ImageUrl { get; set; }
+        public string ImageCacheKey { get; set; }
+        public string ImageRemoteUrl { get; set; }
+        public ChannelType ChannelType { get; set; }
 
         public ChatMessageStatus Status
         {
@@ -37,6 +39,7 @@ namespace Softeq.XToolkit.Chat.Models
             }
         }
 
+        // TODO YP: move to backend side
         public void UpdateIsMineStatus(string currentUserId)
         {
             IsMine = SenderId == currentUserId;
@@ -59,7 +62,13 @@ namespace Softeq.XToolkit.Chat.Models
             MessageType = chatMessageModel.MessageType;
             Body = chatMessageModel.Body;
             DateTime = chatMessageModel.DateTime;
-            ImageUrl = chatMessageModel.ImageUrl;
+            ImageRemoteUrl = chatMessageModel.ImageRemoteUrl;
+            ChannelType = chatMessageModel.ChannelType;
+        }
+
+        public void ReadMessage()
+        {
+            IsRead = true;
         }
 
         public bool IsEarlierThan(ChatMessageModel message)

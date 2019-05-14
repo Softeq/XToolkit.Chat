@@ -21,9 +21,11 @@ namespace Softeq.XToolkit.Chat.ViewModels
             set => _model = value;
         }
 
-        public string Id => _model.SaasUserId;
+        public string Id => _model.Id;
         public string Username => _model.Username;
         public string PhotoUrl => _model.PhotoUrl;
+        public bool IsOnline => _model.IsOnline;
+        public bool IsActive => _model.IsActive;
 
         public bool IsSelected
         {
@@ -42,6 +44,8 @@ namespace Softeq.XToolkit.Chat.ViewModels
             get => _isSelectable;
             set => Set(ref _isSelectable, value);
         }
+
+        public bool IsRemovable { get; set; }
 
         public void SetSelectionCommand(ICommand selectionCommand)
         {

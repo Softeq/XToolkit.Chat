@@ -9,7 +9,6 @@ using Softeq.XToolkit.Bindings.iOS;
 using Softeq.XToolkit.Chat.iOS.Views;
 using Softeq.XToolkit.Chat.ViewModels;
 using Softeq.XToolkit.Common;
-using Softeq.XToolkit.WhiteLabel;
 using Softeq.XToolkit.WhiteLabel.iOS;
 using UIKit;
 using Softeq.XToolkit.WhiteLabel.iOS.Extensions;
@@ -28,10 +27,20 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
         {
             base.ViewDidLoad();
 
-            
-            _customTitleView = new ConnectionStatusView(CGRect.Empty);
             CustomNavigationBar.TintColor = StyleHelper.Style.AccentColor;
-            CustomNavigationItem.AddTitleView(_customTitleView);
+            if (StyleHelper.Style.UseLogoInsteadOfConnectionStatus)
+            {
+                var titleImage = new UIImageView
+                {
+                    Image = UIImage.FromBundle(StyleHelper.Style.LogoBoundleName)
+                };
+                CustomNavigationItem.AddTitleView(titleImage);
+            }
+            else
+            {
+                _customTitleView = new ConnectionStatusView(CGRect.Empty);
+                CustomNavigationItem.AddTitleView(_customTitleView);
+            }
             CustomNavigationItem.SetCommand(UIBarButtonSystemItem.Add, ViewModel.CreateChatCommand, false);
 
             ChatsTableView.RegisterNibForCellReuse(ChatSummaryViewCell.Nib, ChatSummaryViewCell.Key);
@@ -53,10 +62,13 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
 
             Bindings.Add(this.SetBinding(() => ViewModel.SelectedChat, () => _sourceRef.Target.SelectedItem, BindingMode.TwoWay));
 
-            Bindings.Add(this.SetBinding(() => ViewModel.ConnectionStatusViewModel.ConnectionStatusText).WhenSourceChanges(() =>
+            if (_customTitleView != null)
             {
-                _customTitleView.Update(ViewModel.ConnectionStatusViewModel);
-            }));
+                Bindings.Add(this.SetBinding(() => ViewModel.ConnectionStatusViewModel.ConnectionStatusText).WhenSourceChanges(() =>
+                {
+                    _customTitleView.Update(ViewModel.ConnectionStatusViewModel);
+                }));
+            }
         }
 
         public override void ViewWillDisappear(bool animated)
@@ -87,17 +99,24 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
 
             public override UITableViewRowAction[] EditActionsForRow(UITableView tableView, NSIndexPath indexPath)
             {
-                var isCreatedByMe = _sourceRef.Target?.DataSource[indexPath.Row] != null
-                                              && _sourceRef.Target.DataSource[indexPath.Row].IsCreatedByMe;
-                var buttons = new List<UITableViewRowAction>
+                var buttons = new List<UITableViewRowAction>();
+                var itemViewModel = _sourceRef.Target?.DataSource[indexPath.Row];
+
+                if (itemViewModel == null)
                 {
-                    UITableViewRowAction.Create(
+                    return buttons.ToArray();
+                }
+
+                if (itemViewModel.CanLeave)
+                {
+                    var createButton = UITableViewRowAction.Create(
                         UITableViewRowActionStyle.Default,
                         _viewModelRef.Target?.LocalizedStrings.Leave,
-                        (row, index) => OnClickLeave(row, index, tableView))
-                };
+                        (row, index) => OnClickLeave(row, index, tableView));
+                    buttons.Add(createButton);
+                }
 
-                if (isCreatedByMe)
+                if (itemViewModel.CanClose)
                 {
                     var closeButton = UITableViewRowAction.Create(
                         UITableViewRowActionStyle.Default,
@@ -110,8 +129,7 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
                 return buttons.ToArray();
             }
 
-            [Export("tableView:didSelectRowAtIndexPath:")]
-            public void RowSelected(UITableView tableView, NSIndexPath indexPath)
+            public override void RowSelected(UITableView tableView, NSIndexPath indexPath)
             {
                 _sourceRef.Target?.RowSelected(tableView, indexPath);
             }

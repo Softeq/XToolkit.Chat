@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14460.31" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina6_5" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14460.20"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <scenes>
+        <!--New Chat View Controller-->
+        <scene sceneID="gIs-8d-ynR">
+            <objects>
+                <viewController storyboardIdentifier="NewChatViewController" id="9wJ-V0-yw6" customClass="NewChatViewController" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="xTn-gB-GhR">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" keyboardDismissMode="interactive" dataMode="prototypes" style="plain" rowHeight="60" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" contentViewInsetsToSafeArea="NO" translatesAutoresizingMaskIntoConstraints="NO" id="J8p-UN-Zun">
+                                <rect key="frame" x="0.0" y="144.66666666666669" width="414" height="717.33333333333326"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <sections/>
+                            </tableView>
+                            <searchBar contentMode="redraw" searchBarStyle="minimal" translatesAutoresizingMaskIntoConstraints="NO" id="Y1p-u7-QkX">
+                                <rect key="frame" x="0.0" y="88" width="414" height="56"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="56" id="lxs-xI-xnR"/>
+                                </constraints>
+                                <textInputTraits key="textInputTraits"/>
+                            </searchBar>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="XY7-95-SpR">
+                                <rect key="frame" x="0.0" y="144" width="414" height="0.66666666666665719"/>
+                                <color key="backgroundColor" red="0.46274509800000002" green="0.46274509800000002" blue="0.46274509800000002" alpha="1" colorSpace="calibratedRGB"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="0.5" id="hic-Zu-Crb"/>
+                                </constraints>
+                                <viewLayoutGuide key="safeArea" id="y2N-p3-ENc"/>
+                            </view>
+                            <navigationBar contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="NX3-Lp-qdo">
+                                <rect key="frame" x="0.0" y="44" width="414" height="44"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="44" id="JTy-B4-fTd"/>
+                                </constraints>
+                                <items>
+                                    <navigationItem id="NxJ-Ke-aVX"/>
+                                </items>
+                            </navigationBar>
+                            <activityIndicatorView hidden="YES" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" style="whiteLarge" translatesAutoresizingMaskIntoConstraints="NO" id="faE-IW-QJ6">
+                                <rect key="frame" x="188.66666666666666" y="461.66666666666669" width="37" height="37"/>
+                            </activityIndicatorView>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <constraints>
+                            <constraint firstItem="faE-IW-QJ6" firstAttribute="centerX" secondItem="xTn-gB-GhR" secondAttribute="centerX" id="7Ld-PA-Hh0"/>
+                            <constraint firstItem="rjJ-0d-Bf1" firstAttribute="trailing" secondItem="NX3-Lp-qdo" secondAttribute="trailing" id="7ik-NZ-kZw"/>
+                            <constraint firstItem="XY7-95-SpR" firstAttribute="trailing" secondItem="Y1p-u7-QkX" secondAttribute="trailing" id="9a9-AR-1oc"/>
+                            <constraint firstItem="Y1p-u7-QkX" firstAttribute="trailing" secondItem="rjJ-0d-Bf1" secondAttribute="trailing" id="Fq9-8t-zZv"/>
+                            <constraint firstItem="J8p-UN-Zun" firstAttribute="top" secondItem="XY7-95-SpR" secondAttribute="bottom" id="MyC-GN-l5j"/>
+                            <constraint firstItem="NX3-Lp-qdo" firstAttribute="top" secondItem="rjJ-0d-Bf1" secondAttribute="top" id="Phu-o7-lUV"/>
+                            <constraint firstItem="rjJ-0d-Bf1" firstAttribute="bottom" secondItem="J8p-UN-Zun" secondAttribute="bottom" id="Tv3-B8-B3K"/>
+                            <constraint firstItem="rjJ-0d-Bf1" firstAttribute="trailing" secondItem="J8p-UN-Zun" secondAttribute="trailing" id="YWy-2L-JPb"/>
+                            <constraint firstItem="XY7-95-SpR" firstAttribute="top" secondItem="Y1p-u7-QkX" secondAttribute="bottom" id="bKw-x2-FnO"/>
+                            <constraint firstItem="faE-IW-QJ6" firstAttribute="centerY" secondItem="xTn-gB-GhR" secondAttribute="centerY" constant="32" id="c9r-MB-fcO"/>
+                            <constraint firstItem="Y1p-u7-QkX" firstAttribute="top" secondItem="NX3-Lp-qdo" secondAttribute="bottom" id="fSw-M2-VdR"/>
+                            <constraint firstItem="XY7-95-SpR" firstAttribute="leading" secondItem="Y1p-u7-QkX" secondAttribute="leading" id="j29-1x-fmt"/>
+                            <constraint firstItem="Y1p-u7-QkX" firstAttribute="leading" secondItem="rjJ-0d-Bf1" secondAttribute="leading" id="mzy-r9-gjM"/>
+                            <constraint firstItem="J8p-UN-Zun" firstAttribute="leading" secondItem="rjJ-0d-Bf1" secondAttribute="leading" id="weE-2y-ARs"/>
+                            <constraint firstItem="NX3-Lp-qdo" firstAttribute="leading" secondItem="rjJ-0d-Bf1" secondAttribute="leading" id="xTI-7K-eTM"/>
+                        </constraints>
+                        <viewLayoutGuide key="safeArea" id="rjJ-0d-Bf1"/>
+                    </view>
+                    <connections>
+                        <outlet property="CustomNavigationBar" destination="NX3-Lp-qdo" id="L8H-f5-Bmd"/>
+                        <outlet property="CustomNavigationBarItem" destination="NxJ-Ke-aVX" id="Nvi-tF-Icj"/>
+                        <outlet property="ProgressIndicator" destination="faE-IW-QJ6" id="dlm-eH-u48"/>
+                        <outlet property="SearchBar" destination="Y1p-u7-QkX" id="c3O-pd-htr"/>
+                        <outlet property="TableView" destination="J8p-UN-Zun" id="qT9-Xi-AbV"/>
+                        <outlet property="searchDisplayController" destination="g1P-7V-U6a" id="Ool-fS-yR3"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="5RT-wS-8fw" userLabel="First Responder" sceneMemberID="firstResponder"/>
+                <searchDisplayController id="g1P-7V-U6a">
+                    <connections>
+                        <outlet property="delegate" destination="9wJ-V0-yw6" id="FP1-v0-ErG"/>
+                        <outlet property="searchContentsController" destination="9wJ-V0-yw6" id="Gbs-hg-tic"/>
+                        <outlet property="searchResultsDataSource" destination="9wJ-V0-yw6" id="QpI-6i-gaX"/>
+                        <outlet property="searchResultsDelegate" destination="9wJ-V0-yw6" id="u1f-Cr-kqp"/>
+                    </connections>
+                </searchDisplayController>
+            </objects>
+            <point key="canvasLocation" x="289.85507246376812" y="104.46428571428571"/>
+        </scene>
+    </scenes>
+</document>

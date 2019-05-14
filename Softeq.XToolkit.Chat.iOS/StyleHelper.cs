@@ -19,8 +19,10 @@ namespace Softeq.XToolkit.Chat.iOS
     {
         UIColor AccentColor { get; }
         UIColor ButtonTintColor { get; }
+        UIColor OnlineStatusColor { get; }
 
         AvatarImageHelpers.AvatarStyles AvatarStyles { get; }
+        AvatarImageHelpers.AvatarStyles GroupDetailsAvatarStyles { get; }
 
         string BackButtonBundleName { get; }
         string ChatDetailsButtonBundleName { get; }
@@ -38,5 +40,9 @@ namespace Softeq.XToolkit.Chat.iOS
         string ScrollDownBoundleName { get; }
         string CheckedBoundleName { get; }
         string UnCheckedBoundleName { get; }
+        bool UseLogoInsteadOfConnectionStatus { get; }
+        string LogoBoundleName { get; }
+        string ChatNewGroupAvatarBundleName { get; }
+        string AttachmentImagePlaceholderBundleName { get; }
     }
 }

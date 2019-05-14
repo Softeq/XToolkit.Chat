@@ -4,9 +4,10 @@
 using System;
 using Softeq.XToolkit.Bindings;
 using Softeq.XToolkit.Bindings.iOS;
+using Softeq.XToolkit.Chat.iOS.Controls;
 using Softeq.XToolkit.Chat.iOS.Views;
 using Softeq.XToolkit.Chat.ViewModels;
-using Softeq.XToolkit.Common;
+using Softeq.XToolkit.Common.EventArguments;
 using Softeq.XToolkit.WhiteLabel.iOS;
 using Softeq.XToolkit.WhiteLabel.iOS.Extensions;
 using UIKit;
@@ -18,9 +19,9 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
         private const float DefaultSelectedMembersCollectionTopConstraint = 20;
         private const float DefaultFoundMembersCellHeight = 50;
 
-        public AddContactsViewController(IntPtr handle) : base(handle)
-        {
-        }
+        private ObservableTableViewSource<ChatUserViewModel> _tableViewSource;
+
+        public AddContactsViewController(IntPtr handle) : base(handle) { }
 
         public override void ViewDidLoad()
         {
@@ -30,13 +31,8 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
             InitSearchBar();
             InitSearchMembersTableView();
             InitSelectedMembersCollectionView();
-        }
-
-        public override void ViewWillDisappear(bool animated)
-        {
-            base.ViewWillDisappear(animated);
-
-            ResetSelectedRow();
+            ProgressIndicator.Color = StyleHelper.Style.AccentColor;
+            ProgressIndicator.HidesWhenStopped = true;
         }
 
         protected override void DoAttachBindings()
@@ -55,6 +51,48 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
                     SelectedMembersCollectionView.LayoutIfNeeded();
                 });
             }));
+
+            Bindings.Add(this.SetBinding(() => ViewModel.IsBusy).WhenSourceChanges(() =>
+            {
+                if (ViewModel.IsBusy)
+                {
+                    ProgressIndicator.StartAnimating();
+                }
+                else
+                {
+                    ProgressIndicator.StopAnimating();
+                }
+            }));
+
+            TableViewSearchBar.TextChanged += TableViewSearchBarTextChanged;
+            _tableViewSource.ItemTapped += TableViewSourceItemTapped;
+            _tableViewSource.LastItemRequested += TableViewSourceLastItemRequested;
+        }
+
+        protected override void DoDetachBindings()
+        {
+            base.DoDetachBindings();
+
+            TableViewSearchBar.TextChanged -= TableViewSearchBarTextChanged;
+            _tableViewSource.ItemTapped -= TableViewSourceItemTapped;
+            _tableViewSource.LastItemRequested -= TableViewSourceLastItemRequested;
+
+            ResetSelectedRow();
+        }
+
+        private void TableViewSearchBarTextChanged(object sender, UISearchBarTextChangedEventArgs e)
+        {
+            ViewModel.ContactNameSearchQuery = e.SearchText;
+        }
+
+        private void TableViewSourceItemTapped(object sender, GenericEventArgs<ChatUserViewModel> e)
+        {
+            e.Value.IsSelected = !e.Value.IsSelected;
+        }
+
+        private async void TableViewSourceLastItemRequested(object sender, EventArgs e)
+        {
+            await ViewModel.PaginationViewModel.LoadNextPageAsync();
         }
 
         private void InitNavigationBar()
@@ -78,35 +116,29 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
         private void InitSearchBar()
         {
             TableViewSearchBar.Placeholder = ViewModel.Resources.Search;
-            TableViewSearchBar.TextChanged += (sender, e) => { ViewModel.ContactNameSearchQuery = e.SearchText; };
         }
 
         private void InitSearchMembersTableView()
         {
             TableView.RowHeight = DefaultFoundMembersCellHeight;
-            TableView.RegisterNibForCellReuse(ChatUserViewCell.Nib, ChatUserViewCell.Key);
+            TableView.RegisterNibForCellReuse(FilteredContactViewCell.Nib, FilteredContactViewCell.Key);
             TableView.TableFooterView = new UIView();
             TableView.KeyboardDismissMode = UIScrollViewKeyboardDismissMode.Interactive;
 
-            var source = new ObservableTableViewSource<ChatUserViewModel>
+            _tableViewSource = new ObservableTableViewSource<ChatUserViewModel>
             {
                 DataSource = ViewModel.PaginationViewModel.Items,
                 BindCellDelegate = (cell, viewModel, index) =>
                 {
-                    if (cell is ChatUserViewCell memberCell)
+                    if (cell is IBindableViewCell<ChatUserViewModel> memberCell)
                     {
-                        memberCell.BindViewModel(viewModel);
+                        memberCell.Bind(viewModel);
                     }
                 },
-                ReuseId = ChatUserViewCell.Key
+                ReuseId = FilteredContactViewCell.Key
             };
 
-            TableView.Source = source;
-
-            TableView.Delegate = new ContactsTableViewDelegate(new TaskReference(async () =>
-            {
-                await ViewModel.PaginationViewModel.LoadNextPageAsync();
-            }));
+            TableView.Source = _tableViewSource;
         }
 
         private void InitSelectedMembersCollectionView()
@@ -116,7 +148,10 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
             var source = new ObservableCollectionViewSource<ChatUserViewModel, SelectedMemberViewCell>
             {
                 DataSource = ViewModel.SelectedContacts,
-                BindCellDelegate = (cell, viewModel, index) => { cell.BindCell(viewModel); },
+                BindCellDelegate = (cell, viewModel, index) =>
+                {
+                    cell.Bind(viewModel);
+                },
                 ReuseId = SelectedMemberViewCell.Key
             };
 
@@ -129,34 +164,6 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
             if (indexPath != null)
             {
                 TableView.DeselectRow(indexPath, false);
-            }
-        }
-
-        private class ContactsTableViewDelegate : UITableViewDelegate
-        {
-            private readonly TaskReference _onScrolled;
-
-            private bool _isBusy;
-
-            public ContactsTableViewDelegate(TaskReference onScrolled)
-            {
-                _onScrolled = onScrolled ?? throw new ArgumentNullException(nameof(onScrolled));
-            }
-
-            public override async void Scrolled(UIScrollView scrollView)
-            {
-                var currentOffset = scrollView.ContentOffset.Y;
-                var maximumOffset = scrollView.ContentSize.Height - scrollView.Frame.Size.Height;
-                var deltaOffset = maximumOffset - currentOffset;
-
-                if (deltaOffset < 0 && !_isBusy)
-                {
-                    _isBusy = true;
-
-                    await _onScrolled.RunAsync();
-
-                    _isBusy = false;
-                }
             }
         }
     }

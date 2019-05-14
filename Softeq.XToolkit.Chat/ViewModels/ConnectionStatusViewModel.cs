@@ -6,6 +6,7 @@ using System.ComponentModel;
 using Softeq.XToolkit.Chat.Exceptions;
 using Softeq.XToolkit.Chat.Interfaces;
 using Softeq.XToolkit.Chat.Models.Enum;
+using Softeq.XToolkit.Chat.Models.Exceptions;
 using Softeq.XToolkit.Chat.Models.Interfaces;
 using Softeq.XToolkit.WhiteLabel.Mvvm;
 
@@ -15,7 +16,7 @@ namespace Softeq.XToolkit.Chat.ViewModels
     {
         private readonly IChatLocalizedStrings _localizedStrings;
         private readonly IChatConnectionManager _chatConnectionManager;
-        
+
         private IDisposable _connectionStatusChangedSubscription;
         private string _onlineTextStatus;
         private string _connectionStatusText;
@@ -43,19 +44,21 @@ namespace Softeq.XToolkit.Chat.ViewModels
 
         public void Initialize(string onlineTextStatus)
         {
-            _onlineTextStatus = onlineTextStatus ?? throw new ArgumentNullException(nameof(onlineTextStatus));
+            _onlineTextStatus = onlineTextStatus ?? string.Empty;
             _connectionStatusChangedSubscription = _chatConnectionManager.ConnectionStatusChanged.Subscribe(UpdateConnectionStatus);
 
             UpdateConnectionStatus(_chatConnectionManager.ConnectionStatus);
         }
-        
+
         private void UpdateConnectionStatus(ConnectionStatus status)
         {
             if (_onlineTextStatus == null)
             {
                 throw new ChatException("Need to call Initialize() method before.");
             }
-            
+
+            IsOnline = status == ConnectionStatus.Online;
+
             switch (status)
             {
                 case ConnectionStatus.Online:
@@ -73,8 +76,6 @@ namespace Softeq.XToolkit.Chat.ViewModels
                 default:
                     throw new InvalidEnumArgumentException();
             }
-
-            IsOnline = status == ConnectionStatus.Online;
         }
 
         private void Dispose(bool disposing)

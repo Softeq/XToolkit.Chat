@@ -2,10 +2,10 @@
 // http://www.softeq.com
 
 using System;
-using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using System.Collections.Generic;
 using Softeq.XToolkit.Chat.Interfaces;
 using Softeq.XToolkit.Chat.Models;
 using Softeq.XToolkit.Chat.Models.Enum;
@@ -31,6 +31,8 @@ namespace Softeq.XToolkit.Chat.ViewModels
         private readonly IDialogsService _dialogsService;
         private readonly IChatService _chatService;
 
+        private bool _isLoading;
+
         public ChatDetailsViewModel(
             IChatsListManager chatsListManager,
             IPageNavigationService pageNavigationService,
@@ -42,21 +44,27 @@ namespace Softeq.XToolkit.Chat.ViewModels
         {
             _chatsListManager = chatsListManager;
             _pageNavigationService = pageNavigationService;
-            LocalizedStrings = localizedStrings;
             _formatService = formatService;
             _uploadImageService = uploadImageService;
             _dialogsService = dialogsService;
             _chatService = chatService;
 
-            AddMembersCommand = new AsyncCommand(AddMembers);
-            BackCommand = new RelayCommand(_pageNavigationService.GoBack, () => _pageNavigationService.CanGoBack);
-            RemoveMemberAtCommand = new RelayCommand<int>(RemoveMemberAt);
-            //TODO:YS very strange parameter, possibly need to refactor
-            SaveCommand = new AsyncCommand<Func<(Task<Stream> GetImageTask, string Extension)>>(SaveAsync);
+            LocalizedStrings = localizedStrings;
         }
 
         public ChatSummaryModel Summary { get; set; }
+
+        public ChatDetailsHeaderViewModel HeaderViewModel { get; private set; }
+
         public IChatLocalizedStrings LocalizedStrings { get; }
+
+        public bool IsLoading
+        {
+            get => _isLoading;
+            set => Set(ref _isLoading, value);
+        }
+
+        public bool CanEdit => Summary.IsCreatedByMe;
 
         public ObservableRangeCollection<ChatUserViewModel> Members { get; }
             = new ObservableRangeCollection<ChatUserViewModel>();
@@ -64,73 +72,61 @@ namespace Softeq.XToolkit.Chat.ViewModels
         public string MembersCountText => _formatService.PluralizeWithQuantity(Members.Count,
             LocalizedStrings.MembersPlural, LocalizedStrings.MemberSingular);
 
+        public ICommand AddMembersCommand { get; private set; }
 
-        public ICommand SaveCommand { get; }
-        public ICommand AddMembersCommand { get; }
+        public ICommand BackCommand { get; private set; }
 
-        public ICommand BackCommand { get; }
-        public RelayCommand<int> RemoveMemberAtCommand { get; }
+        public ICommand RemoveMemberCommand { get; private set; }
 
-        public override async void OnAppearing()
+        public override void OnInitialize()
+        {
+            base.OnInitialize();
+
+            HeaderViewModel = new ChatDetailsHeaderViewModel(Summary, _uploadImageService, _chatsListManager);
+
+            AddMembersCommand = new AsyncCommand(AddMembers);
+            BackCommand = new RelayCommand(_pageNavigationService.GoBack, () => _pageNavigationService.CanGoBack);
+            RemoveMemberCommand = new RelayCommand<ChatUserViewModel>(x => RemoveMemberAsync(x).SafeTaskWrapper());
+        }
+
+        public override void OnAppearing()
         {
             base.OnAppearing();
 
-            Members.Clear();
-
-            var members = await _chatsListManager.GetChatMembersAsync(Summary.Id);
-            Members.AddRange(members);
-            RaisePropertyChanged(nameof(MembersCountText));
+            LoadDataAsync().SafeTaskWrapper();
         }
 
-        public bool IsMemberRemovable(int memberPosition)
+        private async Task LoadDataAsync()
         {
-            if (Summary.IsCreatedByMe)
+            IsLoading = true;
+            var members = await _chatsListManager.GetChatMembersAsync(Summary.Id).ConfigureAwait(false);
+            ApplyRemovable(members);
+
+            Execute.BeginOnUIThread(() =>
             {
-                return Members[memberPosition].Id != Summary.CreatorId;
-            }
-
-            return false;
+                Members.ReplaceRange(members.EmptyIfNull());
+                RaisePropertyChanged(nameof(MembersCountText));
+                IsLoading = false;
+            });
         }
 
-        private void RemoveMemberAt(int index)
+        private async Task RemoveMemberAsync(ChatUserViewModel memberViewModel)
         {
-            Members.RemoveAt(index);
+            var hasRemoveConfirmation = await _dialogsService.ShowDialogAsync(
+                LocalizedStrings.RemoveUserConfirmationTitle,
+                LocalizedStrings.RemoveUserConfirmationMessage,
+                LocalizedStrings.Yes,
+                LocalizedStrings.No);
 
-            //TODO YP: send request to the server, wait backend impl.
-
-            RaisePropertyChanged(nameof(MembersCountText));
-        }
-
-        private async Task SaveAsync(Func<(Task<Stream> GetImageTask, string Extension)> getImageFunc)
-        {
-            if (IsBusy)
+            if (!hasRemoveConfirmation)
             {
                 return;
             }
 
-            IsBusy = true;
+            Members.Remove(memberViewModel);
+            RaisePropertyChanged(nameof(MembersCountText));
 
-            var imageInfo = getImageFunc();
-            var imagePath = default(string);
-
-            using (var image = await imageInfo.GetImageTask.ConfigureAwait(false))
-            {
-                if (image != null)
-                {
-                    imagePath = await _uploadImageService.UploadImageAsync(image, imageInfo.Extension)
-                        .ConfigureAwait(false);
-                }
-            }
-
-            if (imagePath != null)
-            {
-                Summary.AvatarUrl = imagePath;
-                RaisePropertyChanged(nameof(Summary.AvatarUrl));
-
-                await _chatsListManager.EditChatAsync(Summary).ConfigureAwait(false);
-            }
-
-            Execute.BeginOnUIThread(() => { IsBusy = false; });
+            await _chatService.DeleteMemberAsync(Summary.Id, memberViewModel.Id).ConfigureAwait(false);
         }
 
         private async Task AddMembers()
@@ -150,6 +146,7 @@ namespace Softeq.XToolkit.Chat.ViewModels
             if (result != null)
             {
                 result.SelectedContacts.Apply(x => x.IsSelectable = false);
+                ApplyRemovable(result.SelectedContacts);
                 Members.AddRange(result.SelectedContacts);
 
                 RaisePropertyChanged(nameof(MembersCountText));
@@ -165,6 +162,14 @@ namespace Softeq.XToolkit.Chat.ViewModels
                     LogManager.LogError<ChatDetailsViewModel>(ex);
                 }
             }
+        }
+
+        private void ApplyRemovable(IList<ChatUserViewModel> members)
+        {
+            members.Apply(member =>
+            {
+                member.IsRemovable = CanEdit && member.Id != Summary.CreatorId;
+            });
         }
     }
 }

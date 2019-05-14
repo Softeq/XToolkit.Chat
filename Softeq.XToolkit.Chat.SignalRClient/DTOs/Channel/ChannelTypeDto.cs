@@ -5,7 +5,8 @@ namespace Softeq.XToolkit.Chat.SignalRClient.DTOs.Channel
 {
     internal enum ChannelTypeDto
     {
-        Public,
-        Private
+        Public = 0,
+        Private = 1,
+        Direct = 2
     }
 }

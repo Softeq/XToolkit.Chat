@@ -25,13 +25,31 @@ namespace Softeq.XToolkit.Chat.iOS.Views
 		FFImageLoading.Cross.MvxCachedImageView ChatAvatarImageView { get; set; }
 
 		[Outlet]
+		Softeq.XToolkit.Chat.iOS.Controls.AutoScrollLabel ChatNameLabel { get; set; }
+
+		[Outlet]
+		UIKit.NSLayoutConstraint ChatNameLabelHeight { get; set; }
+
+		[Outlet]
 		UIKit.UITextField ChatNameTextField { get; set; }
+
+		[Outlet]
+		UIKit.UIView ChatNameUnderline { get; set; }
 
 		[Outlet]
 		FFImageLoading.Cross.MvxCachedImageView EditedChatAvatarImageView { get; set; }
 
 		[Outlet]
 		UIKit.UILabel MembersCountLabel { get; set; }
+
+		[Outlet]
+		UIKit.UISwitch MuteChatSwitch { get; set; }
+
+		[Outlet]
+		UIKit.UIView MuteContainer { get; set; }
+
+		[Outlet]
+		UIKit.UILabel MuteLabel { get; set; }
 		
 		void ReleaseDesignerOutlets ()
 		{
@@ -45,9 +63,29 @@ namespace Softeq.XToolkit.Chat.iOS.Views
 				ChangeChatPhotoButton = null;
 			}
 
+			if (ChatAvatarcontainer != null) {
+				ChatAvatarcontainer.Dispose ();
+				ChatAvatarcontainer = null;
+			}
+
 			if (ChatAvatarImageView != null) {
 				ChatAvatarImageView.Dispose ();
 				ChatAvatarImageView = null;
+			}
+
+			if (ChatNameLabel != null) {
+				ChatNameLabel.Dispose ();
+				ChatNameLabel = null;
+			}
+
+			if (ChatNameLabelHeight != null) {
+				ChatNameLabelHeight.Dispose ();
+				ChatNameLabelHeight = null;
+			}
+
+			if (ChatNameUnderline != null) {
+				ChatNameUnderline.Dispose ();
+				ChatNameUnderline = null;
 			}
 
 			if (ChatNameTextField != null) {
@@ -65,9 +103,19 @@ namespace Softeq.XToolkit.Chat.iOS.Views
 				MembersCountLabel = null;
 			}
 
-			if (ChatAvatarcontainer != null) {
-				ChatAvatarcontainer.Dispose ();
-				ChatAvatarcontainer = null;
+			if (MuteChatSwitch != null) {
+				MuteChatSwitch.Dispose ();
+				MuteChatSwitch = null;
+			}
+
+			if (MuteContainer != null) {
+				MuteContainer.Dispose ();
+				MuteContainer = null;
+			}
+
+			if (MuteLabel != null) {
+				MuteLabel.Dispose ();
+				MuteLabel = null;
 			}
 		}
 	}

@@ -7,7 +7,6 @@ namespace Softeq.XToolkit.Chat.SignalRClient.DTOs.Channel
     {
         public string ChannelId { get; set; }
         public string Name { get; set; }
-        public string Topic { get; set; }
         public string WelcomeMessage { get; set; }
         public string PhotoUrl { get; set; }
     }

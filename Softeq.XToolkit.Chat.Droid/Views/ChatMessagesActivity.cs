@@ -1,9 +1,6 @@
 ﻿// Developed by Softeq Development Corporation
 // http://www.softeq.com
 
-using System;
-using System.IO;
-using System.Threading.Tasks;
 using Android.App;
 using Android.OS;
 using Android.Support.V7.Widget;
@@ -16,18 +13,16 @@ using Softeq.XToolkit.Chat.Droid.Adapters;
 using Softeq.XToolkit.Chat.Droid.Controls;
 using Softeq.XToolkit.Chat.Droid.LayoutManagers;
 using Softeq.XToolkit.Chat.Droid.Listeners;
-using Softeq.XToolkit.Chat.Models;
 using Softeq.XToolkit.Chat.ViewModels;
 using Softeq.XToolkit.Common.Command;
 using Softeq.XToolkit.Common.Droid.Converters;
 using Softeq.XToolkit.Common.EventArguments;
-using Softeq.XToolkit.Permissions;
 using Softeq.XToolkit.WhiteLabel;
 using Softeq.XToolkit.WhiteLabel.Droid;
 using Softeq.XToolkit.WhiteLabel.Droid.Controls;
 using Softeq.XToolkit.WhiteLabel.Droid.Services;
+using Softeq.XToolkit.WhiteLabel.ImagePicker;
 using Softeq.XToolkit.WhiteLabel.Threading;
-using Messenger = Softeq.XToolkit.WhiteLabel.Messenger.Messenger;
 
 namespace Softeq.XToolkit.Chat.Droid.Views
 {
@@ -67,10 +62,16 @@ namespace Softeq.XToolkit.Chat.Droid.Views
 
             _navigationBarView = FindViewById<NavigationBarView>(Resource.Id.activity_chat_conversations_navigation_bar);
             _navigationBarView.SetLeftButton(StyleHelper.Style.NavigationBarBackButtonIcon, ViewModel.BackCommand);
-            _navigationBarView.SetRightButton(StyleHelper.Style.NavigationBarDetailsButtonIcon, ViewModel.ShowInfoCommand);
+            if (ViewModel.HasInfo)
+            {
+                _navigationBarView.SetRightButton(StyleHelper.Style.NavigationBarDetailsButtonIcon, ViewModel.ShowInfoCommand);
+            }
 
             _conversationsRecyclerView = FindViewById<RecyclerView>(Resource.Id.rv_conversations_list);
+
             _messageEditText = FindViewById<EditText>(Resource.Id.et_conversations_message);
+            _messageEditText.Hint = ViewModel.MessageInput.EnterMessagePlaceholderString;
+
             _editingMessageLayout = FindViewById<RelativeLayout>(Resource.Id.rl_conversations_editing_message);
             _editingMessageBodyTextView = FindViewById<TextView>(Resource.Id.tv_editing_message_body);
             _editingMessageCloseButton = FindViewById<ImageButton>(Resource.Id.ib_conversations_editing_message_close);
@@ -95,7 +96,7 @@ namespace Softeq.XToolkit.Chat.Droid.Views
 
             _contextMenuComponent = new ContextMenuComponent(ViewModel.MessageCommandActions);
 
-            _editingMessageCloseButton.SetCommand(nameof(_editingMessageCloseButton.Click), ViewModel.CancelEditingMessageModeCommand);
+            _editingMessageCloseButton.SetCommand(nameof(_editingMessageCloseButton.Click), ViewModel.MessageInput.CancelEditingCommand);
             _scrollDownImageButton.SetCommand(nameof(_scrollDownImageButton.Click), new RelayCommand(() =>
             {
                 ScrollToPosition(_conversationsRecyclerView.GetAdapter().ItemCount - 1);
@@ -109,6 +110,9 @@ namespace Softeq.XToolkit.Chat.Droid.Views
             _removeImageButton.SetImageResource(StyleHelper.Style.RemoveImageButtonIcon);
             _removeImageButton.SetCommand(new RelayCommand(RemoveAttachment));
             _editImageContainer.Visibility = ViewStates.Gone;
+
+            var editingMessageHeader = FindViewById<TextView>(Resource.Id.tv_conversations_editing_message_header);
+            editingMessageHeader.Text = ViewModel.MessageInput.EditMessageHeaderString;
         }
 
         protected override void OnPause()
@@ -158,19 +162,19 @@ namespace Softeq.XToolkit.Chat.Droid.Views
         {
             base.DoAttachBindings();
 
-            Bindings.Add(this.SetBinding(() => ViewModel.ConnectionStatusViewModel.ConnectionStatusText).WhenSourceChanges(() =>
+            Bindings.Add(this.SetBinding(() => ViewModel.ConnectionStatus.ConnectionStatusText).WhenSourceChanges(() =>
             {
                 Execute.BeginOnUIThread(() =>
                 {
-                    _navigationBarView.SetTitle(ViewModel.ConnectionStatusViewModel.ConnectionStatusText);
+                    _navigationBarView.SetTitle(ViewModel.ConnectionStatus.ConnectionStatusText);
                 });
             }));
-            Bindings.Add(this.SetBinding(() => ViewModel.MessageToSendBody, () => _messageEditText.Text, BindingMode.TwoWay));
-            Bindings.Add(this.SetBinding(() => ViewModel.IsInEditMessageMode).WhenSourceChanges(() =>
+            Bindings.Add(this.SetBinding(() => ViewModel.MessageInput.MessageBody, () => _messageEditText.Text, BindingMode.TwoWay));
+            Bindings.Add(this.SetBinding(() => ViewModel.MessageInput.IsInEditMessageMode).WhenSourceChanges(() =>
             {
-                if (ViewModel.IsInEditMessageMode)
+                if (ViewModel.MessageInput.IsInEditMessageMode)
                 {
-                    _editingMessageBodyTextView.Text = ViewModel.EditedMessageOriginalBody;
+                    _editingMessageBodyTextView.Text = ViewModel.MessageInput.EditedMessageOriginalBody;
 
                     KeyboardService.ShowSoftKeyboard(_messageEditText);
                 }
@@ -179,9 +183,9 @@ namespace Softeq.XToolkit.Chat.Droid.Views
                     KeyboardService.HideSoftKeyboard(_messageEditText);
                 }
 
-                _editingMessageLayout.Visibility = BoolToViewStateConverter.ConvertGone(ViewModel.IsInEditMessageMode);
+                _editingMessageLayout.Visibility = BoolToViewStateConverter.ConvertGone(ViewModel.MessageInput.IsInEditMessageMode);
             }));
-            Bindings.Add(this.SetBinding(() => ViewModel.Messages).WhenSourceChanges(() =>
+            Bindings.Add(this.SetBinding(() => ViewModel.MessagesList.Messages).WhenSourceChanges(() =>
             {
                 if (_isAdapterSourceInitialized)
                 {
@@ -189,13 +193,14 @@ namespace Softeq.XToolkit.Chat.Droid.Views
                 }
 
                 _conversationsAdapter = new ConversationsObservableRecyclerViewAdapter(
-                        ViewModel.Messages,
+                        ViewModel.MessagesList.Messages,
                         CollectionChangedAutoScrollToBottomHandler,
                         LoadItemsRequestedScrollChangeHandler,
                         ViewModel.GetDateString,
                         _contextMenuComponent);
 
-                _conversationsAdapter.SetCommand(nameof(_conversationsAdapter.LastItemRequested), ViewModel.LoadOlderMessagesCommand);
+                _conversationsAdapter.SetCommand(nameof(_conversationsAdapter.LastItemRequested),
+                    ViewModel.MessagesList.LoadOlderMessagesCommand);
 
                 _conversationsRecyclerView.SetAdapter(_conversationsAdapter);
 
@@ -315,10 +320,8 @@ namespace Softeq.XToolkit.Chat.Droid.Views
 
         private void Send()
         {
-            var args = _imagePicker.ViewModel.ImageCacheKey == null
-                                   ? null
-                                   : new GenericEventArgs<Func<(Task<Stream>, string)>>(_imagePicker.GetStreamFunc());
-            ViewModel.SendCommand.Execute(args);
+            var args = _imagePicker.GetPickerData();
+            ViewModel.MessageInput.SendMessageCommand.Execute(new GenericEventArgs<ImagePickerArgs>(args));
             CloseEditImageContainer();
         }
     }

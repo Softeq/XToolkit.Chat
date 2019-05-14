@@ -9,37 +9,42 @@ using System.CodeDom.Compiler;
 
 namespace Softeq.XToolkit.Chat.iOS.Views
 {
-    [Register("SelectedMemberViewCell")]
-    partial class SelectedMemberViewCell
-    {
-        [Outlet]
-        UIKit.UILabel MemberNameLabel { get; set; }
+	[Register ("SelectedMemberViewCell")]
+	partial class SelectedMemberViewCell
+	{
+		[Outlet]
+		UIKit.UILabel MemberNameLabel { get; set; }
 
-        [Outlet]
-        UIKit.UIImageView MemberPhotoImageView { get; set; }
+		[Outlet]
+		UIKit.UIImageView MemberPhotoImageView { get; set; }
 
-        [Outlet]
-        UIKit.UIButton RemoveMemberBtn { get; set; }
+		[Outlet]
+		UIKit.UIButton RemoveMemberBtn { get; set; }
 
-        void ReleaseDesignerOutlets()
-        {
-            if (MemberNameLabel != null)
-            {
-                MemberNameLabel.Dispose();
-                MemberNameLabel = null;
-            }
+		[Outlet]
+		UIKit.UIImageView RemoveMemberImage { get; set; }
+		
+		void ReleaseDesignerOutlets ()
+		{
+			if (MemberNameLabel != null) {
+				MemberNameLabel.Dispose ();
+				MemberNameLabel = null;
+			}
 
-            if (MemberPhotoImageView != null)
-            {
-                MemberPhotoImageView.Dispose();
-                MemberPhotoImageView = null;
-            }
+			if (MemberPhotoImageView != null) {
+				MemberPhotoImageView.Dispose ();
+				MemberPhotoImageView = null;
+			}
 
-            if (RemoveMemberBtn != null)
-            {
-                RemoveMemberBtn.Dispose();
-                RemoveMemberBtn = null;
-            }
-        }
-    }
+			if (RemoveMemberBtn != null) {
+				RemoveMemberBtn.Dispose ();
+				RemoveMemberBtn = null;
+			}
+
+			if (RemoveMemberImage != null) {
+				RemoveMemberImage.Dispose ();
+				RemoveMemberImage = null;
+			}
+		}
+	}
 }

@@ -4,11 +4,9 @@
 using System;
 using UIKit;
 using CoreGraphics;
-using Foundation;
 using Softeq.XToolkit.WhiteLabel.iOS;
 using Softeq.XToolkit.Chat.iOS.Views;
 using Softeq.XToolkit.Bindings;
-using Softeq.XToolkit.Common;
 using Softeq.XToolkit.Bindings.iOS;
 using Softeq.XToolkit.Chat.ViewModels;
 using Softeq.XToolkit.Common.Command;
@@ -17,15 +15,17 @@ using Softeq.XToolkit.WhiteLabel.iOS.ImagePicker;
 using Softeq.XToolkit.WhiteLabel;
 using Softeq.XToolkit.Permissions;
 using Softeq.XToolkit.WhiteLabel.Threading;
+using Softeq.XToolkit.Chat.iOS.Controls;
+using Softeq.XToolkit.Chat.iOS.TableSources;
 
 namespace Softeq.XToolkit.Chat.iOS.ViewControllers
 {
     public partial class ChatDetailsViewController : ViewControllerBase<ChatDetailsViewModel>
     {
         private ChatDetailsHeaderView _chatDetailsHeaderView;
-        private WeakReferenceEx<ObservableTableViewSource<ChatUserViewModel>> _sourceRef;
         private SimpleImagePicker _simpleImagePicker;
         private string _previewImageKey;
+        private bool _isChangeChatPhotoInitialized;
 
         public ChatDetailsViewController(IntPtr handle) : base(handle) { }
 
@@ -33,31 +33,118 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
         {
             base.ViewDidLoad();
 
+            InitNavigationBar();
+            InitDetailsHeader();
+            InitChatMembersTableView();
+        }
+
+        protected override void DoAttachBindings()
+        {
+            base.DoAttachBindings();
+
+            Bindings.Add(this.SetBinding(() => ViewModel.HeaderViewModel.AvatarUrl).WhenSourceChanges(() =>
+            {
+                _chatDetailsHeaderView.SetChatAvatar(ViewModel.HeaderViewModel.AvatarUrl, ViewModel.HeaderViewModel.ChatName);
+            }));
+            Bindings.Add(this.SetBinding(() => ViewModel.HeaderViewModel.ChatName, () => _chatDetailsHeaderView.ChatNameField.Text, BindingMode.TwoWay));
+            Bindings.Add(this.SetBinding(() => ViewModel.HeaderViewModel.ChatName).WhenSourceChanges(() =>
+            {
+                var chatName = ViewModel.HeaderViewModel.ChatName;
+                if (!string.IsNullOrEmpty(chatName) && !ViewModel.CanEdit)
+                {
+                    _chatDetailsHeaderView.ChatNameTextView.Text = chatName;
+                    _chatDetailsHeaderView.ChatNameTextView.EnableAutoScroll();
+                }
+            }));
+            Bindings.Add(this.SetBinding(() => ViewModel.HeaderViewModel.IsMuted, () => _chatDetailsHeaderView.IsNotificationsMuted));
+            Bindings.Add(this.SetBinding(() => ViewModel.HeaderViewModel.IsBusy, () => _chatDetailsHeaderView.IsMuteNotificationsAvailable)
+                .ConvertSourceToTarget(x => !x));
+
+            Bindings.Add(this.SetBinding(() => ViewModel.MembersCountText, () => _chatDetailsHeaderView.ChatMembersCount));
+            Bindings.Add(this.SetBinding(() => _simpleImagePicker.ViewModel.ImageCacheKey).WhenSourceChanges(() =>
+            {
+                var newImageCacheKey = _simpleImagePicker.ViewModel.ImageCacheKey;
+
+                if (string.IsNullOrEmpty(newImageCacheKey) || newImageCacheKey == _previewImageKey)
+                {
+                    return;
+                }
+
+                _previewImageKey = newImageCacheKey;
+
+                _chatDetailsHeaderView.SetEditedChatAvatar(_previewImageKey);
+
+                Execute.BeginOnUIThread(() =>
+                {
+                    ViewModel.HeaderViewModel.StartEditingCommand.Execute(null);
+                });
+            }));
+
+            Bindings.Add(this.SetBinding(() => ViewModel.IsLoading).WhenSourceChanges(() =>
+            {
+                if (ViewModel.IsLoading)
+                {
+                    BusyIndicator.StartAnimating();
+                }
+                else
+                {
+                    BusyIndicator.StopAnimating();
+                }
+                _chatDetailsHeaderView.MembersCountLabelHidden = ViewModel.IsLoading;
+            }));
+            Bindings.Add(this.SetBinding(() => ViewModel.CanEdit).WhenSourceChanges(() =>
+            {
+                _chatDetailsHeaderView.HideChangeChatPhoto(!ViewModel.CanEdit);
+                _chatDetailsHeaderView.EnableEditMode(ViewModel.CanEdit);
+
+                if (!ViewModel.CanEdit)
+                {
+                    _chatDetailsHeaderView.Frame = new CGRect(0, 0, 200, 260);
+
+                    return;
+                }
+
+                if (!_isChangeChatPhotoInitialized)
+                {
+                    _chatDetailsHeaderView.SetChangeChatPhotoCommand(new RelayCommand(OpenPicker), ViewModel.LocalizedStrings.ChangePhoto);
+                    _chatDetailsHeaderView.SetChangeChatName(ViewModel.HeaderViewModel.StartEditingCommand);
+
+                    _isChangeChatPhotoInitialized = true;
+                }
+            }));
+            Bindings.Add(this.SetBinding(() => ViewModel.HeaderViewModel.IsInEditMode).WhenSourceChanges(() =>
+            {
+                if (ViewModel.HeaderViewModel.IsInEditMode)
+                {
+                    CustomNavigationItem.SetCommand(ViewModel.LocalizedStrings.Save, UIColor.Black, new RelayCommand(Save), false);
+                }
+                else
+                {
+                    CustomNavigationItem.SetRightBarButtonItem(null, true);
+
+                    _chatDetailsHeaderView.EndEditing();
+                }
+            }));
+        }
+
+        private void InitNavigationBar()
+        {
             CustomNavigationItem.Title = ViewModel.LocalizedStrings.DetailsTitle;
             CustomNavigationItem.SetCommand(
                 UIImage.FromBundle(StyleHelper.Style.BackButtonBundleName),
                 ViewModel.BackCommand,
                 true);
+        }
 
-            TableView.RegisterNibForCellReuse(ChatUserViewCell.Nib, ChatUserViewCell.Key);
-            TableView.RowHeight = 50;
-
-            _chatDetailsHeaderView = new ChatDetailsHeaderView(new CGRect(0, 0, 200, 250));
-            _chatDetailsHeaderView.IsEditMode = false;
-            _chatDetailsHeaderView.SetAddMembersCommand(ViewModel.AddMembersCommand);
-            _chatDetailsHeaderView.SetChangeChatPhotoCommand(new RelayCommand(OpenPicker));
-
-            TableView.TableHeaderView = _chatDetailsHeaderView;
-            TableView.TableFooterView = new UIView();
-
-            var source = ViewModel.Members.GetTableViewSource((cell, viewModel, index) =>
-            {
-                (cell as ChatUserViewCell)?.BindViewModel(viewModel);
-            }, ChatUserViewCell.Key);
-            TableView.Source = source;
-            TableView.Delegate = new ParticipantsTableViewDelegate(ViewModel);
-
-            _sourceRef = WeakReferenceEx.Create(source);
+        private void InitDetailsHeader()
+        {
+            _chatDetailsHeaderView = new ChatDetailsHeaderView(new CGRect(0, 0, 200, 300));
+            _chatDetailsHeaderView.EnableEditMode(false);
+            _chatDetailsHeaderView.ChatNamePlaceholder = ViewModel.LocalizedStrings.ChatName;
+            _chatDetailsHeaderView.SetAddMembersCommand(ViewModel.AddMembersCommand, ViewModel.LocalizedStrings.AddMembers);
+            _chatDetailsHeaderView.SetChangeMuteNotificationsCommand(
+                ViewModel.HeaderViewModel.ChangeMuteNotificationsCommand,
+                ViewModel.LocalizedStrings.Notifications);
 
             _simpleImagePicker = new SimpleImagePicker(this, Dependencies.IocContainer.Resolve<IPermissionsManager>(), false)
             {
@@ -66,38 +153,18 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
             };
         }
 
-        protected override void DoAttachBindings()
+        private void InitChatMembersTableView()
         {
-            base.DoAttachBindings();
+            TableView.RegisterNibForCellReuse(ChatUserViewCell.Nib, ChatUserViewCell.Key);
+            TableView.RowHeight = 60;
+            TableView.TableHeaderView = _chatDetailsHeaderView;
+            TableView.TableFooterView = new UIView();
 
-            Bindings.Add(this.SetBinding(() => ViewModel.Summary.AvatarUrl).WhenSourceChanges((() =>
-            {
-                _chatDetailsHeaderView.SetChatAvatar(ViewModel.Summary.AvatarUrl);
-            })));
-            Bindings.Add(this.SetBinding(() => ViewModel.Summary.Name, () => _chatDetailsHeaderView.ChatNameField.Text));
-            Bindings.Add(this.SetBinding(() => ViewModel.MembersCountText, () => _chatDetailsHeaderView.ChatMembersCount));
-            Bindings.Add(this.SetBinding(() => _simpleImagePicker.ViewModel.ImageCacheKey)
-                .WhenSourceChanges(() =>
-                {
-                    if (string.IsNullOrEmpty(_simpleImagePicker.ViewModel.ImageCacheKey))
-                    {
-                        return;
-                    }
+            TableView.Source = CreateTableViewSource();
+            TableView.Delegate = CreateTableViewDelegate();
 
-                    var key = _simpleImagePicker.ViewModel.ImageCacheKey;
-                    if (key == _previewImageKey)
-                    {
-                        return;
-                    }
-
-                    _previewImageKey = key;
-                    Execute.BeginOnUIThread(() =>
-                    {
-                        _chatDetailsHeaderView.SetEditedChatAvatar(_previewImageKey);
-                        CustomNavigationItem.SetCommand(
-                            ViewModel.LocalizedStrings.Save, UIColor.Black, new RelayCommand(SaveAsync), false);
-                    });
-                }));
+            BusyIndicator.Color = StyleHelper.Style.AccentColor;
+            BusyIndicator.HidesWhenStopped = true;
         }
 
         private void OpenPicker()
@@ -105,38 +172,44 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
             _simpleImagePicker.OpenGalleryAsync();
         }
 
-        private void SaveAsync()
+        private void Save()
         {
-            ViewModel.SaveCommand.Execute(_simpleImagePicker.StreamFunc);
-            Execute.BeginOnUIThread(() =>
-            {
-                CustomNavigationItem.SetRightBarButtonItem(null, true);
-            });
+            ViewModel.HeaderViewModel.SaveCommand.Execute(_simpleImagePicker.StreamFunc);
         }
 
-        private class ParticipantsTableViewDelegate : UITableViewDelegate
+        private UITableViewSource CreateTableViewSource()
         {
-            private readonly ChatDetailsViewModel _viewModel;
-
-            public ParticipantsTableViewDelegate(ChatDetailsViewModel viewModel)
+            return new ObservableTableViewSource<ChatUserViewModel>
             {
-                _viewModel = viewModel;
-            }
-
-            public override UITableViewRowAction[] EditActionsForRow(UITableView tableView, NSIndexPath indexPath)
-            {
-                if (!_viewModel.IsMemberRemovable((int)indexPath.Item))
+                DataSource = ViewModel.Members,
+                BindCellDelegate = (cell, viewModel, index) =>
                 {
-                    return new UITableViewRowAction[0];
-                }
+                    if (cell is IBindableViewCell<ChatUserViewModel> userViewCell)
+                    {
+                        userViewCell.Bind(viewModel);
+                    }
+                },
+                CanEditCellDelegate = (viewModel, index) =>
+                {
+                    return viewModel.IsRemovable;
+                },
+                ReuseId = ChatUserViewCell.Key
+            };
+        }
 
-                var remove = UITableViewRowAction.Create(
+        private UITableViewDelegate CreateTableViewDelegate()
+        {
+            return new ActionableTableViewDelegate(() =>
+            {
+                var removeAction = UITableViewRowAction.Create(
                     UITableViewRowActionStyle.Default,
-                    _viewModel.LocalizedStrings.Remove,
-                    (row, index) => _viewModel.RemoveMemberAtCommand.Execute((int)indexPath.Item));
-
-                return new[] { remove };
-            }
+                    ViewModel.LocalizedStrings.Remove,
+                    (row, index) =>
+                    {
+                        ViewModel.RemoveMemberCommand.Execute(ViewModel.Members[index.Row]);
+                    });
+                return new[] { removeAction };
+            });
         }
     }
 }

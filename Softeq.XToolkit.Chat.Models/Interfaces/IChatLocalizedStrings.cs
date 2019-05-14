@@ -8,30 +8,22 @@ namespace Softeq.XToolkit.Chat.Models.Interfaces
         string WaitingForNetwork { get; }
         string Updating { get; }
         string Connecting { get; }
-
         string ChatsTitle { get; }
         string DetailsTitle { get; }
         string InviteUsers { get; }
         string CreateGroup { get; }
-
         string MembersPlural { get; }
         string MemberSingular { get; }
-
         string Invite { get; }
         string Create { get; }
-
         string NotLoggedIn { get; }
-
         string AndOther { get; }
         string TypingPlural { get; }
         string TypingSingular { get; }
-
         string Edit { get; }
         string Delete { get; }
-
         string Leave { get; }
         string Close { get; }
-
         string Today { get; }
         string Yesterday { get; }
         string Remove { get; }
@@ -39,5 +31,21 @@ namespace Softeq.XToolkit.Chat.Models.Interfaces
         string AddMembers { get; }
         string Done { get; }
         string Search { get; }
+        string Ok { get; }
+        string ValidationErrorsDialogTitle { get; }
+        string ChatName { get; }
+        string ChangePhoto { get; }
+        string EditMessage { get; }
+        string YourMessage { get; }
+        string Notifications { get; }
+        string RemoveUserConfirmationTitle { get; }
+        string RemoveUserConfirmationMessage { get; }
+        string LeaveChatConfirmationTitle { get; }
+        string LeaveChatConfirmationMessage { get; }
+        string Yes { get; }
+        string No { get; }
+        string Cancel { get; }
+        string NewChat { get; }
+        string NewGroup { get; }
     }
 }

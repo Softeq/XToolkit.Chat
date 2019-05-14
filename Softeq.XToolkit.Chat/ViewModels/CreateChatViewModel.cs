@@ -7,13 +7,14 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Softeq.XToolkit.Chat.Interfaces;
+using Softeq.XToolkit.Chat.Messages;
 using Softeq.XToolkit.Chat.Models.Enum;
 using Softeq.XToolkit.Chat.Models.Interfaces;
 using Softeq.XToolkit.Chat.Strategies.Search;
 using Softeq.XToolkit.Common.Collections;
 using Softeq.XToolkit.Common.Command;
-using Softeq.XToolkit.Common.Extensions;
 using Softeq.XToolkit.WhiteLabel;
+using Softeq.XToolkit.WhiteLabel.Messenger;
 using Softeq.XToolkit.WhiteLabel.Model;
 using Softeq.XToolkit.WhiteLabel.Mvvm;
 using Softeq.XToolkit.WhiteLabel.Navigation;
@@ -21,21 +22,18 @@ using Softeq.XToolkit.WhiteLabel.Threading;
 
 namespace Softeq.XToolkit.Chat.ViewModels
 {
-    // TODO YP: rename to CreateChatViewModel or merge with ChatDetailsViewModel
-    public class SelectContactsViewModel : ViewModelBase
+    public class CreateChatViewModel : ViewModelBase
     {
         private readonly IChatsListManager _chatsListManager;
         private readonly IChatService _chatService;
         private readonly IFormatService _formatService;
-        private readonly IChatLocalizedStrings _localizedStrings;
-        private readonly ICommand _memberSelectedCommand;
         private readonly IPageNavigationService _pageNavigationService;
         private readonly IUploadImageService _uploadImageService;
         private readonly IDialogsService _dialogsService;
 
         private string _chatName;
 
-        public SelectContactsViewModel(
+        public CreateChatViewModel(
             IChatsListManager chatsListManager,
             IChatService chatService,
             IPageNavigationService pageNavigationService,
@@ -47,29 +45,23 @@ namespace Softeq.XToolkit.Chat.ViewModels
             _chatsListManager = chatsListManager;
             _chatService = chatService;
             _pageNavigationService = pageNavigationService;
-            _localizedStrings = localizedStrings;
             _formatService = formatService;
             _uploadImageService = uploadImageService;
             _dialogsService = dialogsService;
-            _memberSelectedCommand = new RelayCommand(() => RaisePropertyChanged(nameof(ContactsCountText)));
-
-            BackCommand = new RelayCommand(_pageNavigationService.GoBack, () => _pageNavigationService.CanGoBack);
-            AddMembersCommand = new AsyncCommand(OpenDialogForAddMembersAsync);
+            LocalizedStrings = localizedStrings;
         }
 
-        public ICommand BackCommand { get; }
-
-        public ICommand AddMembersCommand { get; }
-
+        public IChatLocalizedStrings LocalizedStrings { get; }
+        
         public ICommand SaveCommand { get; private set; }
 
-        public string Title => _localizedStrings.CreateGroup;
+        public ICommand BackCommand { get; private set; }
 
-        public string ActionButtonName => _localizedStrings.Create;
+        public ICommand AddMembersCommand { get; private set; }
 
         public string ContactsCountText => _formatService.PluralizeWithQuantity(Contacts.Count(x => x.IsSelected),
-            _localizedStrings.MembersPlural,
-            _localizedStrings.MemberSingular);
+            LocalizedStrings.MembersPlural,
+            LocalizedStrings.MemberSingular);
 
         public ObservableRangeCollection<ChatUserViewModel> Contacts { get; } =
             new ObservableRangeCollection<ChatUserViewModel>();
@@ -80,19 +72,17 @@ namespace Softeq.XToolkit.Chat.ViewModels
             set => Set(ref _chatName, value);
         }
 
-        public string AddMembersText => _localizedStrings.AddMembers;
-
         public override void OnInitialize()
         {
             base.OnInitialize();
 
+            BackCommand = new RelayCommand(_pageNavigationService.GoBack, () => _pageNavigationService.CanGoBack);
+            AddMembersCommand = new AsyncCommand(OpenDialogForAddMembersAsync);
             SaveCommand = new AsyncCommand<Func<(Task<Stream>, string)>>(SaveAsync);
         }
 
         private async Task OpenDialogForAddMembersAsync()
         {
-            Contacts.Clear();
-
             var result = await _dialogsService.ShowForViewModel<AddContactsViewModel, AddContactParameters>(
                 new AddContactParameters
                 {
@@ -108,7 +98,7 @@ namespace Softeq.XToolkit.Chat.ViewModels
             if (result != null)
             {
                 var contacts = result.SelectedContacts;
-                contacts.Apply(x => x.SetSelectionCommand(_memberSelectedCommand));
+                //contacts.Apply(x => x.SetSelectionCommand(_updateContactsCountCommand));
                 Contacts.AddRange(contacts);
 
                 RaisePropertyChanged(nameof(ContactsCountText));
@@ -122,39 +112,36 @@ namespace Softeq.XToolkit.Chat.ViewModels
                 return;
             }
 
-            IsBusy = true;
+            Execute.BeginOnUIThread(() => IsBusy = true);
 
-            var imageInfo = getImageFunc();
-            var imagePath = default(string);
-
-            using (var image = await imageInfo.GetImageTask.ConfigureAwait(false))
-            {
-                if (image != null)
-                {
-                    imagePath = await _uploadImageService.UploadImageAsync(image, imageInfo.Extension)
-                        .ConfigureAwait(false);
-                }
-            }
+            var imagePath = await _uploadImageService.UploadImageAsync(getImageFunc).ConfigureAwait(false);
 
             try
             {
                 var selectedContactsIds = Contacts.Where(x => x.IsSelected).Select(x => x.Id).ToList();
-                await _chatsListManager.CreateChatAsync(ChatName, selectedContactsIds, imagePath).ConfigureAwait(false);
+                var isChatCreated = await _chatsListManager.CreateChatAsync(ChatName, selectedContactsIds, imagePath).ConfigureAwait(false);
+
+                if (!isChatCreated)
+                {
+                    await _dialogsService.ShowDialogAsync(LocalizedStrings.ValidationErrorsDialogTitle,
+                        string.Empty, LocalizedStrings.Ok);
+                    return;
+                }
 
                 Execute.BeginOnUIThread(() =>
                 {
                     ChatName = string.Empty;
 
-                    _pageNavigationService.GoBack();
+                    Messenger.Default.Send(new OpenChatsListMessage());
                 });
             }
             catch (Exception ex)
             {
-                LogManager.LogError<SelectContactsViewModel>(ex);
+                LogManager.LogError<CreateChatViewModel>(ex);
             }
             finally
             {
-                IsBusy = false;
+                Execute.BeginOnUIThread(() => IsBusy = false);
             }
         }
     }

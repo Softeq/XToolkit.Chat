@@ -17,6 +17,7 @@ namespace Softeq.XToolkit.Chat.Models.Interfaces
 
         IObservable<ChatSummaryModel> ChatAdded { get; }
         IObservable<string> ChatRemoved { get; }
+        IObservable<string> ChatRead { get; }
         IObservable<(string ChatId, bool IsMuted)> IsChatMutedChanged { get; }
         IObservable<(string ChatId, int NewCount)> UnreadMessageCountChanged { get; }
 
@@ -24,9 +25,11 @@ namespace Softeq.XToolkit.Chat.Models.Interfaces
         SocketConnectionStatus ConnectionStatus { get; }
 
         Task<ChatSummaryModel> CreateChatAsync(string chatName, IList<string> participantsIds, string chatAvatar);
+        Task<ChatSummaryModel> CreateDirectChatAsync(string memberId);
         Task CloseChatAsync(string chatId);
         Task LeaveChatAsync(string chatId);
         Task InviteMembersAsync(string chatId, IList<string> participantsIds);
+        Task DeleteMemberAsync(string chatId, string memberId);
 
         Task<ChatMessageModel> SendMessageAsync(string chatId, string messageBody, string imageUrl);
         Task EditMessageAsync(string messageId, string newBody);

@@ -17,16 +17,20 @@ namespace Softeq.XToolkit.Chat.HttpClient
             return dto == null ? null : new ChatSummaryModel
             {
                 Id = dto.Id,
-                Name = dto.Name,
-                UnreadMessagesCount = dto.UnreadMessagesCount,
-                IsMuted = dto.IsMuted,
-                CreatorId = dto.CreatorSaasUserId,
-                AvatarUrl = dto.PhotoUrl,
-                LastMessage = DtoToChatMessage(dto.LastMessage),
                 CreatedDate = dto.Created,
                 UpdatedDate = dto.Updated,
+                UnreadMessagesCount = dto.UnreadMessagesCount,
+                Name = dto.Name,
+                IsClosed = dto.IsClosed,
+                IsMuted = dto.IsMuted,
+                IsPinned = dto.IsPinned,
+                CreatorId = dto.Creator?.Id,
+                DirectMember = DtoToChatUser(dto.DirectMember),
+                Description = dto.Description,
                 WelcomeMessage = dto.WelcomeMessage,
-                Topic = dto.Topic
+                Type = (ChannelType)dto.Type,
+                LastMessage = DtoToChatMessage(dto.LastMessage),
+                PhotoUrl = dto.PhotoUrl
             };
         }
 
@@ -36,7 +40,7 @@ namespace Softeq.XToolkit.Chat.HttpClient
             {
                 Id = dto.Id.ToString(),
                 ChannelId = dto.ChannelId,
-                SenderId = dto.Sender?.SaasUserId,
+                SenderId = dto.Sender?.Id,
                 SenderName = dto.Sender?.UserName,
                 SenderPhotoUrl = dto.Sender?.AvatarUrl,
                 MessageType = DtoToMessageType(dto.Type),
@@ -44,7 +48,8 @@ namespace Softeq.XToolkit.Chat.HttpClient
                 DateTime = dto.Created,
                 IsRead = dto.IsRead,
                 IsDelivered = true,
-                ImageUrl = dto.ImageUrl
+                ImageRemoteUrl = dto.ImageUrl,
+                ChannelType = (ChannelType)dto.ChannelType
             };
         }
 
@@ -55,9 +60,9 @@ namespace Softeq.XToolkit.Chat.HttpClient
                 Id = dto.Id,
                 Username = dto.UserName,
                 PhotoUrl = dto.AvatarUrl,
-                SaasUserId = dto.SaasUserId,
                 LastActivity = dto.LastActivity,
-                IsOnline = !dto.IsAfk
+                IsOnline = dto.Status == ChatUserStatusDto.Online,
+                IsActive = dto.IsActive
             };
         }
 
@@ -73,7 +78,7 @@ namespace Softeq.XToolkit.Chat.HttpClient
                     throw new InvalidEnumArgumentException("messageType", (int)dto, typeof(MessageTypeDto));
             }
         }
-        
+
         public static PagingModel<ChatUserModel> PagedMembersDtoToPagingModel(PagingModelDto<ChatUserDto> dto)
         {
             if (dto?.Items == null)
@@ -85,7 +90,7 @@ namespace Softeq.XToolkit.Chat.HttpClient
                 .Where(y => y.AvatarUrl != null || !string.IsNullOrEmpty(y.UserName))
                 .Select(DtoToChatUser)
                 .ToList();
-            
+
             return new PagingModel<ChatUserModel>
             {
                 Page = dto.PageNumber,

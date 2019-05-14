@@ -16,5 +16,6 @@ namespace Softeq.XToolkit.Chat.HttpClient.Dtos
         public MessageTypeDto Type { get; set; }
         public bool IsRead { get; set; }
         public string ImageUrl { get; set; }
+        public int ChannelType { get; set; }
     }
 }

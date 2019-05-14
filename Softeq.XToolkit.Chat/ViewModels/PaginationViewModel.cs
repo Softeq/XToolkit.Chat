@@ -10,6 +10,7 @@ using Softeq.XToolkit.Common.Collections;
 using Softeq.XToolkit.Common.Models;
 using Softeq.XToolkit.WhiteLabel.Interfaces;
 using Softeq.XToolkit.WhiteLabel.Mvvm;
+using Softeq.XToolkit.WhiteLabel.Threading;
 
 namespace Softeq.XToolkit.Chat.ViewModels
 {
@@ -21,7 +22,7 @@ namespace Softeq.XToolkit.Chat.ViewModels
         private readonly Func<IReadOnlyList<TViewModel>, IReadOnlyList<TViewModel>> _filterAction;
         private readonly int _pageSize;
 
-        private int _pageNumber = 1;
+        private long _pageNumber = 1;
 
         public PaginationViewModel(
             IViewModelFactoryService viewModelFactory,
@@ -37,20 +38,31 @@ namespace Softeq.XToolkit.Chat.ViewModels
 
         public ObservableRangeCollection<TViewModel> Items { get; } = new ObservableRangeCollection<TViewModel>();
 
-        public async Task LoadFirstPageAsync()
+        public async Task LoadFirstPageAsync(CancellationToken cancellationToken)
         {
-            _pageNumber = 1;
+            Interlocked.Exchange(ref _pageNumber, 1);
 
-            var viewModels = await LoadPageAsync(_pageNumber).ConfigureAwait(false);
+            var viewModels = await LoadPageAsync((int)_pageNumber).ConfigureAwait(false);
 
-            Items.ReplaceRange(viewModels);
+            if (!cancellationToken.IsCancellationRequested)
+            {
+                Execute.BeginOnUIThread(() => 
+                {
+                    Items.ReplaceRange(viewModels);
+                });
+            }
         }
 
         public async Task LoadNextPageAsync()
         {
+            if (Interlocked.Read(ref _pageNumber) == 0)
+            {
+                return; 
+            }
+
             Interlocked.Increment(ref _pageNumber);
 
-            var viewModels = await LoadPageAsync(_pageNumber).ConfigureAwait(false);
+            var viewModels = await LoadPageAsync((int)_pageNumber).ConfigureAwait(false);
 
             if (viewModels.Count > 0)
             {

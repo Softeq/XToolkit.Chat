@@ -15,19 +15,17 @@
 
     <ffimageloading.cross.MvxCachedImageView
         android:id="@+id/chat_photo_image_view"
-        android:layout_width="45dp"
-        android:layout_height="45dp"
+        android:layout_width="44dp"
+        android:layout_height="44dp"
         android:layout_alignParentLeft="true"
-        android:layout_centerVertical="true"
-        android:layout_marginLeft="16dp"
-        android:layout_marginRight="8dp"
-        android:layout_marginTop="8dp"/>
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="13dp"
+        android:layout_marginTop="10dp"/>
 
     <TextView
         android:id="@+id/chat_name_text_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="8dp"
         android:layout_marginTop="8dp"
         android:layout_toLeftOf="@+id/message_status_indicator"
         android:layout_toRightOf="@+id/chat_photo_image_view"
@@ -107,11 +105,4 @@
         android:textColor="@android:color/white"
         android:textSize="12sp" />
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_alignParentBottom="true"
-        android:layout_marginLeft="8dp"
-        android:layout_toRightOf="@+id/chat_photo_image_view"
-        android:background="#cccccc" />
 </RelativeLayout>

@@ -22,8 +22,8 @@ namespace Softeq.XToolkit.Chat
         private readonly IHttpChatAdapter _httpChatAdapter;
         private readonly ILogger _logger;
 
-        private readonly Subject<ChatMessageModel> _messageReceived = new Subject<ChatMessageModel>();
-        private readonly Subject<ChatMessageModel> _messageEdited = new Subject<ChatMessageModel>();
+        private readonly ISubject<ChatMessageModel> _messageReceived = new Subject<ChatMessageModel>();
+        private readonly ISubject<ChatMessageModel> _messageEdited = new Subject<ChatMessageModel>();
 
         private readonly SemaphoreSlim _semaphoreSlim = new SemaphoreSlim(1, 1);
         private string _cachedUserId;
@@ -49,6 +49,7 @@ namespace Softeq.XToolkit.Chat
         public IObservable<(string ChatId, bool IsMuted)> IsChatMutedChanged => _socketChatAdapter.IsChatMutedChanged;
         public IObservable<(string ChatId, int NewCount)> UnreadMessageCountChanged => _socketChatAdapter.UnreadMessageCountChanged;
         public IObservable<string> ChatRemoved => _socketChatAdapter.ChatRemoved;
+        public IObservable<string> ChatRead => _socketChatAdapter.ChatRead;
         public IObservable<SocketConnectionStatus> ConnectionStatusChanged => _socketChatAdapter.ConnectionStatusChanged;
 
         public SocketConnectionStatus ConnectionStatus => _socketChatAdapter.ConnectionStatus;
@@ -56,8 +57,27 @@ namespace Softeq.XToolkit.Chat
         public async Task<ChatSummaryModel> CreateChatAsync(string chatName, IList<string> participantsIds, string imagePath)
         {
             var result = await _socketChatAdapter.CreateChatAsync(chatName, participantsIds, imagePath);
+            if (result == null)
+            {
+                return null;
+            }
             var userId = await GetUserIdAsync().ConfigureAwait(false);
             result.UpdateIsCreatedByMeStatus(userId);
+            return result;
+        }
+
+        public async Task<ChatSummaryModel> CreateDirectChatAsync(string memberId)
+        {
+            var result = await _socketChatAdapter.CreateDirectChatAsync(memberId).ConfigureAwait(false);
+
+            if (result == null)
+            {
+                return null;
+            }
+
+            var userId = await GetUserIdAsync().ConfigureAwait(false);
+            result.UpdateIsCreatedByMeStatus(userId);
+
             return result;
         }
 
@@ -76,17 +96,32 @@ namespace Softeq.XToolkit.Chat
             return _socketChatAdapter.InviteMembersAsync(chatId, participantsIds);
         }
 
+        public Task DeleteMemberAsync(string chatId, string memberId)
+        {
+            return _socketChatAdapter.DeleteMemberAsync(chatId, memberId);
+        }
+
+        public Task MuteChatAsync(string chatId)
+        {
+            return _httpChatAdapter.MuteChatAsync(chatId);
+        }
+
+        public Task UnMuteChatAsync(string chatId)
+        {
+            return _httpChatAdapter.UnMuteChatAsync(chatId);
+        }
+
         public virtual async Task<IList<ChatSummaryModel>> GetChatsListAsync()
         {
-            var models = await _httpChatAdapter.GetChatsListAsync().ConfigureAwait(false);
+            var models = await _httpChatAdapter.GetChannelsAsync().ConfigureAwait(false);
             if (models == null)
             {
                 return null;
             }
-            
+
             var userId = await GetUserIdAsync().ConfigureAwait(false);
             models.Apply(x => x.UpdateIsCreatedByMeStatus(userId));
-                    
+
             return models.ToList();
         }
 
@@ -182,6 +217,7 @@ namespace Softeq.XToolkit.Chat
             _cachedUserId = string.Empty;
         }
 
+        // TODO YP: move to backend side
         private async Task<string> GetUserIdAsync()
         {
             var result = _cachedUserId;
@@ -195,8 +231,8 @@ namespace Softeq.XToolkit.Chat
                     {
                         userSummary = await _httpChatAdapter.GetUserSummaryAsync().ConfigureAwait(false);
                     }
-                    while (string.IsNullOrEmpty(userSummary?.SaasUserId));
-                    _cachedUserId = userSummary.SaasUserId;
+                    while (string.IsNullOrEmpty(userSummary?.Id));
+                    _cachedUserId = userSummary.Id;
                 }
                 result = _cachedUserId;
             }

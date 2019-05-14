@@ -18,7 +18,7 @@
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" allowsSelection="NO" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="xQb-u6-XfH">
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" keyboardDismissMode="interactive" dataMode="prototypes" style="plain" separatorStyle="default" allowsSelection="NO" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="xQb-u6-XfH">
                                 <rect key="frame" x="0.0" y="64" width="375" height="603"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                             </tableView>
@@ -31,20 +31,26 @@
                                     <navigationItem largeTitleDisplayMode="never" id="hur-io-XUn"/>
                                 </items>
                             </navigationBar>
+                            <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" style="whiteLarge" translatesAutoresizingMaskIntoConstraints="NO" id="e5v-eT-U3i">
+                                <rect key="frame" x="169" y="465" width="37" height="37"/>
+                            </activityIndicatorView>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
                             <constraint firstItem="Cbk-k9-mBZ" firstAttribute="trailing" secondItem="xQb-u6-XfH" secondAttribute="trailing" id="4sC-3t-9Pf"/>
                             <constraint firstItem="ZYQ-7Q-g6I" firstAttribute="top" secondItem="Cbk-k9-mBZ" secondAttribute="top" id="6Ea-Of-1fO"/>
                             <constraint firstItem="ZYQ-7Q-g6I" firstAttribute="trailing" secondItem="Cbk-k9-mBZ" secondAttribute="trailing" id="Dh8-U2-r3d"/>
+                            <constraint firstItem="e5v-eT-U3i" firstAttribute="centerX" secondItem="PQq-nB-TEC" secondAttribute="centerX" id="LVh-ou-eJZ"/>
                             <constraint firstItem="xQb-u6-XfH" firstAttribute="leading" secondItem="Cbk-k9-mBZ" secondAttribute="leading" id="MM0-y0-ThG"/>
                             <constraint firstItem="xQb-u6-XfH" firstAttribute="top" secondItem="ZYQ-7Q-g6I" secondAttribute="bottom" id="O4l-ZC-Dpl"/>
                             <constraint firstItem="ZYQ-7Q-g6I" firstAttribute="leading" secondItem="Cbk-k9-mBZ" secondAttribute="leading" id="SFw-M7-jJG"/>
+                            <constraint firstItem="e5v-eT-U3i" firstAttribute="centerY" secondItem="PQq-nB-TEC" secondAttribute="centerY" constant="150" id="nPw-PS-Sw9"/>
                             <constraint firstItem="Cbk-k9-mBZ" firstAttribute="bottom" secondItem="xQb-u6-XfH" secondAttribute="bottom" id="tM9-76-MjG"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="Cbk-k9-mBZ"/>
                     </view>
                     <connections>
+                        <outlet property="BusyIndicator" destination="e5v-eT-U3i" id="J5u-Yt-uR9"/>
                         <outlet property="CustomNavigationBar" destination="ZYQ-7Q-g6I" id="dd9-MP-EQq"/>
                         <outlet property="CustomNavigationItem" destination="hur-io-XUn" id="Y0B-b5-5Ms"/>
                         <outlet property="TableView" destination="xQb-u6-XfH" id="sB5-fd-08W"/>

@@ -7,4 +7,7 @@
   <color name="chat_unreaded_color">#5bc6c9</color>
   <color name="chat_unreaded_muted_color">#b4b4b4</color>
   <color name="chat_status_default_color">#dedede</color>
+  <color name="chat_online_color">#18c756</color>
+  <color name="chat_divider_color">#e2e2e2</color>
+  <color name="chat_content_color">#ffffff</color>
 </resources>

@@ -1,0 +1,83 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:focusable="true"
+    android:focusableInTouchMode="true">
+
+    <com.softeq.xtoolkit.whitelabel.droid.NavigationBarView
+        android:id="@+id/activity_chat_new_nav_bar"
+        android:layout_width="match_parent"
+        android:layout_height="56dp" />
+
+    <LinearLayout
+        android:id="@+id/activity_chat_new_search_container"
+        android:layout_below="@+id/activity_chat_new_nav_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/chat_underlined_bg"
+        android:orientation="horizontal"
+        android:paddingLeft="17dp"
+        android:paddingRight="24dp">
+
+        <ImageView
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_below="@+id/activity_chat_new_nav_bar"
+            android:layout_centerVertical="false"
+            android:layout_marginRight="32dp"
+            android:layout_gravity="center_vertical"
+            android:background="@drawable/chat_ic_search" />
+
+        <EditText
+            android:id="@+id/activity_chat_new_search_text"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:background="@android:color/transparent"
+            android:hint="Search"
+            android:inputType="text"
+            android:maxLines="1" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/activity_chat_new_group_container"
+        android:layout_below="@+id/activity_chat_new_search_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingTop="18dp"
+        android:paddingBottom="18dp"
+        android:paddingLeft="15dp"
+        android:paddingRight="16dp"
+        android:background="#f9f9f9">
+        <ImageView
+            android:id="@+id/activity_chat_new_group_image"
+            android:layout_width="44dp"
+            android:layout_height="44dp"
+            android:layout_marginRight="13dp"
+            android:layout_gravity="center_vertical" />
+        <TextView
+            android:id="@+id/activity_chat_new_group_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:textColor="@color/chat_brand_color"
+            android:fontFamily="sans-serif-medium"
+            android:textSize="17sp"
+            android:text="New Group" />
+    </LinearLayout>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/activity_chat_new_filtered_members"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/activity_chat_new_group_container" />
+
+    <com.softeq.xtoolkit.whitelabel.droid.BusyOverlayView
+        android:id="@+id/activity_chat_new_busy_view"
+        android:layout_below="@+id/activity_chat_new_nav_bar"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"/>
+</RelativeLayout>

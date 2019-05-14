@@ -18,6 +18,12 @@ using Softeq.XToolkit.Common.iOS.Helpers;
 using Softeq.XToolkit.WhiteLabel.iOS.Helpers;
 using Softeq.XToolkit.WhiteLabel.Threading;
 using Softeq.XToolkit.WhiteLabel.ViewModels;
+using FFImageLoading;
+using System.Threading.Tasks;
+using FFImageLoading.Work;
+using Softeq.XToolkit.WhiteLabel;
+using Softeq.XToolkit.WhiteLabel.Interfaces;
+using Softeq.XToolkit.Chat.iOS.Converters;
 
 namespace Softeq.XToolkit.Chat.iOS.Views
 {
@@ -34,6 +40,7 @@ namespace Softeq.XToolkit.Chat.iOS.Views
         private readonly ASImageNode _avatarImageNode = new ASImageNode();
         private readonly ASImageNode _attachmentImageNode = new ASImageNode();
         private readonly ASImageNode _statusImageNode = new ASImageNode();
+        private readonly ChatMessageStatusToImageConverter _statusToImageConverter = new ChatMessageStatusToImageConverter();
 
         private Binding _messageBodyBinding;
         private Binding _messageStatusBinding;
@@ -73,8 +80,8 @@ namespace Softeq.XToolkit.Chat.iOS.Views
                 _avatarImageNode.LoadImageWithTextPlaceholder(
                     _viewModelRef.Target.SenderPhotoUrl,
                     _viewModelRef.Target.SenderName,
-                    new AvatarImageHelpers.AvatarStyles 
-                    { 
+                    new AvatarImageHelpers.AvatarStyles
+                    {
                         BackgroundHexColors = StyleHelper.Style.AvatarStyles.BackgroundHexColors,
                         Font = StyleHelper.Style.AvatarStyles.Font,
                         Size = new System.Drawing.Size((int)AvatarSize, (int)AvatarSize)
@@ -82,19 +89,8 @@ namespace Softeq.XToolkit.Chat.iOS.Views
             }
 
             _attachmentImageNode.ContentMode = UIViewContentMode.ScaleAspectFit;
-            _attachmentImageNode.Hidden = _viewModelRef.Target == null || !_viewModelRef.Target.HasAttachment;
             _attachmentImageNode.ImageModificationBlock = image => image.MakeImageWithRoundedCorners(12);
-            if (_viewModelRef.Target != null && _viewModelRef.Target.HasAttachment && _attachmentImageNode.Image == null)
-            {
-                _attachmentImageNode.LoadImageAsync(_viewModelRef.Target.AttachmentImageUrl).ContinueWith((arg) =>
-                {
-                    SetNeedsLayout();
-                    Layout();
-                });
-                _attachmentImageNode.AddTarget(this,
-                                               new Selector(nameof(OnAttachmentTapped)),
-                                               ASControlNodeEvent.TouchUpInside);
-            }
+            LoadAttachmentImageIfNeeded();
 
             _statusImageNode.ContentMode = UIViewContentMode.Center;
             _statusImageNode.Hidden = !_isMyMessage;
@@ -102,13 +98,7 @@ namespace Softeq.XToolkit.Chat.iOS.Views
 
         public override ASLayoutSpec LayoutSpecThatFits(ASSizeRange constrainedSize)
         {
-            var cellLayout = new ASStackLayoutSpec
-            {
-                Direction = ASStackLayoutDirection.Vertical,
-                Children = new[] { LayoutBody(constrainedSize.max.Width) }
-            };
-
-            return cellLayout;
+            return BuildNode(constrainedSize.max.Width);
         }
 
         public override void DidEnterDisplayState()
@@ -132,28 +122,10 @@ namespace Softeq.XToolkit.Chat.iOS.Views
 
             _messageStatusBinding = this.SetBinding(() => _viewModelRef.Target.Status).WhenSourceChanges(() =>
             {
-                if (_viewModelRef.Target == null)
+                if (_viewModelRef.Target != null)
                 {
-                    return;
+                    _statusImageNode.Image = _statusToImageConverter.ConvertValue(_viewModelRef.Target.Status);
                 }
-                var statusImage = default(UIImage);
-                //TODO VPY: need refactor this
-                switch (_viewModelRef.Target.Status)
-                {
-                    case Models.ChatMessageStatus.Sending:
-                        statusImage = UIImage.FromBundle(StyleHelper.Style.MessageSendingBoundleName);
-                        break;
-                    case Models.ChatMessageStatus.Delivered:
-                        statusImage = UIImage.FromBundle(StyleHelper.Style.MessageDeliveredBoundleName);
-                        break;
-                    case Models.ChatMessageStatus.Read:
-                        statusImage = UIImage.FromBundle(StyleHelper.Style.MessageReadBoundleName);
-                        break;
-                    case Models.ChatMessageStatus.Other:
-                        break;
-                    default: throw new InvalidEnumArgumentException();
-                }
-                _statusImageNode.Image = statusImage;
             });
         }
 
@@ -169,104 +141,156 @@ namespace Softeq.XToolkit.Chat.iOS.Views
         {
             var attrText = _viewModelRef.Target.Body
                 .BuildAttributedString()
-                .Font(UIFont.SystemFontOfSize(17));
+                .Font(UIFont.SystemFontOfSize(17))
+                .DetectLinks(StyleHelper.Style.AccentColor, NSUnderlineStyle.Single, true, out var links);
+
+            if (links != null)
+            {
+                _descriptionTextNode.Delegate = new LinksDelegate();
+                _descriptionTextNode.UserInteractionEnabled = true;
+                _descriptionTextNode.LinkAttributeNames = links;
+            }
+
             _descriptionTextNode.AttributedText = attrText;
         }
 
-        private IASLayoutElement LayoutBody(nfloat width)
+        private ASLayoutSpec BuildNode(nfloat width)
         {
-            IASLayoutElement element = _dateTimeTextNode;
-            if (!_statusImageNode.Hidden)
-            {
-                _statusImageNode.Style.PreferredSize = new CGSize(17, _dateTimeTextNode.Style.Height.value);
-                element = new ASStackLayoutSpec
-                {
-                    Direction = ASStackLayoutDirection.Horizontal,
-                    Children = new IASLayoutElement[] { _dateTimeTextNode, _statusImageNode },
-                    Spacing = 4
-                };
-            }
-            var dateTimeSpec = new ASRelativeLayoutSpec(ASRelativeLayoutSpecPosition.End,
-                                                        ASRelativeLayoutSpecPosition.Start,
-                                                        ASRelativeLayoutSpecSizingOption.Default,
-                                                        element);
-            dateTimeSpec.Style.SpacingBefore = 5;
-
-            var MaxSize = width - 50 - 73 - 17 - (nfloat)AvatarSize;
-
-            if (_attachmentImageNode.Image != null)
-            {
-                var imageSize = _attachmentImageNode.Image.Size;
-                var imageSizeThatFits = imageSize;
-                var ratio = imageSize.Height / imageSize.Width;
-                if (imageSize.Height > imageSize.Width && imageSize.Height > MaxSize)
-                {
-                    imageSizeThatFits.Height *= MaxSize / imageSize.Height;
-                    imageSizeThatFits.Width = imageSizeThatFits.Height / ratio;
-                }
-                else if (imageSize.Height <= imageSize.Width && imageSize.Width > MaxSize)
-                {
-                    imageSizeThatFits.Width *= MaxSize / imageSize.Width;
-                    imageSizeThatFits.Height = imageSizeThatFits.Width * ratio;
-                }
-                _attachmentImageNode.Style.PreferredSize = imageSizeThatFits;
-            }
-
-            var messageElements = new List<IASLayoutElement> { _descriptionTextNode };
-            if (!_attachmentImageNode.Hidden)
-            {
-                messageElements.Add(_attachmentImageNode);
-            }
-            messageElements.Add(dateTimeSpec);
-
-            var messageInsetLeft = _isMyMessage ? 20 : 30;
-            var messageInsetRight = _isMyMessage ? 30 : 20;
-            var messageBodyWithTime = ASInsetLayoutSpec.InsetLayoutSpecWithInsets(
-                new UIEdgeInsets(10, messageInsetLeft, 15, messageInsetRight),
-                new ASStackLayoutSpec
-                {
-                    Direction = ASStackLayoutDirection.Vertical,
-                    Children = messageElements.ToArray()
-                });
-
-            var messageBackgroundImageName = _isMyMessage ? StyleHelper.Style.BubbleMineBoundleName : StyleHelper.Style.BubbleOtherBoundleName;
-            var messageBackgroundImage = UIImage.FromBundle(messageBackgroundImageName)
-                                         ?.CreateResizableImage(new UIEdgeInsets(36, 20, 10, 20));
-            var messageBackground = new ASImageNode
-            {
-                Image = messageBackgroundImage
-            };
-
-            var messageLayout = ASBackgroundLayoutSpec.BackgroundLayoutSpecWithChild(messageBodyWithTime, messageBackground);
-
-            messageLayout.Style.FlexShrink = 1;
-            if (_isMyMessage)
-            {
-                messageLayout.Style.SpacingBefore = 73;
-            }
-            else
-            {
-                messageLayout.Style.SpacingAfter = 73;
-            }
-
-            _avatarImageNode.Style.PreferredSize = new CGSize(AvatarSize, AvatarSize);
-            var avatarLayout = ASInsetLayoutSpec.InsetLayoutSpecWithInsets(new UIEdgeInsets(6, 0, 0, 0), _avatarImageNode);
             var layout = new ASStackLayoutSpec
             {
                 Direction = ASStackLayoutDirection.Horizontal,
                 Children = new IASLayoutElement[]
                 {
-                    avatarLayout,
-                    messageLayout
+                    BuildAvatarNode(),
+                    BuildMessageBodyNode(width)
                 },
                 AlignItems = ASStackLayoutAlignItems.Start
             };
+
             if (_isMyMessage)
             {
                 layout.JustifyContent = ASStackLayoutJustifyContent.End;
             }
 
             return ASInsetLayoutSpec.InsetLayoutSpecWithInsets(new UIEdgeInsets(0, 9, 0, 8), layout);
+        }
+
+        private IASLayoutElement BuildAvatarNode()
+        {
+            _avatarImageNode.Style.PreferredSize = new CGSize(AvatarSize, AvatarSize);
+            return ASInsetLayoutSpec.InsetLayoutSpecWithInsets(new UIEdgeInsets(6, 0, 0, 0), _avatarImageNode);
+        }
+
+        private IASLayoutElement BuildMessageBodyNode(nfloat width)
+        {
+            var messageBodyNode = BuildMessageBodyWithBackground(BuildMessageBodyContentNode(width));
+
+            messageBodyNode.Style.FlexShrink = 1;
+
+            if (_isMyMessage)
+            {
+                messageBodyNode.Style.SpacingBefore = 73;
+            }
+            else
+            {
+                messageBodyNode.Style.SpacingAfter = 73;
+            }
+
+            return messageBodyNode;
+        }
+
+        private IASLayoutElement BuildMessageBodyWithBackground(IASLayoutElement messageBodyNode)
+        {
+            var backgroundImageBundleName = _isMyMessage
+                ? StyleHelper.Style.BubbleMineBoundleName
+                : StyleHelper.Style.BubbleOtherBoundleName;
+
+            var backgroundImage = UIImage.FromBundle(backgroundImageBundleName)
+                    ?.CreateResizableImage(new UIEdgeInsets(36, 20, 10, 20));
+
+            var backgroundNode = new ASImageNode { Image = backgroundImage };
+
+            return ASBackgroundLayoutSpec.BackgroundLayoutSpecWithChild(messageBodyNode, backgroundNode);
+        }
+
+        private IASLayoutElement BuildMessageBodyContentNode(nfloat width)
+        {
+            var messageContentNodes = new List<IASLayoutElement> { _descriptionTextNode };
+
+            if (BuildAttachmentImageNodeIfNeeded(width, out IASLayoutElement attachmentImageNode))
+            {
+                messageContentNodes.Add(attachmentImageNode);
+            }
+
+            messageContentNodes.Add(BuildDateTimeNode());
+
+            var messageInsetLeft = _isMyMessage ? 20 : 30;
+            var messageInsetRight = _isMyMessage ? 30 : 20;
+
+            return ASInsetLayoutSpec.InsetLayoutSpecWithInsets(
+                new UIEdgeInsets(10, messageInsetLeft, 15, messageInsetRight),
+                new ASStackLayoutSpec
+                {
+                    Direction = ASStackLayoutDirection.Vertical,
+                    Children = messageContentNodes.ToArray()
+                });
+        }
+
+        private bool BuildAttachmentImageNodeIfNeeded(nfloat width, out IASLayoutElement layoutElement)
+        {
+            if (_viewModelRef.Target == null || !_viewModelRef.Target.HasAttachment)
+            {
+                layoutElement = null;
+                return false;
+            }
+
+            var maxWidth = width - 50 - 73 - 17 - (nfloat)AvatarSize;
+
+            if (_attachmentImageNode.Image != null)
+            {
+                _attachmentImageNode.Style.PreferredSize = CalculateAttachmentImageNodeSize(
+                    _attachmentImageNode.Image.Size, maxWidth);
+
+                layoutElement = _attachmentImageNode;
+            }
+            else
+            {
+                var placeholderImage = UIImage.FromBundle(StyleHelper.Style.AttachmentImagePlaceholderBundleName);
+                var placeholderImageNode = new ASImageNode { Image = placeholderImage };
+
+                placeholderImageNode.Style.PreferredSize = CalculateAttachmentImageNodeSize(placeholderImage.Size, maxWidth);
+
+                layoutElement = placeholderImageNode;
+            }
+
+            return true;
+        }
+
+        private IASLayoutElement BuildDateTimeNode()
+        {
+            IASLayoutElement dateTimeNode = _dateTimeTextNode;
+
+            if (!_statusImageNode.Hidden)
+            {
+                _statusImageNode.Style.PreferredSize = new CGSize(17, _dateTimeTextNode.Style.Height.value);
+
+                dateTimeNode = new ASStackLayoutSpec
+                {
+                    Direction = ASStackLayoutDirection.Horizontal,
+                    Children = new IASLayoutElement[] { _dateTimeTextNode, _statusImageNode },
+                    Spacing = 4
+                };
+            }
+
+            var dateTimeLayoutNode = new ASRelativeLayoutSpec(
+                ASRelativeLayoutSpecPosition.End,
+                ASRelativeLayoutSpecPosition.Start,
+                ASRelativeLayoutSpecSizingOption.Default,
+                dateTimeNode);
+
+            dateTimeLayoutNode.Style.SpacingBefore = 5;
+
+            return dateTimeLayoutNode;
         }
 
         public override bool CanPerformAction(Selector action, NSObject sender)
@@ -313,13 +337,113 @@ namespace Softeq.XToolkit.Chat.iOS.Views
         [Export("OnAttachmentTapped")]
         private void OnAttachmentTapped()
         {
+            var url = _viewModelRef.Target?.Model?.ImageRemoteUrl;
+            if (string.IsNullOrEmpty(url))
+            {
+                return;
+            }
+
             var options = new FullScreenImageOptions
             {
                 CloseButtonTintColor = Common.iOS.Extensions.UIColorExtensions.ToHex(StyleHelper.Style.ButtonTintColor),
-                ImageUrl = _viewModelRef.Target?.AttachmentImageUrl,
+                ImageUrl = url,
                 IosCloseButtonImageBoundleName = StyleHelper.Style.CloseButtonImageBoundleName
             };
+
             _viewModelRef.Target?.ShowImage(options);
+        }
+
+        private CGSize CalculateAttachmentImageNodeSize(CGSize imageSize, nfloat maxSize)
+        {
+            var imageSizeThatFits = imageSize;
+            var ratio = imageSize.Height / imageSize.Width;
+            if (imageSize.Height > imageSize.Width && imageSize.Height > maxSize)
+            {
+                imageSizeThatFits.Height *= maxSize / imageSize.Height;
+                imageSizeThatFits.Width = imageSizeThatFits.Height / ratio;
+            }
+            else if (imageSize.Height <= imageSize.Width && imageSize.Width > maxSize)
+            {
+                imageSizeThatFits.Width *= maxSize / imageSize.Width;
+                imageSizeThatFits.Height = imageSizeThatFits.Width * ratio;
+            }
+            return imageSizeThatFits;
+        }
+
+        private void LoadAttachmentImageIfNeeded()
+        {
+            if (_viewModelRef.Target != null && _viewModelRef.Target.HasAttachment && _attachmentImageNode.Image == null)
+            {
+                Task.Run(async () =>
+                {
+                    var model = _viewModelRef.Target.Model;
+                    if (model == null)
+                    {
+                        return;
+                    }
+
+                    var expr = default(TaskParameter);
+
+                    if (!string.IsNullOrEmpty(model.ImageCacheKey))
+                    {
+                        expr = ImageService.Instance
+                            .LoadFile(model.ImageCacheKey);
+
+                    }
+                    else if (!string.IsNullOrEmpty(model.ImageRemoteUrl))
+                    {
+                        expr = ImageService.Instance
+                            .LoadUrl(model.ImageRemoteUrl);
+                    }
+
+                    expr = expr.DownSampleInDip(90, 90);
+
+                    var image = default(UIImage);
+
+                    try
+                    {
+                        image = await expr.AsUIImageAsync().ConfigureAwait(false);
+                    }
+                    catch (Exception ex)
+                    {
+                        LogManager.LogError<ChatMessageNode>(ex);
+                    }
+
+                    if (image == null)
+                    {
+                        return;
+                    }
+
+                    Execute.BeginOnUIThread(() =>
+                    {
+                        _attachmentImageNode.Image = image;
+
+                        SetNeedsLayout();
+                        Layout();
+
+                        _attachmentImageNode.AddTarget(
+                            this,
+                            new Selector(nameof(OnAttachmentTapped)),
+                            ASControlNodeEvent.TouchUpInside);
+                    });
+                });
+            }
+        }
+
+        private class LinksDelegate : ASTextNodeDelegate
+        {
+            public override void TappedLinkAttribute(ASTextNode textNode, string attribute, NSObject value, CGPoint point,
+                NSRange textRange)
+            {
+                var launcherService = Dependencies.IocContainer.Resolve<ILauncherService>();
+                launcherService.OpenUrl(((NSUrl)value).AbsoluteString);
+            }
+
+            public override bool ShouldHighlightLinkAttribute(ASTextNode textNode, string attribute, NSObject value,
+                CGPoint point)
+            {
+                return true;
+            }
         }
     }
 }

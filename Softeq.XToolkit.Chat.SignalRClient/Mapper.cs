@@ -5,6 +5,7 @@ using System.ComponentModel;
 using Softeq.XToolkit.Chat.Models;
 using Softeq.XToolkit.Chat.SignalRClient.DTOs.Channel;
 using Softeq.XToolkit.Chat.SignalRClient.DTOs.Message;
+using Softeq.XToolkit.Chat.SignalRClient.DTOs.Member;
 
 namespace Softeq.XToolkit.Chat.SignalRClient
 {
@@ -21,13 +22,16 @@ namespace Softeq.XToolkit.Chat.SignalRClient
             {
                 Id = response.Id.ToString(),
                 Name = response.Name,
-                AvatarUrl = response.PhotoUrl,
+                PhotoUrl = response.PhotoUrl,
                 LastMessage = lastMessage,
                 IsMuted = response.IsMuted,
                 CreatedDate = response.Created,
                 UpdatedDate = response.Updated,
                 UnreadMessagesCount = response.UnreadMessagesCount,
-                CreatorId = response.CreatorSaasUserId,
+                CreatorId = response.Creator?.Id.ToString(),
+                Type = (Models.ChannelType)response.Type,
+                Creator = DtoToChatUser(response.Creator),
+                DirectMember = DtoToChatUser(response.DirectMember)
             };
         }
 
@@ -43,13 +47,14 @@ namespace Softeq.XToolkit.Chat.SignalRClient
                 Body = response.Body,
                 ChannelId = response.ChannelId.ToString(),
                 DateTime = response.Created,
-                SenderId = response.Sender?.SaasUserId,
+                SenderId = response.Sender?.Id.ToString(),
                 SenderName = response.Sender?.UserName,
                 SenderPhotoUrl = response.Sender?.AvatarUrl,
                 MessageType = DtoToMessageType(response.Type),
                 IsRead = response.IsRead,
                 IsDelivered = true,
-                ImageUrl = response.ImageUrl
+                ImageRemoteUrl = response.ImageUrl,
+                ChannelType = (Models.ChannelType)response.ChannelType
             };
         }
 
@@ -63,6 +68,19 @@ namespace Softeq.XToolkit.Chat.SignalRClient
                     return Models.MessageType.Info;
                 default: throw new InvalidEnumArgumentException();
             }
+        }
+
+        public static ChatUserModel DtoToChatUser(MemberSummary dto)
+        {
+            return dto == null ? null : new ChatUserModel
+            {
+                Id = dto.Id.ToString(),
+                Username = dto.UserName,
+                PhotoUrl = dto.AvatarUrl,
+                LastActivity = dto.LastActivity,
+                IsOnline = dto.Status == UserStatus.Online,
+                IsActive = dto.IsActive
+            };
         }
     }
 }

@@ -13,19 +13,52 @@ namespace Softeq.XToolkit.Chat.Models
         public DateTimeOffset? UpdatedDate { get; set; }
         public string Name { get; set; }
         public int UnreadMessagesCount { get; set; }
+        public bool IsClosed { get; set; }
         public bool IsMuted { get; set; }
+        public bool IsPinned { get; set; }
         public string CreatorId { get; set; }
-        public bool IsCreatedByMe { get; private set; }
-        public string AvatarUrl { get; set; }
+        public ChatUserModel Creator { get; set; }
+        public ChatUserModel DirectMember { get; set; }
+        public string Description { get; set; }
+        public string WelcomeMessage { get; set; }
+        public ChannelType Type { get; set; }
         public ChatMessageModel LastMessage { get; set; }
+        public string PhotoUrl { get; set; }
+
         public IList<string> TypingUsersNames { get; set; }
         public bool AreMoreThanThreeUsersTyping { get; set; }
-        public string Topic { get; set; }
-        public string WelcomeMessage { get; set; }
+        public bool IsCreatedByMe { get; private set; }
 
+        // TODO YP: move to backend
         public void UpdateIsCreatedByMeStatus(string currentUserId)
         {
             IsCreatedByMe = CreatorId == currentUserId;
+
+            UpdateModelByType();
+        }
+
+        private void UpdateModelByType()
+        {
+            // TODO YP: move to backend
+            // - different Creator & DirectMemer models for Direct chats
+            //   depends on chat creator user
+            // - currently each channel user received the same event about new channel,
+            //   need to send two different event about this
+            if (Type == ChannelType.Direct)
+            {
+                if (IsCreatedByMe && DirectMember != null)
+                {
+                    Name = DirectMember.Username;
+                    PhotoUrl = DirectMember.PhotoUrl;
+                }
+                else if (Creator != null)
+                {
+                    Name = Creator.Username;
+                    PhotoUrl = Creator.PhotoUrl;
+                }
+
+                IsCreatedByMe = false;
+            }
         }
     }
 }

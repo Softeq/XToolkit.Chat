@@ -10,6 +10,7 @@ using Android.Support.V7.Widget.Helper;
 using Android.Views;
 using Softeq.XToolkit.Bindings;
 using Softeq.XToolkit.Chat.Droid.Adapters;
+using Softeq.XToolkit.Chat.Droid.Controls;
 using Softeq.XToolkit.Chat.Droid.ItemTouchCallbacks;
 using Softeq.XToolkit.Chat.Droid.LayoutManagers;
 using Softeq.XToolkit.Chat.Droid.ViewHolders;
@@ -40,6 +41,11 @@ namespace Softeq.XToolkit.Chat.Droid.Views
 
             _navigationBarView = view.FindViewById<NavigationBarView>(Resource.Id.fragment_chats_navigation_bar);
 
+            if (StyleHelper.Style.UseLogoInsteadOfConnectionStatus)
+            {
+                _navigationBarView.SetCenterImage(StyleHelper.Style.LogoIcon, null);
+            }
+
             _createChatFloatButton = view.FindViewById<FloatingActionButton>(Resource.Id.fab_create_chat);
             _chatsRecyclerView = view.FindViewById<RecyclerView>(Resource.Id.rv_chats_list);
 
@@ -65,13 +71,16 @@ namespace Softeq.XToolkit.Chat.Droid.Views
         {
             base.DoAttachBindings();
 
-            Bindings.Add(this.SetBinding(() => ViewModel.ConnectionStatusViewModel.ConnectionStatusText).WhenSourceChanges(() =>
+            if (!StyleHelper.Style.UseLogoInsteadOfConnectionStatus)
             {
-                Execute.BeginOnUIThread(() =>
+                Bindings.Add(this.SetBinding(() => ViewModel.ConnectionStatusViewModel.ConnectionStatusText).WhenSourceChanges(() =>
                 {
-                    _navigationBarView.SetTitle(ViewModel.ConnectionStatusViewModel.ConnectionStatusText);
-                });
-            }));
+                    Execute.BeginOnUIThread(() =>
+                    {
+                        _navigationBarView.SetTitle(ViewModel.ConnectionStatusViewModel.ConnectionStatusText);
+                    });
+                }));
+            }
         }
 
         public override void OnDestroy()
@@ -85,6 +94,7 @@ namespace Softeq.XToolkit.Chat.Droid.Views
         {
             _chatsRecyclerView.HasFixedSize = true;
             _chatsRecyclerView.SetLayoutManager(new GuardedLinearLayoutManager(Activity));
+            _chatsRecyclerView.AddItemDecoration(new LeftOffsetItemDecoration(Activity, Resource.Color.chat_divider_color, 72));
             _chatsRecyclerView.SetAdapter(new ChatObservableRecyclerViewAdapter(ViewModel.Chats,
                 CreateChatViewHolder, _chatsRecyclerView.SmoothScrollToPosition));
 
@@ -102,12 +112,15 @@ namespace Softeq.XToolkit.Chat.Droid.Views
         private void ConfigureSwipeForViewHolder(RecyclerView.ViewHolder viewHolder, int position,
                                                  ICollection<SwipeCallback.ISwipeActionView> actions)
         {
-            actions.Add(new SimpleSwipeActionView(ViewModel.LocalizedStrings.Leave, _swipeLeaveActionViewOptions, pos =>
+            if (ViewModel.Chats[position].CanLeave)
             {
-                ViewModel.LeaveChatCommand.Execute(ViewModel.Chats[pos]);
-            }));
+                actions.Add(new SimpleSwipeActionView(ViewModel.LocalizedStrings.Leave, _swipeLeaveActionViewOptions, pos =>
+                {
+                    ViewModel.LeaveChatCommand.Execute(ViewModel.Chats[pos]);
+                }));
+            }
 
-            if (ViewModel.Chats[position].IsCreatedByMe)
+            if (ViewModel.Chats[position].CanClose)
             {
                 actions.Add(new SimpleSwipeActionView(ViewModel.LocalizedStrings.Delete, _swipeCloseActionViewOptions, pos =>
                 {

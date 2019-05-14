@@ -3,28 +3,34 @@
 
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.SignalR.Client;
+using Microsoft.Extensions.Logging;
 using Softeq.XToolkit.Chat.SignalRClient.DTOs;
 using Softeq.XToolkit.Chat.SignalRClient.DTOs.Channel;
 using Softeq.XToolkit.Chat.SignalRClient.DTOs.Client;
 using Softeq.XToolkit.Chat.SignalRClient.DTOs.Member;
 using Softeq.XToolkit.Chat.SignalRClient.DTOs.Message;
 using Softeq.XToolkit.Common.Extensions;
+using System.Linq;
+using Softeq.XToolkit.Chat.Models.Exceptions;
+using Softeq.XToolkit.Auth;
 
 namespace Softeq.XToolkit.Chat.SignalRClient
 {
     internal class SignalRClient
     {
         private readonly List<IDisposable> _subscriptions = new List<IDisposable>();
+        private readonly string _chatHubUrl;
 
         private HubConnection _connection;
         private IDisposable _accessTokenExpiredSubscription;
+        private readonly IAccountService _accountService;
 
-        public SignalRClient(string url)
+        public SignalRClient(string url, IAccountService accountService)
         {
-            SourceUrl = url;
+            _chatHubUrl = url;
+            _accountService = accountService;
         }
 
         public event Action AccessTokenExpired;
@@ -42,21 +48,28 @@ namespace Softeq.XToolkit.Chat.SignalRClient
         public event Action<string, string> AttachmentDeleted;
 
         public event Action<string> TypingStarted;
-        public event Action<string> TypingEnded;
+
+        public event Action<string> LastReadMessageChanged;
 
         public event Action<MemberSummary, ChannelSummaryResponse> MemberJoined;
         public event Action<MemberSummary, string> MemberLeft;
 
-        public string SourceUrl { get; }
-
-        public async Task<ClientResponse> ConnectAsync(string accessToken)
+        public async Task<ClientResponse> ConnectAsync()
         {
-            Console.WriteLine("Connecting to {0}", SourceUrl);
+            Console.WriteLine("Connecting to {0}", _chatHubUrl);
+
             _connection = new HubConnectionBuilder()
-                .WithUrl($"{SourceUrl}/chat", options =>
+                .WithUrl($"{_chatHubUrl}/chat", options =>
                 {
-                    options.Headers.Add("Authorization", "Bearer " + accessToken);
+                    options.AccessTokenProvider = () => { return Task.FromResult(_accountService.AccessToken); };
                 })
+#if DEBUG
+                .ConfigureLogging(logging =>
+                {
+                    logging.SetMinimumLevel(LogLevel.Trace);
+                    logging.AddConsole();
+                })
+#endif
                 .Build();
 
             _connection.Closed += e =>
@@ -66,44 +79,10 @@ namespace Softeq.XToolkit.Chat.SignalRClient
                 return Task.CompletedTask;
             };
 
-            // Handle the connected connection
-            while (true)
-            {
-                try
-                {
-                    await _connection.StartAsync().ConfigureAwait(false);
-                    Console.WriteLine("Connected to {0}", SourceUrl);
-                    break;
-                }
-                catch (IOException ex)
-                {
-                    // Process being shutdown
-                    Console.WriteLine(ex);
-                    break;
-                }
-                catch (OperationCanceledException ex)
-                {
-                    // The connection closed
-                    Console.WriteLine(ex);
-                    break;
-                }
-                catch (ObjectDisposedException ex)
-                {
-                    // We're shutting down the client
-                    Console.WriteLine(ex);
-                    break;
-                }
-                catch (Exception ex)
-                {
-                    // Send could have failed because the connection closed
-                    Console.WriteLine(ex);
-                    Console.WriteLine("Failed to connect, trying again in 5000(ms)");
-                    await Task.Delay(5000).ConfigureAwait(false);
-                }
-            }
+            await _connection.StartAsync().ConfigureAwait(false);
 
             _accessTokenExpiredSubscription?.Dispose();
-            _accessTokenExpiredSubscription = _connection.On<string>(ClientEvents.AccessTokenExpired, (requestId) =>
+            _accessTokenExpiredSubscription = _connection.On<string>(ClientEvents.AccessTokenExpired, requestId =>
             {
                 AccessTokenExpired?.Invoke();
             });
@@ -120,14 +99,24 @@ namespace Softeq.XToolkit.Chat.SignalRClient
             return SendAndHandleExceptionsAsync<ChannelSummaryResponse>(ServerMethods.CreateChannelAsync, request);
         }
 
-        public Task UpdateChannelAsync(UpdateChannelRequest request)
+        public Task<ChannelSummaryResponse> CreateDirectChannelAsync(CreateDirectChannelRequest request)
         {
-            return SendAndHandleExceptionsAsync(ServerMethods.UpdateChannelAsync, request);
+            return SendAndHandleExceptionsAsync<ChannelSummaryResponse>(ServerMethods.CreateDirectChannelAsync, request);
+        }
+
+        public Task<ChannelSummaryResponse> UpdateChannelAsync(UpdateChannelRequest request)
+        {
+            return SendAndHandleExceptionsAsync<ChannelSummaryResponse>(ServerMethods.UpdateChannelAsync, request);
         }
 
         public Task CloseChannelAsync(Guid channelId)
         {
             return SendAndHandleExceptionsAsync(ServerMethods.CloseChannelAsync, new ChannelRequest { ChannelId = channelId });
+        }
+
+        public Task DeleteMemberAsync(DeleteMemberRequest request)
+        {
+            return SendAndHandleExceptionsAsync(ServerMethods.DeleteMemberAsync, request);
         }
 
         public Task InviteMemberAsync(InviteMemberRequest request)
@@ -137,7 +126,7 @@ namespace Softeq.XToolkit.Chat.SignalRClient
 
         public Task InviteMembersAsync(InviteMembersRequest request)
         {
-            return SendAndHandleExceptionsAsync(ServerMethods.InviteMembersAsync, request);
+            return SendAndHandleExceptionsAsync(ServerMethods.InviteMultipleMembersAsync, request);
         }
 
         public Task JoinToChannelAsync(JoinToChannelRequest request)
@@ -165,20 +154,15 @@ namespace Softeq.XToolkit.Chat.SignalRClient
             return SendAndHandleExceptionsAsync(ServerMethods.UpdateMessageAsync, request);
         }
 
-        public async Task SendAndHandleExceptionsAsync(string methodName, BaseRequest request)
+        private async Task SendAndHandleExceptionsAsync(string methodName, BaseRequest request)
         {
             //TODO:YS in viewmodel that use this method(LeaveChannelAsync) I see exception handling(try/catch), better log exception here 
             var tcs = new TaskCompletionSource<bool>();
             var requestId = Guid.NewGuid().ToString();
-            IDisposable exceptionSubscription = null;
-            exceptionSubscription = _connection.On<Exception, string>(ClientEvents.ExceptionOccurred, (ex, id) =>
-            {
-                if (id == requestId)
-                {
-                    exceptionSubscription.Dispose();
-                    tcs.SetException(ex);
-                }
-            });
+
+            CreateExceptionSubscription(requestId, tcs);
+            CreateValidationFailedSubscription(requestId, tcs);
+
             IDisposable successSubscription = null;
             successSubscription = _connection.On<string>(ClientEvents.RequestSuccess, id =>
             {
@@ -188,36 +172,23 @@ namespace Softeq.XToolkit.Chat.SignalRClient
                     tcs.SetResult(true);
                 }
             });
-            IDisposable validationFailedSubscription = null;
-            validationFailedSubscription = _connection.On<Exception, string>(ClientEvents.RequestValidationFailed, (ex, id) =>
-            {
-                if (id == requestId)
-                {
-                    validationFailedSubscription.Dispose();
-                    tcs.SetException(ex);
-                }
-            });
+
             request.RequestId = requestId;
             await _connection.InvokeAsync(methodName, request).ConfigureAwait(false);
             await tcs.Task.ConfigureAwait(false);
         }
 
-        public async Task<T> SendAndHandleExceptionsAsync<T>(string methodName, BaseRequest request)
+        private async Task<T> SendAndHandleExceptionsAsync<T>(string methodName, BaseRequest request)
         {
             var tcs = new TaskCompletionSource<T>();
             var requestId = Guid.NewGuid().ToString();
-            IDisposable exceptionSubscription = null;
-            exceptionSubscription = _connection.On<Exception, string>(ClientEvents.ExceptionOccurred, (ex, id) =>
-            {
-                if (id == requestId)
-                {
-                    exceptionSubscription.Dispose();
-                    tcs.SetException(ex);
-                }
-            });
+
+            CreateExceptionSubscription(requestId, tcs);
+            CreateValidationFailedSubscription(requestId, tcs);
+
             IDisposable successSubscription = null;
-            bool isCallEnded = false;
-            T result = default(T);
+            var isCallEnded = false;
+            var result = default(T);
             successSubscription = _connection.On<string>(ClientEvents.RequestSuccess, id =>
             {
                 if (id == requestId)
@@ -233,6 +204,7 @@ namespace Softeq.XToolkit.Chat.SignalRClient
                     }
                 }
             });
+
             request.RequestId = requestId;
             result = await _connection.InvokeAsync<T>(methodName, request).ConfigureAwait(false);
             if (isCallEnded)
@@ -241,6 +213,35 @@ namespace Softeq.XToolkit.Chat.SignalRClient
             }
             isCallEnded = true;
             return await tcs.Task.ConfigureAwait(false);
+        }
+
+        private void CreateExceptionSubscription<T>(string requestId, TaskCompletionSource<T> tcs)
+        {
+            IDisposable exceptionSubscription = null;
+            exceptionSubscription = _connection.On<Exception, string>(ClientEvents.ExceptionOccurred,
+                (ex, id) =>
+                {
+                    if (id == requestId)
+                    {
+                        exceptionSubscription.Dispose();
+                        tcs.SetException(ex);
+                    }
+                });
+        }
+
+        private void CreateValidationFailedSubscription<T>(string requestId, TaskCompletionSource<T> tcs)
+        {
+            IDisposable validationFailedSubscription = null;
+            validationFailedSubscription = _connection.On<IEnumerable<ValidationErrorsResponse>, string>(
+                ClientEvents.RequestValidationFailed,
+                (errors, id) =>
+                {
+                    if (id == requestId)
+                    {
+                        validationFailedSubscription.Dispose();
+                        tcs.SetException(new ChatValidationException(errors.Select(x => x.ErrorMessage).ToList()));
+                    }
+                });
         }
 
         public async Task Disconnect()
@@ -254,65 +255,77 @@ namespace Softeq.XToolkit.Chat.SignalRClient
             _subscriptions.Apply(x => x.Dispose());
             _subscriptions.Clear();
 
-            _subscriptions.Add(_connection.On<MessageResponse>(ClientEvents.MessageAdded, (message) =>
-            {
-                MessageAdded?.Invoke(message);
-            }));
+            _subscriptions.Add(_connection.On<MessageResponse>(ClientEvents.MessageAdded,
+                message =>
+                {
+                    MessageAdded?.Invoke(message);
+                }));
 
-            _subscriptions.Add(_connection.On<Guid, ChannelSummaryResponse>(ClientEvents.MessageDeleted, (deletedMessageId, updatedChannelSummary) =>
-            {
-                MessageDeleted?.Invoke(deletedMessageId.ToString(), updatedChannelSummary);
-            }));
+            _subscriptions.Add(_connection.On<Guid, ChannelSummaryResponse>(ClientEvents.MessageDeleted,
+                (deletedMessageId, updatedChannelSummary) =>
+                {
+                    MessageDeleted?.Invoke(deletedMessageId.ToString(), updatedChannelSummary);
+                }));
 
-            _subscriptions.Add(_connection.On<MessageResponse>(ClientEvents.MessageUpdated, (message) =>
-            {
-                MessageUpdated?.Invoke(message);
-            }));
+            _subscriptions.Add(_connection.On<MessageResponse>(ClientEvents.MessageUpdated,
+                message =>
+                {
+                    MessageUpdated?.Invoke(message);
+                }));
 
-            _subscriptions.Add(_connection.On<MemberSummary, string>(ClientEvents.MemberLeft, (user, channelId) =>
-            {
-                MemberLeft?.Invoke(user, channelId);
-            }));
+            _subscriptions.Add(_connection.On<MemberSummary, string>(ClientEvents.MemberLeft,
+                (user, channelId) =>
+                {
+                    MemberLeft?.Invoke(user, channelId);
+                }));
 
-            _subscriptions.Add(_connection.On<MemberSummary, ChannelSummaryResponse>(ClientEvents.MemberJoined, (user, channel) =>
-            {
-                MemberJoined?.Invoke(user, channel);
-            }));
+            _subscriptions.Add(_connection.On<MemberSummary, ChannelSummaryResponse>(ClientEvents.MemberJoined,
+                (user, channel) =>
+                {
+                    MemberJoined?.Invoke(user, channel);
+                }));
 
-            _subscriptions.Add(_connection.On<ChannelSummaryResponse>(ClientEvents.ChannelUpdated, (channel) =>
-            {
-                ChannelUpdated?.Invoke(channel);
-            }));
+            _subscriptions.Add(_connection.On<ChannelSummaryResponse>(ClientEvents.ChannelUpdated,
+                channel =>
+                {
+                    ChannelUpdated?.Invoke(channel);
+                }));
 
-            _subscriptions.Add(_connection.On<ChannelSummaryResponse>(ClientEvents.ChannelClosed, (channel) =>
-            {
-                ChannelClosed?.Invoke(channel);
-            }));
+            _subscriptions.Add(_connection.On<ChannelSummaryResponse>(ClientEvents.ChannelClosed,
+                channel =>
+                {
+                    ChannelClosed?.Invoke(channel);
+                }));
 
-            _connection.On<ChannelSummaryResponse>(ClientEvents.ChannelAdded, (channel) =>
-            {
-                ChannelAdded?.Invoke(channel);
-            });
+            _connection.On<ChannelSummaryResponse>(ClientEvents.ChannelAdded,
+                channel =>
+                {
+                    ChannelAdded?.Invoke(channel);
+                });
 
-            _subscriptions.Add(_connection.On<string, string>(ClientEvents.AttachmentAdded, (username, message) =>
-            {
-                AttachmentAdded?.Invoke(username, message);
-            }));
+            _subscriptions.Add(_connection.On<string, string>(ClientEvents.AttachmentAdded,
+                (username, message) =>
+                {
+                    AttachmentAdded?.Invoke(username, message);
+                }));
 
-            _subscriptions.Add(_connection.On<string, string>(ClientEvents.AttachmentDeleted, (username, message) =>
-            {
-                AttachmentDeleted?.Invoke(username, message);
-            }));
+            _subscriptions.Add(_connection.On<string, string>(ClientEvents.AttachmentDeleted,
+                (username, message) =>
+                {
+                    AttachmentDeleted?.Invoke(username, message);
+                }));
 
-            _subscriptions.Add(_connection.On<string>(ClientEvents.TypingStarted, (username) =>
-            {
-                TypingStarted?.Invoke(username);
-            }));
+            _subscriptions.Add(_connection.On<string>(ClientEvents.TypingStarted,
+                username =>
+                {
+                    TypingStarted?.Invoke(username);
+                }));
 
-            _subscriptions.Add(_connection.On<string>(ClientEvents.TypingEnded, (username) =>
-            {
-                TypingEnded?.Invoke(username);
-            }));
+            _subscriptions.Add(_connection.On<string>(ClientEvents.LastReadMessageChanged,
+                channelId =>
+                {
+                    LastReadMessageChanged?.Invoke(channelId);
+                }));
         }
     }
 }

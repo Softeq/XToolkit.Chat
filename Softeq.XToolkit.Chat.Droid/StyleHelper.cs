@@ -39,6 +39,11 @@ namespace Softeq.XToolkit.Chat.Droid
         int UnCheckedIcon { get; }
         int UnreadMessagesCountColor { get; }
         int UnreadMutedMessagesCountColor { get; }
+        bool UseLogoInsteadOfConnectionStatus { get; }
+        int LogoIcon { get; }
+        int NewGroupAvatarIcon { get; }
+        int AddMemberIcon { get; }
+        int AttachmentImagePlaceholder { get; }
     }
 
     public abstract class ChatDroidStyleBase : IChatDroidStyle
@@ -66,5 +71,10 @@ namespace Softeq.XToolkit.Chat.Droid
         public abstract int UnCheckedIcon { get; }
         public abstract int UnreadMessagesCountColor { get; }
         public abstract int UnreadMutedMessagesCountColor { get; }
+        public abstract bool UseLogoInsteadOfConnectionStatus { get; }
+        public abstract int LogoIcon { get; }
+        public abstract int NewGroupAvatarIcon { get; }
+        public abstract int AddMemberIcon { get; }
+        public abstract int AttachmentImagePlaceholder { get; }
     }
 }

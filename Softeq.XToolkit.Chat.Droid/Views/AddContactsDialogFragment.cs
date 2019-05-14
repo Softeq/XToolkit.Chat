@@ -13,6 +13,7 @@ using Softeq.XToolkit.WhiteLabel.Droid.Controls;
 using Softeq.XToolkit.WhiteLabel.Droid.Dialogs;
 using Softeq.XToolkit.Chat.Droid.Listeners;
 using Softeq.XToolkit.Common;
+using Softeq.XToolkit.Common.Droid.Converters;
 using Softeq.XToolkit.Common.Command;
 
 namespace Softeq.XToolkit.Chat.Droid.Views
@@ -25,6 +26,7 @@ namespace Softeq.XToolkit.Chat.Droid.Views
         private RecyclerView _filteredMembers;
         private ObservableRecyclerViewAdapter<ChatUserViewModel> _filteredAdapter;
         private ObservableRecyclerViewAdapter<ChatUserViewModel> _selectedAdapter;
+        private BusyOverlayView _busyOverlayView;
 
         protected override int ThemeId => Resource.Style.CoreDialogTheme;
 
@@ -41,14 +43,16 @@ namespace Softeq.XToolkit.Chat.Droid.Views
 
             InitNavigationBarView(view);
 
-            var searchContainer = View.FindViewById<View>(Resource.Id.dialog_select_members_serch_container);
+            var searchContainer = View.FindViewById<View>(Resource.Id.dialog_select_members_search_container);
             searchContainer.SetBackgroundResource(StyleHelper.Style.UnderlinedBg);
 
-            _editText = View.FindViewById<EditText>(Resource.Id.dialog_select_members_serch_text);
+            _editText = View.FindViewById<EditText>(Resource.Id.dialog_select_members_search_text);
             _editText.Hint = ViewModel.Resources.Search;
 
             InitSelectedRecyclerView(view);
             InitFilteredRecyclerView(view);
+
+            _busyOverlayView = View.FindViewById<BusyOverlayView>(Resource.Id.dialog_select_members_busy_view);
         }
 
         protected override void DoAttachBindings()
@@ -61,6 +65,10 @@ namespace Softeq.XToolkit.Chat.Droid.Views
                 _addedMembers.Visibility = ViewModel.HasSelectedContacts
                     ? ViewStates.Visible
                     : ViewStates.Gone;
+            }));
+            Bindings.Add(this.SetBinding(() => ViewModel.IsBusy).WhenSourceChanges(() =>
+            {
+                _busyOverlayView.Visibility = BoolToViewStateConverter.ConvertGone(ViewModel.IsBusy);
             }));
         }
 
@@ -103,6 +111,7 @@ namespace Softeq.XToolkit.Chat.Droid.Views
         private void InitFilteredRecyclerView(View view)
         {
             _filteredMembers = view.FindViewById<RecyclerView>(Resource.Id.dialog_select_members_filtered_members);
+            _filteredMembers.HasFixedSize = true;
             _filteredMembers.SetLayoutManager(new LinearLayoutManager(Context));
             _filteredMembers.AddItemDecoration(new DividerItemDecoration(Context, DividerItemDecoration.Vertical));
             _filteredAdapter = new ObservableRecyclerViewAdapter<ChatUserViewModel>(
@@ -110,7 +119,10 @@ namespace Softeq.XToolkit.Chat.Droid.Views
                 (parent, i) =>
                 {
                     var v = LayoutInflater.From(parent.Context).Inflate(Resource.Layout.view_holder_member_filter_item, parent, false);
-                    return new FilteredItemViewHolder(v);
+                    return new FilteredItemViewHolder(v, new RelayCommand<ChatUserViewModel>(x =>
+                    {
+                        x.IsSelected = !x.IsSelected;
+                    }));
                 },
                 (holder, i, item) =>
                 {

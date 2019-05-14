@@ -29,11 +29,18 @@
                                     <constraint firstAttribute="width" constant="40" id="meA-Xu-GLe"/>
                                 </constraints>
                             </imageView>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="E1f-qv-FuP">
+                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="TIv-MP-z9O">
                                 <rect key="frame" x="35" y="26" width="14" height="14"/>
                                 <constraints>
-                                    <constraint firstAttribute="height" constant="14" id="NSp-Jm-JrQ"/>
-                                    <constraint firstAttribute="width" constant="14" id="gF3-R7-DNy"/>
+                                    <constraint firstAttribute="height" constant="14" id="dim-A9-inO"/>
+                                    <constraint firstAttribute="width" constant="14" id="nYq-Yy-ihK"/>
+                                </constraints>
+                            </imageView>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="E1f-qv-FuP">
+                                <rect key="frame" x="21" y="12" width="28" height="28"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="28" id="NSp-Jm-JrQ"/>
+                                    <constraint firstAttribute="width" constant="28" id="gF3-R7-DNy"/>
                                 </constraints>
                             </button>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Lorem Ipsum" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="QYU-Lh-IDK">
@@ -47,11 +54,13 @@
                         <constraints>
                             <constraint firstItem="QYU-Lh-IDK" firstAttribute="top" secondItem="SAo-ht-Ndq" secondAttribute="bottom" constant="8" id="0nW-au-Oq9"/>
                             <constraint firstItem="SAo-ht-Ndq" firstAttribute="centerX" secondItem="aet-dC-xWa" secondAttribute="centerX" id="HH3-nX-O8d"/>
+                            <constraint firstItem="TIv-MP-z9O" firstAttribute="trailing" secondItem="E1f-qv-FuP" secondAttribute="trailing" id="LFI-EY-0NT"/>
                             <constraint firstAttribute="bottom" secondItem="QYU-Lh-IDK" secondAttribute="bottom" id="P8Y-Pw-ZXm"/>
                             <constraint firstAttribute="trailing" secondItem="QYU-Lh-IDK" secondAttribute="trailing" id="RSn-3q-Cmi"/>
                             <constraint firstItem="E1f-qv-FuP" firstAttribute="bottom" secondItem="SAo-ht-Ndq" secondAttribute="bottom" constant="-4" id="YnE-Cd-S5j"/>
                             <constraint firstItem="E1f-qv-FuP" firstAttribute="trailing" secondItem="SAo-ht-Ndq" secondAttribute="trailing" constant="4" id="ZuS-v7-4Tr"/>
                             <constraint firstItem="SAo-ht-Ndq" firstAttribute="top" secondItem="aet-dC-xWa" secondAttribute="top" constant="4" id="fj5-ib-dh9"/>
+                            <constraint firstItem="TIv-MP-z9O" firstAttribute="bottom" secondItem="E1f-qv-FuP" secondAttribute="bottom" id="oh4-0B-1tt"/>
                             <constraint firstItem="QYU-Lh-IDK" firstAttribute="leading" secondItem="aet-dC-xWa" secondAttribute="leading" id="vSF-TP-Zw8"/>
                         </constraints>
                     </view>
@@ -68,6 +77,7 @@
                 <outlet property="MemberNameLabel" destination="QYU-Lh-IDK" id="XKh-Pi-d59"/>
                 <outlet property="MemberPhotoImageView" destination="SAo-ht-Ndq" id="PBd-Rc-EVv"/>
                 <outlet property="RemoveMemberBtn" destination="E1f-qv-FuP" id="GgI-S6-1Rf"/>
+                <outlet property="RemoveMemberImage" destination="TIv-MP-z9O" id="8FC-uj-sWy"/>
             </connections>
             <point key="canvasLocation" x="48.75" y="70.774647887323951"/>
         </collectionViewCell>

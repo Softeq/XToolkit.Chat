@@ -1,15 +1,15 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\XToolkit\Softeq.XToolkit.Permissions\Softeq.XToolkit.Permissions.csproj" />
     <ProjectReference Include="..\Softeq.XToolkit.Chat.Models\Softeq.XToolkit.Chat.Models.csproj" />
     <ProjectReference Include="..\..\XToolkit.WhiteLabel\Softeq.XToolkit.WhiteLabel\Softeq.XToolkit.WhiteLabel.csproj" />
     <ProjectReference Include="..\Softeq.XToolkit.Chat.SignalRClient\Softeq.XToolkit.Chat.SignalRClient.csproj" />
     <ProjectReference Include="..\Softeq.XToolkit.Chat.HttpClient\Softeq.XToolkit.Chat.HttpClient.csproj" />
+    <ProjectReference Include="..\..\XToolkit.WhiteLabel\XToolkit.Permissions\Softeq.XToolkit.Permissions\Softeq.XToolkit.Permissions.csproj" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="System.Reactive" Version="4.0.0" />
@@ -20,8 +20,6 @@
     <Folder Include="Manager\" />
     <Folder Include="Exceptions\" />
     <Folder Include="Services\" />
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Remove="ViewModels\SelectMembersViewModel.cs" />
+    <Folder Include="Messages\" />
   </ItemGroup>
 </Project>
