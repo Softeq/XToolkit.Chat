@@ -193,23 +193,23 @@
       <Project>{051C065C-DF97-4406-BEAB-F2F91842275C}</Project>
       <Name>Softeq.XToolkit.WhiteLabel</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\XToolkit.WhiteLabel\XToolkit.Bindings\Softeq.XToolkit.Bindings\Softeq.XToolkit.Bindings.csproj">
-      <Project>{556D5257-68D9-43B6-B06D-DAA137E2A9FD}</Project>
+    <ProjectReference Include="..\..\XToolkit.WhiteLabel\Softeq.XToolkit.Common\Softeq.XToolkit.Common.csproj">
+      <Project>{5626D784-EB87-4BE3-8297-AC707451C3C6}</Project>
+      <Name>Softeq.XToolkit.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\XToolkit.WhiteLabel\Softeq.XToolkit.Bindings\Softeq.XToolkit.Bindings.csproj">
+      <Project>{D5F562B4-D878-4B86-AB35-93BC43A253C5}</Project>
       <Name>Softeq.XToolkit.Bindings</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\XToolkit.WhiteLabel\XToolkit.Bindings\Softeq.XToolkit.Bindings.iOS\Softeq.XToolkit.Bindings.iOS.csproj">
+    <ProjectReference Include="..\..\XToolkit.WhiteLabel\Softeq.XToolkit.Bindings.iOS\Softeq.XToolkit.Bindings.iOS.csproj">
       <Project>{2D399BA9-1878-43E2-AF05-6873EAE9151B}</Project>
       <Name>Softeq.XToolkit.Bindings.iOS</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\XToolkit.WhiteLabel\XToolkit.Permissions\Softeq.XToolkit.Permissions\Softeq.XToolkit.Permissions.csproj">
-      <Project>{33058D2B-E6F2-41D2-98BF-6C1C89B89225}</Project>
+    <ProjectReference Include="..\..\XToolkit.WhiteLabel\Softeq.XToolkit.Permissions\Softeq.XToolkit.Permissions.csproj">
+      <Project>{E8FAA479-4003-4A66-B355-CA96A2D59DA0}</Project>
       <Name>Softeq.XToolkit.Permissions</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\XToolkit.WhiteLabel\XToolkit.Bindings\XToolkit.Common\Softeq.XToolkit.Common\Softeq.XToolkit.Common.csproj">
-      <Project>{93F44531-29C0-4FDE-AD7B-DE391727C174}</Project>
-      <Name>Softeq.XToolkit.Common</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\XToolkit.WhiteLabel\XToolkit.Bindings\XToolkit.Common\Softeq.XToolkit.Common.iOS\Softeq.XToolkit.Common.iOS.csproj">
+    <ProjectReference Include="..\..\XToolkit.WhiteLabel\Softeq.XToolkit.Common.iOS\Softeq.XToolkit.Common.iOS.csproj">
       <Project>{6BCB2009-2E46-458C-BCAA-AFC27A631924}</Project>
       <Name>Softeq.XToolkit.Common.iOS</Name>
     </ProjectReference>
