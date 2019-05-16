@@ -30,12 +30,12 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
         private NSLayoutConstraint _inputBottomConstraint;
         private NSLayoutConstraint _scrollToBottomConstraint;
         private WeakReferenceEx<GroupedTableDataSource<DateTimeOffset, ChatMessageViewModel>> _dataSourceRef;
-        private WeakReferenceEx<MessagesTableDelegate> _tableDelegateRef;
         private bool _isAutoScrollAvailable;
         private bool _isAutoScrollToBottomEnabled = true;
         private bool _shouldUpdateTableViewContentOffset;
         private ContextMenuComponent _contextMenuComponent;
         private ConnectionStatusView _customTitleView;
+        private MessagesTableDelegate _tableDelegate;
 
         public ChatMessagesViewController(IntPtr handle) : base(handle) { }
 
@@ -66,10 +66,7 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
                     false);
             }
 
-            MainView.InsertSubview(TableNode.View, 1);
-            MainView.InsertSubview(Input, 2);
-            InitializeInput();
-            InitTableViewAsync().SafeTaskWrapper();
+            InitTableView();
 
             _contextMenuComponent = new ContextMenuComponent();
             _contextMenuComponent.AddCommand(ContextMenuActions.Edit, ViewModel.MessageCommandActions[0]);
@@ -99,10 +96,7 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
         {
             base.ViewDidAppear(animated);
 
-            if (_tableDelegateRef.Target != null)
-            {
-                _tableDelegateRef.Target.ScrollPositionChanged += TableViewDelegateScrollPositionChanged;
-            }
+            _tableDelegate.ScrollPositionChanged += TableViewDelegateScrollPositionChanged;
         }
 
         public override void ViewWillDisappear(bool animated)
@@ -111,15 +105,15 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
 
             ViewModel.MessageAddedCommand = null;
 
-            if (!NavigationController.ViewControllers.Contains(this))
+            // TODO YP: need check this approach
+            if (NavigationController != null && !NavigationController.ViewControllers.Contains(this))
             {
                 _dataSourceRef.Target?.UnsubscribeItemsChanged();
             }
 
-            if (_tableDelegateRef.Target != null)
-            {
-                _tableDelegateRef.Target.ScrollPositionChanged -= TableViewDelegateScrollPositionChanged;
-            }
+            UnregisterKeyboardObservers();
+
+            _tableDelegate.ScrollPositionChanged -= TableViewDelegateScrollPositionChanged;
         }
 
         public override void ObserveValue(NSString keyPath, NSObject ofObject, NSDictionary change, IntPtr context)
@@ -184,6 +178,34 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
             Input.Init(this, new ChatInputKeyboardDelegate(_inputBottomConstraint));
         }
 
+        private void InitTableView()
+        {
+            TableNode.View.RegisterNibForHeaderFooterViewReuse(MessagesDateHeaderViewCell.Nib, MessagesDateHeaderViewCell.Key);
+
+            MainView.InsertSubview(TableNode.View, 1);
+            MainView.InsertSubview(Input, 2);
+            InitializeInput();
+
+            TableNode.Inverted = true;
+            TableNode.ShouldAnimateSizeChanges = false;
+            TableNode.LayerBacked = true;
+            TableNode.RasterizationScale = 1;
+
+            InitTableViewDelegate();
+
+            InitTableViewAsync().SafeTaskWrapper();
+        }
+
+        private void InitTableViewDelegate()
+        {
+            _tableDelegate = new MessagesTableDelegate(TableNode.Inverted)
+            {
+                SectionHeaderHeight = 35f,
+                GetViewForHeaderDelegate = GetHeader
+            };
+            _tableDelegate.WillDisplayCell += OnWillDisplayCell;
+        }
+
         private async Task InitTableViewAsync()
         {
             // delay is need to delay UI thread freezing while TableNode items are loaded
@@ -196,30 +218,27 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
             TableNode.View.BackgroundColor = UIColor.FromRGB(245, 245, 245);
             MainView.InsertSubview(TableNode.View, 1);
 
-            TableNode.View.RegisterNibForHeaderFooterViewReuse(MessagesDateHeaderViewCell.Nib, MessagesDateHeaderViewCell.Key);
+            _tableViewBottomConstraint = TableNode.View.BottomAnchor.ConstraintEqualTo(MainView.BottomAnchor, -InputBarHeight);
 
-            TableNode.Inverted = true;
+            NSLayoutConstraint.ActivateConstraints(new[]
+            {
+                TableNode.View.RightAnchor.ConstraintEqualTo(MainView.RightAnchor),
+                TableNode.View.LeftAnchor.ConstraintEqualTo(MainView.LeftAnchor),
+                TableNode.View.TopAnchor.ConstraintEqualTo(MainView.SafeAreaLayoutGuide.TopAnchor),
+                _tableViewBottomConstraint
+            });
+
             var tableSource = new GroupedTableDataSource<DateTimeOffset, ChatMessageViewModel>(
                 ViewModel.MessagesList.Messages,
                 TableNode.View,
                 viewModel => new ChatMessageNode(viewModel, _contextMenuComponent),
                 TableNode.Inverted);
-            var tableDelegate = new MessagesTableDelegate(TableNode.Inverted)
-            {
-                SectionHeaderHeight = 35f,
-                GetViewForHeaderDelegate = GetHeader
-            };
-            tableDelegate.WillDisplayCell += OnWillDisplayCell;
-            TableNode.ShouldAnimateSizeChanges = false;
-            TableNode.LayerBacked = true;
-            TableNode.RasterizationScale = 1;
 
             TableNode.View.EstimatedRowHeight = MinCellHeight;
             TableNode.View.SeparatorStyle = UITableViewCellSeparatorStyle.None;
             _dataSourceRef = WeakReferenceEx.Create(tableSource);
-            _tableDelegateRef = WeakReferenceEx.Create(tableDelegate);
             TableNode.DataSource = tableSource;
-            TableNode.Delegate = tableDelegate;
+            TableNode.Delegate = _tableDelegate;
             TableNode.View.AddObserver(this, ContentSizeKey, NSKeyValueObservingOptions.OldNew, IntPtr.Zero);
             TableNode.SetTuningParameters(new ASRangeTuningParameters { leadingBufferScreenfuls = 1, trailingBufferScreenfuls = 1 }, ASLayoutRangeType.Display);
             TableNode.SetTuningParameters(new ASRangeTuningParameters { leadingBufferScreenfuls = 1, trailingBufferScreenfuls = 1 }, ASLayoutRangeType.Preload);

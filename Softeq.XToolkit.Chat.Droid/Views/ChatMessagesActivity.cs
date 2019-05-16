@@ -67,10 +67,9 @@ namespace Softeq.XToolkit.Chat.Droid.Views
 
             _contextMenuComponent = new ContextMenuComponent(ViewModel.MessageCommandActions);
 
-            _scrollDownImageButton.SetCommand(nameof(_scrollDownImageButton.Click), new RelayCommand(() =>
-            {
-                ScrollToPosition(_conversationsRecyclerView.GetAdapter().ItemCount - 1);
-            }));
+            _scrollDownImageButton.SetCommand(nameof(_scrollDownImageButton.Click), new RelayCommand(ScrollToBottom));
+
+            ViewModel.MessageAddedCommand = new RelayCommand(ScrollToBottomIfNeeded);
         }
 
         protected override void OnPause()
@@ -135,7 +134,7 @@ namespace Softeq.XToolkit.Chat.Droid.Views
 
                 _conversationsAdapter = new ConversationsObservableRecyclerViewAdapter(
                         ViewModel.MessagesList.Messages,
-                        CollectionChangedAutoScrollToBottomHandler,
+                        ScrollToPositionIfNeeded,
                         LoadItemsRequestedScrollChangeHandler,
                         ViewModel.GetDateString,
                         _contextMenuComponent);
@@ -158,14 +157,6 @@ namespace Softeq.XToolkit.Chat.Droid.Views
             _chatInputView.UnbindViewModel();
         }
 
-        private void ScrollToPosition(int lastPosition)
-        {
-            Execute.OnUIThread(() =>
-            {
-                _conversationsRecyclerView.ScrollToPosition(lastPosition);
-            });
-        }
-
         private void InitializeConversationsRecyclerView()
         {
             _conversationsRecyclerView.SetLayoutManager(
@@ -186,12 +177,30 @@ namespace Softeq.XToolkit.Chat.Droid.Views
             _scrollDownImageButton.Visibility = BoolToViewStateConverter.ConvertGone(isVisible);
         }
 
-        private void CollectionChangedAutoScrollToBottomHandler(int bottomPosition)
+        private void ScrollToBottomIfNeeded()
+        {
+            ScrollToPositionIfNeeded(_conversationsRecyclerView.GetAdapter().ItemCount - 1);
+        }
+
+        private void ScrollToBottom()
+        {
+            ScrollToPosition(_conversationsRecyclerView.GetAdapter().ItemCount - 1);
+        }
+
+        private void ScrollToPositionIfNeeded(int position)
         {
             if (_isAutoScrollToFooterEnabled)
             {
-                ScrollToPosition(bottomPosition);
+                ScrollToPosition(position);
             }
+        }
+
+        private void ScrollToPosition(int lastPosition)
+        {
+            Execute.OnUIThread(() =>
+            {
+                _conversationsRecyclerView.ScrollToPosition(lastPosition);
+            });
         }
 
         private void LoadItemsRequestedScrollChangeHandler(int newItemsCount)
