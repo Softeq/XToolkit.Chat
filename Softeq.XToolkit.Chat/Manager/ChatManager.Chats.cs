@@ -119,6 +119,16 @@ namespace Softeq.XToolkit.Chat.Manager
             return ChatsCollection.FirstOrDefault(x => x.ChatId == chatId);
         }
 
+        public async Task<ChatSummaryViewModel> GetChatByIdFromCacheAsync(string chatId)
+        {
+            if (ChatsCollection.Count == 0)
+            {
+                await UpdateChatsListWithLoader(_localCache.Get<IList<ChatSummaryModel>>(ChatsCacheKey));
+            }
+
+            return GetChatById(chatId);
+        }
+
         public async Task<ChatSummaryViewModel> FindOrCreateDirectChatAsync(string memberId)
         {
             var directChatWithMember = ChatsCollection.FirstOrDefault(x =>

@@ -18,6 +18,7 @@ namespace Softeq.XToolkit.Chat.Interfaces
         Task UnMuteChatAsync(string chatId);
 
         ChatSummaryViewModel GetChatById(string chatId);
+        Task<ChatSummaryViewModel> GetChatByIdFromCacheAsync(string chatId);
 
         Task InviteMembersAsync(string chatId, IList<string> participantsIds);
         Task<IList<ChatUserViewModel>> GetChatMembersAsync(string chatId);
