@@ -275,7 +275,7 @@ namespace Softeq.XToolkit.Chat.SignalRClient
                     return;
                 }
 
-                if (user.Id.Equals(_memberId))
+                if (user.Id.ToString() == _memberId)
                 {
                     var chat = Mapper.DtoToChatSummary(channel);
                     chat.UpdateIsCreatedByMeStatus(_memberId);
