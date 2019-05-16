@@ -31,7 +31,7 @@ namespace Softeq.XToolkit.Chat.ViewModels
         private readonly IUploadImageService _uploadImageService;
         private readonly IDialogsService _dialogsService;
 
-        private string _chatName;
+        private string _chatName = string.Empty;
 
         public CreateChatViewModel(
             IChatsListManager chatsListManager,
@@ -107,7 +107,13 @@ namespace Softeq.XToolkit.Chat.ViewModels
 
         private async Task SaveAsync(Func<(Task<Stream> GetImageTask, string Extension)> getImageFunc)
         {
-            if (IsBusy || string.IsNullOrEmpty(ChatName))
+            if (string.IsNullOrWhiteSpace(_chatName))
+            {
+                ChatName = string.Empty;
+                return;
+            }
+
+            if (IsBusy)
             {
                 return;
             }
@@ -118,8 +124,9 @@ namespace Softeq.XToolkit.Chat.ViewModels
 
             try
             {
+                var chatName = _chatName.Trim();
                 var selectedContactsIds = Contacts.Where(x => x.IsSelected).Select(x => x.Id).ToList();
-                var isChatCreated = await _chatsListManager.CreateChatAsync(ChatName, selectedContactsIds, imagePath).ConfigureAwait(false);
+                var isChatCreated = await _chatsListManager.CreateChatAsync(chatName, selectedContactsIds, imagePath).ConfigureAwait(false);
 
                 if (!isChatCreated)
                 {

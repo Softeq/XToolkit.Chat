@@ -57,14 +57,15 @@ namespace Softeq.XToolkit.Chat.ViewModels
         private async void SendMessageAsync(GenericEventArgs<ImagePickerArgs> e)
         {
             var photoSelector = e?.Value;
+            var hasImage = photoSelector.Extension != null;
             var newMessageBody = MessageBody?.Trim();
 
-            if (photoSelector == null && string.IsNullOrEmpty(newMessageBody))
+            MessageBody = string.Empty;
+
+            if (!hasImage && string.IsNullOrEmpty(newMessageBody))
             {
                 return;
             }
-
-            MessageBody = string.Empty;
 
             if (IsInEditMessageMode)
             {
@@ -76,7 +77,7 @@ namespace Softeq.XToolkit.Chat.ViewModels
             }
             else
             {
-                await _chatManager.SendMessageAsync(_chatId, newMessageBody, e?.Value).ConfigureAwait(false);
+                await _chatManager.SendMessageAsync(_chatId, newMessageBody, photoSelector).ConfigureAwait(false);
             }
         }
 
