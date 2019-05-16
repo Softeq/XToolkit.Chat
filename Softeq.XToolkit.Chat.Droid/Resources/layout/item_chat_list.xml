@@ -63,13 +63,38 @@
         android:textColor="#8d8d8d"
         android:textSize="15sp" />
 
+    <LinearLayout
+        android:id="@+id/chat_message_body_photo_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/username_text_view"
+        android:layout_toLeftOf="@+id/date_time_text_view"
+        android:layout_below="@+id/username_text_view"
+        android:layout_alignParentBottom="true"
+        android:gravity="center_vertical"
+        android:visibility="gone"
+        android:orientation="horizontal">
+        <ImageView
+            android:id="@+id/chat_message_body_photo_icon"
+            android:layout_width="20dp"
+            android:layout_height="20dp" />
+        <TextView
+            android:id="@+id/chat_message_body_photo_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="4dp"
+            android:text="[Photo]"/>
+    </LinearLayout>
+
     <TextView
         android:id="@+id/date_time_text_view"
-        android:layout_width="50dp"
+        android:layout_width="wrap_content"
         android:layout_height="20dp"
+        android:minWidth="50dp"
         android:layout_alignParentRight="true"
         android:layout_alignParentTop="true"
         android:layout_marginRight="20dp"
+        android:layout_marginLeft="8dp"
         android:layout_marginTop="8dp"
         android:gravity="end"
         android:maxLines="1"

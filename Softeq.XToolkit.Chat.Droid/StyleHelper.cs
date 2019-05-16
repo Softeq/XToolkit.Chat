@@ -44,6 +44,7 @@ namespace Softeq.XToolkit.Chat.Droid
         int NewGroupAvatarIcon { get; }
         int AddMemberIcon { get; }
         int AttachmentImagePlaceholder { get; }
+        int LastMessageBodyPhotoIcon { get; }
     }
 
     public abstract class ChatDroidStyleBase : IChatDroidStyle
@@ -76,5 +77,6 @@ namespace Softeq.XToolkit.Chat.Droid
         public abstract int NewGroupAvatarIcon { get; }
         public abstract int AddMemberIcon { get; }
         public abstract int AttachmentImagePlaceholder { get; }
+        public abstract int LastMessageBodyPhotoIcon { get; }
     }
 }

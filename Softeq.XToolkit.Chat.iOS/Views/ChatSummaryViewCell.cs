@@ -33,8 +33,7 @@ namespace Softeq.XToolkit.Chat.iOS.Views
             // Note: this .ctor should not contain any initialization logic.
         }
 
-        [Export("awakeFromNib")]
-        new public void AwakeFromNib()
+        public override void AwakeFromNib()
         {
             UnreadMessageCountBackground.Layer.MasksToBounds = true;
             UnreadMessageCountBackground.Layer.CornerRadius = 9;
@@ -46,12 +45,15 @@ namespace Softeq.XToolkit.Chat.iOS.Views
         {
             _viewModelRef = WeakReferenceEx.Create(viewModel);
 
+            LastMessageBodyPhotoIcon.Image = UIImage.FromBundle(StyleHelper.Style.LastMessageBodyPhotoIcon);
+            LastMessageBodyPhotoLabel.Text = viewModel.LocalizedStrings.Photo;
+
             _bindings.Apply(x => x.Detach());
             _bindings.Clear();
 
             _bindings.Add(this.SetBinding(() => _viewModelRef.Target.ChatName, () => ChatNameLabel.Text));
-            //_bindings.Add(this.SetBinding(() => _viewModelRef.Target.LastMessageUsername, () => UsernameLabel.Text));
-            _bindings.Add(this.SetBinding(() => _viewModelRef.Target.LastMessageBody, () => MessageBodyLabel.Text));
+            //_bindings.Add(this.SetBinding(() => _viewModelRef.Target.LastMessageViewModel.Username, () => UsernameLabel.Text));
+            _bindings.Add(this.SetBinding(() => _viewModelRef.Target.LastMessageViewModel.Body, () => MessageBodyLabel.Text));
             _bindings.Add(this.SetBinding(() => _viewModelRef.Target.ChatPhotoUrl).WhenSourceChanges(() =>
             {
                 SenderPhotoImageView.LoadImageWithTextPlaceholder(
@@ -59,7 +61,7 @@ namespace Softeq.XToolkit.Chat.iOS.Views
                     _viewModelRef.Target.ChatName,
                     StyleHelper.Style.AvatarStyles);
             }));
-            //_bindings.Add(this.SetBinding(() => _viewModelRef.Target.LastMessageStatus).WhenSourceChanges(() =>
+            //_bindings.Add(this.SetBinding(() => _viewModelRef.Target.LastMessageViewModel.Status).WhenSourceChanges(() =>
             //{
             //    if (ReadUnreadIndicator != null && UnreadView != null)
             //    {
@@ -84,8 +86,19 @@ namespace Softeq.XToolkit.Chat.iOS.Views
                     UnreadMessageCountBackground.Hidden = _viewModelRef.Target.UnreadMessageCount == 0;
                 }
             }));
-            _bindings.Add(this.SetBinding(() => _viewModelRef.Target.LastMessageDateTime, () => DateTimeLabel.Text));
+            _bindings.Add(this.SetBinding(() => _viewModelRef.Target.LastMessageViewModel.DateTime, () => DateTimeLabel.Text));
             _bindings.Add(this.SetBinding(() => _viewModelRef.Target.UnreadMessageCount, () => UnreadMessageCountLabel.Text));
+            _bindings.Add(this.SetBinding(() => _viewModelRef.Target.LastMessageViewModel.HasPhoto).WhenSourceChanges(() =>
+            {
+                if (!_viewModelRef.Target.LastMessageViewModel.HasBody && _viewModelRef.Target.LastMessageViewModel.HasPhoto)
+                {
+                    LastMessageBodyPhotoView.Hidden = false;
+                }
+                else
+                {
+                    LastMessageBodyPhotoView.Hidden = true;
+                }
+            }));
         }
     }
 }

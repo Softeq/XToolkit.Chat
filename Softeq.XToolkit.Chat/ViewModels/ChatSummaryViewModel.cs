@@ -12,6 +12,7 @@ using Softeq.XToolkit.WhiteLabel.Threading;
 
 namespace Softeq.XToolkit.Chat.ViewModels
 {
+    // TODO YP: split viewmodel to separate viewmodels for chat list and chat messages
     public class ChatSummaryViewModel : ObservableObject,
         IViewModelParameter<ChatSummaryModel>,
         IEquatable<ChatSummaryViewModel>
@@ -20,31 +21,36 @@ namespace Softeq.XToolkit.Chat.ViewModels
         private const string SpaceDelimiter = " ";
         private const int MaxVisibleTypingUsersCount = 3;
 
-        private readonly IChatLocalizedStrings _localizedStrings;
         private readonly IFormatService _formatService;
+
         private ChatSummaryModel _chatSummary;
 
         public ChatSummaryViewModel(
             IChatLocalizedStrings localizedStrings,
             IFormatService formatService)
         {
-            _localizedStrings = localizedStrings;
+            LocalizedStrings = localizedStrings;
             _formatService = formatService;
         }
 
         public ChatSummaryModel Parameter
         {
-            set => _chatSummary = value ?? new ChatSummaryModel();
             get => _chatSummary;
+            set
+            {
+                _chatSummary = value ?? new ChatSummaryModel();
+
+                LastMessageViewModel = new LastMessageBodyViewModel(_formatService, _chatSummary.LastMessage);
+            }
         }
 
         public string ChatId => _chatSummary.Id;
         public string CreatorId => _chatSummary.CreatorId;
         public string ChatName => _chatSummary.Name;
-        public string LastMessageUsername => _chatSummary.LastMessage?.SenderName;
-        public string LastMessageBody => _chatSummary.LastMessage?.Body;
-        public ChatMessageStatus LastMessageStatus => _chatSummary.LastMessage?.Status ?? ChatMessageStatus.Other;
-        public string LastMessageDateTime => _formatService.ToShortTimeFormat(_chatSummary.LastMessage?.DateTime.LocalDateTime);
+
+        public LastMessageBodyViewModel LastMessageViewModel { get; private set; }
+
+        public IChatLocalizedStrings LocalizedStrings { get; }
 
         public int UnreadMessageCount
         {
@@ -113,11 +119,11 @@ namespace Softeq.XToolkit.Chat.ViewModels
                 }
                 if (AreMoreThanThreeUsersTyping)
                 {
-                    result += SpaceDelimiter + _localizedStrings.AndOther;
+                    result += SpaceDelimiter + LocalizedStrings.AndOther;
                 }
                 result += SpaceDelimiter + _formatService.PluralizeWithQuantity(TypingUsersNames.Count,
-                                                                                _localizedStrings.TypingPlural,
-                                                                                _localizedStrings.TypingSingular);
+                                                                                LocalizedStrings.TypingPlural,
+                                                                                LocalizedStrings.TypingSingular);
                 return result;
             }
         }
@@ -125,13 +131,8 @@ namespace Softeq.XToolkit.Chat.ViewModels
         public void UpdateLastMessage(ChatMessageModel newLastMessage)
         {
             _chatSummary.LastMessage = newLastMessage;
-            Execute.BeginOnUIThread(() =>
-            {
-                RaisePropertyChanged(nameof(LastMessageUsername));
-                RaisePropertyChanged(nameof(LastMessageBody));
-                RaisePropertyChanged(nameof(LastMessageStatus));
-                RaisePropertyChanged(nameof(LastMessageDateTime));
-            });
+
+            LastMessageViewModel.UpdateModel(newLastMessage);
         }
 
         public bool Equals(ChatSummaryViewModel other)

@@ -47,5 +47,6 @@ namespace Softeq.XToolkit.Chat.Models.Interfaces
         string Cancel { get; }
         string NewChat { get; }
         string NewGroup { get; }
+        string Photo { get; }
     }
 }
