@@ -111,8 +111,6 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
                 _dataSourceRef.Target?.UnsubscribeItemsChanged();
             }
 
-            UnregisterKeyboardObservers();
-
             _tableDelegate.ScrollPositionChanged -= TableViewDelegateScrollPositionChanged;
         }
 
@@ -216,17 +214,6 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
             TableNode.View.AddGestureRecognizer(new UITapGestureRecognizer(() => View.EndEditing(false)));
             TableNode.View.TranslatesAutoresizingMaskIntoConstraints = false;
             TableNode.View.BackgroundColor = UIColor.FromRGB(245, 245, 245);
-            MainView.InsertSubview(TableNode.View, 1);
-
-            _tableViewBottomConstraint = TableNode.View.BottomAnchor.ConstraintEqualTo(MainView.BottomAnchor, -InputBarHeight);
-
-            NSLayoutConstraint.ActivateConstraints(new[]
-            {
-                TableNode.View.RightAnchor.ConstraintEqualTo(MainView.RightAnchor),
-                TableNode.View.LeftAnchor.ConstraintEqualTo(MainView.LeftAnchor),
-                TableNode.View.TopAnchor.ConstraintEqualTo(MainView.SafeAreaLayoutGuide.TopAnchor),
-                _tableViewBottomConstraint
-            });
 
             var tableSource = new GroupedTableDataSource<DateTimeOffset, ChatMessageViewModel>(
                 ViewModel.MessagesList.Messages,
