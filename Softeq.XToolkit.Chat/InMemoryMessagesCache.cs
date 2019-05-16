@@ -309,8 +309,8 @@ namespace Softeq.XToolkit.Chat
         /// <param name="messages">Collection to insert.</param>
         private void AddNewMessages(List<ChatMessageModel> collection, IList<ChatMessageModel> messages)
         {
-            var messagesToInsert = messages.Where(y => !collection.Contains(y)).ToList();
-            foreach (var message in messages)
+            var messagesToInsert = messages.Except(collection).ToList();
+            foreach (var message in messagesToInsert)
             {
                 var previousMessageIndex = collection.FindLastIndex(y => y.DateTime.DateTime.IsEarlierThan(message.DateTime.DateTime));
                 collection.Insert(previousMessageIndex + 1, message);
