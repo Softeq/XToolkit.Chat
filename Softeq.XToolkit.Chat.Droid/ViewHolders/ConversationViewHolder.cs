@@ -255,14 +255,20 @@ namespace Softeq.XToolkit.Chat.Droid.ViewHolders
 
         protected virtual (int Width, int Height) CalculateAttachmentImageViewSize()
         {
+            var defSize = (ViewGroup.LayoutParams.MatchParent, ViewGroup.LayoutParams.WrapContent);
             var context = CrossCurrentActivity.Current.AppContext;
+
+            if (AttachmentImageView == null || AttachmentImageView.Drawable == null)
+            {
+                return defSize;
+            }
 
             var originalImageWidth = context.ToPixels(AttachmentImageView.Drawable.IntrinsicWidth);
             var originalImageHeight = context.ToPixels(AttachmentImageView.Drawable.IntrinsicHeight);
 
             if (originalImageWidth <= 0 || originalImageHeight <= 0)
             {
-                return (ViewGroup.LayoutParams.MatchParent, ViewGroup.LayoutParams.WrapContent);
+                return defSize;
             }
 
             var maxImageWidth = GetAttachmentImageViewMaxWidth(context);

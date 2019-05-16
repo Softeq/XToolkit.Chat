@@ -26,6 +26,16 @@ namespace Softeq.XToolkit.Chat.Droid.ViewHolders
         private const string ChatStatusDefaultColor = "#dedede";
 
         private readonly WeakAction<ChatSummaryViewModel> _selectChatAction;
+        private readonly MvxCachedImageView _chatPhotoImageView;
+        private readonly TextView _chatNameTextView;
+        private readonly TextView _userNameTextView;
+        private readonly TextView _messageBodyTextView;
+        private readonly LinearLayout _messageBodyPhotoView;
+        private readonly ImageView _messageBodyPhotoImageView;
+        private readonly TextView _messageBodyPhotoLabel;
+        private readonly TextView _dateTimeTextView;
+        private readonly TextView _unreadMessageCountTextView;
+        private readonly View _messageStatusIndicatorView;
 
         private WeakReferenceEx<ChatSummaryViewModel> _viewModelRef;
 
@@ -33,42 +43,40 @@ namespace Softeq.XToolkit.Chat.Droid.ViewHolders
         {
             _selectChatAction = new WeakAction<ChatSummaryViewModel>(selectChatAction);
 
-            ChatPhotoImageView = itemView.FindViewById<MvxCachedImageView>(Resource.Id.chat_photo_image_view);
-            ChatNameTextView = itemView.FindViewById<TextView>(Resource.Id.chat_name_text_view);
-            UserNameTextView = itemView.FindViewById<TextView>(Resource.Id.username_text_view);
-            MessageBodyTextView = itemView.FindViewById<TextView>(Resource.Id.message_body_text_view);
-            DateTimeTextView = itemView.FindViewById<TextView>(Resource.Id.date_time_text_view);
-            UnreadMessageCountTextView = itemView.FindViewById<TextView>(Resource.Id.unreaded_messages_count_text_view);
-            MessageStatusIndicatorView = itemView.FindViewById<View>(Resource.Id.message_status_indicator);
+            _chatPhotoImageView = itemView.FindViewById<MvxCachedImageView>(Resource.Id.chat_photo_image_view);
+            _chatNameTextView = itemView.FindViewById<TextView>(Resource.Id.chat_name_text_view);
+            _userNameTextView = itemView.FindViewById<TextView>(Resource.Id.username_text_view);
+            _messageBodyTextView = itemView.FindViewById<TextView>(Resource.Id.message_body_text_view);
+            _dateTimeTextView = itemView.FindViewById<TextView>(Resource.Id.date_time_text_view);
+            _unreadMessageCountTextView = itemView.FindViewById<TextView>(Resource.Id.unreaded_messages_count_text_view);
+            _messageStatusIndicatorView = itemView.FindViewById<View>(Resource.Id.message_status_indicator);
+            _messageBodyPhotoView = itemView.FindViewById<LinearLayout>(Resource.Id.chat_message_body_photo_view);
+            _messageBodyPhotoImageView = itemView.FindViewById<ImageView>(Resource.Id.chat_message_body_photo_icon);
+            _messageBodyPhotoLabel = itemView.FindViewById<TextView>(Resource.Id.chat_message_body_photo_label);
 
             itemView.SetCommand(nameof(itemView.Click), new RelayCommand(ChatClickHandler));
         }
-
-        private MvxCachedImageView ChatPhotoImageView { get; }
-        private TextView ChatNameTextView { get; }
-        private TextView UserNameTextView { get; }
-        private TextView MessageBodyTextView { get; }
-        private TextView DateTimeTextView { get; }
-        private TextView UnreadMessageCountTextView { get; }
-        private View MessageStatusIndicatorView { get; }
 
         public override void BindViewModel(ChatSummaryViewModel viewModel)
         {
             _viewModelRef = WeakReferenceEx.Create(viewModel);
 
-            Bindings.Add(this.SetBinding(() => _viewModelRef.Target.ChatName, () => ChatNameTextView.Text));
-            Bindings.Add(this.SetBinding(() => _viewModelRef.Target.LastMessageUsername, () => UserNameTextView.Text));
-            Bindings.Add(this.SetBinding(() => _viewModelRef.Target.LastMessageBody, () => MessageBodyTextView.Text));
-            Bindings.Add(this.SetBinding(() => _viewModelRef.Target.LastMessageDateTime, () => DateTimeTextView.Text));
+            _messageBodyPhotoLabel.Text = viewModel.LocalizedStrings.Photo;
+            _messageBodyPhotoImageView.SetImageResource(StyleHelper.Style.LastMessageBodyPhotoIcon);
+
+            Bindings.Add(this.SetBinding(() => _viewModelRef.Target.ChatName, () => _chatNameTextView.Text));
+            Bindings.Add(this.SetBinding(() => _viewModelRef.Target.LastMessageViewModel.Username, () => _userNameTextView.Text));
+            Bindings.Add(this.SetBinding(() => _viewModelRef.Target.LastMessageViewModel.Body, () => _messageBodyTextView.Text));
+            Bindings.Add(this.SetBinding(() => _viewModelRef.Target.LastMessageViewModel.DateTime, () => _dateTimeTextView.Text));
 
             Bindings.Add(this.SetBinding(() => _viewModelRef.Target.ChatPhotoUrl).WhenSourceChanges(() =>
             {
-                if (ChatPhotoImageView == null)
+                if (_chatPhotoImageView == null)
                 {
                     return;
                 }
 
-                ChatPhotoImageView.LoadImageWithTextPlaceholder(
+                _chatPhotoImageView.LoadImageWithTextPlaceholder(
                     _viewModelRef.Target.ChatPhotoUrl,
                     _viewModelRef.Target.ChatName,
                     new AvatarPlaceholderDrawable.AvatarStyles
@@ -81,32 +89,32 @@ namespace Softeq.XToolkit.Chat.Droid.ViewHolders
 
             Bindings.Add(this.SetBinding(() => _viewModelRef.Target.UnreadMessageCount).WhenSourceChanges(() =>
             {
-                if (UnreadMessageCountTextView != null)
+                if (_unreadMessageCountTextView != null)
                 {
-                    UnreadMessageCountTextView.Text = _viewModelRef.Target.UnreadMessageCount.ToString();
-                    UnreadMessageCountTextView.Visibility = BoolToViewStateConverter.ConvertGone(_viewModelRef.Target.UnreadMessageCount > 0);
+                    _unreadMessageCountTextView.Text = _viewModelRef.Target.UnreadMessageCount.ToString();
+                    _unreadMessageCountTextView.Visibility = BoolToViewStateConverter.ConvertGone(_viewModelRef.Target.UnreadMessageCount > 0);
                 }
             }));
 
             Bindings.Add(this.SetBinding(() => _viewModelRef.Target.IsMuted).WhenSourceChanges(() =>
             {
-                if (UnreadMessageCountTextView != null)
+                if (_unreadMessageCountTextView != null)
                 {
                     var colorResId = _viewModelRef.Target.IsMuted
                         ? StyleHelper.Style.UnreadMutedMessagesCountColor
                         : StyleHelper.Style.UnreadMessagesCountColor;
 
-                    var color = ContextCompat.GetColor(UnreadMessageCountTextView.Context, colorResId);
+                    var color = ContextCompat.GetColor(_unreadMessageCountTextView.Context, colorResId);
 
-                    UnreadMessageCountTextView.Background = CreateBackgroundWithCornerRadius(color, 56f);
+                    _unreadMessageCountTextView.Background = CreateBackgroundWithCornerRadius(color, 56f);
                 }
             }));
 
-            Bindings.Add(this.SetBinding(() => _viewModelRef.Target.LastMessageStatus).WhenSourceChanges(() =>
+            Bindings.Add(this.SetBinding(() => _viewModelRef.Target.LastMessageViewModel.Status).WhenSourceChanges(() =>
             {
                 Color color;
 
-                switch (_viewModelRef.Target.LastMessageStatus)
+                switch (_viewModelRef.Target.LastMessageViewModel.Status)
                 {
                     case ChatMessageStatus.Read:
                         color = Color.GreenYellow;
@@ -119,7 +127,21 @@ namespace Softeq.XToolkit.Chat.Droid.ViewHolders
                         break;
                 }
 
-                MessageStatusIndicatorView?.SetBackgroundColor(color);
+                _messageStatusIndicatorView?.SetBackgroundColor(color);
+            }));
+
+            Bindings.Add(this.SetBinding(() => _viewModelRef.Target.LastMessageViewModel.HasPhoto).WhenSourceChanges(() =>
+            {
+                if (!_viewModelRef.Target.LastMessageViewModel.HasBody && _viewModelRef.Target.LastMessageViewModel.HasPhoto)
+                {
+                    _messageBodyTextView.Visibility = ViewStates.Gone;
+                    _messageBodyPhotoView.Visibility = ViewStates.Visible;
+                }
+                else
+                {
+                    _messageBodyTextView.Visibility = ViewStates.Visible;
+                    _messageBodyPhotoView.Visibility = ViewStates.Gone;
+                }
             }));
         }
 

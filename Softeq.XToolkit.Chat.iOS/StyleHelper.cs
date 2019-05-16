@@ -44,5 +44,6 @@ namespace Softeq.XToolkit.Chat.iOS
         string LogoBoundleName { get; }
         string ChatNewGroupAvatarBundleName { get; }
         string AttachmentImagePlaceholderBundleName { get; }
+        string LastMessageBodyPhotoIcon { get; }
     }
 }

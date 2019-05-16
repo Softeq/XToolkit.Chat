@@ -4,7 +4,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Android.OS;
 using Android.Support.V7.Widget;
 using Android.Views;
 using Softeq.XToolkit.Chat.Droid.ViewHolders;
@@ -13,6 +12,7 @@ using Softeq.XToolkit.Common.Extensions;
 using Softeq.XToolkit.Common.Collections;
 using Softeq.XToolkit.Common.EventArguments;
 using Softeq.XToolkit.Common.WeakSubscription;
+using Softeq.XToolkit.WhiteLabel.Threading;
 
 namespace Softeq.XToolkit.Chat.Droid.Adapters
 {
@@ -73,7 +73,9 @@ namespace Softeq.XToolkit.Chat.Droid.Adapters
         {
             DataSource = ConvertGroupedCollectionToList(GroupedDataSource);
 
-            RunOnUI(NotifyDataSetChanged);
+            // Notify asynchronously because we need time for
+            // while adapter recalculates internal state in a background thread.
+            Execute.BeginOnUIThread(() => NotifyDataSetChanged());
 
             NotifyCollectionChanged(e);
         }
@@ -155,19 +157,6 @@ namespace Softeq.XToolkit.Chat.Droid.Adapters
             }
 
             return list;
-        }
-
-        private void RunOnUI(Action handler)
-        {
-            if (Looper.MainLooper == Looper.MyLooper())
-            {
-                handler();
-            }
-            else
-            {
-                var h = new Handler(Looper.MainLooper);
-                h.Post(handler);
-            }
         }
 
         // TODO: Export to separate files

@@ -29,7 +29,7 @@ namespace Softeq.XToolkit.Chat.ViewModels
         public string Id => Model.Id;
         public string ChatId => Model.ChannelId;
         public DateTimeOffset DateTime => Model.DateTime;
-        public string TextDateTime => _formatService.ToShortTimeFormat(Model.DateTime.LocalDateTime);
+        public string TextDateTime => _formatService.ToMessageDateTimeFormat(Model.DateTime.LocalDateTime);
 
         public string Body
         {

@@ -35,6 +35,7 @@ namespace Softeq.XToolkit.Chat.ViewModels
 
             ChatName = chatModel.Name;
             AvatarUrl = chatModel.PhotoUrl;
+            IsMuted = chatModel.IsMuted;
 
             StartEditingCommand = new RelayCommand(StartEditing);
             ChangeMuteNotificationsCommand = new RelayCommand(() => ChangeMuteNotificationsAsync().SafeTaskWrapper());
@@ -130,13 +131,17 @@ namespace Softeq.XToolkit.Chat.ViewModels
                 _chatModel.PhotoUrl = imagePath;
             }
 
-            _chatModel.Name = _chatName;
+            if (!string.IsNullOrWhiteSpace(_chatName))
+            {
+                _chatModel.Name = _chatName.Trim();
+            }
 
             await _chatsListManager.EditChatAsync(_chatModel).ConfigureAwait(false);
 
             Execute.BeginOnUIThread(() =>
             {
                 IsBusy = false;
+                ChatName = _chatModel.Name;
             });
         }
     }
