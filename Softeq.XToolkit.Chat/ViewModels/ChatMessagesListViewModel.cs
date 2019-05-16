@@ -64,6 +64,10 @@ namespace Softeq.XToolkit.Chat.ViewModels
                 LoadInitialMessagesAsync().SafeTaskWrapper();
                 _areLatestMessagesLoaded = true;
             }
+            else
+            {
+                RefreshMessagesAsync().SafeTaskWrapper();
+            }
 
             Messages.ItemsChanged += OnMessagesAddedToCollection;
             MarkMessagesAsRead();
@@ -160,7 +164,7 @@ namespace Softeq.XToolkit.Chat.ViewModels
 
             if (olderMessages.Any())
             {
-                Messages.AddRangeToGroupsSorted(olderMessages);
+                AddMessages(olderMessages);
             }
             else
             {
@@ -172,7 +176,24 @@ namespace Softeq.XToolkit.Chat.ViewModels
         private async Task LoadInitialMessagesAsync()
         {
             var messages = await _chatManager.LoadInitialMessagesAsync(_chatId, InitialReadMessagesBatchCount);
-            Messages.AddRangeToGroupsSorted(messages);
+            AddMessages(messages);
+        }
+
+        private async Task RefreshMessagesAsync()
+        {
+            _areOlderMessagesLoaded = false;
+
+            var lastMessages = await _chatManager.LoadInitialMessagesAsync(_chatId, InitialReadMessagesBatchCount);
+            var lastMessagesSortedGroup = new ObservableKeyGroupsCollection<DateTimeOffset, ChatMessageViewModel>(
+                message => message.DateTime.Date,
+                (x, y) => x.CompareTo(y),
+                (x, y) => x.DateTime.CompareTo(y.DateTime));
+
+            lastMessagesSortedGroup.AddRangeToGroupsSorted(lastMessages);
+
+            Messages.UnionSortedGroups(lastMessagesSortedGroup, new MessagesGroupComparer());
+
+            _messageAdded.Invoke();
         }
 
         private void OnMessagesAddedToCollection(object sender, NotifyKeyGroupsCollectionChangedEventArgs e)
@@ -195,6 +216,12 @@ namespace Softeq.XToolkit.Chat.ViewModels
             {
                 await _chatManager.MarkMessageAsReadAsync(_chatId, lastMessage.Id).ConfigureAwait(false);
             }
+        }
+
+        private void AddMessages(IList<ChatMessageViewModel> messages)
+        {
+            var messagesForAdd = messages.Except(Messages.Values).ToList();
+            Messages.AddRangeToGroupsSorted(messagesForAdd);
         }
 
         // TODO YP: unused
@@ -223,6 +250,19 @@ namespace Softeq.XToolkit.Chat.ViewModels
         private void RemoveAllSubscriptions()
         {
             _subscriptions.Apply(x => x.Dispose());
+        }
+
+        private class MessagesGroupComparer : IEqualityComparer<ChatMessageViewModel>
+        {
+            public bool Equals(ChatMessageViewModel x, ChatMessageViewModel y)
+            {
+                return x.Equals(y);
+            }
+
+            public int GetHashCode(ChatMessageViewModel obj)
+            {
+                return obj.GetHashCode();
+            }
         }
     }
 }
