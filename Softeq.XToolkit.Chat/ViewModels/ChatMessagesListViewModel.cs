@@ -80,12 +80,12 @@ namespace Softeq.XToolkit.Chat.ViewModels
             Messages.ItemsChanged -= OnMessagesAddedToCollection;
         }
 
-        public void OnMessageDeleted(string deletedMessageId)
+        private void OnMessageDeleted(string deletedMessageId)
         {
             DeleteAllMessages(x => x.Id == deletedMessageId);
         }
 
-        public void OnMessageReceived(ChatMessageViewModel messageViewModel)
+        private void OnMessageReceived(ChatMessageViewModel messageViewModel)
         {
             if (messageViewModel.ChatId == _chatId)
             {
@@ -93,13 +93,13 @@ namespace Softeq.XToolkit.Chat.ViewModels
             }
         }
 
-        public void OnMessagesBatchReceived(IList<ChatMessageViewModel> messages)
+        private void OnMessagesBatchReceived(IList<ChatMessageViewModel> messages)
         {
             var messagesToAdd = messages.Where(x => x.ChatId == _chatId).ToList();
             AddNewMessages(messagesToAdd);
         }
 
-        public void OnMessageEdited(ChatMessageModel messageModel)
+        private void OnMessageEdited(ChatMessageModel messageModel)
         {
             bool WasUpdated(ChatMessageViewModel x) => x.Id == messageModel.Id;
             Messages.Where(x => x.Any(WasUpdated))
@@ -108,7 +108,7 @@ namespace Softeq.XToolkit.Chat.ViewModels
                     .Apply(x => x.UpdateMessageModel(messageModel));
         }
 
-        public void OnMessagesBatchUpdated(IList<ChatMessageModel> messagesModels)
+        private void OnMessagesBatchUpdated(IList<ChatMessageModel> messagesModels)
         {
             foreach (var m in messagesModels)
             {
@@ -116,12 +116,12 @@ namespace Softeq.XToolkit.Chat.ViewModels
             }
         }
 
-        public void OnMessagesBatchDeleted(IList<string> deletedMessagesIds)
+        private void OnMessagesBatchDeleted(IList<string> deletedMessagesIds)
         {
             DeleteAllMessages(x => deletedMessagesIds.Contains(x.Id));
         }
 
-        public void OnChatRead(string chatId)
+        private void OnChatRead(string chatId)
         {
             if (chatId != _chatId)
             {
