@@ -71,7 +71,7 @@ namespace Softeq.XToolkit.Chat.SignalRClient
 
         public IObservable<string> ChatRemoved => _chatRemoved;
 
-        public IObservable<Guid> ChatRead { get; private set; }
+        public IObservable<string> ChatRead { get; private set; }
 
         public IObservable<string> MessageRead => null;
 
@@ -265,9 +265,11 @@ namespace Softeq.XToolkit.Chat.SignalRClient
                 _chatRemoved.OnNext(channel.Id.ToString());
             };
 
-            ChatRead = Observable.FromEvent<Guid>(
-                h => _signalRClient.LastReadMessageUpdated += h,
-                h => _signalRClient.LastReadMessageUpdated -= h);
+            ChatRead = Observable
+                .FromEvent<Guid>(
+                    h => _signalRClient.LastReadMessageUpdated += h,
+                    h => _signalRClient.LastReadMessageUpdated -= h)
+                .Select(x => x.ToString());
 
             _signalRClient.MemberLeft += (user, channelId) =>
             {
