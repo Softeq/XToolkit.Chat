@@ -13,6 +13,7 @@
             <connections>
                 <outlet property="AttachmentContainer" destination="2f7-d8-sAe" id="name-outlet-2f7-d8-sAe"/>
                 <outlet property="AttachmentImage" destination="WnH-Rc-TFD" id="name-outlet-WnH-Rc-TFD"/>
+                <outlet property="BottomConstraint" destination="IUi-QT-JCD" id="name-outlet-IUi-QT-JCD"/>
                 <outlet property="DeleteButton" destination="EeH-Tn-1Fo" id="name-outlet-EeH-Tn-1Fo"/>
                 <outlet property="EditContainer" destination="hYY-jy-llh" id="name-outlet-hYY-jy-llh"/>
                 <outlet property="EditingBodyLabel" destination="4eZ-UD-27c" id="name-outlet-4eZ-UD-27c"/>
