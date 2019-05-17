@@ -2,10 +2,12 @@
 // http://www.softeq.com
 
 using System.ComponentModel;
+using Softeq.NetKit.Chat.SignalRClient.DTOs.Channel.Response;
+using Softeq.NetKit.Chat.SignalRClient.DTOs.Member;
+using Softeq.NetKit.Chat.SignalRClient.DTOs.Member.Response;
+using Softeq.NetKit.Chat.SignalRClient.DTOs.Message;
 using Softeq.XToolkit.Chat.Models;
-using Softeq.XToolkit.Chat.SignalRClient.DTOs.Channel;
-using Softeq.XToolkit.Chat.SignalRClient.DTOs.Message;
-using Softeq.XToolkit.Chat.SignalRClient.DTOs.Member;
+using MessageType = Softeq.NetKit.Chat.SignalRClient.DTOs.Message.MessageType;
 
 namespace Softeq.XToolkit.Chat.SignalRClient
 {
@@ -29,7 +31,7 @@ namespace Softeq.XToolkit.Chat.SignalRClient
                 UpdatedDate = response.Updated,
                 UnreadMessagesCount = response.UnreadMessagesCount,
                 CreatorId = response.Creator?.Id.ToString(),
-                Type = (Models.ChannelType)response.Type,
+                Type = (ChannelType)response.Type,
                 Creator = DtoToChatUser(response.Creator),
                 DirectMember = DtoToChatUser(response.DirectMember)
             };
@@ -54,23 +56,23 @@ namespace Softeq.XToolkit.Chat.SignalRClient
                 IsRead = response.IsRead,
                 IsDelivered = true,
                 ImageRemoteUrl = response.ImageUrl,
-                ChannelType = (Models.ChannelType)response.ChannelType
+                ChannelType = (ChannelType)response.ChannelType
             };
         }
 
-        public static Models.MessageType DtoToMessageType(DTOs.Message.MessageType dto)
+        private static Models.MessageType DtoToMessageType(MessageType dto)
         {
             switch (dto)
             {
-                case DTOs.Message.MessageType.Default:
+                case MessageType.Default:
                     return Models.MessageType.Default;
-                case DTOs.Message.MessageType.Notification:
+                case MessageType.Notification:
                     return Models.MessageType.Info;
                 default: throw new InvalidEnumArgumentException();
             }
         }
 
-        public static ChatUserModel DtoToChatUser(MemberSummary dto)
+        private static ChatUserModel DtoToChatUser(MemberSummaryResponse dto)
         {
             return dto == null ? null : new ChatUserModel
             {
