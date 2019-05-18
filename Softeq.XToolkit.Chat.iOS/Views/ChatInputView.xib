@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="14490.70" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
     <device id="retina4_7" orientation="portrait">
         <adaptation id="fullscreen"/>
@@ -13,6 +13,7 @@
             <connections>
                 <outlet property="AttachmentContainer" destination="2f7-d8-sAe" id="name-outlet-2f7-d8-sAe"/>
                 <outlet property="AttachmentImage" destination="WnH-Rc-TFD" id="name-outlet-WnH-Rc-TFD"/>
+                <outlet property="BottomConstraint" destination="IUi-QT-JCD" id="name-outlet-IUi-QT-JCD"/>
                 <outlet property="DeleteButton" destination="EeH-Tn-1Fo" id="name-outlet-EeH-Tn-1Fo"/>
                 <outlet property="EditContainer" destination="hYY-jy-llh" id="name-outlet-hYY-jy-llh"/>
                 <outlet property="EditingBodyLabel" destination="4eZ-UD-27c" id="name-outlet-4eZ-UD-27c"/>
@@ -60,7 +61,7 @@
                                             <nil key="highlightedColor"/>
                                         </label>
                                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="39W-or-PgZ">
-                                            <rect key="frame" x="337" y="8" width="16" height="22"/>
+                                            <rect key="frame" x="323" y="8" width="30" height="34"/>
                                             <state key="normal" image="Chat_Close"/>
                                         </button>
                                     </subviews>
@@ -129,13 +130,13 @@
                                             <rect key="frame" x="8" y="0.0" width="281" height="48"/>
                                             <subviews>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Placeholder" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="wE6-x3-tWd">
-                                                    <rect key="frame" x="8" y="0.0" width="265" height="48"/>
+                                                    <rect key="frame" x="8" y="0.0" width="90.5" height="48"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                     <color key="textColor" red="0.68627450980000004" green="0.68627450980000004" blue="0.68627450980000004" alpha="1" colorSpace="calibratedRGB"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
-                                                <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" horizontalCompressionResistancePriority="1000" scrollEnabled="NO" textAlignment="natural" translatesAutoresizingMaskIntoConstraints="NO" id="CFI-Sq-1Mv">
-                                                    <rect key="frame" x="0.0" y="0.0" width="281" height="48"/>
+                                                <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" horizontalCompressionResistancePriority="1000" scrollEnabled="NO" textAlignment="natural" translatesAutoresizingMaskIntoConstraints="NO" id="CFI-Sq-1Mv" customClass="CustomTextView">
+                                                    <rect key="frame" x="0.0" y="0.0" width="106.5" height="48"/>
                                                     <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                     <constraints>
                                                         <constraint firstAttribute="height" constant="300" id="u0N-zL-cQk"/>
@@ -164,17 +165,17 @@
                                         <stackView opaque="NO" contentMode="scaleToFill" alignment="bottom" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="ZHl-85-BLF">
                                             <rect key="frame" x="289" y="0.0" width="64" height="48"/>
                                             <subviews>
-                                                <button opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="1000" horizontalCompressionResistancePriority="1000" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="MRJ-Ct-mHQ">
-                                                    <rect key="frame" x="0.0" y="21" width="16" height="27"/>
+                                                <button opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="1000" horizontalCompressionResistancePriority="1000" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="MRJ-Ct-mHQ" misplaced="YES">
+                                                    <rect key="frame" x="0.0" y="14" width="0.0" height="34"/>
                                                     <state key="normal" image="icPhoto"/>
                                                 </button>
-                                                <button opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="1000" horizontalCompressionResistancePriority="1000" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="CED-2o-ehl">
-                                                    <rect key="frame" x="24" y="21" width="16" height="27"/>
+                                                <button opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="1000" horizontalCompressionResistancePriority="1000" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="CED-2o-ehl" misplaced="YES">
+                                                    <rect key="frame" x="8" y="21" width="48" height="27"/>
                                                     <inset key="contentEdgeInsets" minX="0.0" minY="5" maxX="0.0" maxY="0.0"/>
                                                     <state key="normal" image="icImage"/>
                                                 </button>
-                                                <button opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="1000" horizontalCompressionResistancePriority="1000" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ATL-1X-ic4">
-                                                    <rect key="frame" x="48" y="21" width="16" height="27"/>
+                                                <button opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="1000" horizontalCompressionResistancePriority="1000" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ATL-1X-ic4" misplaced="YES">
+                                                    <rect key="frame" x="64" y="14" width="0.0" height="34"/>
                                                     <state key="normal" image="icSend"/>
                                                     <connections>
                                                         <action selector="OnSend:" destination="-1" eventType="touchUpInside" id="629"/>
@@ -232,9 +233,6 @@
         </view>
     </objects>
     <resources>
-        <image name="Chat_Close" width="16" height="16"/>
-        <image name="icImage" width="16" height="16"/>
-        <image name="icPhoto" width="16" height="16"/>
         <image name="icSend" width="25" height="23"/>
     </resources>
 </document>

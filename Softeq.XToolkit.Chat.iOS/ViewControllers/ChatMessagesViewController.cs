@@ -27,8 +27,6 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
         private const int MinCellHeight = 50;
         private const string ContentSizeKey = "contentSize";
 
-        private NSLayoutConstraint _inputBottomConstraint;
-        private NSLayoutConstraint _scrollToBottomConstraint;
         private WeakReferenceEx<GroupedTableDataSource<DateTimeOffset, ChatMessageViewModel>> _dataSourceRef;
         private bool _isAutoScrollAvailable;
         private bool _isAutoScrollToBottomEnabled = true;
@@ -36,12 +34,19 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
         private ContextMenuComponent _contextMenuComponent;
         private ConnectionStatusView _customTitleView;
         private MessagesTableDelegate _tableDelegate;
+        private WeakReferenceEx<ChatInputKeyboardDelegate> _chatInputDelegate;
+        private NSLayoutConstraint _scrollToBottomConstraint;
+        private NSLayoutConstraint _tableBottomConstraint;
 
         public ChatMessagesViewController(IntPtr handle) : base(handle) { }
 
         protected ASTableNode TableNode { get; private set; }
 
         protected ChatInputView Input { get; private set; }
+
+        public override UIView InputAccessoryView => Input;
+
+        public override bool CanBecomeFirstResponder => true;
 
         public override void ViewDidLoad()
         {
@@ -51,6 +56,8 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
 
             TableNode = new ASTableNode(UITableViewStyle.Grouped);
             Input = new ChatInputView() { TranslatesAutoresizingMaskIntoConstraints = false };
+            Input.Init(this);
+            _chatInputDelegate = new WeakReferenceEx<ChatInputKeyboardDelegate>(Input.Delegate);
 
             CustomNavigationItem.AddTitleView(_customTitleView);
             CustomNavigationItem.SetCommand(
@@ -66,6 +73,7 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
                     false);
             }
 
+            MainView.InsertSubview(TableNode.View, 1);
             InitTableView();
 
             _contextMenuComponent = new ContextMenuComponent();
@@ -90,6 +98,7 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
             base.ViewWillAppear(animated);
 
             ViewModel.MessageAddedCommand = new RelayCommand(OnMessageAdded);
+            _tableBottomConstraint.Constant = -Input.IntrinsicContentSize.Height;
         }
 
         public override void ViewDidAppear(bool animated)
@@ -97,6 +106,7 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
             base.ViewDidAppear(animated);
 
             _tableDelegate.ScrollPositionChanged += TableViewDelegateScrollPositionChanged;
+            _chatInputDelegate.Target.KeyboardHeightChanged += Target_KeyboardHeightChanged;
         }
 
         public override void ViewWillDisappear(bool animated)
@@ -112,24 +122,7 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
             }
 
             _tableDelegate.ScrollPositionChanged -= TableViewDelegateScrollPositionChanged;
-        }
-
-        public override void ObserveValue(NSString keyPath, NSObject ofObject, NSDictionary change, IntPtr context)
-        {
-            if (keyPath != ContentSizeKey)
-            {
-                base.ObserveValue(keyPath, ofObject, change, context);
-                return;
-            }
-
-            var oldSize = ((NSValue)new NSObservedChange(change).OldValue).CGSizeValue;
-            var newSize = ((NSValue)new NSObservedChange(change).NewValue).CGSizeValue;
-
-            if (ofObject is ASTableView)
-            {
-                TableViewContentSizeChanged(newSize, oldSize);
-                return;
-            }
+            _chatInputDelegate.Target.KeyboardHeightChanged -= Target_KeyboardHeightChanged;
         }
 
         protected override void DoAttachBindings()
@@ -154,26 +147,13 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
             {
                 Input.SetTextPlaceholdervisibility(string.IsNullOrEmpty(ViewModel.MessageInput.MessageBody));
             }));
+            Input.AttachBindings();
         }
 
-        private void InitializeInput()
+        protected override void DoDetachBindings()
         {
-            _inputBottomConstraint = MainView.SafeAreaLayoutGuide.BottomAnchor.ConstraintEqualTo(Input.BottomAnchor);
-            _scrollToBottomConstraint = ScrollToBottomButton.BottomAnchor.ConstraintEqualTo(TableNode.View.BottomAnchor);
-            _scrollToBottomConstraint.Constant = -16;
-            NSLayoutConstraint.ActivateConstraints(new[]
-            {
-                TableNode.View.RightAnchor.ConstraintEqualTo(MainView.RightAnchor),
-                TableNode.View.LeftAnchor.ConstraintEqualTo(MainView.LeftAnchor),
-                Input.RightAnchor.ConstraintEqualTo(MainView.RightAnchor),
-                Input.LeftAnchor.ConstraintEqualTo(MainView.LeftAnchor),
-                TableNode.View.TopAnchor.ConstraintEqualTo(MainView.SafeAreaLayoutGuide.TopAnchor),
-                TableNode.View.BottomAnchor.ConstraintEqualTo(Input.TopAnchor),
-                _scrollToBottomConstraint,
-                _inputBottomConstraint
-            });
-
-            Input.Init(this, new ChatInputKeyboardDelegate(_inputBottomConstraint));
+            base.DoDetachBindings();
+            Input.DetachBindings();
         }
 
         private void InitTableView()
@@ -181,8 +161,6 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
             TableNode.View.RegisterNibForHeaderFooterViewReuse(MessagesDateHeaderViewCell.Nib, MessagesDateHeaderViewCell.Key);
 
             MainView.InsertSubview(TableNode.View, 1);
-            MainView.InsertSubview(Input, 2);
-            InitializeInput();
 
             TableNode.Inverted = true;
             TableNode.ShouldAnimateSizeChanges = false;
@@ -192,6 +170,19 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
             InitTableViewDelegate();
 
             InitTableViewAsync().SafeTaskWrapper();
+
+            _scrollToBottomConstraint = ScrollToBottomButton.BottomAnchor.ConstraintEqualTo(TableNode.View.BottomAnchor);
+            _scrollToBottomConstraint.Constant = -16;
+
+            _tableBottomConstraint = TableNode.View.BottomAnchor.ConstraintEqualTo(MainView.BottomAnchor, -Input.IntrinsicContentSize.Height);
+            NSLayoutConstraint.ActivateConstraints(new[]
+            {
+                TableNode.View.RightAnchor.ConstraintEqualTo(MainView.RightAnchor),
+                TableNode.View.LeftAnchor.ConstraintEqualTo(MainView.LeftAnchor),
+                TableNode.View.TopAnchor.ConstraintEqualTo(MainView.SafeAreaLayoutGuide.TopAnchor),
+                _tableBottomConstraint,
+                _scrollToBottomConstraint
+            });
         }
 
         private void InitTableViewDelegate()
@@ -211,7 +202,6 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
             await Task.Delay(1);
 
             TableNode.View.KeyboardDismissMode = UIScrollViewKeyboardDismissMode.Interactive;
-            TableNode.View.AddGestureRecognizer(new UITapGestureRecognizer(() => View.EndEditing(false)));
             TableNode.View.TranslatesAutoresizingMaskIntoConstraints = false;
             TableNode.View.BackgroundColor = UIColor.FromRGB(245, 245, 245);
 
@@ -226,7 +216,6 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
             _dataSourceRef = WeakReferenceEx.Create(tableSource);
             TableNode.DataSource = tableSource;
             TableNode.Delegate = _tableDelegate;
-            TableNode.View.AddObserver(this, ContentSizeKey, NSKeyValueObservingOptions.OldNew, IntPtr.Zero);
             TableNode.SetTuningParameters(new ASRangeTuningParameters { leadingBufferScreenfuls = 1, trailingBufferScreenfuls = 1 }, ASLayoutRangeType.Display);
             TableNode.SetTuningParameters(new ASRangeTuningParameters { leadingBufferScreenfuls = 1, trailingBufferScreenfuls = 1 }, ASLayoutRangeType.Preload);
             TableNode.ReloadData();
@@ -250,18 +239,6 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
             if (row == ViewModel.MessagesList.Messages.SelectMany(x => x).Count() - 1)
             {
                 ViewModel.MessagesList.LoadOlderMessagesAsync().SafeTaskWrapper();
-            }
-        }
-
-        private void TableViewContentSizeChanged(CGSize newSize, CGSize oldSize)
-        {
-            var deltaHeight = newSize.Height - oldSize.Height;
-
-            if (!_isAutoScrollToBottomEnabled && _shouldUpdateTableViewContentOffset && deltaHeight > MinCellHeight)
-            {
-                _shouldUpdateTableViewContentOffset = false;
-
-                TableNode.SetContentOffset(new CGPoint(0, TableNode.ContentOffset.Y + deltaHeight), false);
             }
         }
 
@@ -303,6 +280,17 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
                 var index = NSIndexPath.FromRowSection(0, 0);
                 TableNode.ScrollToRowAtIndexPath(index, UITableViewScrollPosition.None, isAnimated);
             });
+        }
+
+        private void Target_KeyboardHeightChanged(nfloat height)
+        {
+            var val = height + _tableBottomConstraint.Constant;
+            if(val > Input.IntrinsicContentSize.Height)
+            {
+                TableNode.View.ContentOffset = new CGPoint(0, -val);
+            }
+            TableNode.View.ContentInset = new UIEdgeInsets(val, 0, 0, 0);
+            TableNode.View.ScrollIndicatorInsets = new UIEdgeInsets(val, 0, 0, 0);
         }
 
         private class MessagesTableDelegate : GroupedTableDelegate
