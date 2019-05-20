@@ -97,8 +97,13 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
         {
             base.ViewWillAppear(animated);
 
+            if(IsMovingToParentViewController)
+            {
+                _chatInputDelegate.Target.KeyboardHeightChanged += Target_KeyboardHeightChanged;
+                _tableBottomConstraint.Constant = -Input.IntrinsicContentSize.Height;
+            }
+
             ViewModel.MessageAddedCommand = new RelayCommand(OnMessageAdded);
-            _tableBottomConstraint.Constant = -Input.IntrinsicContentSize.Height;
         }
 
         public override void ViewDidAppear(bool animated)
@@ -106,7 +111,6 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
             base.ViewDidAppear(animated);
 
             _tableDelegate.ScrollPositionChanged += TableViewDelegateScrollPositionChanged;
-            _chatInputDelegate.Target.KeyboardHeightChanged += Target_KeyboardHeightChanged;
         }
 
         public override void ViewWillDisappear(bool animated)
@@ -115,14 +119,13 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
 
             ViewModel.MessageAddedCommand = null;
 
-            // TODO YP: need check this approach
-            if (NavigationController != null && !NavigationController.ViewControllers.Contains(this))
+            if (IsMovingFromParentViewController)
             {
                 _dataSourceRef.Target?.UnsubscribeItemsChanged();
+                _chatInputDelegate.Target.KeyboardHeightChanged -= Target_KeyboardHeightChanged;
             }
 
             _tableDelegate.ScrollPositionChanged -= TableViewDelegateScrollPositionChanged;
-            _chatInputDelegate.Target.KeyboardHeightChanged -= Target_KeyboardHeightChanged;
         }
 
         protected override void DoAttachBindings()
@@ -285,7 +288,7 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
         private void Target_KeyboardHeightChanged(nfloat height)
         {
             var val = height + _tableBottomConstraint.Constant;
-            if(val > Input.IntrinsicContentSize.Height)
+            if(val > -_tableBottomConstraint.Constant)
             {
                 TableNode.View.ContentOffset = new CGPoint(0, -val);
             }
