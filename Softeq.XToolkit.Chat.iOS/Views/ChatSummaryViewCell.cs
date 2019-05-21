@@ -52,7 +52,6 @@ namespace Softeq.XToolkit.Chat.iOS.Views
             _bindings.Clear();
 
             _bindings.Add(this.SetBinding(() => _viewModelRef.Target.ChatName, () => ChatNameLabel.Text));
-            _bindings.Add(this.SetBinding(() => _viewModelRef.Target.LastMessageViewModel.Body, () => MessageBodyLabel.Text));
             _bindings.Add(this.SetBinding(() => _viewModelRef.Target.LastMessageViewModel.Body).WhenSourceChanges((obj) =>
             {
                 MessageBodyLabel.Text = _viewModelRef.Target.LastMessageViewModel.Body;
