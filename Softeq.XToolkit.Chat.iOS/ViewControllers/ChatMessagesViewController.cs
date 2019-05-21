@@ -2,6 +2,7 @@
 // http://www.softeq.com
 
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using AsyncDisplayKitBindings;
 using CoreGraphics;
@@ -17,9 +18,7 @@ using Softeq.XToolkit.Common.Extensions;
 using Softeq.XToolkit.WhiteLabel.iOS;
 using Softeq.XToolkit.WhiteLabel.iOS.Extensions;
 using Softeq.XToolkit.WhiteLabel.Threading;
-using System.Linq;
 using UIKit;
-using Softeq.XToolkit.Bindings.iOS.Gestures;
 
 namespace Softeq.XToolkit.Chat.iOS.ViewControllers
 {
@@ -41,7 +40,7 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
 
         protected ASTableNode TableNode { get; private set; }
 
-        protected UIScrollView Table { get; private set; }
+        protected ASTableView Table { get; private set; }
 
         protected ChatInputView Input { get; private set; }
 
@@ -56,6 +55,7 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
             _customTitleView = new ConnectionStatusView(CGRect.Empty);
 
             TableNode = new ASTableNode(UITableViewStyle.Grouped);
+            Table = TableNode.View;
 
             Input = new ChatInputView() { TranslatesAutoresizingMaskIntoConstraints = false };
             Input.Init(this);
@@ -74,7 +74,7 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
                     false);
             }
 
-            MainView.InsertSubview(TableNode.View, 1);
+            MainView.InsertSubview(Table, 1);
             InitTableView();
 
             _contextMenuComponent = new ContextMenuComponent();
@@ -161,10 +161,9 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
 
         private void InitTableView()
         {
-            Table = TableNode.View;
-            TableNode.View.RegisterNibForHeaderFooterViewReuse(MessagesDateHeaderViewCell.Nib, MessagesDateHeaderViewCell.Key);
+            Table.RegisterNibForHeaderFooterViewReuse(MessagesDateHeaderViewCell.Nib, MessagesDateHeaderViewCell.Key);
 
-            MainView.InsertSubview(TableNode.View, 1);
+            MainView.InsertSubview(Table, 1);
 
             TableNode.Inverted = true;
             TableNode.ShouldAnimateSizeChanges = false;
@@ -175,15 +174,15 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
 
             InitTableViewAsync().SafeTaskWrapper();
 
-            _scrollToBottomConstraint = ScrollToBottomButton.BottomAnchor.ConstraintEqualTo(TableNode.View.BottomAnchor);
+            _scrollToBottomConstraint = ScrollToBottomButton.BottomAnchor.ConstraintEqualTo(Table.BottomAnchor);
             _scrollToBottomConstraint.Constant = -16;
 
-            _tableBottomConstraint = TableNode.View.BottomAnchor.ConstraintEqualTo(MainView.BottomAnchor);
+            _tableBottomConstraint = Table.BottomAnchor.ConstraintEqualTo(MainView.BottomAnchor);
             NSLayoutConstraint.ActivateConstraints(new[]
             {
-                TableNode.View.RightAnchor.ConstraintEqualTo(MainView.RightAnchor),
-                TableNode.View.LeftAnchor.ConstraintEqualTo(MainView.LeftAnchor),
-                TableNode.View.TopAnchor.ConstraintEqualTo(MainView.SafeAreaLayoutGuide.TopAnchor),
+                Table.RightAnchor.ConstraintEqualTo(MainView.RightAnchor),
+                Table.LeftAnchor.ConstraintEqualTo(MainView.LeftAnchor),
+                Table.TopAnchor.ConstraintEqualTo(MainView.SafeAreaLayoutGuide.TopAnchor),
                 _tableBottomConstraint,
                 _scrollToBottomConstraint
             });
@@ -205,19 +204,19 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
             // thus previous screen will not be frozen
             await Task.Delay(1);
 
-            TableNode.View.KeyboardDismissMode = UIScrollViewKeyboardDismissMode.Interactive;
-            TableNode.View.TranslatesAutoresizingMaskIntoConstraints = false;
-            TableNode.View.BackgroundColor = UIColor.FromRGB(245, 245, 245);
-            TableNode.View.AddGestureRecognizer(new UITapGestureRecognizer((obj) => Input.TextView.ResignFirstResponder()));
+            Table.KeyboardDismissMode = UIScrollViewKeyboardDismissMode.Interactive;
+            Table.TranslatesAutoresizingMaskIntoConstraints = false;
+            Table.BackgroundColor = UIColor.FromRGB(245, 245, 245);
+            Table.AddGestureRecognizer(new UITapGestureRecognizer((obj) => Input.TextView.ResignFirstResponder()));
 
             var tableSource = new GroupedTableDataSource<DateTimeOffset, ChatMessageViewModel>(
                 ViewModel.MessagesList.Messages,
-                TableNode.View,
+                Table,
                 viewModel => new ChatMessageNode(viewModel, _contextMenuComponent),
                 TableNode.Inverted);
 
-            TableNode.View.EstimatedRowHeight = MinCellHeight;
-            TableNode.View.SeparatorStyle = UITableViewCellSeparatorStyle.None;
+            Table.EstimatedRowHeight = MinCellHeight;
+            Table.SeparatorStyle = UITableViewCellSeparatorStyle.None;
             _dataSourceRef = WeakReferenceEx.Create(tableSource);
             TableNode.DataSource = tableSource;
             TableNode.Delegate = _tableDelegate;
@@ -254,7 +253,7 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
 
         private void TableViewScrollChanged(nfloat scrollViewOffsetY)
         {
-            var isAutoScrollAvailable = scrollViewOffsetY < TableNode.View.Frame.Height;
+            var isAutoScrollAvailable = scrollViewOffsetY < Table.Frame.Height;
             if (isAutoScrollAvailable != _isAutoScrollAvailable)
             {
                 _isAutoScrollAvailable = isAutoScrollAvailable;
