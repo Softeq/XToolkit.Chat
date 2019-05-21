@@ -145,7 +145,7 @@
                                                     <constraints>
                                                         <constraint firstAttribute="height" constant="300" id="u0N-zL-cQk"/>
                                                     </constraints>
-                                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="19"/>
                                                     <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
                                                     <variation key="default">
                                                         <mask key="constraints">

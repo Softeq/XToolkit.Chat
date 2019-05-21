@@ -157,6 +157,7 @@
     <Compile Include="Views\ChatInputView.designer.cs">
       <DependentUpon>ChatInputView.cs</DependentUpon>
     </Compile>
+    <Compile Include="Views\ChatInputScrollViewDelegate.cs" />
   </ItemGroup>
   <ItemGroup>
     <InterfaceDefinition Include="ViewControllers\ChatDetailsStoryboard.storyboard" />

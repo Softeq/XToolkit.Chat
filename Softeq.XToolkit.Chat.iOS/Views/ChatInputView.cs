@@ -13,6 +13,7 @@ using Softeq.XToolkit.Common.EventArguments;
 using Softeq.XToolkit.WhiteLabel.ImagePicker;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using Softeq.XToolkit.Common;
 
 namespace Softeq.XToolkit.Chat.iOS.Views
 {
@@ -21,7 +22,10 @@ namespace Softeq.XToolkit.Chat.iOS.Views
         [Register("CustomTextView")]
         public class CustomTextView : UITextView
         {
-            public CustomTextView(IntPtr handle) : base(handle) { }
+            public CustomTextView(IntPtr handle) : base(handle) 
+            {
+                Initialize();
+            }
 
             public override string Text 
             { 
@@ -34,10 +38,16 @@ namespace Softeq.XToolkit.Chat.iOS.Views
             }
 
             public event Action TextChanged;
+
+            private void Initialize ()
+            {
+                Changed += (sender, e) => TextChanged?.Invoke();
+            }
         }
 
         private SimpleImagePicker _simpleImagePicker;
         private Binding _attachedImageBinding;
+        private WeakReferenceEx<UIScrollView> _boundedScrollView;
 
         public ChatInputView(IntPtr handle) : base(handle)
         {
@@ -49,10 +59,12 @@ namespace Softeq.XToolkit.Chat.iOS.Views
 
         public nfloat TopMargin => 8;
 
-        public nfloat BottomMargin => Delegate.KeyBoardOpened ? 
+        public nfloat BottomMargin => KeyboardDelegate.KeyBoardOpened ? 
             8 : 8 + UIApplication.SharedApplication.KeyWindow.SafeAreaInsets.Bottom;
 
-        public ChatInputKeyboardDelegate Delegate { get; private set; }
+        public ChatInputKeyboardDelegate KeyboardDelegate { get; private set; }
+
+        public ChatInputScrollViewDelegate ScrollViewDelegate { get; private set; }
 
         public override CGSize IntrinsicContentSize
         {
@@ -72,8 +84,8 @@ namespace Softeq.XToolkit.Chat.iOS.Views
         protected override void Initialize()
         {
             base.Initialize();
-            Delegate = new ChatInputKeyboardDelegate(this);
-            Delegate.KeyboardHeightChanged += Delegate_KeyboardFrameHeight;
+            KeyboardDelegate = new ChatInputKeyboardDelegate(this);
+            KeyboardDelegate.KeyboardHeightChanged += Delegate_KeyboardFrameHeight;
             TextView.TextChanged += OnTextViewChanged;
             BottomConstraint.Constant = BottomMargin;
         }
@@ -105,8 +117,8 @@ namespace Softeq.XToolkit.Chat.iOS.Views
             if(disposing)
             {
                 TextView.TextChanged -= OnTextViewChanged;
-                Delegate.KeyboardHeightChanged -= Delegate_KeyboardFrameHeight;
-                Delegate.Dispose();
+                KeyboardDelegate.KeyboardHeightChanged -= Delegate_KeyboardFrameHeight;
+                KeyboardDelegate.Dispose();
             }
             base.Dispose(disposing);
         }
@@ -117,6 +129,11 @@ namespace Softeq.XToolkit.Chat.iOS.Views
             OpenCameraButton.SetCommand(new RelayCommand(_simpleImagePicker.OpenCameraAsync));
             OpenGalleryButton.SetCommand(new RelayCommand(_simpleImagePicker.OpenGalleryAsync));
             DeleteButton.SetCommand(new RelayCommand(OnDeleteButtonTap));
+        }
+
+        public void SetBoundedScrollView(UIScrollView boundedScrollView, nfloat scrollViewBottomMargin)
+        {
+            ScrollViewDelegate = new ChatInputScrollViewDelegate(this, boundedScrollView, scrollViewBottomMargin);
         }
 
         public void AttachBindings()
