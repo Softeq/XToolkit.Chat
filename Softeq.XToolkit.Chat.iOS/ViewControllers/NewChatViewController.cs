@@ -119,6 +119,10 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
             TableView.TableFooterView = new UIView();
             TableView.RegisterNibForCellReuse(FilteredContactViewCell.Nib, FilteredContactViewCell.Key);
             TableView.Source = _tableViewSource;
+            TableView.AddGestureRecognizer(new UITapGestureRecognizer((obj) => View.EndEditing(true))
+            {
+                CancelsTouchesInView = false
+            });
         }
 
         private void InitProgressIndicator()
