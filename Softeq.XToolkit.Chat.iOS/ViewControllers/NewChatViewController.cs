@@ -50,17 +50,24 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
             SearchBar.TextChanged += TableViewSearchBarTextChanged;
             _tableViewSource.ItemTapped += TableViewSourceItemTapped;
             _tableViewSource.LastItemRequested += TableViewSourceLastItemRequested;
+            ViewModel.PaginationViewModel.Items.CollectionChanged += ItemsCollectionChanged;
         }
 
         protected override void DoDetachBindings()
         {
             base.DoDetachBindings();
 
+            ViewModel.PaginationViewModel.Items.CollectionChanged -= ItemsCollectionChanged;
             SearchBar.TextChanged -= TableViewSearchBarTextChanged;
             _tableViewSource.ItemTapped -= TableViewSourceItemTapped;
             _tableViewSource.LastItemRequested -= TableViewSourceLastItemRequested;
 
             ResetSelectedRow();
+        }
+
+        private void ItemsCollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            TableView.BackgroundView.Hidden = ViewModel.PaginationViewModel.Items.Count != 0;
         }
 
         private void TableViewSearchBarTextChanged(object sender, UISearchBarTextChangedEventArgs e)
@@ -123,6 +130,7 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
             {
                 CancelsTouchesInView = false
             });
+            TableView.BackgroundView = new SearchNoResultView() { Hidden = true };
         }
 
         private void InitProgressIndicator()
