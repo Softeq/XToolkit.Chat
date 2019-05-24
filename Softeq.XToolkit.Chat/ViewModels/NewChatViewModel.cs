@@ -49,8 +49,7 @@ namespace Softeq.XToolkit.Chat.ViewModels
                 SearchLoader,
                 SearchFilter,
                 DefaultSearchResultsPageSize);
-
-            SearchCommand = new RelayCommand(DoSearch);
+            SearchCommand = new AsyncCommand(DoSearch); 
             CancelCommand = new RelayCommand(GoBack);
             CreateGroupChatCommand = new RelayCommand(() => _pageNavigationService.NavigateToViewModel<CreateChatViewModel>());
             CreatePersonalChatCommand = new RelayCommand<ChatUserViewModel>(CreatePersonalChat);
@@ -76,6 +75,8 @@ namespace Softeq.XToolkit.Chat.ViewModels
             }
         }
 
+        public bool HasResults => PaginationViewModel.Items.Count > 0;
+
         public override void OnAppearing()
         {
             base.OnAppearing();
@@ -86,15 +87,20 @@ namespace Softeq.XToolkit.Chat.ViewModels
 
                 await PaginationViewModel.LoadFirstPageAsync(CancellationToken.None).ConfigureAwait(false);
 
-                Execute.BeginOnUIThread(() => IsBusy = false);
+                Execute.BeginOnUIThread(() =>
+                {
+                    RaisePropertyChanged(nameof(HasResults));
+                    IsBusy = false;
+                });
             });
         }
 
-        private void DoSearch()
+        private async Task DoSearch()
         {
             _lastSearchCancelSource?.Cancel();
             _lastSearchCancelSource = new CancellationTokenSource();
-            PaginationViewModel.LoadFirstPageAsync(_lastSearchCancelSource.Token).ConfigureAwait(false);
+            await PaginationViewModel.LoadFirstPageAsync(_lastSearchCancelSource.Token).ConfigureAwait(false);
+            Execute.BeginOnUIThread(() => RaisePropertyChanged(nameof(HasResults)));
         }
 
         private Task<PagingModel<ChatUserModel>> SearchLoader(int pageNumber, int pageSize)

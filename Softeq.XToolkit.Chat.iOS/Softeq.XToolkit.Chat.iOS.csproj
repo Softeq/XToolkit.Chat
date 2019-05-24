@@ -159,6 +159,9 @@
     </Compile>
     <Compile Include="Views\ChatInputScrollViewDelegate.cs" />
     <Compile Include="Views\SearchNoResultView.cs" />
+    <Compile Include="Views\SearchNoResultView.designer.cs">
+      <DependentUpon>SearchNoResultView.cs</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <InterfaceDefinition Include="ViewControllers\ChatDetailsStoryboard.storyboard" />
