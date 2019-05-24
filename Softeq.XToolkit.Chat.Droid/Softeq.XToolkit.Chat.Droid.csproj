@@ -98,6 +98,7 @@
     <Compile Include="Views\NewChatActivity.cs" />
     <Compile Include="Controls\LeftOffsetItemDecoration.cs" />
     <Compile Include="Controls\ChatInputView.cs" />
+    <Compile Include="Controls\SearchNoResultView.cs" />
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\layout\activity_chat_details.xml" />
@@ -128,6 +129,7 @@
     <AndroidResource Include="Resources\drawable\chat_underlined_bg.xml" />
     <AndroidResource Include="Resources\drawable\chat_input_background.xml" />
     <AndroidResource Include="Resources\layout\view_chat_input.xml" />
+    <AndroidResource Include="Resources\layout\view_search_no_results.xml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Views\" />
