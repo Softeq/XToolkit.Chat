@@ -46,6 +46,10 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
                     ProgressIndicator.StopAnimating();
                 }
             }));
+            Bindings.Add(this.SetBinding(() => ViewModel.NoResultVisible).WhenSourceChanges(() =>
+            {
+                TableView.BackgroundView.Hidden = !ViewModel.NoResultVisible;
+            }));
 
             SearchBar.TextChanged += TableViewSearchBarTextChanged;
             _tableViewSource.ItemTapped += TableViewSourceItemTapped;
@@ -119,6 +123,14 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
             TableView.TableFooterView = new UIView();
             TableView.RegisterNibForCellReuse(FilteredContactViewCell.Nib, FilteredContactViewCell.Key);
             TableView.Source = _tableViewSource;
+            TableView.AddGestureRecognizer(new UITapGestureRecognizer((obj) => View.EndEditing(true))
+            {
+                CancelsTouchesInView = false
+            });
+            TableView.BackgroundView = new SearchNoResultView() 
+            { 
+                NoResultText = ViewModel.LocalizedStrings.SearchNoResults
+            };
         }
 
         private void InitProgressIndicator()

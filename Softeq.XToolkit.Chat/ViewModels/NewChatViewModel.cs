@@ -30,6 +30,7 @@ namespace Softeq.XToolkit.Chat.ViewModels
 
         private CancellationTokenSource _lastSearchCancelSource = new CancellationTokenSource();
         private string _searchQuery;
+        private bool _hasResults;
 
         public NewChatViewModel(
             IChatService chatService,
@@ -43,14 +44,14 @@ namespace Softeq.XToolkit.Chat.ViewModels
             LocalizedStrings = localizedStrings;
             _pageNavigationService = pageNavigationService;
             _logger = logManager.GetLogger<NewChatViewModel>();
+            NoResultVisible = false;
 
             PaginationViewModel = new PaginationViewModel<ChatUserViewModel, ChatUserModel>(
                 new ChatUserViewModelFactory(),
                 SearchLoader,
                 SearchFilter,
                 DefaultSearchResultsPageSize);
-
-            SearchCommand = new RelayCommand(DoSearch);
+            SearchCommand = new AsyncCommand(DoSearch); 
             CancelCommand = new RelayCommand(GoBack);
             CreateGroupChatCommand = new RelayCommand(() => _pageNavigationService.NavigateToViewModel<CreateChatViewModel>());
             CreatePersonalChatCommand = new RelayCommand<ChatUserViewModel>(CreatePersonalChat);
@@ -76,6 +77,15 @@ namespace Softeq.XToolkit.Chat.ViewModels
             }
         }
 
+        public bool NoResultVisible
+        {
+            get => _hasResults;
+            set
+            {
+                Set(ref _hasResults, value);
+            }
+        }
+
         public override void OnAppearing()
         {
             base.OnAppearing();
@@ -86,15 +96,20 @@ namespace Softeq.XToolkit.Chat.ViewModels
 
                 await PaginationViewModel.LoadFirstPageAsync(CancellationToken.None).ConfigureAwait(false);
 
-                Execute.BeginOnUIThread(() => IsBusy = false);
+                Execute.BeginOnUIThread(() =>
+                {
+                    NoResultVisible = PaginationViewModel.Items.Count == 0;
+                    IsBusy = false;
+                });
             });
         }
 
-        private void DoSearch()
+        private async Task DoSearch()
         {
             _lastSearchCancelSource?.Cancel();
             _lastSearchCancelSource = new CancellationTokenSource();
-            PaginationViewModel.LoadFirstPageAsync(_lastSearchCancelSource.Token).ConfigureAwait(false);
+            await PaginationViewModel.LoadFirstPageAsync(_lastSearchCancelSource.Token).ConfigureAwait(false);
+            Execute.BeginOnUIThread(() => NoResultVisible = PaginationViewModel.Items.Count == 0);
         }
 
         private Task<PagingModel<ChatUserModel>> SearchLoader(int pageNumber, int pageSize)

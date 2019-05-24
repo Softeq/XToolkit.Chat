@@ -5,29 +5,64 @@ using UIKit;
 
 namespace Softeq.XToolkit.Chat.iOS.Views
 {
-    public class ChatInputKeyboardDelegate : IDisposable
+    public class ChatInputKeyboardDelegate : NSObject
     {
         private readonly IDisposable _willShowObserver;
         private readonly IDisposable _willHideObserver;
+        private readonly IDisposable _willChangeFrameObserver;
 
-        public ChatInputKeyboardDelegate(NSLayoutConstraint inputBottomConstraint)
+        private WeakReferenceEx<ChatInputView> _chatInputView;
+
+        public ChatInputKeyboardDelegate(ChatInputView chatInputView)
         {
+            _chatInputView = new WeakReferenceEx<ChatInputView>(chatInputView);
             _willShowObserver = NSNotificationCenter.DefaultCenter.AddObserver(UIKeyboard.WillShowNotification, (notification) =>
             {
-                var safeAreaBottom = UIApplication.SharedApplication.KeyWindow.SafeAreaInsets.Bottom;
-                var keyBoardHeight = UIKeyboard.FrameEndFromNotification(notification).Height;
-                inputBottomConstraint.Constant = keyBoardHeight - safeAreaBottom;
+                if(!KeyBoardOpened)
+                {
+                    TryInvokeOpenKeyboardEvent(notification);
+                }
             });
             _willHideObserver = NSNotificationCenter.DefaultCenter.AddObserver(UIKeyboard.WillHideNotification, (notification) =>
             {
-                inputBottomConstraint.Constant = 0;
+                if(KeyBoardOpened)
+                {
+                    KeyBoardOpened = false;
+                    KeyboardHeightChanged?.Invoke(0);
+                }
+            });
+            _willChangeFrameObserver = NSNotificationCenter.DefaultCenter.AddObserver(UIKeyboard.WillChangeFrameNotification, (notification) =>
+            {
+                if(KeyBoardOpened)
+                {
+                    TryInvokeOpenKeyboardEvent(notification);
+                }
             });
         }
 
-        public void Dispose()
+        public bool KeyBoardOpened { get; private set; }
+
+        public event Action<nfloat> KeyboardHeightChanged;
+
+        protected override void Dispose(bool disposing)
         {
-            _willShowObserver.Dispose();
-            _willHideObserver.Dispose();
+            if(disposing)
+            {
+                _willShowObserver.Dispose();
+                _willHideObserver.Dispose();
+                _willChangeFrameObserver?.Dispose();
+            }
+            base.Dispose(disposing);
+        }
+
+        private void TryInvokeOpenKeyboardEvent(NSNotification notification)
+        {
+            var keyboardHeight = UIKeyboard.FrameEndFromNotification(notification).Height;
+            if (_chatInputView.Target?.Frame.Height < keyboardHeight)
+            {
+                KeyBoardOpened = true;
+            }
+            KeyboardHeightChanged?.Invoke(keyboardHeight);
         }
     }
 }

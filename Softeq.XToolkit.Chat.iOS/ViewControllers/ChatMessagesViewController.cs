@@ -2,6 +2,7 @@
 // http://www.softeq.com
 
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using AsyncDisplayKitBindings;
 using CoreGraphics;
@@ -17,7 +18,6 @@ using Softeq.XToolkit.Common.Extensions;
 using Softeq.XToolkit.WhiteLabel.iOS;
 using Softeq.XToolkit.WhiteLabel.iOS.Extensions;
 using Softeq.XToolkit.WhiteLabel.Threading;
-using System.Linq;
 using UIKit;
 
 namespace Softeq.XToolkit.Chat.iOS.ViewControllers
@@ -27,21 +27,26 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
         private const int MinCellHeight = 50;
         private const string ContentSizeKey = "contentSize";
 
-        private NSLayoutConstraint _inputBottomConstraint;
-        private NSLayoutConstraint _scrollToBottomConstraint;
         private WeakReferenceEx<GroupedTableDataSource<DateTimeOffset, ChatMessageViewModel>> _dataSourceRef;
         private bool _isAutoScrollAvailable;
         private bool _isAutoScrollToBottomEnabled = true;
-        private bool _shouldUpdateTableViewContentOffset;
         private ContextMenuComponent _contextMenuComponent;
         private ConnectionStatusView _customTitleView;
         private MessagesTableDelegate _tableDelegate;
+        private NSLayoutConstraint _scrollToBottomConstraint;
+        private NSLayoutConstraint _tableBottomConstraint;
 
         public ChatMessagesViewController(IntPtr handle) : base(handle) { }
 
         protected ASTableNode TableNode { get; private set; }
 
+        protected ASTableView Table { get; private set; }
+
         protected ChatInputView Input { get; private set; }
+
+        public override UIView InputAccessoryView => Input;
+
+        public override bool CanBecomeFirstResponder => true;
 
         public override void ViewDidLoad()
         {
@@ -50,7 +55,10 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
             _customTitleView = new ConnectionStatusView(CGRect.Empty);
 
             TableNode = new ASTableNode(UITableViewStyle.Grouped);
+            Table = TableNode.View;
+
             Input = new ChatInputView() { TranslatesAutoresizingMaskIntoConstraints = false };
+            Input.Init(this);
 
             CustomNavigationItem.AddTitleView(_customTitleView);
             CustomNavigationItem.SetCommand(
@@ -66,6 +74,7 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
                     false);
             }
 
+            MainView.InsertSubview(Table, 1);
             InitTableView();
 
             _contextMenuComponent = new ContextMenuComponent();
@@ -89,6 +98,12 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
         {
             base.ViewWillAppear(animated);
 
+            if (IsMovingToParentViewController)
+            {
+                _tableBottomConstraint.Constant = -Input.IntrinsicContentSize.Height;
+                Input.SetBoundedScrollView(Table, _tableBottomConstraint.Constant);
+            }
+
             ViewModel.MessageAddedCommand = new RelayCommand(OnMessageAdded);
         }
 
@@ -105,31 +120,12 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
 
             ViewModel.MessageAddedCommand = null;
 
-            // TODO YP: need check this approach
-            if (NavigationController != null && !NavigationController.ViewControllers.Contains(this))
+            if (IsMovingFromParentViewController)
             {
                 _dataSourceRef.Target?.UnsubscribeItemsChanged();
             }
 
             _tableDelegate.ScrollPositionChanged -= TableViewDelegateScrollPositionChanged;
-        }
-
-        public override void ObserveValue(NSString keyPath, NSObject ofObject, NSDictionary change, IntPtr context)
-        {
-            if (keyPath != ContentSizeKey)
-            {
-                base.ObserveValue(keyPath, ofObject, change, context);
-                return;
-            }
-
-            var oldSize = ((NSValue)new NSObservedChange(change).OldValue).CGSizeValue;
-            var newSize = ((NSValue)new NSObservedChange(change).NewValue).CGSizeValue;
-
-            if (ofObject is ASTableView)
-            {
-                TableViewContentSizeChanged(newSize, oldSize);
-                return;
-            }
         }
 
         protected override void DoAttachBindings()
@@ -154,35 +150,20 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
             {
                 Input.SetTextPlaceholdervisibility(string.IsNullOrEmpty(ViewModel.MessageInput.MessageBody));
             }));
+            Input.AttachBindings();
         }
 
-        private void InitializeInput()
+        protected override void DoDetachBindings()
         {
-            _inputBottomConstraint = MainView.SafeAreaLayoutGuide.BottomAnchor.ConstraintEqualTo(Input.BottomAnchor);
-            _scrollToBottomConstraint = ScrollToBottomButton.BottomAnchor.ConstraintEqualTo(TableNode.View.BottomAnchor);
-            _scrollToBottomConstraint.Constant = -16;
-            NSLayoutConstraint.ActivateConstraints(new[]
-            {
-                TableNode.View.RightAnchor.ConstraintEqualTo(MainView.RightAnchor),
-                TableNode.View.LeftAnchor.ConstraintEqualTo(MainView.LeftAnchor),
-                Input.RightAnchor.ConstraintEqualTo(MainView.RightAnchor),
-                Input.LeftAnchor.ConstraintEqualTo(MainView.LeftAnchor),
-                TableNode.View.TopAnchor.ConstraintEqualTo(MainView.SafeAreaLayoutGuide.TopAnchor),
-                TableNode.View.BottomAnchor.ConstraintEqualTo(Input.TopAnchor),
-                _scrollToBottomConstraint,
-                _inputBottomConstraint
-            });
-
-            Input.Init(this, new ChatInputKeyboardDelegate(_inputBottomConstraint));
+            base.DoDetachBindings();
+            Input.DetachBindings();
         }
 
         private void InitTableView()
         {
-            TableNode.View.RegisterNibForHeaderFooterViewReuse(MessagesDateHeaderViewCell.Nib, MessagesDateHeaderViewCell.Key);
+            Table.RegisterNibForHeaderFooterViewReuse(MessagesDateHeaderViewCell.Nib, MessagesDateHeaderViewCell.Key);
 
-            MainView.InsertSubview(TableNode.View, 1);
-            MainView.InsertSubview(Input, 2);
-            InitializeInput();
+            MainView.InsertSubview(Table, 1);
 
             TableNode.Inverted = true;
             TableNode.ShouldAnimateSizeChanges = false;
@@ -192,6 +173,19 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
             InitTableViewDelegate();
 
             InitTableViewAsync().SafeTaskWrapper();
+
+            _scrollToBottomConstraint = ScrollToBottomButton.BottomAnchor.ConstraintEqualTo(Table.BottomAnchor);
+            _scrollToBottomConstraint.Constant = -16;
+
+            _tableBottomConstraint = Table.BottomAnchor.ConstraintEqualTo(MainView.BottomAnchor);
+            NSLayoutConstraint.ActivateConstraints(new[]
+            {
+                Table.RightAnchor.ConstraintEqualTo(MainView.RightAnchor),
+                Table.LeftAnchor.ConstraintEqualTo(MainView.LeftAnchor),
+                Table.TopAnchor.ConstraintEqualTo(MainView.SafeAreaLayoutGuide.TopAnchor),
+                _tableBottomConstraint,
+                _scrollToBottomConstraint
+            });
         }
 
         private void InitTableViewDelegate()
@@ -210,23 +204,22 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
             // thus previous screen will not be frozen
             await Task.Delay(1);
 
-            TableNode.View.KeyboardDismissMode = UIScrollViewKeyboardDismissMode.Interactive;
-            TableNode.View.AddGestureRecognizer(new UITapGestureRecognizer(() => View.EndEditing(false)));
-            TableNode.View.TranslatesAutoresizingMaskIntoConstraints = false;
-            TableNode.View.BackgroundColor = UIColor.FromRGB(245, 245, 245);
+            Table.KeyboardDismissMode = UIScrollViewKeyboardDismissMode.Interactive;
+            Table.TranslatesAutoresizingMaskIntoConstraints = false;
+            Table.BackgroundColor = UIColor.FromRGB(245, 245, 245);
+            Table.AddGestureRecognizer(new UITapGestureRecognizer((obj) => Input.TextView.ResignFirstResponder()));
 
             var tableSource = new GroupedTableDataSource<DateTimeOffset, ChatMessageViewModel>(
                 ViewModel.MessagesList.Messages,
-                TableNode.View,
+                Table,
                 viewModel => new ChatMessageNode(viewModel, _contextMenuComponent),
                 TableNode.Inverted);
 
-            TableNode.View.EstimatedRowHeight = MinCellHeight;
-            TableNode.View.SeparatorStyle = UITableViewCellSeparatorStyle.None;
+            Table.EstimatedRowHeight = MinCellHeight;
+            Table.SeparatorStyle = UITableViewCellSeparatorStyle.None;
             _dataSourceRef = WeakReferenceEx.Create(tableSource);
             TableNode.DataSource = tableSource;
             TableNode.Delegate = _tableDelegate;
-            TableNode.View.AddObserver(this, ContentSizeKey, NSKeyValueObservingOptions.OldNew, IntPtr.Zero);
             TableNode.SetTuningParameters(new ASRangeTuningParameters { leadingBufferScreenfuls = 1, trailingBufferScreenfuls = 1 }, ASLayoutRangeType.Display);
             TableNode.SetTuningParameters(new ASRangeTuningParameters { leadingBufferScreenfuls = 1, trailingBufferScreenfuls = 1 }, ASLayoutRangeType.Preload);
             TableNode.ReloadData();
@@ -253,18 +246,6 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
             }
         }
 
-        private void TableViewContentSizeChanged(CGSize newSize, CGSize oldSize)
-        {
-            var deltaHeight = newSize.Height - oldSize.Height;
-
-            if (!_isAutoScrollToBottomEnabled && _shouldUpdateTableViewContentOffset && deltaHeight > MinCellHeight)
-            {
-                _shouldUpdateTableViewContentOffset = false;
-
-                TableNode.SetContentOffset(new CGPoint(0, TableNode.ContentOffset.Y + deltaHeight), false);
-            }
-        }
-
         private void TableViewDelegateScrollPositionChanged(object sender, nfloat scrollPosition)
         {
             TableViewScrollChanged(scrollPosition);
@@ -272,7 +253,7 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
 
         private void TableViewScrollChanged(nfloat scrollViewOffsetY)
         {
-            var isAutoScrollAvailable = scrollViewOffsetY < TableNode.View.Frame.Height;
+            var isAutoScrollAvailable = scrollViewOffsetY < Table.Frame.Height;
             if (isAutoScrollAvailable != _isAutoScrollAvailable)
             {
                 _isAutoScrollAvailable = isAutoScrollAvailable;
@@ -288,8 +269,6 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
 
         private void OnMessageAdded()
         {
-            _shouldUpdateTableViewContentOffset = true;
-
             if (_isAutoScrollToBottomEnabled)
             {
                 ScrollToBottom();

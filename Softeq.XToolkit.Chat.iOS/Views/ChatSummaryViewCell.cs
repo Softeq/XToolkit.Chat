@@ -52,8 +52,11 @@ namespace Softeq.XToolkit.Chat.iOS.Views
             _bindings.Clear();
 
             _bindings.Add(this.SetBinding(() => _viewModelRef.Target.ChatName, () => ChatNameLabel.Text));
-            //_bindings.Add(this.SetBinding(() => _viewModelRef.Target.LastMessageViewModel.Username, () => UsernameLabel.Text));
-            _bindings.Add(this.SetBinding(() => _viewModelRef.Target.LastMessageViewModel.Body, () => MessageBodyLabel.Text));
+            _bindings.Add(this.SetBinding(() => _viewModelRef.Target.LastMessageViewModel.Body).WhenSourceChanges((obj) =>
+            {
+                MessageBodyLabel.Text = _viewModelRef.Target.LastMessageViewModel.Body;
+                BodyContainer.Hidden = !_viewModelRef.Target.LastMessageViewModel.HasBody && !_viewModelRef.Target.LastMessageViewModel.HasPhoto;
+            }));
             _bindings.Add(this.SetBinding(() => _viewModelRef.Target.ChatPhotoUrl).WhenSourceChanges(() =>
             {
                 SenderPhotoImageView.LoadImageWithTextPlaceholder(
@@ -61,14 +64,6 @@ namespace Softeq.XToolkit.Chat.iOS.Views
                     _viewModelRef.Target.ChatName,
                     StyleHelper.Style.AvatarStyles);
             }));
-            //_bindings.Add(this.SetBinding(() => _viewModelRef.Target.LastMessageViewModel.Status).WhenSourceChanges(() =>
-            //{
-            //    if (ReadUnreadIndicator != null && UnreadView != null)
-            //    {
-            //        ReadUnreadIndicator.Hidden = _viewModelRef.Target.LastMessageStatus == ChatMessageStatus.Other;
-            //        UnreadView.Hidden = _viewModelRef.Target.LastMessageStatus == ChatMessageStatus.Read;
-            //    }
-            //}));
             _bindings.Add(this.SetBinding(() => _viewModelRef.Target.IsMuted).WhenSourceChanges(() =>
             {
                 if (UnreadMessageCountLabel != null)
@@ -98,6 +93,7 @@ namespace Softeq.XToolkit.Chat.iOS.Views
                 {
                     LastMessageBodyPhotoView.Hidden = true;
                 }
+                BodyContainer.Hidden = !_viewModelRef.Target.LastMessageViewModel.HasBody && !_viewModelRef.Target.LastMessageViewModel.HasPhoto;
             }));
         }
     }

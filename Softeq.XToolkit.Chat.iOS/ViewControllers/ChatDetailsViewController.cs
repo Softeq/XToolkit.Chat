@@ -33,6 +33,8 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
         {
             base.ViewDidLoad();
 
+            View.AddGestureRecognizer(new UITapGestureRecognizer(() => View.EndEditing(true)));
+
             InitNavigationBar();
             InitDetailsHeader();
             InitChatMembersTableView();

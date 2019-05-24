@@ -24,6 +24,10 @@ namespace Softeq.XToolkit.Chat.iOS.Views
 
         [Outlet]
         [GeneratedCode ("iOS Designer", "1.0")]
+        UIKit.NSLayoutConstraint BottomConstraint { get; set; }
+
+        [Outlet]
+        [GeneratedCode ("iOS Designer", "1.0")]
         UIKit.UIButton DeleteButton { get; set; }
 
         [Outlet]
@@ -64,7 +68,7 @@ namespace Softeq.XToolkit.Chat.iOS.Views
 
         [Outlet]
         [GeneratedCode ("iOS Designer", "1.0")]
-        public UIKit.UITextView TextView { get; set; }
+        public Softeq.XToolkit.Chat.iOS.Views.ChatInputView.CustomTextView TextView { get; set; }
 
         [Action ("OnSend:")]
         [GeneratedCode ("iOS Designer", "1.0")]
@@ -80,6 +84,11 @@ namespace Softeq.XToolkit.Chat.iOS.Views
             if (AttachmentImage != null) {
                 AttachmentImage.Dispose ();
                 AttachmentImage = null;
+            }
+
+            if (BottomConstraint != null) {
+                BottomConstraint.Dispose ();
+                BottomConstraint = null;
             }
 
             if (DeleteButton != null) {

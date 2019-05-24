@@ -64,6 +64,11 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
                 }
             }));
 
+            Bindings.Add(this.SetBinding(() => ViewModel.NoResultVisible).WhenSourceChanges(() =>
+            {
+                TableView.BackgroundView.Hidden = !ViewModel.NoResultVisible;
+            }));
+
             TableViewSearchBar.TextChanged += TableViewSearchBarTextChanged;
             _tableViewSource.ItemTapped += TableViewSourceItemTapped;
             _tableViewSource.LastItemRequested += TableViewSourceLastItemRequested;
@@ -120,10 +125,18 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
 
         private void InitSearchMembersTableView()
         {
+            TableView.BackgroundView = new SearchNoResultView()
+            {
+                NoResultText = ViewModel.Resources.SearchNoResults
+            };
             TableView.RowHeight = DefaultFoundMembersCellHeight;
             TableView.RegisterNibForCellReuse(FilteredContactViewCell.Nib, FilteredContactViewCell.Key);
             TableView.TableFooterView = new UIView();
             TableView.KeyboardDismissMode = UIScrollViewKeyboardDismissMode.Interactive;
+            TableView.AddGestureRecognizer(new UITapGestureRecognizer(() => View.EndEditing(true))
+            {
+                CancelsTouchesInView = false
+            });
 
             _tableViewSource = new ObservableTableViewSource<ChatUserViewModel>
             {
@@ -144,6 +157,7 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
         private void InitSelectedMembersCollectionView()
         {
             SelectedMembersCollectionView.RegisterNibForCell(SelectedMemberViewCell.Nib, SelectedMemberViewCell.Key);
+            SelectedMembersCollectionView.AddGestureRecognizer(new UITapGestureRecognizer(() => View.EndEditing(true)));
 
             var source = new ObservableCollectionViewSource<ChatUserViewModel, SelectedMemberViewCell>
             {
