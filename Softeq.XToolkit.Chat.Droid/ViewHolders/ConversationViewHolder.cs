@@ -10,7 +10,6 @@ using FFImageLoading.Cross;
 using FFImageLoading.Transformations;
 using FFImageLoading.Work;
 using Softeq.XToolkit.Bindings;
-using Softeq.XToolkit.Chat.Droid.Controls;
 using Softeq.XToolkit.Chat.Models;
 using Softeq.XToolkit.Chat.ViewModels;
 using Softeq.XToolkit.Common;
@@ -18,12 +17,12 @@ using Softeq.XToolkit.Common.WeakSubscription;
 using Softeq.XToolkit.WhiteLabel.Droid.Extensions;
 using Softeq.XToolkit.WhiteLabel.Threading;
 using Softeq.XToolkit.WhiteLabel.ViewModels;
-using PopupMenu = Android.Support.V7.Widget.PopupMenu;
 using Softeq.XToolkit.Common.Droid.Extensions;
 using Android.Content;
 using Plugin.CurrentActivity;
 using Softeq.XToolkit.Common.Droid.Converters;
 using Android.Graphics.Drawables;
+using Softeq.XToolkit.Chat.Droid.Controls;
 
 namespace Softeq.XToolkit.Chat.Droid.ViewHolders
 {
@@ -31,18 +30,17 @@ namespace Softeq.XToolkit.Chat.Droid.ViewHolders
     {
         private readonly IDisposable _messageLongClickSubscription;
         private readonly bool _isIncomingMessageViewType;
-        private readonly ContextMenuComponent _contextMenuComponent;
-
+        private readonly IItemActionHandler<ChatMessageViewModel> _actionHandler;
         private WeakReferenceEx<ChatMessageViewModel> _viewModelRef;
 
         public ConversationViewHolder(
             View itemView,
             bool isIncomingMessageViewType,
-            ContextMenuComponent contextMenuComponent)
+            IItemActionHandler<ChatMessageViewModel> actionHandler)
             : base(itemView)
         {
             _isIncomingMessageViewType = isIncomingMessageViewType;
-            _contextMenuComponent = contextMenuComponent;
+            _actionHandler = actionHandler;
 
             MessageContainer = itemView.FindViewById<LinearLayout>(Resource.Id.ll_message_container);
             MessageBodyTextView = itemView.FindViewById<TextView>(Resource.Id.tv_message_body);
@@ -183,19 +181,7 @@ namespace Softeq.XToolkit.Chat.Droid.ViewHolders
 
         private void MessageContainerLongClickHandler(object sender, View.LongClickEventArgs eventArgs)
         {
-            CreatePopupMenuFor((View)sender).Show();
-        }
-
-        private PopupMenu CreatePopupMenuFor(View itemView)
-        {
-            var popup = _contextMenuComponent.BuildMenu(itemView.Context, itemView);
-            popup.MenuItemClick += PopupMenuItemClickHandler;
-            return popup;
-        }
-
-        private void PopupMenuItemClickHandler(object sender, PopupMenu.MenuItemClickEventArgs e)
-        {
-            _contextMenuComponent.ExecuteCommand(e.Item.ItemId, _viewModelRef.Target);
+            _actionHandler.Handle((View)sender, _viewModelRef.Target);
         }
 
         private void ChangeMessageViewStatus(ChatMessageStatus status)
@@ -258,7 +244,7 @@ namespace Softeq.XToolkit.Chat.Droid.ViewHolders
             var defSize = (ViewGroup.LayoutParams.MatchParent, ViewGroup.LayoutParams.WrapContent);
             var context = CrossCurrentActivity.Current.AppContext;
 
-            if (AttachmentImageView == null || AttachmentImageView.Drawable == null)
+            if (AttachmentImageView?.Drawable == null)
             {
                 return defSize;
             }

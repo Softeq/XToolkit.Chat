@@ -78,7 +78,6 @@ namespace Softeq.XToolkit.Chat.Models
 
         public bool IsEarlierOrEqualsThan(ChatMessageModel message)
         {
-            var result = message != null && DateTime.DateTime.IsEarlierOrEqualThan(message.DateTime.DateTime);
             return message != null && DateTime.DateTime.IsEarlierOrEqualThan(message.DateTime.DateTime);
         }
 

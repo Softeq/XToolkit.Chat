@@ -30,7 +30,7 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
         private WeakReferenceEx<GroupedTableDataSource<DateTimeOffset, ChatMessageViewModel>> _dataSourceRef;
         private bool _isAutoScrollAvailable;
         private bool _isAutoScrollToBottomEnabled = true;
-        private ContextMenuComponent _contextMenuComponent;
+        private ContextMenuHandler<ChatMessageViewModel> _contextMenuHandler;
         private ConnectionStatusView _customTitleView;
         private MessagesTableDelegate _tableDelegate;
         private NSLayoutConstraint _scrollToBottomConstraint;
@@ -77,12 +77,7 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
             MainView.InsertSubview(Table, 1);
             InitTableView();
 
-            _contextMenuComponent = new ContextMenuComponent();
-            _contextMenuComponent.AddCommand(ContextMenuActions.Edit, ViewModel.MessageCommandActions[0]);
-            _contextMenuComponent.AddCommand(ContextMenuActions.Delete, ViewModel.MessageCommandActions[1]);
-
-            UIMenuController.SharedMenuController.MenuItems = _contextMenuComponent.BuildMenuItems();
-            UIMenuController.SharedMenuController.Update();
+            _contextMenuHandler = new ContextMenuHandler<ChatMessageViewModel>(CreateContextMenuComponentForViewModel);
 
             Input.SetCommandWithArgs(nameof(Input.SendRaised), ViewModel.MessageInput.SendMessageCommand);
             Input.EditingCloseButton.SetCommand(ViewModel.MessageInput.CancelEditingCommand);
@@ -212,7 +207,7 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
             var tableSource = new GroupedTableDataSource<DateTimeOffset, ChatMessageViewModel>(
                 ViewModel.MessagesList.Messages,
                 Table,
-                viewModel => new ChatMessageNode(viewModel, _contextMenuComponent),
+                viewModel => new ChatMessageNode(viewModel, _contextMenuHandler),
                 TableNode.Inverted);
 
             Table.EstimatedRowHeight = MinCellHeight;
@@ -283,6 +278,29 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
                 TableNode.ScrollToRowAtIndexPath(index, UITableViewScrollPosition.None, isAnimated);
             });
         }
+
+        private ContextMenuComponent CreateContextMenuComponentForViewModel(ChatMessageViewModel message)
+        {
+            var contextMenuComponent = new ContextMenuComponent();
+            var commandActions = ViewModel.GetCommandActionsForMessage(message);
+            switch (commandActions.Count)
+            {
+                case 1:
+                    contextMenuComponent.AddCommand(ContextMenuActions.Delete, commandActions[0]);
+                    break;
+                case 2:
+                    contextMenuComponent.AddCommand(ContextMenuActions.Edit, commandActions[0]);
+                    contextMenuComponent.AddCommand(ContextMenuActions.Delete, commandActions[1]);
+                    break;
+            }
+            return contextMenuComponent;
+        }
+        
+        [Export(ContextMenuActions.Edit)]
+        private void Edit() => _contextMenuHandler.ExecuteCommand(ContextMenuActions.Edit);
+
+        [Export(ContextMenuActions.Delete)]
+        private void Delete() => _contextMenuHandler.ExecuteCommand(ContextMenuActions.Delete);
 
         private class MessagesTableDelegate : GroupedTableDelegate
         {

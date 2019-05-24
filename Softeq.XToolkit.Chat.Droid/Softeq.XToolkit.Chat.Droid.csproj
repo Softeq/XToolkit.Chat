@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -98,6 +98,7 @@
     <Compile Include="Views\NewChatActivity.cs" />
     <Compile Include="Controls\LeftOffsetItemDecoration.cs" />
     <Compile Include="Controls\ChatInputView.cs" />
+    <Compile Include="Controls\ContextMenuHandler.cs" />
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\layout\activity_chat_details.xml" />
