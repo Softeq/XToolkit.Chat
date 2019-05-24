@@ -46,9 +46,9 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
                     ProgressIndicator.StopAnimating();
                 }
             }));
-            Bindings.Add(this.SetBinding(() => ViewModel.HasResults).WhenSourceChanges(() =>
+            Bindings.Add(this.SetBinding(() => ViewModel.NoResultVisible).WhenSourceChanges(() =>
             {
-                TableView.BackgroundView.Hidden = ViewModel.HasResults;
+                TableView.BackgroundView.Hidden = !ViewModel.NoResultVisible;
             }));
 
             SearchBar.TextChanged += TableViewSearchBarTextChanged;
@@ -127,7 +127,10 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
             {
                 CancelsTouchesInView = false
             });
-            TableView.BackgroundView = new SearchNoResultView() { NoResultText = ViewModel.LocalizedStrings.SearchNoResults };
+            TableView.BackgroundView = new SearchNoResultView() 
+            { 
+                NoResultText = ViewModel.LocalizedStrings.SearchNoResults
+            };
         }
 
         private void InitProgressIndicator()

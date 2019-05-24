@@ -64,10 +64,14 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
                 }
             }));
 
+            Bindings.Add(this.SetBinding(() => ViewModel.NoResultVisible).WhenSourceChanges(() =>
+            {
+                TableView.BackgroundView.Hidden = !ViewModel.NoResultVisible;
+            }));
+
             TableViewSearchBar.TextChanged += TableViewSearchBarTextChanged;
             _tableViewSource.ItemTapped += TableViewSourceItemTapped;
             _tableViewSource.LastItemRequested += TableViewSourceLastItemRequested;
-            ViewModel.PaginationViewModel.Items.CollectionChanged += ItemsCollectionChanged;
         }
 
         protected override void DoDetachBindings()
@@ -77,14 +81,8 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
             TableViewSearchBar.TextChanged -= TableViewSearchBarTextChanged;
             _tableViewSource.ItemTapped -= TableViewSourceItemTapped;
             _tableViewSource.LastItemRequested -= TableViewSourceLastItemRequested;
-            ViewModel.PaginationViewModel.Items.CollectionChanged -= ItemsCollectionChanged;
 
             ResetSelectedRow();
-        }
-
-        private void ItemsCollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
-        {
-            TableView.BackgroundView.Hidden = ViewModel.PaginationViewModel.Items.Count != 0;
         }
 
         private void TableViewSearchBarTextChanged(object sender, UISearchBarTextChangedEventArgs e)
@@ -127,7 +125,10 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
 
         private void InitSearchMembersTableView()
         {
-            TableView.BackgroundView = new SearchNoResultView() { Hidden = true };
+            TableView.BackgroundView = new SearchNoResultView()
+            {
+                NoResultText = ViewModel.Resources.SearchNoResults
+            };
             TableView.RowHeight = DefaultFoundMembersCellHeight;
             TableView.RegisterNibForCellReuse(FilteredContactViewCell.Nib, FilteredContactViewCell.Key);
             TableView.TableFooterView = new UIView();

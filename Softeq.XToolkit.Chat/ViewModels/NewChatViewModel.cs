@@ -30,6 +30,7 @@ namespace Softeq.XToolkit.Chat.ViewModels
 
         private CancellationTokenSource _lastSearchCancelSource = new CancellationTokenSource();
         private string _searchQuery;
+        private bool _hasResults;
 
         public NewChatViewModel(
             IChatService chatService,
@@ -43,6 +44,7 @@ namespace Softeq.XToolkit.Chat.ViewModels
             LocalizedStrings = localizedStrings;
             _pageNavigationService = pageNavigationService;
             _logger = logManager.GetLogger<NewChatViewModel>();
+            NoResultVisible = false;
 
             PaginationViewModel = new PaginationViewModel<ChatUserViewModel, ChatUserModel>(
                 new ChatUserViewModelFactory(),
@@ -75,7 +77,14 @@ namespace Softeq.XToolkit.Chat.ViewModels
             }
         }
 
-        public bool HasResults => PaginationViewModel.Items.Count > 0;
+        public bool NoResultVisible
+        {
+            get => _hasResults;
+            set
+            {
+                Set(ref _hasResults, value);
+            }
+        }
 
         public override void OnAppearing()
         {
@@ -89,7 +98,7 @@ namespace Softeq.XToolkit.Chat.ViewModels
 
                 Execute.BeginOnUIThread(() =>
                 {
-                    RaisePropertyChanged(nameof(HasResults));
+                    NoResultVisible = PaginationViewModel.Items.Count == 0;
                     IsBusy = false;
                 });
             });
@@ -100,7 +109,7 @@ namespace Softeq.XToolkit.Chat.ViewModels
             _lastSearchCancelSource?.Cancel();
             _lastSearchCancelSource = new CancellationTokenSource();
             await PaginationViewModel.LoadFirstPageAsync(_lastSearchCancelSource.Token).ConfigureAwait(false);
-            Execute.BeginOnUIThread(() => RaisePropertyChanged(nameof(HasResults)));
+            Execute.BeginOnUIThread(() => NoResultVisible = PaginationViewModel.Items.Count == 0);
         }
 
         private Task<PagingModel<ChatUserModel>> SearchLoader(int pageNumber, int pageSize)

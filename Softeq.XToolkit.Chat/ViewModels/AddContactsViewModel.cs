@@ -40,6 +40,7 @@ namespace Softeq.XToolkit.Chat.ViewModels
         private ISearchContactsStrategy _searchContactsStrategy;
         private CancellationTokenSource _lastSearchCancelSource = new CancellationTokenSource();
         private IReadOnlyList<ChatUserViewModel> _excludedContacts = new List<ChatUserViewModel>();
+        private bool _hasResults;
 
         public AddContactsViewModel(
             IAccountService accountService,
@@ -47,6 +48,7 @@ namespace Softeq.XToolkit.Chat.ViewModels
         {
             _accountService = accountService;
             Resources = chatLocalizedStrings;
+            NoResultVisible = false;
 
             PaginationViewModel = new PaginationViewModel<ChatUserViewModel, ChatUserModel>(
                 new ChatUserViewModelFactory(),
@@ -100,6 +102,15 @@ namespace Softeq.XToolkit.Chat.ViewModels
             }
         }
 
+        public bool NoResultVisible
+        {
+            get => _hasResults;
+            set
+            {
+                Set(ref _hasResults, value);
+            }
+        }
+
         public ObservableRangeCollection<ChatUserViewModel> SelectedContacts { get; } =
             new ObservableRangeCollection<ChatUserViewModel>();
 
@@ -115,7 +126,11 @@ namespace Softeq.XToolkit.Chat.ViewModels
 
                 await PaginationViewModel.LoadFirstPageAsync(CancellationToken.None).ConfigureAwait(false);
 
-                Execute.BeginOnUIThread(() => IsBusy = false);
+                Execute.BeginOnUIThread(() =>
+                {
+                    NoResultVisible = PaginationViewModel.Items.Count == 0;
+                    IsBusy = false;
+                });
             });
         }
 
@@ -124,6 +139,7 @@ namespace Softeq.XToolkit.Chat.ViewModels
             _lastSearchCancelSource?.Cancel();
             _lastSearchCancelSource = new CancellationTokenSource();
             PaginationViewModel.LoadFirstPageAsync(_lastSearchCancelSource.Token).ConfigureAwait(false);
+            Execute.BeginOnUIThread(() => NoResultVisible = PaginationViewModel.Items.Count == 0);
         }
 
         private Task<PagingModel<ChatUserModel>> SearchLoader(int pageNumber, int pageSize)
