@@ -17,6 +17,8 @@ namespace Softeq.XToolkit.Chat.Manager
 {
     public partial class ChatManager : IChatMessagesManager
     {
+        public event EventHandler<int> TotalUnreadMessagesCountChange;
+
         public async Task<IList<ChatMessageViewModel>> LoadInitialMessagesAsync(string chatId, int count)
         {
             var models = await _messagesCache.GetLatestMessagesAsync(chatId, count).ConfigureAwait(false);

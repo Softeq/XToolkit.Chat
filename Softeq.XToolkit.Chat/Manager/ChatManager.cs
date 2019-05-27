@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
 using System.Reactive.Subjects;
@@ -43,6 +44,7 @@ namespace Softeq.XToolkit.Chat.Manager
         private readonly ISubject<ConnectionStatus> _connectionStatusChanged = new Subject<ConnectionStatus>();
 
         private ConnectionStatus _connectionStatus = ConnectionStatus.Online;
+        private int _totalUnreadMessagesCount;
         private string _activeChatId;
 
         public ChatManager(
@@ -66,6 +68,7 @@ namespace Softeq.XToolkit.Chat.Manager
                 return _chatService.GetMessagesFromAsync(chatId, messageFromId, messageFromDateTime);
             }));
             _messagesCache.CacheUpdated += OnCacheUpdated;
+            ChatsCollection.CollectionChanged += OnChatsCollectionCollectionChanged;
 
             _subscriptions.Add(_chatService.MessageReceived.Subscribe(AddLatestMessage));
             _subscriptions.Add(_chatService.MessageEdited.Subscribe(OnMessageEdited));
@@ -138,6 +141,16 @@ namespace Softeq.XToolkit.Chat.Manager
             await UpdateMessagesCacheAsync().ConfigureAwait(false);
 
             ConnectionStatus = ConnectionStatus.Online;
+        }
+
+        private void OnChatsCollectionCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            var totalUnreadMessagesCount = 0;
+            foreach(var item in ChatsCollection)
+            {
+                totalUnreadMessagesCount += item.UnreadMessageCount;
+            }
+            TotalUnreadMessagesCountChange?.Invoke(this, totalUnreadMessagesCount);
         }
 
         private void OnCacheUpdated(CacheUpdatedResults cacheUpdatedResults)

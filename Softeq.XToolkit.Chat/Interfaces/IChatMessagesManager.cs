@@ -8,6 +8,8 @@ namespace Softeq.XToolkit.Chat.Interfaces
 {
     public interface IChatMessagesManager
     {
+        event EventHandler<int> TotalUnreadMessagesCountChange;
+
         IObservable<ChatMessageViewModel> MessageAdded { get; }
         IObservable<ChatMessageModel> MessageEdited { get; }
         IObservable<string> MessageDeleted { get; }
