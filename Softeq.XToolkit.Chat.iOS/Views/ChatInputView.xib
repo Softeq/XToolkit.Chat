@@ -170,16 +170,15 @@
                                             <rect key="frame" x="289" y="0.0" width="64" height="48"/>
                                             <subviews>
                                                 <button opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="1000" horizontalCompressionResistancePriority="1000" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="MRJ-Ct-mHQ">
-                                                    <rect key="frame" x="0.0" y="21" width="16" height="27"/>
+                                                    <rect key="frame" x="0.0" y="26" width="16" height="22"/>
                                                     <state key="normal" image="icPhoto"/>
                                                 </button>
                                                 <button opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="1000" horizontalCompressionResistancePriority="1000" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="CED-2o-ehl">
-                                                    <rect key="frame" x="24" y="21" width="16" height="27"/>
-                                                    <inset key="contentEdgeInsets" minX="0.0" minY="5" maxX="0.0" maxY="0.0"/>
+                                                    <rect key="frame" x="24" y="26" width="16" height="22"/>
                                                     <state key="normal" image="icImage"/>
                                                 </button>
                                                 <button opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="1000" horizontalCompressionResistancePriority="1000" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ATL-1X-ic4">
-                                                    <rect key="frame" x="48" y="21" width="16" height="27"/>
+                                                    <rect key="frame" x="48" y="26" width="16" height="22"/>
                                                     <state key="normal" image="icSend"/>
                                                     <connections>
                                                         <action selector="OnSend:" destination="-1" eventType="touchUpInside" id="629"/>

@@ -5,7 +5,7 @@ namespace Softeq.XToolkit.Chat.iOS.Controls
 {
     public static class ContextMenuActions
     {
-        public const string Edit = "edit";
-        public const string Delete = "delete";
+        public const string Edit = "message_edit";
+        public const string Delete = "message_delete";
     }
 }

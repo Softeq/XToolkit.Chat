@@ -1,6 +1,7 @@
 ﻿// Developed by Softeq Development Corporation
 // http://www.softeq.com
 
+using System;
 using Android.App;
 using Android.OS;
 using Android.Support.V7.Widget;
@@ -33,8 +34,8 @@ namespace Softeq.XToolkit.Chat.Droid.Views
         private RecyclerView _conversationsRecyclerView;
         private ConversationsObservableRecyclerViewAdapter _conversationsAdapter;
         private ImageButton _scrollDownImageButton;
-        private ContextMenuComponent _contextMenuComponent;
         private ChatInputView _chatInputView;
+        private ContextMenuHandler<ChatMessageViewModel> _contextMenuHandler;
         //private bool _shouldSendStateMessageToChat;
         private bool _isAdapterSourceInitialized;
         private bool _isAutoScrollToFooterEnabled = true;
@@ -65,7 +66,11 @@ namespace Softeq.XToolkit.Chat.Droid.Views
 
             InitializeConversationsRecyclerView();
 
-            _contextMenuComponent = new ContextMenuComponent(ViewModel.MessageCommandActions);
+            _contextMenuHandler = new ContextMenuHandler<ChatMessageViewModel>(itemViewModel =>
+            {
+                var commandActions = ViewModel.GetCommandActionsForMessage(itemViewModel);
+                return new ContextMenuComponent(commandActions);
+            });
 
             _scrollDownImageButton.SetCommand(nameof(_scrollDownImageButton.Click), new RelayCommand(ScrollToBottom));
 
@@ -137,7 +142,7 @@ namespace Softeq.XToolkit.Chat.Droid.Views
                         ScrollToPositionIfNeeded,
                         LoadItemsRequestedScrollChangeHandler,
                         ViewModel.GetDateString,
-                        _contextMenuComponent);
+                        _contextMenuHandler);
 
                 _conversationsAdapter.SetCommand(nameof(_conversationsAdapter.LastItemRequested),
                     ViewModel.MessagesList.LoadOlderMessagesCommand);

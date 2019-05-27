@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Softeq.XToolkit.Chat.Models;
 using Softeq.XToolkit.Chat.Models.Interfaces;
+using Softeq.XToolkit.WhiteLabel;
 using Softeq.XToolkit.WhiteLabel.Interfaces;
 using Softeq.XToolkit.WhiteLabel.Mvvm;
 using Softeq.XToolkit.WhiteLabel.Threading;
@@ -25,12 +26,12 @@ namespace Softeq.XToolkit.Chat.ViewModels
 
         private ChatSummaryModel _chatSummary;
 
-        public ChatSummaryViewModel(
-            IChatLocalizedStrings localizedStrings,
-            IFormatService formatService)
+        // TODO YP: need to avoid to use fat ViewModels as navParam,
+        //          because navParam will be de/serialized
+        public ChatSummaryViewModel()
         {
-            LocalizedStrings = localizedStrings;
-            _formatService = formatService;
+            LocalizedStrings = Dependencies.IocContainer.Resolve<IChatLocalizedStrings>();
+            _formatService = Dependencies.IocContainer.Resolve<IFormatService>();
         }
 
         public ChatSummaryModel Parameter

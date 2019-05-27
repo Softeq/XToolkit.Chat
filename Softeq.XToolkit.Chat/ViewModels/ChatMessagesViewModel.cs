@@ -10,6 +10,8 @@ using Softeq.XToolkit.WhiteLabel.Interfaces;
 using Softeq.XToolkit.WhiteLabel.Mvvm;
 using Softeq.XToolkit.WhiteLabel.Navigation;
 using Softeq.XToolkit.Chat.Models.Interfaces;
+using System.Linq;
+using Softeq.XToolkit.Chat.Models;
 
 namespace Softeq.XToolkit.Chat.ViewModels
 {
@@ -38,21 +40,6 @@ namespace Softeq.XToolkit.Chat.ViewModels
 
             BackCommand = new RelayCommand(_pageNavigationService.GoBack, () => _pageNavigationService.CanGoBack);
             ShowInfoCommand = new RelayCommand(ShowInfo);
-            MessageCommandActions = new List<CommandAction>
-            {
-                new CommandAction
-                {
-                    Title = _localizedStrings.Edit,
-                    Command = new RelayCommand<ChatMessageViewModel>(EditMessage),
-                    CommandActionStyle = CommandActionStyle.Default
-                },
-                new CommandAction
-                {
-                    Title = _localizedStrings.Delete,
-                    Command = new RelayCommand<ChatMessageViewModel>(DeleteMessage),
-                    CommandActionStyle = CommandActionStyle.Destructive
-                }
-            };
         }
 
         public ChatSummaryViewModel Parameter
@@ -79,8 +66,6 @@ namespace Softeq.XToolkit.Chat.ViewModels
         public ICommand ShowInfoCommand { get; }
         public ICommand MessageAddedCommand { get; set; } // TODO YP: review this approach
 
-        public IReadOnlyList<CommandAction> MessageCommandActions { get; }
-
         public override void OnAppearing()
         {
             base.OnAppearing();
@@ -105,6 +90,30 @@ namespace Softeq.XToolkit.Chat.ViewModels
         public virtual string GetDateString(DateTimeOffset date)
         {
             return _formatService.Humanize(date, _localizedStrings.Today, _localizedStrings.Yesterday);
+        }
+
+        public IReadOnlyList<CommandAction> GetCommandActionsForMessage(ChatMessageViewModel message)
+        {
+            var actionCommands = new List<CommandAction>();
+
+            if (CanEditMessage(message))
+            {
+                actionCommands.Add(new CommandAction
+                {
+                    Title = _localizedStrings.Edit,
+                    Command = new RelayCommand<ChatMessageViewModel>(EditMessage),
+                    CommandActionStyle = CommandActionStyle.Default
+                });
+            }
+
+            actionCommands.Add(new CommandAction
+            {
+                Title = _localizedStrings.Delete,
+                Command = new RelayCommand<ChatMessageViewModel>(DeleteMessage),
+                CommandActionStyle = CommandActionStyle.Destructive
+            });
+
+            return actionCommands;
         }
 
         private void ShowInfo()
@@ -136,6 +145,15 @@ namespace Softeq.XToolkit.Chat.ViewModels
         private void EditMessage(ChatMessageViewModel message)
         {
             MessageInput.EditMessageCommand.Execute(message);
+        }
+
+        private bool CanEditMessage(ChatMessageViewModel message)
+        {
+            var messages = MessagesList.Messages.Values.Where(x => x.MessageType == MessageType.Default).ToList();
+            var messagePosition = messages.IndexOf(message);
+            var lastMessagesBelow = messages.Skip(messagePosition + 1);
+            var flowOfMineMessages = lastMessagesBelow.All(x => x.IsMine);
+            return flowOfMineMessages;
         }
     }
 }

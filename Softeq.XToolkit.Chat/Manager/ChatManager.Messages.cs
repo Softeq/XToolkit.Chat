@@ -156,14 +156,6 @@ namespace Softeq.XToolkit.Chat.Manager
             }
             _messagesCache.TryEditMessage(updatedMessage);
             _messageEdited.OnNext(updatedMessage);
-            ModifyChatsSafely(() =>
-            {
-                var chatSummary = ChatsCollection.FirstOrDefault(x => x.ChatId == updatedMessage.ChannelId);
-                if (chatSummary != null)
-                {
-                    chatSummary.UpdateLastMessage(updatedMessage);
-                }
-            });
         }
 
         private void OnMessageDeleted((string DeletedMessageId, ChatSummaryModel UpdatedChatSummary) value)
@@ -179,7 +171,6 @@ namespace Softeq.XToolkit.Chat.Manager
                 var chatSummary = ChatsCollection.FirstOrDefault(x => x.ChatId == value.UpdatedChatSummary.Id);
                 if (chatSummary != null)
                 {
-                    // TODO: [Backend] UpdatedChatSummary.LastMessage is null
                     chatSummary.UpdateLastMessage(value.UpdatedChatSummary.LastMessage);
                     chatSummary.UnreadMessageCount = value.UpdatedChatSummary.UnreadMessagesCount;
                 }
