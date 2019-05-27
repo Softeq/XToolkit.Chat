@@ -233,9 +233,11 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
             return sectionFooter;
         }
 
-        private void OnWillDisplayCell(int row)
+        private void OnWillDisplayCell(int section, int row)
         {
-            if (row == ViewModel.MessagesList.Messages.SelectMany(x => x).Count() - 1)
+            Console.WriteLine("SECTION " + section +" ROW " + row);
+            if(section == ViewModel.MessagesList.Messages.Count - 1
+                && row == ViewModel.MessagesList.Messages[0].Count - 1)
             {
                 ViewModel.MessagesList.LoadOlderMessagesAsync().SafeTaskWrapper();
             }
