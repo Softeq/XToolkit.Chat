@@ -26,7 +26,7 @@ namespace Softeq.XToolkit.Chat.Droid.Adapters
         private readonly WeakAction<int> _collectionChangedAction;
         private readonly WeakAction<int> _lastItemsLoadedAction;
         private readonly WeakFunc<DateTimeOffset, string> _headerGroupConverter;
-        private readonly ContextMenuComponent _contextMenuComponent;
+        private readonly IItemActionHandler<ChatMessageViewModel> _actionHandler;
 
         public event EventHandler LastItemRequested;
 
@@ -35,13 +35,13 @@ namespace Softeq.XToolkit.Chat.Droid.Adapters
             Action<int> collectionChangedAction,
             Action<int> lastItemsLoadedAction,
             Func<DateTimeOffset, string> headerGroupConverter,
-            ContextMenuComponent contextMenuComponent)
+            IItemActionHandler<ChatMessageViewModel> actionHandler)
             : base(items, null)
         {
             _collectionChangedAction = new WeakAction<int>(collectionChangedAction);
             _lastItemsLoadedAction = new WeakAction<int>(lastItemsLoadedAction);
             _headerGroupConverter = new WeakFunc<DateTimeOffset, string>(headerGroupConverter);
-            _contextMenuComponent = contextMenuComponent;
+            _actionHandler = actionHandler;
         }
 
         public override int GetItemViewType(int position)
@@ -69,10 +69,10 @@ namespace Softeq.XToolkit.Chat.Droid.Adapters
                         .Inflate(Resource.Layout.item_chat_conversation_info, parent, false), CreateHeaderModel);
                 case InComingMessageViewType:
                     return new ConversationViewHolder(LayoutInflater.From(parent.Context)
-                        .Inflate(Resource.Layout.item_chat_conversation_incoming, parent, false), true, _contextMenuComponent);
+                        .Inflate(Resource.Layout.item_chat_conversation_incoming, parent, false), true, _actionHandler);
                 case OutComingMessageViewType:
                     return new ConversationViewHolder(LayoutInflater.From(parent.Context)
-                        .Inflate(Resource.Layout.item_chat_conversation_outcoming, parent, false), false, _contextMenuComponent);
+                        .Inflate(Resource.Layout.item_chat_conversation_outcoming, parent, false), false, _actionHandler);
                 default:
                     throw new InvalidEnumArgumentException(nameof(viewType), viewType, typeof(int));
             }

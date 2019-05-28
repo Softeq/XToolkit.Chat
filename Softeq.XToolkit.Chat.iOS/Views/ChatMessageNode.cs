@@ -3,7 +3,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using AsyncDisplayKitBindings;
 using CoreGraphics;
 using Foundation;
@@ -32,7 +31,7 @@ namespace Softeq.XToolkit.Chat.iOS.Views
         private const double AvatarSize = 35;
 
         private readonly WeakReferenceEx<ChatMessageViewModel> _viewModelRef;
-        private readonly ContextMenuComponent _contextMenuComponent;
+        private readonly IItemActionHandler<ChatMessageViewModel> _contextMenuComponent;
         private readonly bool _isMyMessage;
 
         private readonly ASTextNode _descriptionTextNode = new ASTextNode();
@@ -45,7 +44,9 @@ namespace Softeq.XToolkit.Chat.iOS.Views
         private Binding _messageBodyBinding;
         private Binding _messageStatusBinding;
 
-        public ChatMessageNode(ChatMessageViewModel viewModel, ContextMenuComponent contextMenuComponent)
+        public ChatMessageNode(
+            ChatMessageViewModel viewModel,
+            IItemActionHandler<ChatMessageViewModel> contextMenuComponent)
         {
             _viewModelRef = WeakReferenceEx.Create(viewModel);
             _contextMenuComponent = contextMenuComponent;
@@ -159,7 +160,7 @@ namespace Softeq.XToolkit.Chat.iOS.Views
             var layout = new ASStackLayoutSpec
             {
                 Direction = ASStackLayoutDirection.Horizontal,
-                Children = new IASLayoutElement[]
+                Children = new[]
                 {
                     BuildAvatarNode(),
                     BuildMessageBodyNode(width)
@@ -300,38 +301,16 @@ namespace Softeq.XToolkit.Chat.iOS.Views
 
         public override bool CanBecomeFirstResponder => true;
 
-        public void TryShowMenu()
+        private void TryShowMenu()
         {
             if (_viewModelRef.Target == null || !_viewModelRef.Target.IsMine)
             {
                 return;
             }
-            Execute.BeginOnUIThread(() =>
-            {
-                if (!UIMenuController.SharedMenuController.MenuVisible)
-                {
-                    var res = BecomeFirstResponder;
 
-                    var targetViewFrame = _descriptionTextNode.View.Frame;
-                    var targetRect = new CGRect(0, 0, targetViewFrame.Width, targetViewFrame.Height);
+            var _ = BecomeFirstResponder;
 
-                    UIMenuController.SharedMenuController.Update();
-                    UIMenuController.SharedMenuController.SetTargetRect(targetRect, _descriptionTextNode.View);
-                    UIMenuController.SharedMenuController.SetMenuVisible(true, true);
-                }
-            });
-        }
-
-        [Export(ContextMenuActions.Edit)]
-        private void Edit()
-        {
-            _contextMenuComponent.ExecuteCommand(ContextMenuActions.Edit, _viewModelRef.Target);
-        }
-
-        [Export(ContextMenuActions.Delete)]
-        private void Delete()
-        {
-            _contextMenuComponent.ExecuteCommand(ContextMenuActions.Delete, _viewModelRef.Target);
+            _contextMenuComponent.Handle(_descriptionTextNode.View, _viewModelRef.Target);
         }
 
         [Export("OnAttachmentTapped")]
@@ -353,7 +332,7 @@ namespace Softeq.XToolkit.Chat.iOS.Views
             _viewModelRef.Target?.ShowImage(options);
         }
 
-        private CGSize CalculateAttachmentImageNodeSize(CGSize imageSize, nfloat maxSize)
+        private static CGSize CalculateAttachmentImageNodeSize(CGSize imageSize, nfloat maxSize)
         {
             var imageSizeThatFits = imageSize;
             var ratio = imageSize.Height / imageSize.Width;

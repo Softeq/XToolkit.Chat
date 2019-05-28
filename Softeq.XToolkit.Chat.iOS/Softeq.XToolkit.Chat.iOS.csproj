@@ -107,7 +107,7 @@
     </Compile>
     <Compile Include="Views\InfoMessageNode.cs" />
     <Compile Include="BootstrapperIos.cs" />
-    <Compile Include="Extensions\MvxCachedImageViewExtensions.cs" />
+    <Compile Include="Extensions\ASImageNodeExtensions.cs" />
     <Compile Include="TableSources\GroupedTableDataSource.cs" />
     <Compile Include="TableSources\GroupedTableDelegate.cs" />
     <Compile Include="Views\MessagesDateHeaderViewCell.cs" />
@@ -153,6 +153,7 @@
     <Compile Include="Controls\AutoScrollLabel.cs" />
     <Compile Include="Converters\ChatMessageStatusToImageConverter.cs" />
     <Compile Include="Views\ChatInputKeyboardDelegate.cs" />
+    <Compile Include="Controls\ContextMenuHandler.cs" />
     <Compile Include="Views\ChatInputView.cs" />
     <Compile Include="Views\ChatInputView.designer.cs">
       <DependentUpon>ChatInputView.cs</DependentUpon>
