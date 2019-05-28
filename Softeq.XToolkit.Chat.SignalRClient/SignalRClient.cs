@@ -27,14 +27,5 @@ namespace Softeq.XToolkit.Chat.SignalRClient
 #endif
             return connection;
         }
-
-        // TODO YP: wait response
-        // https://github.com/Softeq/NetKit.Chat.Client.SDK/issues/9
-//        public async Task Disconnect()
-//        {
-//            await _connection.InvokeAsync(ServerMethods.DeleteClientAsync).ConfigureAwait(false);
-//            await _connection.StopAsync().ConfigureAwait(false);
-//        }
-
     }
 }
