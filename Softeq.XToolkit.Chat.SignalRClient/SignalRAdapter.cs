@@ -3,23 +3,26 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net.WebSockets;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
 using System.Threading;
 using System.Threading.Tasks;
+using Softeq.NetKit.Chat.SignalRClient.DTOs.Channel;
+using Softeq.NetKit.Chat.SignalRClient.DTOs.Channel.Request;
+using Softeq.NetKit.Chat.SignalRClient.DTOs.Member.Request;
+using Softeq.NetKit.Chat.SignalRClient.DTOs.Message.Request;
 using Softeq.XToolkit.Auth;
 using Softeq.XToolkit.Chat.Models;
 using Softeq.XToolkit.Chat.Models.Enum;
 using Softeq.XToolkit.Chat.Models.Exceptions;
 using Softeq.XToolkit.Chat.Models.Interfaces;
-using Softeq.XToolkit.Chat.SignalRClient.DTOs.Channel;
-using Softeq.XToolkit.Chat.SignalRClient.DTOs.Member;
-using Softeq.XToolkit.Chat.SignalRClient.DTOs.Message;
 using Softeq.XToolkit.Common;
 using Softeq.XToolkit.Common.Extensions;
 using Softeq.XToolkit.Common.Interfaces;
 using Softeq.XToolkit.RemoteData;
+using ChannelType = Softeq.NetKit.Chat.SignalRClient.DTOs.Channel.ChannelType;
 
 namespace Softeq.XToolkit.Chat.SignalRClient
 {
@@ -39,7 +42,7 @@ namespace Softeq.XToolkit.Chat.SignalRClient
         private readonly ISubject<SocketConnectionStatus> _connectionStatusChanged = new Subject<SocketConnectionStatus>();
 
         private string _memberId;
-        private bool _isConnected = false;
+        private bool _isConnected;
         private bool _canReconnectAutomatically = true;
 
         public SignalRAdapter(
@@ -80,19 +83,29 @@ namespace Softeq.XToolkit.Chat.SignalRClient
 
         public SocketConnectionStatus ConnectionStatus { get; private set; } = SocketConnectionStatus.Connecting;
 
-        public Task CloseChatAsync(string chatId)
+        public Task CloseChatAsync(string channelId)
         {
             return CheckConnectionAndSendRequest(new TaskReference(() =>
             {
-                return _signalRClient.CloseChannelAsync(new Guid(chatId));
+                var closeChannelRequest = new ChannelRequest
+                {
+                    ChannelId = new Guid(channelId),
+                    RequestId = Guid.NewGuid().ToString()
+                };
+                return _signalRClient.CloseChannelAsync(closeChannelRequest);
             }));
         }
 
-        public Task LeaveChatAsync(string chatId)
+        public Task LeaveChatAsync(string channelId)
         {
             return CheckConnectionAndSendRequest(new TaskReference(() =>
             {
-                return _signalRClient.LeaveChannelAsync(new Guid(chatId));
+                var channelRequestModel = new ChannelRequest
+                {
+                    ChannelId = new Guid(channelId),
+                    RequestId = Guid.NewGuid().ToString()
+                };
+                return _signalRClient.LeaveChannelAsync(channelRequestModel);
             }));
         }
 
@@ -102,8 +115,8 @@ namespace Softeq.XToolkit.Chat.SignalRClient
             {
                 var createChannelRequest = new CreateChannelRequest
                 {
-                    AllowedMembers = participantsIds,
-                    Type = ChannelTypeDto.Private,
+                    AllowedMembers = participantsIds.ToList(),
+                    Type = ChannelType.Private,
                     Name = chatName,
                     PhotoUrl = chatAvatar
                 };
@@ -118,7 +131,7 @@ namespace Softeq.XToolkit.Chat.SignalRClient
             {
                 var createChannelRequest = new CreateDirectChannelRequest
                 {
-                    MemberId = memberId
+                    MemberId = new Guid(memberId)
                 };
                 var dto = await _signalRClient.CreateDirectChannelAsync(createChannelRequest).ConfigureAwait(false);
                 return Mapper.DtoToChatSummary(dto);
@@ -129,12 +142,12 @@ namespace Softeq.XToolkit.Chat.SignalRClient
         {
             return CheckConnectionAndSendRequest(new TaskReference(() =>
             {
-                var inviteMembersRequest = new InviteMembersRequest
+                var inviteMembersRequest = new InviteMultipleMembersRequest
                 {
-                    InvitedMembersIds = participantsIds,
+                    InvitedMembersIds = participantsIds.Select(x => new Guid(x)).ToList(),
                     ChannelId = new Guid(chatId),
                 };
-                return _signalRClient.InviteMembersAsync(inviteMembersRequest);
+                return _signalRClient.InviteMultipleMembersAsync(inviteMembersRequest);
             }));
         }
 
@@ -155,13 +168,13 @@ namespace Softeq.XToolkit.Chat.SignalRClient
         {
             return CheckConnectionAndSendRequest(new TaskReference<ChatMessageModel>(async () =>
             {
-                var createMessageRequest = new CreateMessageRequest
+                var createMessageRequest = new AddMessageRequest
                 {
                     ChannelId = new Guid(chatId),
                     Body = messageBody,
                     ImageUrl = imageUrl
                 };
-                var dto = await _signalRClient.CreateMessageAsync(createMessageRequest);
+                var dto = await _signalRClient.AddMessageAsync(createMessageRequest);
                 return Mapper.DtoToChatMessage(dto);
             }));
         }
@@ -199,7 +212,7 @@ namespace Softeq.XToolkit.Chat.SignalRClient
 
         public void ForceDisconnect()
         {
-            _signalRClient.Disconnect().SafeTaskWrapper();
+            _signalRClient.DisconnectAsync().SafeTaskWrapper();
             _isConnected = false;
             _canReconnectAutomatically = false;
         }
@@ -210,10 +223,10 @@ namespace Softeq.XToolkit.Chat.SignalRClient
             {
                 var request = new UpdateChannelRequest
                 {
-                    ChannelId = x.Id,
+                    ChannelId = new Guid(x.Id),
                     Name = x.Name,
                     PhotoUrl = x.PhotoUrl,
-                    WelcomeMessage = x.WelcomeMessage,
+                    WelcomeMessage = x.WelcomeMessage
                 };
 
                 return _signalRClient.UpdateChannelAsync(request);
@@ -239,7 +252,7 @@ namespace Softeq.XToolkit.Chat.SignalRClient
             };
             _signalRClient.MessageDeleted += (deletedMessageId, updatedChatSummary) =>
             {
-                _messageDeleted.OnNext((deletedMessageId, Mapper.DtoToChatSummary(updatedChatSummary)));
+                _messageDeleted.OnNext((deletedMessageId.ToString(), Mapper.DtoToChatSummary(updatedChatSummary)));
             };
             _signalRClient.ChannelAdded += channel =>
             {
@@ -252,9 +265,11 @@ namespace Softeq.XToolkit.Chat.SignalRClient
                 _chatRemoved.OnNext(channel.Id.ToString());
             };
 
-            ChatRead = Observable.FromEvent<string>(
-                h => _signalRClient.LastReadMessageChanged += h,
-                h => _signalRClient.LastReadMessageChanged -= h);
+            ChatRead = Observable
+                .FromEvent<Guid>(
+                    h => _signalRClient.LastReadMessageUpdated += h,
+                    h => _signalRClient.LastReadMessageUpdated -= h)
+                .Select(x => x.ToString());
 
             _signalRClient.MemberLeft += (user, channelId) =>
             {
@@ -265,7 +280,7 @@ namespace Softeq.XToolkit.Chat.SignalRClient
 
                 if (user.Id.ToString() == _memberId)
                 {
-                    _chatRemoved.OnNext(channelId);
+                    _chatRemoved.OnNext(channelId.ToString());
                 }
             };
             _signalRClient.MemberJoined += (user, channel) =>
@@ -363,7 +378,7 @@ namespace Softeq.XToolkit.Chat.SignalRClient
                         _logger.Error("SignalRAdapter: accessToken is not valid, please relogin");
                     }
 
-                    _memberId = client.MemberId;
+                    _memberId = client.MemberId.ToString();
 
                     _isConnected = true;
                     UpdateConnectionStatus(SocketConnectionStatus.Connected);
