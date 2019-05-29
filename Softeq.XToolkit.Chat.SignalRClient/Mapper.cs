@@ -79,7 +79,7 @@ namespace Softeq.XToolkit.Chat.SignalRClient
                 PhotoUrl = dto.AvatarUrl,
                 LastActivity = dto.LastActivity,
                 IsOnline = dto.Status == UserStatus.Online,
-                IsActive = true
+                IsActive = dto.IsActive
             };
         }
     }

@@ -154,7 +154,7 @@ namespace Softeq.XToolkit.Chat.iOS.Views
                 InvalidateIntrinsicContentSize();
             });
             _imagePickerBusyBinding = this.SetBinding(() => _simpleImagePicker.IsBusy, () => ImageLoader.Hidden)
-                .ConvertSourceToTarget((x) => !x);;
+                .ConvertSourceToTarget((x) => !x);
         }
 
         public void DetachBindings()
