@@ -12,7 +12,6 @@ namespace Softeq.XToolkit.Chat.Models.Interfaces
     {
         IObservable<ChatMessageModel> MessageReceived { get; }
         IObservable<(string DeletedMessageId, ChatSummaryModel UpdatedChatSummary)> MessageDeleted { get; }
-        IObservable<string> MessageRead { get; }
         IObservable<ChatMessageModel> MessageEdited { get; }
 
         IObservable<ChatSummaryModel> ChatAdded { get; }

@@ -73,8 +73,6 @@ namespace Softeq.XToolkit.Chat.SignalRClient
 
         public IObservable<string> ChatRead { get; private set; }
 
-        public IObservable<string> MessageRead => null;
-
         public IObservable<(string ChatId, bool IsMuted)> IsChatMutedChanged => null;
 
         public IObservable<(string ChatId, int NewCount)> UnreadMessageCountChanged => null;
