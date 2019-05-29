@@ -66,7 +66,11 @@ namespace Softeq.XToolkit.Chat.Droid.ViewHolders
 
             Bindings.Add(this.SetBinding(() => _viewModelRef.Target.ChatName, () => _chatNameTextView.Text));
             Bindings.Add(this.SetBinding(() => _viewModelRef.Target.LastMessageViewModel.Username, () => _userNameTextView.Text));
-            Bindings.Add(this.SetBinding(() => _viewModelRef.Target.LastMessageViewModel.Body, () => _messageBodyTextView.Text));
+            Bindings.Add(this.SetBinding(() => _viewModelRef.Target.LastMessageViewModel.Body).WhenSourceChanges(() =>
+            {
+                _messageBodyTextView.Text = _viewModelRef.Target.LastMessageViewModel.Body;
+                _messageBodyTextView.Visibility = BoolToViewStateConverter.ConvertGone(_viewModelRef.Target.LastMessageViewModel.HasBody);
+            }));
             Bindings.Add(this.SetBinding(() => _viewModelRef.Target.LastMessageViewModel.DateTime, () => _dateTimeTextView.Text));
 
             Bindings.Add(this.SetBinding(() => _viewModelRef.Target.ChatPhotoUrl).WhenSourceChanges(() =>
@@ -139,7 +143,7 @@ namespace Softeq.XToolkit.Chat.Droid.ViewHolders
                 }
                 else
                 {
-                    _messageBodyTextView.Visibility = ViewStates.Visible;
+                    _messageBodyTextView.Visibility = BoolToViewStateConverter.ConvertGone(_viewModelRef.Target.LastMessageViewModel.HasBody);
                     _messageBodyPhotoView.Visibility = ViewStates.Gone;
                 }
             }));

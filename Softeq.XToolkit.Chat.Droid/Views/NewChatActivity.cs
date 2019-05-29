@@ -28,6 +28,7 @@ namespace Softeq.XToolkit.Chat.Droid.Views
         private LinearLayout _newGroupLayout;
         private ImageView _newGroupImage;
         private TextView _newGroupText;
+        private SearchNoResultView _searchNoResultView;
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -51,6 +52,10 @@ namespace Softeq.XToolkit.Chat.Droid.Views
         {
             base.DoAttachBindings();
 
+            Bindings.Add(this.SetBinding(() => ViewModel.NoResultVisible).WhenSourceChanges(() =>
+            {
+                _searchNoResultView.Visibility = BoolToViewStateConverter.ConvertGone(ViewModel.NoResultVisible);
+            }));
             Bindings.Add(this.SetBinding(() => ViewModel.SearchQuery, () => _editText.Text, BindingMode.TwoWay));
             Bindings.Add(this.SetBinding(() => ViewModel.IsBusy, () => _busyOverlayView.Visibility)
                 .ConvertSourceToTarget(BoolToViewStateConverter.ConvertGone));
@@ -120,6 +125,8 @@ namespace Softeq.XToolkit.Chat.Droid.Views
             {
                 await ViewModel.PaginationViewModel.LoadNextPageAsync();
             })));
+            _searchNoResultView = FindViewById<SearchNoResultView>(Resource.Id.search_no_result_container);
+            _searchNoResultView.Text = ViewModel.LocalizedStrings.SearchNoResults;
         }
 
         private void NewGroupLayoutClick(object sender, EventArgs e)

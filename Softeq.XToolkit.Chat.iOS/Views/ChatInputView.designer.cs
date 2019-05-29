@@ -48,6 +48,10 @@ namespace Softeq.XToolkit.Chat.iOS.Views
 
         [Outlet]
         [GeneratedCode ("iOS Designer", "1.0")]
+        UIKit.UIActivityIndicatorView ImageLoader { get; set; }
+
+        [Outlet]
+        [GeneratedCode ("iOS Designer", "1.0")]
         UIKit.UIButton OpenCameraButton { get; set; }
 
         [Outlet]
@@ -114,6 +118,11 @@ namespace Softeq.XToolkit.Chat.iOS.Views
             if (EditingTitleLabel != null) {
                 EditingTitleLabel.Dispose ();
                 EditingTitleLabel = null;
+            }
+
+            if (ImageLoader != null) {
+                ImageLoader.Dispose ();
+                ImageLoader = null;
             }
 
             if (OpenCameraButton != null) {

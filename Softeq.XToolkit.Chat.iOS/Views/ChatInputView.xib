@@ -19,6 +19,7 @@
                 <outlet property="EditingBodyLabel" destination="4eZ-UD-27c" id="name-outlet-4eZ-UD-27c"/>
                 <outlet property="EditingCloseButton" destination="39W-or-PgZ" id="name-outlet-39W-or-PgZ"/>
                 <outlet property="EditingTitleLabel" destination="XYJ-bj-qq9" id="name-outlet-XYJ-bj-qq9"/>
+                <outlet property="ImageLoader" destination="fGN-rg-M58" id="name-outlet-fGN-rg-M58"/>
                 <outlet property="OpenCameraButton" destination="MRJ-Ct-mHQ" id="name-outlet-MRJ-Ct-mHQ"/>
                 <outlet property="OpenGalleryButton" destination="CED-2o-ehl" id="name-outlet-CED-2o-ehl"/>
                 <outlet property="PlaceholderLabel" destination="wE6-x3-tWd" id="name-outlet-wE6-x3-tWd"/>
@@ -96,19 +97,16 @@
                                         </imageView>
                                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="EeH-Tn-1Fo">
                                             <rect key="frame" x="60" y="10" width="16" height="16"/>
-                                            <color key="backgroundColor" white="0.33333333333333331" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                             <constraints>
                                                 <constraint firstAttribute="height" constant="16" id="bQl-pZ-wc6"/>
                                                 <constraint firstAttribute="width" constant="16" id="bRj-44-8Ht"/>
                                             </constraints>
                                             <color key="tintColor" red="0.92549019610000005" green="0.92549019610000005" blue="0.92549019610000005" alpha="1" colorSpace="calibratedRGB"/>
-                                            <state key="normal" image="Chat_Close"/>
-                                            <userDefinedRuntimeAttributes>
-                                                <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
-                                                    <integer key="value" value="8"/>
-                                                </userDefinedRuntimeAttribute>
-                                            </userDefinedRuntimeAttributes>
+                                            <state key="normal" image="icClear"/>
                                         </button>
+                                        <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" animating="YES" style="white" translatesAutoresizingMaskIntoConstraints="NO" id="fGN-rg-M58">
+                                            <rect key="frame" x="33" y="33" width="20" height="20"/>
+                                        </activityIndicatorView>
                                     </subviews>
                                     <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                     <constraints>
@@ -118,6 +116,8 @@
                                         <constraint firstItem="WnH-Rc-TFD" firstAttribute="top" secondItem="2f7-d8-sAe" secondAttribute="topMargin" id="JUy-gv-oym"/>
                                         <constraint firstItem="EeH-Tn-1Fo" firstAttribute="trailing" secondItem="WnH-Rc-TFD" secondAttribute="trailing" constant="-2" id="MI7-E1-geU"/>
                                         <constraint firstItem="WnH-Rc-TFD" firstAttribute="top" secondItem="EeH-Tn-1Fo" secondAttribute="top" constant="-2" id="WRG-Vb-z30"/>
+                                        <constraint firstItem="fGN-rg-M58" firstAttribute="centerY" secondItem="2f7-d8-sAe" secondAttribute="centerY" id="cJO-Tk-jRe"/>
+                                        <constraint firstItem="fGN-rg-M58" firstAttribute="centerX" secondItem="2f7-d8-sAe" secondAttribute="centerX" id="esP-g2-X9J"/>
                                     </constraints>
                                 </view>
                                 <stackView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="SWU-KM-JTz">
@@ -237,6 +237,7 @@
     </objects>
     <resources>
         <image name="Chat_Close" width="16" height="16"/>
+        <image name="icClear" width="16" height="16"/>
         <image name="icImage" width="16" height="16"/>
         <image name="icPhoto" width="16" height="16"/>
         <image name="icSend" width="25" height="23"/>

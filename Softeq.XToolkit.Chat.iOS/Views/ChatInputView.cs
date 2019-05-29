@@ -47,7 +47,7 @@ namespace Softeq.XToolkit.Chat.iOS.Views
 
         private SimpleImagePicker _simpleImagePicker;
         private Binding _attachedImageBinding;
-        private WeakReferenceEx<UIScrollView> _boundedScrollView;
+        private Binding _imagePickerBusyBinding;
 
         public ChatInputView(IntPtr handle) : base(handle)
         {
@@ -138,29 +138,29 @@ namespace Softeq.XToolkit.Chat.iOS.Views
 
         public void AttachBindings()
         {
-            _attachedImageBinding = this.SetBinding(() => _simpleImagePicker.ViewModel.ImageCacheKey).WhenSourceChanges(() =>
+            _attachedImageBinding = this.SetBinding(() => _simpleImagePicker.Image).WhenSourceChanges(() =>
             {
-                InvokeOnMainThread(() =>
+                if (_simpleImagePicker.Image == null)
                 {
-                    if (string.IsNullOrEmpty(_simpleImagePicker.ViewModel.ImageCacheKey))
-                    {
-                        AttachmentImage.Image = null;
-                        AttachmentContainer.Hidden = true;
-                    }
-                    else
-                    {
-                        AttachmentImage.Image = UIImage.FromFile(_simpleImagePicker.ViewModel.ImageCacheKey);
-                        AttachmentContainer.Hidden = false;
-                    }
-                    LayoutIfNeeded();
-                    InvalidateIntrinsicContentSize();
-                });
+                    AttachmentImage.Image = null;
+                    AttachmentContainer.Hidden = true;
+                }
+                else
+                {
+                    AttachmentImage.Image = _simpleImagePicker.Image;
+                    AttachmentContainer.Hidden = false;
+                }
+                LayoutIfNeeded();
+                InvalidateIntrinsicContentSize();
             });
+            _imagePickerBusyBinding = this.SetBinding(() => _simpleImagePicker.IsBusy, () => ImageLoader.Hidden)
+                .ConvertSourceToTarget((x) => !x);
         }
 
         public void DetachBindings()
         {
             _attachedImageBinding.Detach();
+            _imagePickerBusyBinding.Detach();
         }
 
         public void StartEditing(string text)
@@ -195,7 +195,7 @@ namespace Softeq.XToolkit.Chat.iOS.Views
 
         private void OnDeleteButtonTap()
         {
-            _simpleImagePicker.ViewModel.ImageCacheKey = null;
+            _simpleImagePicker.Clear();
         }
 
         private void OnTextViewChanged()
@@ -212,9 +212,10 @@ namespace Softeq.XToolkit.Chat.iOS.Views
 
         partial void OnSend(UIButton sender)
         {
+            if(_simpleImagePicker.IsBusy) { return; }
             var args = _simpleImagePicker.GetPickerData();
             SendRaised?.Invoke(this, new GenericEventArgs<ImagePickerArgs>(args));
-            _simpleImagePicker.ViewModel.ImageCacheKey = null;
+            _simpleImagePicker.Clear();
         }
     }
 }
