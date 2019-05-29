@@ -44,7 +44,6 @@ namespace Softeq.XToolkit.Chat
         public IObservable<ChatMessageModel> MessageReceived => _messageReceived;
         public IObservable<ChatMessageModel> MessageEdited => _messageEdited;
         public IObservable<(string DeletedMessageId, ChatSummaryModel UpdatedChatSummary)> MessageDeleted => _socketChatAdapter.MessageDeleted;
-        public IObservable<string> MessageRead => _socketChatAdapter.MessageRead;
         public IObservable<ChatSummaryModel> ChatAdded => _socketChatAdapter.ChatAdded;
         public IObservable<(string ChatId, bool IsMuted)> IsChatMutedChanged => _socketChatAdapter.IsChatMutedChanged;
         public IObservable<(string ChatId, int NewCount)> UnreadMessageCountChanged => _socketChatAdapter.UnreadMessageCountChanged;
