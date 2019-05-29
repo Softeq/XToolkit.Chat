@@ -97,18 +97,12 @@
                                         </imageView>
                                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="EeH-Tn-1Fo">
                                             <rect key="frame" x="60" y="10" width="16" height="16"/>
-                                            <color key="backgroundColor" white="0.33333333333333331" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                             <constraints>
                                                 <constraint firstAttribute="height" constant="16" id="bQl-pZ-wc6"/>
                                                 <constraint firstAttribute="width" constant="16" id="bRj-44-8Ht"/>
                                             </constraints>
                                             <color key="tintColor" red="0.92549019610000005" green="0.92549019610000005" blue="0.92549019610000005" alpha="1" colorSpace="calibratedRGB"/>
-                                            <state key="normal" image="Chat_Close"/>
-                                            <userDefinedRuntimeAttributes>
-                                                <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
-                                                    <integer key="value" value="8"/>
-                                                </userDefinedRuntimeAttribute>
-                                            </userDefinedRuntimeAttributes>
+                                            <state key="normal" image="icClear"/>
                                         </button>
                                         <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" animating="YES" style="white" translatesAutoresizingMaskIntoConstraints="NO" id="fGN-rg-M58">
                                             <rect key="frame" x="33" y="33" width="20" height="20"/>
@@ -243,6 +237,7 @@
     </objects>
     <resources>
         <image name="Chat_Close" width="16" height="16"/>
+        <image name="icClear" width="16" height="16"/>
         <image name="icImage" width="16" height="16"/>
         <image name="icPhoto" width="16" height="16"/>
         <image name="icSend" width="25" height="23"/>
