@@ -19,6 +19,7 @@
                 <outlet property="EditingBodyLabel" destination="4eZ-UD-27c" id="name-outlet-4eZ-UD-27c"/>
                 <outlet property="EditingCloseButton" destination="39W-or-PgZ" id="name-outlet-39W-or-PgZ"/>
                 <outlet property="EditingTitleLabel" destination="XYJ-bj-qq9" id="name-outlet-XYJ-bj-qq9"/>
+                <outlet property="ImageLoader" destination="fGN-rg-M58" id="name-outlet-fGN-rg-M58"/>
                 <outlet property="OpenCameraButton" destination="MRJ-Ct-mHQ" id="name-outlet-MRJ-Ct-mHQ"/>
                 <outlet property="OpenGalleryButton" destination="CED-2o-ehl" id="name-outlet-CED-2o-ehl"/>
                 <outlet property="PlaceholderLabel" destination="wE6-x3-tWd" id="name-outlet-wE6-x3-tWd"/>
@@ -109,6 +110,9 @@
                                                 </userDefinedRuntimeAttribute>
                                             </userDefinedRuntimeAttributes>
                                         </button>
+                                        <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" animating="YES" style="white" translatesAutoresizingMaskIntoConstraints="NO" id="fGN-rg-M58">
+                                            <rect key="frame" x="33" y="33" width="20" height="20"/>
+                                        </activityIndicatorView>
                                     </subviews>
                                     <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                     <constraints>
@@ -118,6 +122,8 @@
                                         <constraint firstItem="WnH-Rc-TFD" firstAttribute="top" secondItem="2f7-d8-sAe" secondAttribute="topMargin" id="JUy-gv-oym"/>
                                         <constraint firstItem="EeH-Tn-1Fo" firstAttribute="trailing" secondItem="WnH-Rc-TFD" secondAttribute="trailing" constant="-2" id="MI7-E1-geU"/>
                                         <constraint firstItem="WnH-Rc-TFD" firstAttribute="top" secondItem="EeH-Tn-1Fo" secondAttribute="top" constant="-2" id="WRG-Vb-z30"/>
+                                        <constraint firstItem="fGN-rg-M58" firstAttribute="centerY" secondItem="2f7-d8-sAe" secondAttribute="centerY" id="cJO-Tk-jRe"/>
+                                        <constraint firstItem="fGN-rg-M58" firstAttribute="centerX" secondItem="2f7-d8-sAe" secondAttribute="centerX" id="esP-g2-X9J"/>
                                     </constraints>
                                 </view>
                                 <stackView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="SWU-KM-JTz">
