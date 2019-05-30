@@ -22,6 +22,7 @@ namespace Softeq.XToolkit.Chat.iOS
         UIColor OnlineStatusColor { get; }
 
         AvatarImageHelpers.AvatarStyles AvatarStyles { get; }
+        AvatarImageHelpers.AvatarStyles BigAvatarStyles { get; }
         AvatarImageHelpers.AvatarStyles GroupDetailsAvatarStyles { get; }
 
         string BackButtonBundleName { get; }
