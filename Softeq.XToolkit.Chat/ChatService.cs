@@ -246,6 +246,11 @@ namespace Softeq.XToolkit.Chat
             return result;
         }
 
+        private Task<ChatUserModel> GetUserSummaryAsync()
+        {
+            return _httpChatAdapter.GetUserSummaryAsync();
+        }
+
         private async void OnMessageReceived(ChatMessageModel messageModel)
         {
             var userId = await GetUserIdAsync().ConfigureAwait(false);
