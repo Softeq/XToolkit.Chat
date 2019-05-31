@@ -6,19 +6,18 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using Softeq.XToolkit.Common.Collections;
+using Softeq.XToolkit.Common.Command;
+using Softeq.XToolkit.WhiteLabel;
+using Softeq.XToolkit.WhiteLabel.Messenger;
+using Softeq.XToolkit.WhiteLabel.Mvvm;
+using Softeq.XToolkit.WhiteLabel.Navigation;
+using Softeq.XToolkit.WhiteLabel.Threading;
 using Softeq.XToolkit.Chat.Interfaces;
 using Softeq.XToolkit.Chat.Messages;
 using Softeq.XToolkit.Chat.Models.Enum;
 using Softeq.XToolkit.Chat.Models.Interfaces;
 using Softeq.XToolkit.Chat.Strategies.Search;
-using Softeq.XToolkit.Common.Collections;
-using Softeq.XToolkit.Common.Command;
-using Softeq.XToolkit.WhiteLabel;
-using Softeq.XToolkit.WhiteLabel.Messenger;
-using Softeq.XToolkit.WhiteLabel.Model;
-using Softeq.XToolkit.WhiteLabel.Mvvm;
-using Softeq.XToolkit.WhiteLabel.Navigation;
-using Softeq.XToolkit.WhiteLabel.Threading;
 
 namespace Softeq.XToolkit.Chat.ViewModels
 {
@@ -52,7 +51,7 @@ namespace Softeq.XToolkit.Chat.ViewModels
         }
 
         public IChatLocalizedStrings LocalizedStrings { get; }
-        
+
         public ICommand SaveCommand { get; private set; }
 
         public ICommand BackCommand { get; private set; }
@@ -83,23 +82,21 @@ namespace Softeq.XToolkit.Chat.ViewModels
 
         private async Task OpenDialogForAddMembersAsync()
         {
-            var result = await _dialogsService.ShowForViewModel<AddContactsViewModel, AddContactParameters>(
-                new AddContactParameters
-                {
-                    SelectedContacts = Contacts,
-                    SelectionType = SelectedContactsAction.CreateChat,
-                    SearchStrategy = new CreateChatSearchContactsStrategy(_chatService)
-                },
-                new OpenDialogOptions
-                {
-                    ShouldShowBackgroundOverlay = false
-                });
-
-            if (result != null)
+            var parameter = new AddContactParameters
             {
-                var contacts = result.SelectedContacts;
+                SelectedContacts = Contacts,
+                SelectionType = SelectedContactsAction.CreateChat,
+                SearchStrategy = new CreateChatSearchContactsStrategy(_chatService)
+            };
+
+            var selectedContacts = await _dialogsService.For<AddContactsViewModel>()
+                .WithParam(x => x.Parameter, parameter)
+                .Navigate<ObservableRangeCollection<ChatUserViewModel>>();
+
+            if (selectedContacts != null && selectedContacts.Count > 0)
+            {
                 //contacts.Apply(x => x.SetSelectionCommand(_updateContactsCountCommand));
-                Contacts.AddRange(contacts);
+                Contacts.AddRange(selectedContacts);
 
                 RaisePropertyChanged(nameof(ContactsCountText));
             }

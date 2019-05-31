@@ -6,19 +6,18 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using System.Collections.Generic;
-using Softeq.XToolkit.Chat.Interfaces;
+using Softeq.XToolkit.Common.Command;
+using Softeq.XToolkit.Common.Extensions;
+using Softeq.XToolkit.Common.Collections;
+using Softeq.XToolkit.WhiteLabel;
+using Softeq.XToolkit.WhiteLabel.Mvvm;
+using Softeq.XToolkit.WhiteLabel.Navigation;
+using Softeq.XToolkit.WhiteLabel.Threading;
+using Softeq.XToolkit.Chat.Strategies.Search;
 using Softeq.XToolkit.Chat.Models;
 using Softeq.XToolkit.Chat.Models.Enum;
 using Softeq.XToolkit.Chat.Models.Interfaces;
-using Softeq.XToolkit.Common.Collections;
-using Softeq.XToolkit.WhiteLabel.Mvvm;
-using Softeq.XToolkit.WhiteLabel.Navigation;
-using Softeq.XToolkit.Chat.Strategies.Search;
-using Softeq.XToolkit.Common.Command;
-using Softeq.XToolkit.Common.Extensions;
-using Softeq.XToolkit.WhiteLabel;
-using Softeq.XToolkit.WhiteLabel.Model;
-using Softeq.XToolkit.WhiteLabel.Threading;
+using Softeq.XToolkit.Chat.Interfaces;
 
 namespace Softeq.XToolkit.Chat.ViewModels
 {
@@ -131,23 +130,23 @@ namespace Softeq.XToolkit.Chat.ViewModels
 
         private async Task AddMembers()
         {
-            var result = await _dialogsService.ShowForViewModel<AddContactsViewModel, AddContactParameters>(
-                new AddContactParameters
-                {
-                    SelectedContacts = Members,
-                    SelectionType = SelectedContactsAction.InviteToChat,
-                    SearchStrategy = new InviteSearchContactsStrategy(_chatService, Summary.Id)
-                },
-                new OpenDialogOptions
-                {
-                    ShouldShowBackgroundOverlay = false
-                });
-
-            if (result != null)
+            var parameter = new AddContactParameters
             {
-                result.SelectedContacts.Apply(x => x.IsSelectable = false);
-                ApplyRemovable(result.SelectedContacts);
-                Members.AddRange(result.SelectedContacts);
+                SelectedContacts = Members,
+                SelectionType = SelectedContactsAction.InviteToChat,
+                SearchStrategy = new InviteSearchContactsStrategy(_chatService, Summary.Id)
+            };
+
+            var selectedContacts = await _dialogsService.For<AddContactsViewModel>()
+                .WithParam(x => x.Parameter, parameter)
+                .Navigate<ObservableRangeCollection<ChatUserViewModel>>();
+
+            if (selectedContacts != null && selectedContacts.Count > 0)
+            {
+                selectedContacts.Apply(x => x.IsSelectable = false);
+
+                ApplyRemovable(selectedContacts);
+                Members.AddRange(selectedContacts);
 
                 RaisePropertyChanged(nameof(MembersCountText));
 

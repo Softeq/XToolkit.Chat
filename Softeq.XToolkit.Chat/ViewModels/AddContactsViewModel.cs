@@ -58,8 +58,8 @@ namespace Softeq.XToolkit.Chat.ViewModels
 
             _contactSelectedCommand = new RelayCommand<ChatUserViewModel>(SwitchSelectedContact);
             SearchContactCommand = new RelayCommand(DoSearch);
-            CancelCommand = new RelayCommand(() => DialogComponent.CloseCommand.Execute(false));
-            DoneCommand = new RelayCommand(() => DialogComponent.CloseCommand.Execute(true));
+            CancelCommand = new RelayCommand(() => DialogComponent.CloseCommand.Execute(null));
+            DoneCommand = new RelayCommand(() => DialogComponent.CloseCommand.Execute(SelectedContacts));
         }
 
         public ICommand SearchContactCommand { get; }
