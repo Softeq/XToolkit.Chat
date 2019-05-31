@@ -136,15 +136,17 @@ namespace Softeq.XToolkit.Chat.ViewModels
                 SelectionType = SelectedContactsAction.InviteToChat,
                 SearchStrategy = new InviteSearchContactsStrategy(_chatService, Summary.Id)
             };
-            var result = await _dialogsService.For<AddContactsViewModel>()
-                .WithParam(x => x.Parameter, parameter)
-                .Navigate<AddContactsViewModel>();
 
-            if (result != null)
+            var selectedContacts = await _dialogsService.For<AddContactsViewModel>()
+                .WithParam(x => x.Parameter, parameter)
+                .Navigate<ObservableRangeCollection<ChatUserViewModel>>();
+
+            if (selectedContacts != null && selectedContacts.Count > 0)
             {
-                result.SelectedContacts.Apply(x => x.IsSelectable = false);
-                ApplyRemovable(result.SelectedContacts);
-                Members.AddRange(result.SelectedContacts);
+                selectedContacts.Apply(x => x.IsSelectable = false);
+
+                ApplyRemovable(selectedContacts);
+                Members.AddRange(selectedContacts);
 
                 RaisePropertyChanged(nameof(MembersCountText));
 
