@@ -96,7 +96,9 @@ namespace Softeq.XToolkit.Chat.ViewModels
 
         public void ShowImage(FullScreenImageOptions options)
         {
-            _dialogsService.ShowForViewModel<FullScreenImageViewModel, FullScreenImageOptions>(options);
+            _dialogsService.For<FullScreenImageViewModel>()
+                .WithParam(x => x.FullScreenImageOptions, options)
+                .Navigate();
         }
 
         public void UpdateMessageModel(ChatMessageModel chatMessageModel)
