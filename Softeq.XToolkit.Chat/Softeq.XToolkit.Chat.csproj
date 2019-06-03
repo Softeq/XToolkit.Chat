@@ -11,7 +11,7 @@
     <ProjectReference Include="..\Softeq.XToolkit.Chat.HttpClient\Softeq.XToolkit.Chat.HttpClient.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="System.Reactive" Version="4.0.0" />
+    <PackageReference Include="System.Reactive" Version="4.1.5" />
     <PackageReference Include="Autofac" Version="4.8.1" />
   </ItemGroup>
   <ItemGroup>
