@@ -89,16 +89,19 @@ namespace Softeq.XToolkit.Chat.iOS.Controls
 
         private void HideNotificationHandler(object sender, NSNotificationEventArgs e)
         {
-            CleanUp();
+            CleanUp(false);
         }
 
-        private void CleanUp()
+        private void CleanUp(bool cleanAll = true)
         {
             _notification?.Dispose();
             _notification = null;
 
-            _lastContextMenuComponent = null;
-            _viewModel = default(T);
+            if (cleanAll)
+            {
+                _lastContextMenuComponent = null;
+                _viewModel = default(T);
+            }
         }
 
         public void Dispose()
