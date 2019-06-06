@@ -146,7 +146,7 @@ namespace Softeq.XToolkit.Chat.Manager
         private void OnChatsCollectionCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
             var totalUnreadMessagesCount = 0;
-            foreach(var item in ChatsCollection)
+            foreach (var item in ChatsCollection.Where(x => !x.IsMuted))
             {
                 totalUnreadMessagesCount += item.UnreadMessageCount;
             }
