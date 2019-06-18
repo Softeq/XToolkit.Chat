@@ -337,5 +337,15 @@ namespace Softeq.XToolkit.Chat.HttpClient
         {
             throw new NotImplementedException();
         }
+
+        public Task<bool> SubscribeForPushNotificationsAsync(string token)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<bool> UnsubscribeFromPushNotificationsAsync(string token)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

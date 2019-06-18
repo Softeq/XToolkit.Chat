@@ -179,5 +179,29 @@ namespace Softeq.XToolkit.Chat.HttpClient
 
             return _httpClient.TrySendAsync(request, _logger);
         }
+
+        public Task<bool> SubscribeForPushNotificationsAsync(string token)
+        {
+            var dto = new PushTokenDto
+            {
+                Token = token
+            };
+
+            var request = new PostSubscribePushTokenRequest(_chatConfig.ApiUrl, _jsonSerializer, dto);
+
+            return _httpClient.TrySendAsync(request, _logger);
+        }
+
+        public Task<bool> UnsubscribeFromPushNotificationsAsync(string token)
+        {
+            var dto = new PushTokenDto
+            {
+                Token = token
+            };
+
+            var request = new PostUnsubscribePushTokenRequest(_chatConfig.ApiUrl, _jsonSerializer, dto);
+
+            return _httpClient.TrySendAsync(request, _logger);
+        }
     }
 }

@@ -38,5 +38,8 @@ namespace Softeq.XToolkit.Chat.Models.Interfaces
             string nameFilter, int pageSize, int pageNumber);
 
         Task<ChatSummaryModel> CreateDirectChatAsync(string memberId);
+
+        Task<bool> SubscribeForPushNotificationsAsync(string token);
+        Task<bool> UnsubscribeFromPushNotificationsAsync(string token);
     }
 }
