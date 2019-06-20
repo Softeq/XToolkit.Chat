@@ -414,7 +414,7 @@ namespace Softeq.XToolkit.Chat.iOS.Views
             public override void TappedLinkAttribute(ASTextNode textNode, string attribute, NSObject value, CGPoint point,
                 NSRange textRange)
             {
-                var launcherService = Dependencies.IocContainer.Resolve<ILauncherService>();
+                var launcherService = Dependencies.Container.Resolve<ILauncherService>();
                 launcherService.OpenUrl(((NSUrl)value).AbsoluteString);
             }
 

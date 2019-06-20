@@ -16,7 +16,7 @@ namespace Softeq.XToolkit.Chat.Manager
     {
         public static void UpdateCollectionTest()
         {
-            var viewModelFactoryService = Dependencies.IocContainer.Resolve<IViewModelFactoryService>();
+            var viewModelFactoryService = Dependencies.Container.Resolve<IViewModelFactoryService>();
 
             ChatMessageViewModel CreateViewModel(ChatMessageModel model)
             {

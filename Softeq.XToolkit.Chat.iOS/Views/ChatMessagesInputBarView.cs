@@ -125,7 +125,7 @@ namespace Softeq.XToolkit.Chat.iOS.Views
             EditImageContainerHeightConstraint.Constant = 0;
 
             _simpleImagePicker = new SimpleImagePicker(viewController,
-                Dependencies.IocContainer.Resolve<IPermissionsManager>(), false);
+                Dependencies.Container.Resolve<IPermissionsManager>(), false);
             _attachedImageBinding = this.SetBinding(() => _simpleImagePicker.ViewModel.ImageCacheKey).WhenSourceChanges(
                 () =>
                 {

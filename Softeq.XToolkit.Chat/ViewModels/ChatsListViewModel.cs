@@ -80,7 +80,7 @@ namespace Softeq.XToolkit.Chat.ViewModels
         {
             base.OnDisappearing();
 
-            ConnectionStatusViewModel.Dispose();
+            ConnectionStatusViewModel.RemoveSubscriptions();
         }
 
         private void CreateChat()
