@@ -9,39 +9,35 @@ using Softeq.XToolkit.Chat.Models.Interfaces;
 using Softeq.XToolkit.Chat.SignalRClient;
 using Softeq.XToolkit.Chat.ViewModels;
 using Softeq.XToolkit.Chat.Services;
+using Softeq.XToolkit.WhiteLabel.Bootstrapper.Abstract;
 
 namespace Softeq.XToolkit.Chat
 {
     public static class Bootstrapper
     {
-        public static void Configure(ContainerBuilder containerBuilder)
+        public static void Configure(IContainerBuilder containerBuilder)
         {
-            containerBuilder.RegisterType<SignalRAdapter>().As<ISocketChatAdapter>()
-                .InstancePerLifetimeScope();
-            containerBuilder.RegisterType<HttpChatAdapter>().As<IHttpChatAdapter>()
-                .InstancePerLifetimeScope();
-            containerBuilder.RegisterType<ChatService>().As<IChatService>()
-                .InstancePerLifetimeScope();
-            containerBuilder.RegisterType<ChatManager>()
-                .As<ChatManager>()
-                .As<IChatsListManager>()
-                .As<IChatMessagesManager>()
-                .As<IChatConnectionManager>()
-                .InstancePerLifetimeScope();
-            containerBuilder.RegisterType<InMemoryMessagesCache>().As<IMessagesCache>().InstancePerLifetimeScope();
-            containerBuilder.RegisterType<FormatService>().As<IFormatService>().InstancePerLifetimeScope();
-            containerBuilder.RegisterType<UploadImageService>().As<IUploadImageService>().InstancePerLifetimeScope();
+            containerBuilder.Singleton<SignalRAdapter, ISocketChatAdapter>();
+            containerBuilder.Singleton<HttpChatAdapter, IHttpChatAdapter>();
+            containerBuilder.Singleton<ChatService, IChatService>();
+            containerBuilder.Singleton<ChatManager, ChatManager>();
+            containerBuilder.Singleton<ChatManager, IChatsListManager>();
+            containerBuilder.Singleton<ChatManager, IChatMessagesManager>();
+            containerBuilder.Singleton<ChatManager, IChatConnectionManager>();
+            containerBuilder.Singleton<InMemoryMessagesCache, IMessagesCache>();
+            containerBuilder.Singleton<FormatService, IFormatService>();
+            containerBuilder.Singleton<UploadImageService, IUploadImageService>();
 
             // ViewModels
-            containerBuilder.RegisterType<ChatsListViewModel>().InstancePerDependency();
-            containerBuilder.RegisterType<CreateChatViewModel>().InstancePerDependency();
-            containerBuilder.RegisterType<AddContactsViewModel>().InstancePerDependency();
-            containerBuilder.RegisterType<ChatMessagesViewModel>().InstancePerDependency();
-            containerBuilder.RegisterType<ChatDetailsViewModel>().InstancePerDependency();
-            containerBuilder.RegisterType<ChatSummaryViewModel>().InstancePerDependency();
-            containerBuilder.RegisterType<ChatMessageViewModel>().InstancePerDependency();
-            containerBuilder.RegisterType<ConnectionStatusViewModel>().InstancePerDependency();
-            containerBuilder.RegisterType<NewChatViewModel>().InstancePerDependency();
+            containerBuilder.PerDependency<ChatsListViewModel>();
+            containerBuilder.PerDependency<CreateChatViewModel>();
+            containerBuilder.PerDependency<AddContactsViewModel>();
+            containerBuilder.PerDependency<ChatMessagesViewModel>();
+            containerBuilder.PerDependency<ChatDetailsViewModel>();
+            containerBuilder.PerDependency<ChatSummaryViewModel>();
+            containerBuilder.PerDependency<ChatMessageViewModel>();
+            containerBuilder.PerDependency<ConnectionStatusViewModel>();
+            containerBuilder.PerDependency<NewChatViewModel>();
         }
     }
 }

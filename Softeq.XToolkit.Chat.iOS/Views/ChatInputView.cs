@@ -125,7 +125,7 @@ namespace Softeq.XToolkit.Chat.iOS.Views
 
         public void Init(UIViewController parentViewController)
         {
-            _simpleImagePicker = new SimpleImagePicker(parentViewController, Dependencies.IocContainer.Resolve<IPermissionsManager>(), false);
+            _simpleImagePicker = new SimpleImagePicker(parentViewController, Dependencies.Container.Resolve<IPermissionsManager>(), false);
             OpenCameraButton.SetCommand(new RelayCommand(_simpleImagePicker.OpenCameraAsync));
             OpenGalleryButton.SetCommand(new RelayCommand(_simpleImagePicker.OpenGalleryAsync));
             DeleteButton.SetCommand(new RelayCommand(OnDeleteButtonTap));

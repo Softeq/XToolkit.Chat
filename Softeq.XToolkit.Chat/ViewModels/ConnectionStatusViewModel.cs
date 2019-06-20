@@ -12,7 +12,7 @@ using Softeq.XToolkit.WhiteLabel.Mvvm;
 
 namespace Softeq.XToolkit.Chat.ViewModels
 {
-    public class ConnectionStatusViewModel : ObservableObject, IDisposable
+    public class ConnectionStatusViewModel : ObservableObject
     {
         private readonly IChatLocalizedStrings _localizedStrings;
         private readonly IChatConnectionManager _chatConnectionManager;
@@ -50,6 +50,11 @@ namespace Softeq.XToolkit.Chat.ViewModels
             UpdateConnectionStatus(_chatConnectionManager.ConnectionStatus);
         }
 
+        public void RemoveSubscriptions()
+        {
+            _connectionStatusChangedSubscription?.Dispose();
+        }
+
         private void UpdateConnectionStatus(ConnectionStatus status)
         {
             if (_onlineTextStatus == null)
@@ -76,20 +81,6 @@ namespace Softeq.XToolkit.Chat.ViewModels
                 default:
                     throw new InvalidEnumArgumentException();
             }
-        }
-
-        private void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                _connectionStatusChangedSubscription?.Dispose();
-            }
-        }
-
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
         }
     }
 }
