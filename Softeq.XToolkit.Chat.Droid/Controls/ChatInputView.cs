@@ -166,7 +166,7 @@ namespace Softeq.XToolkit.Chat.Droid.Controls
         private void Initialize(Context context)
         {
             _bindings = new List<Binding>();
-            _imagePicker = new ImagePicker(Dependencies.PermissionsManager, Dependencies.IocContainer.Resolve<IImagePickerService>());
+            _imagePicker = new ImagePicker(Dependencies.PermissionsManager, Dependencies.Container.Resolve<IImagePickerService>());
 
             Inflate(context, Resource.Layout.view_chat_input, this);
             _messageEditText = FindViewById<EditText>(Resource.Id.et_conversations_message);

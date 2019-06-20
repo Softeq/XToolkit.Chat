@@ -72,7 +72,7 @@ namespace Softeq.XToolkit.Chat.Droid.Views
 
             InitializeContactsRecyclerView();
 
-            _imagePicker = new ImagePicker(Dependencies.PermissionsManager, Dependencies.IocContainer.Resolve<IImagePickerService>())
+            _imagePicker = new ImagePicker(Dependencies.PermissionsManager, Dependencies.Container.Resolve<IImagePickerService>())
             {
                 MaxImageWidth = 300
             };
