@@ -180,11 +180,12 @@ namespace Softeq.XToolkit.Chat.HttpClient
             return _httpClient.TrySendAsync(request, _logger);
         }
 
-        public Task<bool> SubscribeForPushNotificationsAsync(string token)
+        public Task<bool> SubscribeForPushNotificationsAsync(string token, int devicePlatform)
         {
             var dto = new PushTokenDto
             {
-                Token = token
+                Token = token,
+                DevicePlatform = devicePlatform
             };
 
             var request = new PostSubscribePushTokenRequest(_chatConfig.ApiUrl, _jsonSerializer, dto);
@@ -192,11 +193,12 @@ namespace Softeq.XToolkit.Chat.HttpClient
             return _httpClient.TrySendAsync(request, _logger);
         }
 
-        public Task<bool> UnsubscribeFromPushNotificationsAsync(string token)
+        public Task<bool> UnsubscribeFromPushNotificationsAsync(string token, int devicePlatform)
         {
             var dto = new PushTokenDto
             {
-                Token = token
+                Token = token,
+                DevicePlatform = devicePlatform
             };
 
             var request = new PostUnsubscribePushTokenRequest(_chatConfig.ApiUrl, _jsonSerializer, dto);

@@ -3,6 +3,6 @@
     public class PushTokenDto
     {
         public string Token { get; set; }
-        //public int DevicePlatform { get; set; }
+        public int DevicePlatform { get; set; }
     }
 }

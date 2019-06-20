@@ -39,7 +39,7 @@ namespace Softeq.XToolkit.Chat.Models.Interfaces
 
         Task<ChatSummaryModel> CreateDirectChatAsync(string memberId);
 
-        Task<bool> SubscribeForPushNotificationsAsync(string token);
-        Task<bool> UnsubscribeFromPushNotificationsAsync(string token);
+        Task<bool> SubscribeForPushNotificationsAsync(string token, int devicePlatform);
+        Task<bool> UnsubscribeFromPushNotificationsAsync(string token, int devicePlatform);
     }
 }
