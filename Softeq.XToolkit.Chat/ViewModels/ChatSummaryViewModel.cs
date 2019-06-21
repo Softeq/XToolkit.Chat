@@ -30,8 +30,8 @@ namespace Softeq.XToolkit.Chat.ViewModels
         //          because navParam will be de/serialized
         public ChatSummaryViewModel()
         {
-            LocalizedStrings = Dependencies.IocContainer.Resolve<IChatLocalizedStrings>();
-            _formatService = Dependencies.IocContainer.Resolve<IFormatService>();
+            LocalizedStrings = Dependencies.Container.Resolve<IChatLocalizedStrings>();
+            _formatService = Dependencies.Container.Resolve<IFormatService>();
         }
 
         public ChatSummaryModel Parameter

@@ -148,7 +148,7 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
                 ViewModel.HeaderViewModel.ChangeMuteNotificationsCommand,
                 ViewModel.LocalizedStrings.Notifications);
 
-            _simpleImagePicker = new SimpleImagePicker(this, Dependencies.IocContainer.Resolve<IPermissionsManager>(), false)
+            _simpleImagePicker = new SimpleImagePicker(this, Dependencies.Container.Resolve<IPermissionsManager>(), false)
             {
                 MaxImageWidth = 280,
                 MaxImageHeight = 280

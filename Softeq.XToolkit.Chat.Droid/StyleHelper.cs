@@ -9,9 +9,7 @@ namespace Softeq.XToolkit.Chat.Droid
 {
     internal static class StyleHelper
     {
-        private static readonly Lazy<IChatDroidStyle> StyleLazy = Dependencies.IocContainer.LazyResolve<IChatDroidStyle>();
-
-        public static IChatDroidStyle Style => StyleLazy.Value;
+        public static IChatDroidStyle Style = Dependencies.Container.Resolve<IChatDroidStyle>();
     }
 
     public interface IChatDroidStyle
