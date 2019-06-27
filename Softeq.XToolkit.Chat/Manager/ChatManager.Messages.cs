@@ -65,7 +65,7 @@ namespace Softeq.XToolkit.Chat.Manager
             return new List<ChatMessageViewModel>();
         }
 
-        public async Task SendMessageAsync(string chatId, string messageBody, ImagePickerArgs imagePickerArgs)
+        public async Task SendMessageAsync(string chatId, string messageBody, ImagePickerResult imagePickerArgs, string imageCachePath)
         {
             var tempMessage = new ChatMessageModel
             {
@@ -73,7 +73,7 @@ namespace Softeq.XToolkit.Chat.Manager
                 Body = messageBody,
                 ChannelId = chatId,
                 IsMine = true,
-                ImageCacheKey = imagePickerArgs?.ImageCacheKey
+                ImageCacheKey = imageCachePath
             };
 
             var tempMessageViewModel = CreateAndAddNewTempMessage(tempMessage);
@@ -92,21 +92,25 @@ namespace Softeq.XToolkit.Chat.Manager
         // Better way:
         // - start upload immediately after select
         // - when message canceled - send request for remove temp image
-        private async Task<string> UploadImageAsync(ImagePickerArgs imagePickerArgs)
+        private async Task<string> UploadImageAsync(ImagePickerResult imagePickerArgs)
         {
             var imageUrl = default(string);
 
-            if (imagePickerArgs != null)
+            if (imagePickerArgs?.ImageObject != null)
             {
                 try
                 {
                     imageUrl = await _uploadImageService
-                        .UploadImageAsync(() => (imagePickerArgs.ImageStream(), imagePickerArgs.Extension))
+                        .UploadImageAsync(() => (imagePickerArgs.GetStream(), imagePickerArgs.Extension))
                         .ConfigureAwait(false);
                 }
                 catch (InvalidDataException ex)
                 {
                     _logger.Error(ex);
+                }
+                finally
+                {
+                    imagePickerArgs.Dispose();
                 }
             }
 

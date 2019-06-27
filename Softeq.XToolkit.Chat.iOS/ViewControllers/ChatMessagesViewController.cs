@@ -79,8 +79,11 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
 
             _contextMenuHandler = new ContextMenuHandler<ChatMessageViewModel>(CreateContextMenuComponentForViewModel);
 
-            Input.SetCommandWithArgs(nameof(Input.SendRaised), ViewModel.MessageInput.SendMessageCommand);
             Input.EditingCloseButton.SetCommand(ViewModel.MessageInput.CancelEditingCommand);
+            Input.OpenCameraButton.SetCommand(ViewModel.MessageInput.OpenCameraCommand);
+            Input.OpenGalleryButton.SetCommand(ViewModel.MessageInput.OpenGalleryCommand);
+            Input.SendButton.SetCommand(ViewModel.MessageInput.SendMessageCommand);
+            Input.DeleteButton.SetCommand(ViewModel.MessageInput.DeleteImageCommand);
             Input.SetLabels(
                 ViewModel.MessageInput.EditMessageHeaderString,
                 ViewModel.MessageInput.EnterMessagePlaceholderString);
@@ -145,13 +148,10 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
             {
                 Input.SetTextPlaceholdervisibility(string.IsNullOrEmpty(ViewModel.MessageInput.MessageBody));
             }));
-            Input.AttachBindings();
-        }
-
-        protected override void DoDetachBindings()
-        {
-            base.DoDetachBindings();
-            Input.DetachBindings();
+            Bindings.Add(this.SetBinding(() => ViewModel.MessageInput.ImageObject).WhenSourceChanges(() =>
+            {
+                Input.SetImage(ViewModel.MessageInput.ImageObject);
+            }));
         }
 
         private void InitTableView()
