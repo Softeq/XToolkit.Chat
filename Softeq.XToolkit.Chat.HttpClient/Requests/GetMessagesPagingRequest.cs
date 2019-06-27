@@ -1,7 +1,6 @@
 ﻿// Developed by Softeq Development Corporation
 // http://www.softeq.com
 
-using System;
 using Softeq.XToolkit.RemoteData.HttpClient;
 using Softeq.XToolkit.RemoteData;
 
@@ -11,21 +10,25 @@ namespace Softeq.XToolkit.Chat.HttpClient.Requests
     {
         private readonly string _queryParams;
 
-        public GetMessagesPagingRequest(
-            string channelId,
-            string messageFromId = null,
-            DateTimeOffset? messageFromDateTime = null,
-            int? pageSize = null)
+        public GetMessagesPagingRequest(GetMessagesQuery query)
         {
-            ChannelId = channelId;
+            ChannelId = query.ChannelId;
 
-            var messageCreated = messageFromDateTime.Value.ToString("u");
+            var queryBuilder = new QueryStringBuilder()
+                .AddParam("messageId", query.FromId);
 
-            _queryParams = new QueryStringBuilder()
-                .AddParam("messageId", messageFromId)
-                .AddParam("messageCreated", messageCreated)
-                .AddParam("pageSize", pageSize)
-                .Build();
+            if (query.FromDateTime.HasValue)
+            {
+                var messageCreated = query.FromDateTime.Value.ToString("u");
+                queryBuilder.AddParam("messageCreated", messageCreated);
+            }
+
+            if (query.Count.HasValue)
+            {
+                queryBuilder.AddParam("pageSize", query.Count);
+            }
+
+            _queryParams = queryBuilder.Build();
         }
 
         protected string ChannelId { get; }

@@ -5,10 +5,17 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Softeq.XToolkit.Chat.HttpClient.Dtos;
+using Softeq.NetKit.Chat.TransportModels.Models.CommonModels.Request.Channel;
+using Softeq.NetKit.Chat.TransportModels.Models.CommonModels.Request.Member;
+using Softeq.NetKit.Chat.TransportModels.Models.CommonModels.Request.Message;
+using Softeq.NetKit.Chat.TransportModels.Models.CommonModels.Response;
+using Softeq.NetKit.Chat.TransportModels.Models.CommonModels.Response.Channel;
+using Softeq.NetKit.Chat.TransportModels.Models.CommonModels.Response.Member;
+using Softeq.NetKit.Chat.TransportModels.Models.CommonModels.Response.Message;
 using Softeq.XToolkit.Chat.HttpClient.Requests;
 using Softeq.XToolkit.Chat.Models;
 using Softeq.XToolkit.Chat.Models.Interfaces;
+using Softeq.XToolkit.Chat.Models.Queries;
 using Softeq.XToolkit.Common.Interfaces;
 using Softeq.XToolkit.Common.Models;
 using Softeq.XToolkit.RemoteData;
@@ -39,14 +46,14 @@ namespace Softeq.XToolkit.Chat.HttpClient
         {
             var request = new GetUserSummaryRequest(_chatConfig.ApiUrl);
 
-            return _httpClient.GetModelAsync<ChatUserModel, ChatUserDto>(request, _logger, Mapper.DtoToChatUser);
+            return _httpClient.GetModelAsync<ChatUserModel, MemberSummaryResponse>(request, _logger, Mapper.DtoToChatUser);
         }
 
         public Task<IList<ChatUserModel>> GetChatMembersAsync(string chatId)
         {
             var request = new GetChatMembersRequest(_chatConfig.ApiUrl, chatId);
 
-            return _httpClient.GetModelAsync<IList<ChatUserModel>, IList<ChatUserDto>>(request, _logger,
+            return _httpClient.GetModelAsync<IList<ChatUserModel>, IList<MemberSummaryResponse>>(request, _logger,
                 x => x.Select(Mapper.DtoToChatUser).ToList());
         }
 
@@ -60,110 +67,120 @@ namespace Softeq.XToolkit.Chat.HttpClient
         [Obsolete("Used SignalR method.")]
         public Task<ChatSummaryModel> CreateChatAsync(IEnumerable<string> participantsIds)
         {
-            var dto = new CreateChatDto
+            var dto = new CreateChannelRequest
             {
                 AllowedMembers = participantsIds.ToList(),
             };
 
             var request = new PostCreateChatRequest(_chatConfig.ApiUrl, _jsonSerializer, dto);
 
-            return _httpClient.GetModelAsync<ChatSummaryModel, ChatSummaryDto>(request, _logger, Mapper.DtoToChatSummary);
+            return _httpClient.GetModelAsync<ChatSummaryModel, ChannelSummaryResponse>(request, _logger, Mapper.DtoToChatSummary);
         }
 
         public Task<ChatSummaryModel> CreateDirectChatAsync(string memberId)
         {
-            var dto = new CreateDirectChatDto
+            var dto = new CreateDirectChannelRequest
             {
-                MemberId = memberId
+                MemberId = new Guid(memberId)
             };
 
             var request = new PostCreateDirectChatRequest(_chatConfig.ApiUrl, _jsonSerializer, dto);
 
-            return _httpClient.GetModelAsync<ChatSummaryModel, ChatSummaryDto>(request, _logger, Mapper.DtoToChatSummary);
+            return _httpClient.GetModelAsync<ChatSummaryModel, ChannelSummaryResponse>(request, _logger, Mapper.DtoToChatSummary);
         }
 
         public async Task<IList<ChatSummaryModel>> GetChannelsAsync()
         {
             var request = new GetChatsListRequest(_chatConfig.ApiUrl);
 
-            var result = await _httpClient.GetModelOrExceptionAsync<IList<ChatSummaryModel>, IList<ChatSummaryDto>>(request,
+            var result = await _httpClient.GetModelOrExceptionAsync<IList<ChatSummaryModel>, IList<ChannelSummaryResponse>>(request,
                 _logger, x => x.Select(Mapper.DtoToChatSummary).ToList()).ConfigureAwait(false);
 
             return result.Model;
         }
 
-        public async Task<IList<ChatMessageModel>> GetOlderMessagesAsync(string chatId,
-            string messageFromId = null, DateTimeOffset? messageFromDateTime = null, int? count = null)
+        public Task<IList<ChatMessageModel>> GetOlderMessagesAsync(MessagesQuery query)
         {
-            var request = new GetOlderMessagesRequest(_chatConfig.ApiUrl, chatId, messageFromId, messageFromDateTime, count);
-
-            var result = await _httpClient.GetPagingModelAsync<ChatMessageModel, ChatMessageDto>(request,
-                _logger, Mapper.DtoToChatMessage).ConfigureAwait(false);
-
-            return result?.Data;
+            var messagesQuery = new GetMessagesQuery
+            {
+                ChannelId = query.ChannelId,
+                FromId = query.FromId,
+                FromDateTime = query.FromDateTime,
+                Count = query.Count
+            };
+            var request = new GetOlderMessagesRequest(_chatConfig.ApiUrl, messagesQuery);
+            return LoadMessagesAsync(request);
         }
 
-        public async Task<IList<ChatMessageModel>> GetLatestMessagesAsync(string chatId)
+        public Task<IList<ChatMessageModel>> GetLatestMessagesAsync(string chatId)
         {
-            var request = new GetLatestMessagesRequest(_chatConfig.ApiUrl, chatId);
-
-            var response = await _httpClient.GetPagingModelAsync<ChatMessageModel, ChatMessageDto>(request,
-                _logger, Mapper.DtoToChatMessage).ConfigureAwait(false);
-
-            return response?.Data;
+            return LoadMessagesAsync(new GetLatestMessagesRequest(_chatConfig.ApiUrl, chatId));
         }
 
-        public async Task<IList<ChatMessageModel>> GetMessagesFromAsync(string chatId,
-            string messageFromId, DateTimeOffset messageFromDateTime, int? count = null)
+        public Task<IList<ChatMessageModel>> GetMessagesFromAsync(MessagesQuery query)
         {
-            var request = new GetMessagesRequest(_chatConfig.ApiUrl, chatId, messageFromId, messageFromDateTime, count);
-
-            var response = await _httpClient.GetPagingModelAsync<ChatMessageModel, ChatMessageDto>(request,
-                _logger, Mapper.DtoToChatMessage).ConfigureAwait(false);
-
-            return response?.Data;
+            var messagesQuery = new GetMessagesQuery
+            {
+                ChannelId = query.ChannelId,
+                FromId = query.FromId,
+                FromDateTime = query.FromDateTime,
+                Count = query.Count
+            };
+            var request = new GetMessagesRequest(_chatConfig.ApiUrl, messagesQuery);
+            return LoadMessagesAsync(request);
         }
 
-        public async Task<IList<ChatMessageModel>> GetAllMessagesAsync(string chatId)
+        public Task<IList<ChatMessageModel>> GetAllMessagesAsync(string chatId)
         {
-            var request = new GetMessagesRequest(_chatConfig.ApiUrl, chatId);
-
-            var response = await _httpClient.GetPagingModelAsync<ChatMessageModel, ChatMessageDto>(request,
-                _logger, Mapper.DtoToChatMessage).ConfigureAwait(false);
-
-            return response?.Data;
+            var query = new GetMessagesQuery
+            {
+                ChannelId = chatId,
+            };
+            var request = new GetMessagesRequest(_chatConfig.ApiUrl, query);
+            return LoadMessagesAsync(request);
         }
 
-        public async Task MarkMessageAsReadAsync(string chatId, string messageId)
+        public async Task MarkMessageAsReadAsync(string channelId, string messageId)
         {
-            var request = new PostMarkAsReadRequest(_chatConfig.ApiUrl, chatId, messageId);
+            var dto = new SetLastReadMessageRequest
+            {
+                ChannelId = new Guid(channelId),
+                MessageId = new Guid(messageId)
+            };
+            var request = new PostMarkAsReadRequest(_chatConfig.ApiUrl, _jsonSerializer, dto);
 
             await _httpClient.TrySendAsync(request, _logger).ConfigureAwait(false);
         }
 
-        public async Task<PagingModel<ChatUserModel>> GetContactsAsync(string nameFilter, int pageSize, int pageNumber)
+        public async Task<PagingModel<ChatUserModel>> GetContactsAsync(string nameFilter, int pageNumber, int pageSize)
         {
-            var request = new GetMembersRequest(_chatConfig.ApiUrl, nameFilter, pageSize, pageNumber);
+            var request = new GetMembersRequest(_chatConfig.ApiUrl, nameFilter, pageNumber, pageSize);
 
-            var result = await _httpClient.TrySendAndDeserializeAsync<PagingModelDto<ChatUserDto>>(request,
+            var result = await _httpClient.TrySendAndDeserializeAsync<QueryResult<MemberSummaryResponse>>(request,
                 _logger).ConfigureAwait(false);
 
             return result == null
                 ? null
-                : Mapper.PagedMembersDtoToPagingModel(result);
+                : Mapper.PagedDtoToPagingModel(result, Mapper.DtoToChatUser);
         }
 
-        public async Task<PagingModel<ChatUserModel>> GetContactsForInviteAsync(string chatId,
-            string nameFilter, int pageSize, int pageNumber)
+        public async Task<PagingModel<ChatUserModel>> GetContactsForInviteAsync(ContactsQuery query)
         {
-            var request = new GetMembersForInviteRequest(_chatConfig.ApiUrl, chatId, nameFilter, pageSize, pageNumber);
+            var dto = new GetPotentialChannelMembersRequest
+            {
+                NameFilter = query.NameFilter,
+                PageNumber = query.PageNumber,
+                PageSize = query.PageSize
+            };
 
-            var result = await _httpClient.TrySendAndDeserializeAsync<PagingModelDto<ChatUserDto>>(request,
+            var request = new GetMembersForInviteRequest(_chatConfig.ApiUrl, _jsonSerializer, dto, query.ChannelId);
+
+            var result = await _httpClient.TrySendAndDeserializeAsync<QueryResult<MemberSummaryResponse>>(request,
                 _logger).ConfigureAwait(false);
 
             return result == null
                 ? null
-                : Mapper.PagedMembersDtoToPagingModel(result);
+                : Mapper.PagedDtoToPagingModel(result, Mapper.DtoToChatUser);
         }
 
         public Task MuteChatAsync(string chatId)
@@ -178,6 +195,14 @@ namespace Softeq.XToolkit.Chat.HttpClient
             var request = new PostUnMuteChatRequest(_chatConfig.ApiUrl, chatId);
 
             return _httpClient.TrySendAsync(request, _logger);
+        }
+
+        private async Task<IList<ChatMessageModel>> LoadMessagesAsync(BaseRestRequest request)
+        {
+            var result = await _httpClient.TrySendAndDeserializeAsync<QueryResult<MessageResponse>>(request,
+                _logger).ConfigureAwait(false);
+
+            return Mapper.PagedDtoToPagingModel(result, Mapper.DtoToChatMessage)?.Data;
         }
     }
 }

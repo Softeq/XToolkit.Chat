@@ -1,3 +1,6 @@
+// Developed by Softeq Development Corporation
+// http://www.softeq.com
+
 ﻿using Softeq.XToolkit.Chat.Models;
 using Softeq.XToolkit.Chat.ViewModels;
 using Softeq.XToolkit.WhiteLabel.Interfaces;

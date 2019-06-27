@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using Softeq.XToolkit.Chat.Models;
 using Softeq.XToolkit.Chat.Models.Enum;
 using Softeq.XToolkit.Chat.Models.Interfaces;
+using Softeq.XToolkit.Chat.Models.Queries;
 using Softeq.XToolkit.Common.Extensions;
 using Softeq.XToolkit.Common.Interfaces;
 using Softeq.XToolkit.Common.Models;
@@ -43,11 +44,12 @@ namespace Softeq.XToolkit.Chat
 
         public IObservable<ChatMessageModel> MessageReceived => _messageReceived;
         public IObservable<ChatMessageModel> MessageEdited => _messageEdited;
-        public IObservable<(string DeletedMessageId, ChatSummaryModel UpdatedChatSummary)> MessageDeleted => _socketChatAdapter.MessageDeleted;
+        public IObservable<ChatDeletedMessageModel> MessageDeleted => _socketChatAdapter.MessageDeleted;
         public IObservable<ChatSummaryModel> ChatAdded => _socketChatAdapter.ChatAdded;
         public IObservable<(string ChatId, bool IsMuted)> IsChatMutedChanged => _socketChatAdapter.IsChatMutedChanged;
         public IObservable<(string ChatId, int NewCount)> UnreadMessageCountChanged => _socketChatAdapter.UnreadMessageCountChanged;
         public IObservable<string> ChatRemoved => _socketChatAdapter.ChatRemoved;
+        public IObservable<ChatSummaryModel> ChatUpdated => _socketChatAdapter.ChatUpdated;
         public IObservable<string> ChatRead => _socketChatAdapter.ChatRead;
         public IObservable<SocketConnectionStatus> ConnectionStatusChanged => _socketChatAdapter.ConnectionStatusChanged;
 
@@ -56,12 +58,15 @@ namespace Softeq.XToolkit.Chat
         public async Task<ChatSummaryModel> CreateChatAsync(string chatName, IList<string> participantsIds, string imagePath)
         {
             var result = await _socketChatAdapter.CreateChatAsync(chatName, participantsIds, imagePath);
+
             if (result == null)
             {
                 return null;
             }
+
             var userId = await GetUserIdAsync().ConfigureAwait(false);
             result.UpdateIsCreatedByMeStatus(userId);
+
             return result;
         }
 
@@ -124,13 +129,9 @@ namespace Softeq.XToolkit.Chat
             return models.ToList();
         }
 
-        public virtual async Task<IList<ChatMessageModel>> GetOlderMessagesAsync(string chatId,
-            string messageFromId = null,
-            DateTimeOffset? messageFromDateTime = null,
-            int? count = null)
+        public virtual async Task<IList<ChatMessageModel>> GetOlderMessagesAsync(MessagesQuery query)
         {
-            var messages = await _httpChatAdapter.GetOlderMessagesAsync(chatId, messageFromId, messageFromDateTime, count)
-                                                 .ConfigureAwait(false);
+            var messages = await _httpChatAdapter.GetOlderMessagesAsync(query).ConfigureAwait(false);
             return await GetMessagesWithIsMineStatus(messages);
         }
 
@@ -140,13 +141,9 @@ namespace Softeq.XToolkit.Chat
             return await GetMessagesWithIsMineStatus(messages);
         }
 
-        public async Task<IList<ChatMessageModel>> GetMessagesFromAsync(string chatId,
-                                                                        string messageFromId,
-                                                                        DateTimeOffset messageFromDateTime,
-                                                                        int? count = null)
+        public async Task<IList<ChatMessageModel>> GetMessagesFromAsync(MessagesQuery query)
         {
-            var messages = await _httpChatAdapter.GetMessagesFromAsync(chatId, messageFromId, messageFromDateTime, count)
-                                                 .ConfigureAwait(false);
+            var messages = await _httpChatAdapter.GetMessagesFromAsync(query).ConfigureAwait(false);
             return await GetMessagesWithIsMineStatus(messages);
         }
 
@@ -184,9 +181,9 @@ namespace Softeq.XToolkit.Chat
             return _httpChatAdapter.GetContactsAsync(nameFilter, pageNumber, pageSize);
         }
 
-        public Task<PagingModel<ChatUserModel>> GetContactsForInviteAsync(string chatId, string nameFilter, int pageNumber, int pageSize)
+        public Task<PagingModel<ChatUserModel>> GetContactsForInviteAsync(ContactsQuery query)
         {
-            return _httpChatAdapter.GetContactsForInviteAsync(chatId, nameFilter, pageNumber, pageSize);
+            return _httpChatAdapter.GetContactsForInviteAsync(query);
         }
 
         public Task<IList<ChatUserModel>> GetChatMembersAsync(string chatId)
@@ -244,11 +241,6 @@ namespace Softeq.XToolkit.Chat
                 _semaphoreSlim.Release();
             }
             return result;
-        }
-
-        private Task<ChatUserModel> GetUserSummaryAsync()
-        {
-            return _httpChatAdapter.GetUserSummaryAsync();
         }
 
         private async void OnMessageReceived(ChatMessageModel messageModel)

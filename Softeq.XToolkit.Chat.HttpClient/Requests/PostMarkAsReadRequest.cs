@@ -1,27 +1,24 @@
 ﻿// Developed by Softeq Development Corporation
 // http://www.softeq.com
 
-using System.Net.Http;
+using Softeq.NetKit.Chat.TransportModels.Models.CommonModels.Request.Message;
+using Softeq.XToolkit.Common.Interfaces;
 using Softeq.XToolkit.RemoteData.HttpClient;
 
 namespace Softeq.XToolkit.Chat.HttpClient.Requests
 {
-    internal class PostMarkAsReadRequest : BaseRestRequest
+    internal class PostMarkAsReadRequest : BasePostRestRequest<SetLastReadMessageRequest>
     {
-        private readonly string _apiUrl;
-        private readonly string _channelId;
-        private readonly string _messageId;
-
-        public PostMarkAsReadRequest(string apiUrl, string channelId, string messageId)
+        public PostMarkAsReadRequest(
+            string apiUrl,
+            IJsonSerializer jsonSerializer,
+            SetLastReadMessageRequest dto)
+            : base(jsonSerializer, dto)
         {
-            _apiUrl = apiUrl;
-            _channelId = channelId;
-            _messageId = messageId;
+            EndpointUrl = $"{apiUrl}/channel/{dto.ChannelId}/message/{dto.MessageId}/mark-as-read";
         }
 
-        public override HttpMethod Method => HttpMethod.Post;
-
-        public override string EndpointUrl => $"{_apiUrl}/channel/{_channelId}/message/{_messageId}/mark-as-read";
+        public override string EndpointUrl { get; }
 
         public override bool UseOriginalEndpoint => true;
     }

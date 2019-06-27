@@ -5,14 +5,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Softeq.NetKit.Chat.SignalRClient" Version="1.0.3" />
+    <PackageReference Include="Softeq.NetKit.Chat.SignalRClient" Version="1.0.5-alpha4" />
     <PackageReference Include="System.Reactive" Version="4.1.5" />
     <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="2.2.0" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\XToolkit\Softeq.XToolkit.Auth\Softeq.XToolkit.Auth.csproj" />
     <ProjectReference Include="..\Softeq.XToolkit.Chat.Models\Softeq.XToolkit.Chat.Models.csproj" />
-    <ProjectReference Include="..\..\XToolkit\Softeq.XToolkit.RemoteData\Softeq.XToolkit.RemoteData.csproj" />
-    <ProjectReference Include="..\..\XToolkit\Softeq.XToolkit.Connectivity\Softeq.XToolkit.Connectivity.csproj" />
   </ItemGroup>
 </Project>

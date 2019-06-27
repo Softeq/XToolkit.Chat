@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Softeq.XToolkit.Chat.Models;
 using Softeq.XToolkit.Chat.Models.Interfaces;
+using Softeq.XToolkit.Chat.Models.Queries;
 using Softeq.XToolkit.Common.Interfaces;
 
 namespace Softeq.XToolkit.Chat
@@ -27,22 +28,19 @@ namespace Softeq.XToolkit.Chat
         /// <summary>
         ///     Pass current chat messages count instead of page size.
         /// </summary>
-        public override async Task<IList<ChatMessageModel>> GetOlderMessagesAsync(string chatId,
-                                                                                 string messageFromId = null,
-                                                                                 DateTimeOffset? messageFromDateTime = null,
-                                                                                 int? count = null)
+        public override async Task<IList<ChatMessageModel>> GetOlderMessagesAsync(MessagesQuery query)
         {
             //await Task.Delay(1000);
             int messagesCount = 100;
             var testMessages = new List<ChatMessageModel>();
             var l = new List<int>();
-            for (int i = count.Value; i < count.Value + messagesCount; i++)
+            for (int i = query.Count.Value; i < query.Count.Value + messagesCount; i++)
             {
                 l.Add(i);
             }
-            for (int i = count.Value; i < count.Value + messagesCount; i++)
+            for (int i = query.Count.Value; i < query.Count.Value + messagesCount; i++)
             {
-                var hoursOffset = l[i - count.Value];
+                var hoursOffset = l[i - query.Count.Value];
                 var time = DateTimeOffset.Now.AddHours(-hoursOffset);
                 testMessages.Add(new ChatMessageModel
                 {
@@ -50,7 +48,7 @@ namespace Softeq.XToolkit.Chat
                     Body = i.ToString(),
                     DateTime = time
                 });
-            };
+            }
             return testMessages;
         }
 

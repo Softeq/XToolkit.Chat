@@ -4,6 +4,7 @@
 using System.Threading.Tasks;
 using Softeq.XToolkit.Chat.Models;
 using Softeq.XToolkit.Chat.Models.Interfaces;
+using Softeq.XToolkit.Chat.Models.Queries;
 using Softeq.XToolkit.Common.Models;
 
 namespace Softeq.XToolkit.Chat.Strategies.Search
@@ -23,7 +24,13 @@ namespace Softeq.XToolkit.Chat.Strategies.Search
 
         public Task<PagingModel<ChatUserModel>> Search(string query, int pageNumber, int pageSize)
         {
-            return _chatService.GetContactsForInviteAsync(_chatId, query, pageNumber, pageSize);
+            return _chatService.GetContactsForInviteAsync(new ContactsQuery
+            {
+                ChannelId = _chatId,
+                NameFilter = query,
+                PageNumber = pageNumber,
+                PageSize = pageSize
+            });
         }
     }
 }

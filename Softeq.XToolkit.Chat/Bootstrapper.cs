@@ -1,7 +1,6 @@
 ﻿// Developed by Softeq Development Corporation
 // http://www.softeq.com
 
-using Autofac;
 using Softeq.XToolkit.Chat.HttpClient;
 using Softeq.XToolkit.Chat.Interfaces;
 using Softeq.XToolkit.Chat.Manager;
@@ -20,13 +19,14 @@ namespace Softeq.XToolkit.Chat
             containerBuilder.Singleton<SignalRAdapter, ISocketChatAdapter>();
             containerBuilder.Singleton<HttpChatAdapter, IHttpChatAdapter>();
             containerBuilder.Singleton<ChatService, IChatService>();
-            containerBuilder.Singleton<ChatManager, ChatManager>();
-            containerBuilder.Singleton<ChatManager, IChatsListManager>();
-            containerBuilder.Singleton<ChatManager, IChatMessagesManager>();
-            containerBuilder.Singleton<ChatManager, IChatConnectionManager>();
             containerBuilder.Singleton<InMemoryMessagesCache, IMessagesCache>();
             containerBuilder.Singleton<FormatService, IFormatService>();
             containerBuilder.Singleton<UploadImageService, IUploadImageService>();
+
+            containerBuilder.Singleton<ChatManager>();
+            containerBuilder.Singleton<IChatsListManager>(x => x.Resolve<ChatManager>());
+            containerBuilder.Singleton<IChatMessagesManager>(x => x.Resolve<ChatManager>());
+            containerBuilder.Singleton<IChatConnectionManager>(x => x.Resolve<ChatManager>());
 
             // ViewModels
             containerBuilder.PerDependency<ChatsListViewModel>();

@@ -85,7 +85,7 @@ namespace Softeq.XToolkit.Chat.iOS.Views
                     {
                         BackgroundHexColors = StyleHelper.Style.AvatarStyles.BackgroundHexColors,
                         Font = StyleHelper.Style.AvatarStyles.Font,
-                        Size = new System.Drawing.Size((int)AvatarSize, (int)AvatarSize)
+                        Size = new System.Drawing.Size((int) AvatarSize, (int) AvatarSize)
                     });
             }
 
@@ -245,7 +245,7 @@ namespace Softeq.XToolkit.Chat.iOS.Views
                 return false;
             }
 
-            var maxWidth = width - 50 - 73 - 17 - (nfloat)AvatarSize;
+            var maxWidth = width - 50 - 73 - 17 - (nfloat) AvatarSize;
 
             if (_attachmentImageNode.Image != null)
             {
@@ -415,7 +415,7 @@ namespace Softeq.XToolkit.Chat.iOS.Views
                 NSRange textRange)
             {
                 var launcherService = Dependencies.Container.Resolve<ILauncherService>();
-                launcherService.OpenUrl(((NSUrl)value).AbsoluteString);
+                launcherService.OpenUrl(((NSUrl) value).AbsoluteString);
             }
 
             public override bool ShouldHighlightLinkAttribute(ASTextNode textNode, string attribute, NSObject value,

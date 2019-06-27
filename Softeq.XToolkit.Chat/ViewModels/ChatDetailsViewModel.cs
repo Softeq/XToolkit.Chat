@@ -167,7 +167,7 @@ namespace Softeq.XToolkit.Chat.ViewModels
         {
             members.Apply(member =>
             {
-                member.IsRemovable = CanEdit && member.Id != Summary.CreatorId;
+                member.IsRemovable = CanEdit && member.Id != Summary.Member.Id;
             });
         }
     }

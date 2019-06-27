@@ -1,3 +1,6 @@
+// Developed by Softeq Development Corporation
+// http://www.softeq.com
+
 ﻿using Android.Content;
 using Android.Graphics;
 using Android.Support.V4.Content;

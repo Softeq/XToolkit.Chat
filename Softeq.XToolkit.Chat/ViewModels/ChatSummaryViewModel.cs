@@ -46,7 +46,6 @@ namespace Softeq.XToolkit.Chat.ViewModels
         }
 
         public string ChatId => _chatSummary.Id;
-        public string CreatorId => _chatSummary.CreatorId;
         public string ChatName => _chatSummary.Name;
 
         public LastMessageBodyViewModel LastMessageViewModel { get; private set; }
@@ -164,6 +163,18 @@ namespace Softeq.XToolkit.Chat.ViewModels
             }
 
             return _chatSummary.UpdatedDate ?? _chatSummary.CreatedDate;
+        }
+
+        internal void UpdateModel(ChatSummaryModel updatedChatSummary)
+        {
+            _chatSummary = updatedChatSummary;
+
+            UpdateLastMessage(updatedChatSummary.LastMessage);
+
+            RaisePropertyChanged(() => ChatPhotoUrl);
+            RaisePropertyChanged(() => ChatName);
+            RaisePropertyChanged(() => UnreadMessageCount);
+            RaisePropertyChanged(() => IsMuted);
         }
     }
 }

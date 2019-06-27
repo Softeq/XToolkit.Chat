@@ -1,5 +1,6 @@
 ﻿// Developed by Softeq Development Corporation
 // http://www.softeq.com
+
 using System;
 
 namespace Softeq.XToolkit.Chat.Models.Interfaces

@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using Softeq.XToolkit.Chat.Exceptions;
 using Softeq.XToolkit.Chat.Interfaces;
 using Softeq.XToolkit.Chat.Models;
+using Softeq.XToolkit.Chat.Models.Queries;
 using Softeq.XToolkit.Chat.ViewModels;
 using Softeq.XToolkit.Common.Collections;
 using Softeq.XToolkit.WhiteLabel.ImagePicker;
@@ -38,29 +39,23 @@ namespace Softeq.XToolkit.Chat.Manager
             return new List<ChatMessageViewModel>();
         }
 
-        public async Task<IList<ChatMessageViewModel>> LoadOlderMessagesAsync(
-            string chatId,
-            string messageFromId,
-            DateTimeOffset messageFromDateTime,
-            int count)
+        public async Task<IList<ChatMessageViewModel>> LoadOlderMessagesAsync(MessagesQuery query)
         {
-            var models = await _messagesCache.GetOlderMessagesAsync(chatId,
-                messageFromId, messageFromDateTime, count).ConfigureAwait(false);
+            var models = await _messagesCache.GetOlderMessagesAsync(query).ConfigureAwait(false);
 
             if (models.Count > 0)
             {
                 return CreateMessagesViewModels(models);
             }
 
-            var olderMessagesModels = await _chatService.GetOlderMessagesAsync(chatId,
-                messageFromId, messageFromDateTime, count).ConfigureAwait(false);
+            var olderMessagesModels = await _chatService.GetOlderMessagesAsync(query).ConfigureAwait(false);
 
             if (olderMessagesModels != null && olderMessagesModels.Any())
             {
-                await _messagesCache.SaveMessagesAsync(chatId, olderMessagesModels).ConfigureAwait(false);
+                await _messagesCache.SaveMessagesAsync(query.ChannelId, olderMessagesModels).ConfigureAwait(false);
 
                 // TODO YP: check recursion
-                return await LoadOlderMessagesAsync(chatId, messageFromId, messageFromDateTime, count).ConfigureAwait(false);
+                return await LoadOlderMessagesAsync(query).ConfigureAwait(false);
             }
             return new List<ChatMessageViewModel>();
         }
@@ -162,21 +157,31 @@ namespace Softeq.XToolkit.Chat.Manager
             _messageEdited.OnNext(updatedMessage);
         }
 
-        private void OnMessageDeleted((string DeletedMessageId, ChatSummaryModel UpdatedChatSummary) value)
+        private void OnMessageDeleted(ChatDeletedMessageModel value)
         {
-            if (value.DeletedMessageId == null || value.UpdatedChatSummary == null)
+            if (value.MessageId == null || value.ChannelId == null)
             {
                 return;
             }
-            _messagesCache.TryDeleteMessage(value.UpdatedChatSummary.Id, value.DeletedMessageId);
-            _messageDeleted.OnNext(value.DeletedMessageId);
+
+            _messagesCache.TryDeleteMessage(value.ChannelId, value.MessageId);
+
+            _messageDeleted.OnNext(value.MessageId);
+        }
+
+        private void OnChatUpdated(ChatSummaryModel updatedChatSummary)
+        {
+            if (updatedChatSummary == null)
+            {
+                return;
+            }
+
             ModifyChatsSafely(() =>
             {
-                var chatSummary = ChatsCollection.FirstOrDefault(x => x.ChatId == value.UpdatedChatSummary.Id);
+                var chatSummary = ChatsCollection.FirstOrDefault(x => x.ChatId == updatedChatSummary.Id);
                 if (chatSummary != null)
                 {
-                    chatSummary.UpdateLastMessage(value.UpdatedChatSummary.LastMessage);
-                    chatSummary.UnreadMessageCount = value.UpdatedChatSummary.UnreadMessagesCount;
+                    chatSummary.UpdateModel(updatedChatSummary);
                 }
             });
         }

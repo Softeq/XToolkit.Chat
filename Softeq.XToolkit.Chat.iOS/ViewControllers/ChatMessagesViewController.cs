@@ -2,7 +2,6 @@
 // http://www.softeq.com
 
 using System;
-using System.Linq;
 using System.Threading.Tasks;
 using AsyncDisplayKitBindings;
 using CoreGraphics;
@@ -207,7 +206,7 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
             var tableSource = new GroupedTableDataSource<DateTimeOffset, ChatMessageViewModel>(
                 ViewModel.MessagesList.Messages,
                 Table,
-                viewModel => new ChatMessageNode(viewModel, _contextMenuHandler),
+                viewModel => GetMessageNode(viewModel),
                 TableNode.Inverted);
 
             Table.EstimatedRowHeight = MinCellHeight;
@@ -221,13 +220,23 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
             TableNode.LeadingScreensForBatching = 3;
         }
 
+        private ASCellNode GetMessageNode(ChatMessageViewModel viewModel)
+        {
+            if (viewModel.MessageType == Models.MessageType.System)
+            {
+                return new SystemMessageNode(viewModel);
+            }
+
+            return new ChatMessageNode(viewModel, _contextMenuHandler);
+        }
+
         private UIView GetHeader(UITableView tableView, nint section)
         {
-            var sectionFooter = (MessagesDateHeaderViewCell)tableView.DequeueReusableHeaderFooterView(MessagesDateHeaderViewCell.Key);
+            var sectionFooter = (MessagesDateHeaderViewCell) tableView.DequeueReusableHeaderFooterView(MessagesDateHeaderViewCell.Key);
             if (section < ViewModel.MessagesList.Messages.Count)
             {
                 var adjustedSectionIndex = TableNode.Inverted ? ViewModel.MessagesList.Messages.Count - 1 - section : section;
-                var date = ViewModel.MessagesList.Messages[(int)adjustedSectionIndex].Key;
+                var date = ViewModel.MessagesList.Messages[(int) adjustedSectionIndex].Key;
                 sectionFooter.Title = ViewModel.GetDateString(date);
             }
             return sectionFooter;
@@ -235,11 +244,10 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
 
         private void OnWillDisplayCell(int section, int row)
         {
-            Console.WriteLine("SECTION " + section +" ROW " + row);
-            if(section == ViewModel.MessagesList.Messages.Count - 1
+            if (section == ViewModel.MessagesList.Messages.Count - 1
                 && row == ViewModel.MessagesList.Messages[0].Count - 1)
             {
-                ViewModel.MessagesList.LoadOlderMessagesAsync().SafeTaskWrapper();
+                ViewModel.MessagesList.LoadOlderMessagesCommand.Execute(null);
             }
         }
 
@@ -297,7 +305,7 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
             }
             return contextMenuComponent;
         }
-        
+
         [Export(ContextMenuActions.Edit)]
         private void Edit() => _contextMenuHandler.ExecuteCommand(ContextMenuActions.Edit);
 

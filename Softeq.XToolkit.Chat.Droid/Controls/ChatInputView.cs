@@ -1,4 +1,4 @@
-﻿// Developed by Softeq Development Corporation
+// Developed by Softeq Development Corporation
 // http://www.softeq.com
 
 using System.Collections.Generic;
@@ -76,7 +76,7 @@ namespace Softeq.XToolkit.Chat.Droid.Controls
             }));
             _bindings.Add(this.SetBinding(() => _viewModelRef.Target.ImageObject).WhenSourceChanges(() =>
             {
-                if(_viewModelRef.Target.ImageObject == null)
+                if (_viewModelRef.Target.ImageObject == null)
                 {
                     _imagePreview.SetImageBitmap(null);
                     _editImageContainer.Visibility = ViewStates.Gone;

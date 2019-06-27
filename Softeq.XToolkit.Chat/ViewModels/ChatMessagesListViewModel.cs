@@ -14,6 +14,7 @@ using Softeq.XToolkit.Common.Extensions;
 using Softeq.XToolkit.WhiteLabel.Mvvm;
 using Softeq.XToolkit.Chat.Models;
 using Softeq.XToolkit.Chat.Interfaces;
+using Softeq.XToolkit.Chat.Models.Queries;
 
 namespace Softeq.XToolkit.Chat.ViewModels
 {
@@ -143,7 +144,7 @@ namespace Softeq.XToolkit.Chat.ViewModels
         }
 
         // TODO YP: check frequency of call this method
-        public async Task LoadOlderMessagesAsync()
+        private async Task LoadOlderMessagesAsync()
         {
             if (_areOlderMessagesLoaded)
             {
@@ -156,11 +157,14 @@ namespace Softeq.XToolkit.Chat.ViewModels
                 await LoadInitialMessagesAsync();
                 return;
             }
-            var olderMessages = await _chatManager.LoadOlderMessagesAsync(
-                _chatId,
-                oldestMessage.Id,
-                oldestMessage.DateTime,
-                OlderMessagesBatchCount);
+            var query = new MessagesQuery
+            {
+                ChannelId = _chatId,
+                FromId = oldestMessage.Id,
+                FromDateTime = oldestMessage.DateTime,
+                Count = OlderMessagesBatchCount
+            };
+            var olderMessages = await _chatManager.LoadOlderMessagesAsync(query);
 
             if (olderMessages.Any())
             {

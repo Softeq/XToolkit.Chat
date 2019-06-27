@@ -1,21 +1,13 @@
 ﻿// Developed by Softeq Development Corporation
 // http://www.softeq.com
 
-using System;
-
 namespace Softeq.XToolkit.Chat.HttpClient.Requests
 {
     internal class GetMessagesRequest : GetMessagesPagingRequest
     {
         private readonly string _apiUrl;
 
-        public GetMessagesRequest(
-            string apiUrl,
-            string channelId,
-            string messageFromId = null,
-            DateTimeOffset? messageFromDateTime = null,
-            int? pageSize = null)
-            : base(channelId, messageFromId, messageFromDateTime, pageSize)
+        public GetMessagesRequest(string apiUrl, GetMessagesQuery query) : base(query)
         {
             _apiUrl = apiUrl;
         }

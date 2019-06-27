@@ -2,61 +2,87 @@
 // http://www.softeq.com
 
 using System.ComponentModel;
-using Softeq.NetKit.Chat.SignalRClient.DTOs.Channel.Response;
-using Softeq.NetKit.Chat.SignalRClient.DTOs.Member;
-using Softeq.NetKit.Chat.SignalRClient.DTOs.Member.Response;
-using Softeq.NetKit.Chat.SignalRClient.DTOs.Message;
+using System.Linq;
 using Softeq.XToolkit.Chat.Models;
-using MessageType = Softeq.NetKit.Chat.SignalRClient.DTOs.Message.MessageType;
+using Softeq.NetKit.Chat.TransportModels.Enums;
+using Softeq.NetKit.Chat.TransportModels.Models.CommonModels.Response.Channel;
+using Softeq.NetKit.Chat.TransportModels.Models.CommonModels.Response.Member;
+using Softeq.NetKit.Chat.TransportModels.Models.CommonModels.Response.Message;
+using MessageType = Softeq.NetKit.Chat.TransportModels.Enums.MessageType;
 
 namespace Softeq.XToolkit.Chat.SignalRClient
 {
     internal static class Mapper
     {
-        public static ChatSummaryModel DtoToChatSummary(ChannelSummaryResponse response)
+        #region Common Mapper Methods - HttpClient.Mapper
+
+        internal static ChatSummaryModel DtoToChatSummary(ChannelSummaryResponse dto)
         {
-            if (response == null)
+            if (dto == null)
             {
                 return null;
             }
-            var lastMessage = DtoToChatMessage(response.LastMessage);
+
+            var lastMessage = DtoToChatMessage(dto.LastMessage);
+            var member = dto.Members.First();
+            var directMember = dto.Members.FirstOrDefault(x => x.Id != member.Id);
+
             return new ChatSummaryModel
             {
-                Id = response.Id.ToString(),
-                Name = response.Name,
-                PhotoUrl = response.PhotoUrl,
+                Id = dto.Id.ToString(),
+                Name = dto.Name,
+                PhotoUrl = dto.PhotoUrl,
                 LastMessage = lastMessage,
-                IsMuted = response.IsMuted,
-                CreatedDate = response.Created,
-                UpdatedDate = response.Updated,
-                UnreadMessagesCount = response.UnreadMessagesCount,
-                CreatorId = response.Creator?.Id.ToString(),
-                Type = (ChannelType)response.Type,
-                Creator = DtoToChatUser(response.Creator),
-                DirectMember = DtoToChatUser(response.DirectMember)
+                IsMuted = dto.IsMuted,
+                CreatedDate = dto.Created,
+                UpdatedDate = dto.Updated,
+                UnreadMessagesCount = dto.UnreadMessagesCount,
+                Type = (Models.ChannelType) dto.Type,
+                Member = DtoToChatUser(member),
+                DirectMember = DtoToChatUser(directMember)
             };
         }
 
-        public static ChatMessageModel DtoToChatMessage(MessageResponse response)
+        internal static ChatMessageModel DtoToChatMessage(MessageResponse dto)
         {
-            if (response == null)
+            if (dto == null)
             {
                 return null;
             }
+
             return new ChatMessageModel
             {
-                Id = response.Id.ToString(),
-                Body = response.Body,
-                ChannelId = response.ChannelId.ToString(),
-                DateTime = response.Created,
-                SenderId = response.Sender?.Id.ToString(),
-                SenderName = response.Sender?.UserName,
-                SenderPhotoUrl = response.Sender?.AvatarUrl,
-                MessageType = DtoToMessageType(response.Type),
-                IsRead = response.IsRead,
+                Id = dto.Id.ToString(),
+                Body = dto.Body,
+                ChannelId = dto.ChannelId.ToString(),
+                DateTime = dto.Created,
+                SenderId = dto.Sender?.Id.ToString(),
+                SenderName = dto.Sender?.UserName,
+                SenderPhotoUrl = dto.Sender?.AvatarUrl,
+                MessageType = DtoToMessageType(dto.Type),
+                IsRead = dto.IsRead,
                 IsDelivered = true,
-                ImageRemoteUrl = response.ImageUrl,
-                ChannelType = (ChannelType)response.ChannelType
+                ImageRemoteUrl = dto.ImageUrl,
+                ChannelType = (Models.ChannelType) dto.ChannelType
+            };
+        }
+
+        internal static ChatUserModel DtoToChatUser(MemberSummaryResponse dto)
+        {
+            if (dto == null)
+            {
+                return null;
+            }
+
+            return new ChatUserModel
+            {
+                Id = dto.Id.ToString(),
+                Username = dto.UserName,
+                PhotoUrl = dto.AvatarUrl,
+                LastActivity = dto.LastActivity,
+                IsOnline = dto.Status == UserStatus.Online,
+                Role = DtoToUserRole(dto.Role),
+                IsActive = dto.IsActive
             };
         }
 
@@ -66,23 +92,24 @@ namespace Softeq.XToolkit.Chat.SignalRClient
             {
                 case MessageType.Default:
                     return Models.MessageType.Default;
-                case MessageType.Notification:
-                    return Models.MessageType.Info;
+                case MessageType.System:
+                    return Models.MessageType.System;
                 default: throw new InvalidEnumArgumentException();
             }
         }
 
-        private static ChatUserModel DtoToChatUser(MemberSummaryResponse dto)
+        private static Models.Enum.UserRole DtoToUserRole(UserRole dto)
         {
-            return dto == null ? null : new ChatUserModel
+            switch (dto)
             {
-                Id = dto.Id.ToString(),
-                Username = dto.UserName,
-                PhotoUrl = dto.AvatarUrl,
-                LastActivity = dto.LastActivity,
-                IsOnline = dto.Status == UserStatus.Online,
-                IsActive = dto.IsActive
-            };
+                case UserRole.User:
+                    return Models.Enum.UserRole.User;
+                case UserRole.Admin:
+                    return Models.Enum.UserRole.Admin;
+                default: throw new InvalidEnumArgumentException();
+            }
         }
+
+        #endregion
     }
 }

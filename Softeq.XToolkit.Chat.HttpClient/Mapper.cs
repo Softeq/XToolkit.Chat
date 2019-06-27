@@ -1,103 +1,137 @@
 ﻿// Developed by Softeq Development Corporation
 // http://www.softeq.com
 
-using Softeq.XToolkit.Chat.HttpClient.Dtos;
-using Softeq.XToolkit.Chat.Models;
+using System;
 using System.ComponentModel;
 using System.Linq;
 using Softeq.XToolkit.Common.Models;
-using Softeq.XToolkit.RemoteData;
+using Softeq.XToolkit.Chat.Models;
+using Softeq.NetKit.Chat.TransportModels.Enums;
+using Softeq.NetKit.Chat.TransportModels.Models.CommonModels.Response.Channel;
+using Softeq.NetKit.Chat.TransportModels.Models.CommonModels.Response.Member;
+using Softeq.NetKit.Chat.TransportModels.Models.CommonModels.Response.Message;
+using Softeq.NetKit.Chat.TransportModels.Models.CommonModels.Response;
+using MessageType = Softeq.NetKit.Chat.TransportModels.Enums.MessageType;
 
 namespace Softeq.XToolkit.Chat.HttpClient
 {
     internal static class Mapper
     {
-        public static ChatSummaryModel DtoToChatSummary(ChatSummaryDto dto)
-        {
-            return dto == null ? null : new ChatSummaryModel
-            {
-                Id = dto.Id,
-                CreatedDate = dto.Created,
-                UpdatedDate = dto.Updated,
-                UnreadMessagesCount = dto.UnreadMessagesCount,
-                Name = dto.Name,
-                IsClosed = dto.IsClosed,
-                IsMuted = dto.IsMuted,
-                IsPinned = dto.IsPinned,
-                CreatorId = dto.Creator?.Id,
-                DirectMember = DtoToChatUser(dto.DirectMember),
-                Description = dto.Description,
-                WelcomeMessage = dto.WelcomeMessage,
-                Type = (ChannelType)dto.Type,
-                LastMessage = DtoToChatMessage(dto.LastMessage),
-                PhotoUrl = dto.PhotoUrl
-            };
-        }
+        #region Common Mapper Methods - SignalRClient.Mapper
 
-        public static ChatMessageModel DtoToChatMessage(ChatMessageDto dto)
+        internal static ChatSummaryModel DtoToChatSummary(ChannelSummaryResponse response)
         {
-            return dto == null ? null : new ChatMessageModel
+            if (response == null)
             {
-                Id = dto.Id.ToString(),
-                ChannelId = dto.ChannelId,
-                SenderId = dto.Sender?.Id,
-                SenderName = dto.Sender?.UserName,
-                SenderPhotoUrl = dto.Sender?.AvatarUrl,
-                MessageType = DtoToMessageType(dto.Type),
-                Body = dto.Body,
-                DateTime = dto.Created,
-                IsRead = dto.IsRead,
-                IsDelivered = true,
-                ImageRemoteUrl = dto.ImageUrl,
-                ChannelType = (ChannelType)dto.ChannelType
-            };
-        }
-
-        public static ChatUserModel DtoToChatUser(ChatUserDto dto)
-        {
-            return dto == null ? null : new ChatUserModel
-            {
-                Id = dto.Id,
-                Username = dto.UserName,
-                PhotoUrl = dto.AvatarUrl,
-                LastActivity = dto.LastActivity,
-                IsOnline = dto.Status == ChatUserStatusDto.Online,
-                IsActive =dto.IsActive
-            };
-        }
-
-        public static MessageType DtoToMessageType(MessageTypeDto dto)
-        {
-            switch (dto)
-            {
-                case MessageTypeDto.Default:
-                    return MessageType.Default;
-                case MessageTypeDto.Notification:
-                    return MessageType.Info;
-                default:
-                    return MessageType.Unknown;
-                    //throw new InvalidEnumArgumentException("messageType", (int)dto, typeof(MessageTypeDto));
+                return null;
             }
+            var lastMessage = DtoToChatMessage(response.LastMessage);
+            var member = response.Members.First();
+            var directMember = response.Members.FirstOrDefault(x => x.Id != member.Id);
+
+            return new ChatSummaryModel
+            {
+                Id = response.Id.ToString(),
+                Name = response.Name,
+                PhotoUrl = response.PhotoUrl,
+                LastMessage = lastMessage,
+                IsMuted = response.IsMuted,
+                CreatedDate = response.Created,
+                UpdatedDate = response.Updated,
+                UnreadMessagesCount = response.UnreadMessagesCount,
+                Type = (Models.ChannelType) response.Type,
+                Member = DtoToChatUser(member),
+                DirectMember = DtoToChatUser(directMember)
+            };
         }
 
-        public static PagingModel<ChatUserModel> PagedMembersDtoToPagingModel(PagingModelDto<ChatUserDto> dto)
+        internal static ChatMessageModel DtoToChatMessage(MessageResponse response)
         {
-            if (dto?.Items == null)
+            if (response == null)
+            {
+                return null;
+            }
+            return new ChatMessageModel
+            {
+                Id = response.Id.ToString(),
+                Body = response.Body,
+                ChannelId = response.ChannelId.ToString(),
+                DateTime = response.Created,
+                SenderId = response.Sender?.Id.ToString(),
+                SenderName = response.Sender?.UserName,
+                SenderPhotoUrl = response.Sender?.AvatarUrl,
+                MessageType = DtoToMessageType(response.Type),
+                IsRead = response.IsRead,
+                IsDelivered = true,
+                ImageRemoteUrl = response.ImageUrl,
+                ChannelType = (Models.ChannelType) response.ChannelType
+            };
+        }
+
+        internal static ChatUserModel DtoToChatUser(MemberSummaryResponse dto)
+        {
+            if (dto == null)
             {
                 return null;
             }
 
-            var items = dto.Items
-                .Where(y => y.AvatarUrl != null || !string.IsNullOrEmpty(y.UserName))
-                .Select(DtoToChatUser)
+            return new ChatUserModel
+            {
+                Id = dto.Id.ToString(),
+                Username = dto.UserName,
+                PhotoUrl = dto.AvatarUrl,
+                LastActivity = dto.LastActivity,
+                IsOnline = dto.Status == UserStatus.Online,
+                Role = DtoToUserRole(dto.Role),
+                IsActive = dto.IsActive
+            };
+        }
+
+        private static Models.MessageType DtoToMessageType(MessageType dto)
+        {
+            switch (dto)
+            {
+                case MessageType.Default:
+                    return Models.MessageType.Default;
+                case MessageType.System:
+                    return Models.MessageType.System;
+                default: throw new InvalidEnumArgumentException();
+            }
+        }
+
+        private static Models.Enum.UserRole DtoToUserRole(UserRole dto)
+        {
+            switch (dto)
+            {
+                case UserRole.User:
+                    return Models.Enum.UserRole.User;
+                case UserRole.Admin:
+                    return Models.Enum.UserRole.Admin;
+                default: throw new InvalidEnumArgumentException();
+            }
+        }
+
+        #endregion
+
+        internal static PagingModel<TModel> PagedDtoToPagingModel<TDto, TModel>(
+            QueryResult<TDto> dto,
+            Func<TDto, TModel> itemsMapper)
+        {
+            if (dto?.Results == null)
+            {
+                return null;
+            }
+
+            var items = dto.Results
+                .Select(itemsMapper)
                 .ToList();
 
-            return new PagingModel<ChatUserModel>
+            return new PagingModel<TModel>
             {
                 Page = dto.PageNumber,
                 Data = items,
                 TotalNumberOfPages = dto.TotalNumberOfPages,
-                TotalNumberOfRecords = dto.TotalNumberOfRecords,
+                TotalNumberOfRecords = dto.TotalNumberOfItems,
                 PageSize = dto.PageSize
             };
         }

@@ -1,7 +1,11 @@
+// Developed by Softeq Development Corporation
+// http://www.softeq.com
+
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Softeq.XToolkit.Chat.Models;
+using Softeq.XToolkit.Chat.Models.Queries;
 using Softeq.XToolkit.Chat.ViewModels;
 
 namespace Softeq.XToolkit.Chat.Interfaces
@@ -21,11 +25,7 @@ namespace Softeq.XToolkit.Chat.Interfaces
 
         Task<IList<ChatMessageViewModel>> LoadInitialMessagesAsync(string chatId, int count);
 
-        Task<IList<ChatMessageViewModel>> LoadOlderMessagesAsync(
-            string chatId,
-            string messageFromId,
-            DateTimeOffset messageFromDateTime,
-            int count);
+        Task<IList<ChatMessageViewModel>> LoadOlderMessagesAsync(MessagesQuery query);
 
         Task MarkMessageAsReadAsync(string chatId, string messageId);
     }

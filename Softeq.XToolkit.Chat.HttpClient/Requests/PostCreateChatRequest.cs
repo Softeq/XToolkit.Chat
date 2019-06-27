@@ -1,20 +1,20 @@
 ﻿// Developed by Softeq Development Corporation
 // http://www.softeq.com
 
-using Softeq.XToolkit.Chat.HttpClient.Dtos;
+using Softeq.NetKit.Chat.TransportModels.Models.CommonModels.Request.Channel;
 using Softeq.XToolkit.Common.Interfaces;
 using Softeq.XToolkit.RemoteData.HttpClient;
 
 namespace Softeq.XToolkit.Chat.HttpClient.Requests
 {
-    internal class PostCreateChatRequest : BasePostRestRequest<CreateChatDto>
+    internal class PostCreateChatRequest : BasePostRestRequest<CreateChannelRequest>
     {
         private readonly string _apiUrl;
 
         public PostCreateChatRequest(
             string apiUrl,
             IJsonSerializer jsonSerializer,
-            CreateChatDto dto)
+            CreateChannelRequest dto)
             : base(jsonSerializer, dto)
         {
             _apiUrl = apiUrl;

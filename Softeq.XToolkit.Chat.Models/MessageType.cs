@@ -7,6 +7,7 @@ namespace Softeq.XToolkit.Chat.Models
     {
         Unknown = -1,
         Default = 0,
-        Info = 1
+        Forward = 2,
+        System = 3
     }
 }

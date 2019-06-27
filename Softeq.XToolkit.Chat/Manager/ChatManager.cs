@@ -12,7 +12,9 @@ using Softeq.XToolkit.Chat.Interfaces;
 using Softeq.XToolkit.Chat.Models;
 using Softeq.XToolkit.Chat.Models.Enum;
 using Softeq.XToolkit.Chat.Models.Interfaces;
+using Softeq.XToolkit.Chat.Models.Queries;
 using Softeq.XToolkit.Chat.ViewModels;
+using Softeq.XToolkit.Common;
 using Softeq.XToolkit.Common.Collections;
 using Softeq.XToolkit.Common.Extensions;
 using Softeq.XToolkit.Common.Interfaces;
@@ -44,7 +46,6 @@ namespace Softeq.XToolkit.Chat.Manager
         private readonly ISubject<ConnectionStatus> _connectionStatusChanged = new Subject<ConnectionStatus>();
 
         private ConnectionStatus _connectionStatus = ConnectionStatus.Online;
-        private int _totalUnreadMessagesCount;
         private string _activeChatId;
 
         public ChatManager(
@@ -62,11 +63,11 @@ namespace Softeq.XToolkit.Chat.Manager
             _localCache = localCache;
             _logger = logManager.GetLogger<ChatManager>();
 
-            _messagesCache.Init(new Common.TaskReference<string, string, DateTimeOffset, IList<ChatMessageModel>>(
-                (chatId, messageFromId, messageFromDateTime) =>
+            _messagesCache.Init(new TaskReference<MessagesQuery, IList<ChatMessageModel>>(query =>
             {
-                return _chatService.GetMessagesFromAsync(chatId, messageFromId, messageFromDateTime);
+                return _chatService.GetMessagesFromAsync(query);
             }));
+
             _messagesCache.CacheUpdated += OnCacheUpdated;
             ChatsCollection.CollectionChanged += OnChatsCollectionCollectionChanged;
 
@@ -75,6 +76,7 @@ namespace Softeq.XToolkit.Chat.Manager
             _subscriptions.Add(_chatService.MessageDeleted.Subscribe(OnMessageDeleted));
             _subscriptions.Add(_chatService.ChatAdded.Subscribe(x => TryAddChat(x)));
             _subscriptions.Add(_chatService.ChatRemoved.Subscribe(OnChatRemoved));
+            _subscriptions.Add(_chatService.ChatUpdated.Subscribe(OnChatUpdated));
             _subscriptions.Add(_chatService.ChatRead.Subscribe(OnChatRead));
 
             _subscriptions.Add(_chatService.ConnectionStatusChanged.Subscribe(OnConnectionStatusChanged));

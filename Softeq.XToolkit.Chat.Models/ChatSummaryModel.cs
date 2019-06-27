@@ -16,9 +16,17 @@ namespace Softeq.XToolkit.Chat.Models
         public bool IsClosed { get; set; }
         public bool IsMuted { get; set; }
         public bool IsPinned { get; set; }
-        public string CreatorId { get; set; }
-        public ChatUserModel Creator { get; set; }
+
+        /// <summary>
+        /// Must be personalized for current user
+        /// </summary>
+        public ChatUserModel Member { get; set; }
+
+        /// <summary>
+        /// Only for direct channels
+        /// </summary>
         public ChatUserModel DirectMember { get; set; }
+
         public string Description { get; set; }
         public string WelcomeMessage { get; set; }
         public ChannelType Type { get; set; }
@@ -29,10 +37,11 @@ namespace Softeq.XToolkit.Chat.Models
         public bool AreMoreThanThreeUsersTyping { get; set; }
         public bool IsCreatedByMe { get; private set; }
 
-        // TODO YP: move to backend
         public void UpdateIsCreatedByMeStatus(string currentUserId)
         {
-            IsCreatedByMe = CreatorId == currentUserId;
+            // TODO YP: Check of Id can be removed after fix personalized member on backend side
+            IsCreatedByMe = Member.Id == currentUserId
+                && Member.Role == Enum.UserRole.Admin;
 
             UpdateModelByType();
         }
@@ -51,10 +60,10 @@ namespace Softeq.XToolkit.Chat.Models
                     Name = DirectMember.Username;
                     PhotoUrl = DirectMember.PhotoUrl;
                 }
-                else if (Creator != null)
+                else if (Member != null)
                 {
-                    Name = Creator.Username;
-                    PhotoUrl = Creator.PhotoUrl;
+                    Name = Member.Username;
+                    PhotoUrl = Member.PhotoUrl;
                 }
 
                 IsCreatedByMe = false;

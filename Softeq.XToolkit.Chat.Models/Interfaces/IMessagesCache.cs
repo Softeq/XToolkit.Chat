@@ -4,22 +4,23 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Softeq.XToolkit.Chat.Models.Queries;
 using Softeq.XToolkit.Common;
 
 namespace Softeq.XToolkit.Chat.Models.Interfaces
 {
     public interface IMessagesCache
     {
-        void Init(TaskReference<string, string, DateTimeOffset, IList<ChatMessageModel>> getMessagesAsync);
+        void Init(TaskReference<MessagesQuery, IList<ChatMessageModel>> getMessagesAsync);
 
         event Action<CacheUpdatedResults> CacheUpdated;
 
         Task<List<ChatMessageModel>> GetLatestMessagesAsync(string chatId, int count);
-        Task<List<ChatMessageModel>> GetOlderMessagesAsync(string chatId, string messageFromId, DateTimeOffset messageFromDateTime, int count);
+        Task<List<ChatMessageModel>> GetOlderMessagesAsync(MessagesQuery query);
 
         void TryAddMessage(ChatMessageModel chatMessage);
         void TryEditMessage(ChatMessageModel updatedMessage);
-        void TryDeleteMessage(string chatId, string deletedMessageId);
+        void TryDeleteMessage(string channelId, string deletedMessageId);
         void UpdateSentMessage(ChatMessageModel sentMessage, ChatMessageModel deliveredMessage);
 
         ChatMessageModel FindDuplicateMessage(ChatMessageModel message);
