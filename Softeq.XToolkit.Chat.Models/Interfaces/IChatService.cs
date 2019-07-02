@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Softeq.XToolkit.Chat.Models.Enum;
+using Softeq.XToolkit.Chat.Models.Queries;
 using Softeq.XToolkit.Common.Models;
 
 namespace Softeq.XToolkit.Chat.Models.Interfaces
@@ -12,11 +13,12 @@ namespace Softeq.XToolkit.Chat.Models.Interfaces
     public interface IChatService
     {
         IObservable<ChatMessageModel> MessageReceived { get; }
-        IObservable<(string DeletedMessageId, ChatSummaryModel UpdatedChatSummary)> MessageDeleted { get; }
+        IObservable<ChatDeletedMessageModel> MessageDeleted { get; }
         IObservable<ChatMessageModel> MessageEdited { get; }
 
         IObservable<ChatSummaryModel> ChatAdded { get; }
         IObservable<string> ChatRemoved { get; }
+        IObservable<ChatSummaryModel> ChatUpdated { get; }
         IObservable<string> ChatRead { get; }
         IObservable<(string ChatId, bool IsMuted)> IsChatMutedChanged { get; }
         IObservable<(string ChatId, int NewCount)> UnreadMessageCountChanged { get; }
@@ -27,6 +29,7 @@ namespace Softeq.XToolkit.Chat.Models.Interfaces
         Task<IList<ChatSummaryModel>> GetChatsListAsync();
         Task<ChatSummaryModel> CreateChatAsync(string chatName, IList<string> participantsIds, string imagePath);
         Task<ChatSummaryModel> CreateDirectChatAsync(string memberId);
+        Task EditChatAsync(ChatSummaryModel chatSummary);
         Task CloseChatAsync(string chatId);
         Task LeaveChatAsync(string chatId);
         Task InviteMembersAsync(string chatId, IList<string> participantsIds);
@@ -34,15 +37,9 @@ namespace Softeq.XToolkit.Chat.Models.Interfaces
         Task MuteChatAsync(string chatId);
         Task UnMuteChatAsync(string chatId);
 
-        Task<IList<ChatMessageModel>> GetOlderMessagesAsync(string chatId,
-                                                            string messageFromId = null,
-                                                            DateTimeOffset? messageFromDateTime = null,
-                                                            int? count = null);
+        Task<IList<ChatMessageModel>> GetOlderMessagesAsync(MessagesQuery query);
         Task<IList<ChatMessageModel>> GetLatestMessagesAsync(string chatId);
-        Task<IList<ChatMessageModel>> GetMessagesFromAsync(string chatId,
-                                                           string messageFromId,
-                                                           DateTimeOffset messageFromDateTime,
-                                                           int? count = null);
+        Task<IList<ChatMessageModel>> GetMessagesFromAsync(MessagesQuery query);
         Task<IList<ChatMessageModel>> GetAllMessagesAsync(string chatId);
 
         Task MarkMessageAsReadAsync(string chatId, string messageId);
@@ -54,13 +51,11 @@ namespace Softeq.XToolkit.Chat.Models.Interfaces
 
         Task<PagingModel<ChatUserModel>> GetContactsAsync(string nameFilter, int pageNumber, int pageSize);
 
-        Task<PagingModel<ChatUserModel>> GetContactsForInviteAsync(string chatId,
-            string nameFilter, int pageNumber, int pageSize);
+        Task<PagingModel<ChatUserModel>> GetContactsForInviteAsync(ContactsQuery query);
 
         void ForceReconnect();
         void ForceDisconnect();
 
-        Task EditChatAsync(ChatSummaryModel chatSummary);
         void Logout();
     }
 }

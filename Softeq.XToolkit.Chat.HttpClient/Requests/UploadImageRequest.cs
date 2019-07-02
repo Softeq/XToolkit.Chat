@@ -48,6 +48,7 @@ namespace Softeq.XToolkit.Chat.HttpClient.Requests
 
         public override HttpContent GetContent()
         {
+            _stream.Seek(0, SeekOrigin.Begin);
             return new StreamContent(_stream);
         }
 

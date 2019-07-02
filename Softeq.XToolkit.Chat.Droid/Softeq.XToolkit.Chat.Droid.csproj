@@ -100,6 +100,7 @@
     <Compile Include="Controls\ChatInputView.cs" />
     <Compile Include="Controls\SearchNoResultView.cs" />
     <Compile Include="Controls\ContextMenuHandler.cs" />
+    <Compile Include="ViewHolders\ConversationSystemViewHolder.cs" />
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\layout\activity_chat_details.xml" />
@@ -131,6 +132,8 @@
     <AndroidResource Include="Resources\drawable\chat_input_background.xml" />
     <AndroidResource Include="Resources\layout\view_chat_input.xml" />
     <AndroidResource Include="Resources\layout\view_search_no_results.xml" />
+    <AndroidResource Include="Resources\layout\item_chat_conversation_system.xml" />
+    <AndroidResource Include="Resources\drawable\chat_bg_conversation_system.xml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Views\" />

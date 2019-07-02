@@ -12,6 +12,7 @@ using Softeq.XToolkit.WhiteLabel.Navigation;
 using Softeq.XToolkit.Chat.Models.Interfaces;
 using System.Linq;
 using Softeq.XToolkit.Chat.Models;
+using Softeq.XToolkit.WhiteLabel.ImagePicker;
 
 namespace Softeq.XToolkit.Chat.ViewModels
 {
@@ -21,16 +22,19 @@ namespace Softeq.XToolkit.Chat.ViewModels
         private readonly IPageNavigationService _pageNavigationService;
         private readonly IChatLocalizedStrings _localizedStrings;
         private readonly IFormatService _formatService;
+        private readonly IImagePickerService _imagePicker;
 
         private ChatSummaryViewModel _chatSummaryViewModel;
 
         public ChatMessagesViewModel(
+            IImagePickerService imagePicker,
             IPageNavigationService pageNavigationService,
             IChatLocalizedStrings localizedStrings,
             IFormatService formatService,
             ChatManager chatManager,
             ConnectionStatusViewModel connectionStatusViewModel)
         {
+            _imagePicker = imagePicker;
             _pageNavigationService = pageNavigationService;
             _localizedStrings = localizedStrings;
             _formatService = formatService;
@@ -130,7 +134,7 @@ namespace Softeq.XToolkit.Chat.ViewModels
                 MessageAddedCommand?.Execute(null);
             });
 
-            MessageInput = new ChatMessageInputViewModel(chatId, _chatManager, _localizedStrings);
+            MessageInput = new ChatMessageInputViewModel(chatId, _chatManager, _imagePicker, _localizedStrings);
         }
 
         private async void DeleteMessage(ChatMessageViewModel message)

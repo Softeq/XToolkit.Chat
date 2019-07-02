@@ -19,10 +19,6 @@ namespace Softeq.XToolkit.Chat.Droid.Adapters
     public class ConversationsObservableRecyclerViewAdapter
         : GroupedObservableRecyclerViewAdapter<DateTimeOffset, ChatMessageViewModel>
     {
-        private const int InfoMessageViewType = 1;
-        private const int OutComingMessageViewType = 2;
-        private const int InComingMessageViewType = 3;
-
         private readonly WeakAction<int> _collectionChangedAction;
         private readonly WeakAction<int> _lastItemsLoadedAction;
         private readonly WeakFunc<DateTimeOffset, string> _headerGroupConverter;
@@ -48,31 +44,42 @@ namespace Softeq.XToolkit.Chat.Droid.Adapters
         {
             var data = DataSource[position];
 
-            if (data.ItemType == GroupItemTypes.Data)
+            if (data.ItemType == GroupItemTypes.Header)
             {
-                if (((GroupDataItem<ChatMessageViewModel>)data).Data.IsMine)
-                {
-                    return OutComingMessageViewType;
-                }
-                return InComingMessageViewType;
+                return (int) ViewHolderType.Header;
             }
 
-            return InfoMessageViewType;
+            var message = ((GroupDataItem<ChatMessageViewModel>) data).Data;
+
+            if (message.MessageType == Models.MessageType.System)
+            {
+                return (int) ViewHolderType.SystemMessage;
+            }
+
+            if (message.IsMine)
+            {
+                return (int) ViewHolderType.OutComingMessage;
+            }
+
+            return (int) ViewHolderType.InComingMessage;
         }
 
         public override RecyclerView.ViewHolder OnCreateViewHolder(ViewGroup parent, int viewType)
         {
-            switch (viewType)
+            switch ((ViewHolderType) viewType)
             {
-                case InfoMessageViewType:
+                case ViewHolderType.Header:
                     return new ConversationInfoViewHolder(LayoutInflater.From(parent.Context)
                         .Inflate(Resource.Layout.item_chat_conversation_info, parent, false), CreateHeaderModel);
-                case InComingMessageViewType:
+                case ViewHolderType.InComingMessage:
                     return new ConversationViewHolder(LayoutInflater.From(parent.Context)
                         .Inflate(Resource.Layout.item_chat_conversation_incoming, parent, false), true, _actionHandler);
-                case OutComingMessageViewType:
+                case ViewHolderType.OutComingMessage:
                     return new ConversationViewHolder(LayoutInflater.From(parent.Context)
                         .Inflate(Resource.Layout.item_chat_conversation_outcoming, parent, false), false, _actionHandler);
+                case ViewHolderType.SystemMessage:
+                    return new ConversationSystemViewHolder(LayoutInflater.From(parent.Context)
+                        .Inflate(Resource.Layout.item_chat_conversation_system, parent, false));
                 default:
                     throw new InvalidEnumArgumentException(nameof(viewType), viewType, typeof(int));
             }
@@ -163,6 +170,14 @@ namespace Softeq.XToolkit.Chat.Droid.Adapters
                     }
                 }
             }
+        }
+
+        private enum ViewHolderType
+        {
+            Header = 1,
+            OutComingMessage = 2,
+            InComingMessage = 3,
+            SystemMessage = 4
         }
     }
 }

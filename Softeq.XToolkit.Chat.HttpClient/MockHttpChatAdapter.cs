@@ -7,6 +7,7 @@ using System.Reactive.Subjects;
 using System.Threading.Tasks;
 using Softeq.XToolkit.Chat.Models;
 using Softeq.XToolkit.Chat.Models.Interfaces;
+using Softeq.XToolkit.Chat.Models.Queries;
 using Softeq.XToolkit.Common.Models;
 
 namespace Softeq.XToolkit.Chat.HttpClient
@@ -131,16 +132,6 @@ namespace Softeq.XToolkit.Chat.HttpClient
             };
         }
 
-        public async Task<IList<ChatMessageModel>> GetLastReadMessagesAsync(string chatId, string earliestMessageId = null, DateTimeOffset? earliestMessageDateTime = null)
-        {
-            return null;
-        }
-
-        public async Task<IList<ChatMessageModel>> GetUnreadMessagesAsync(string chatId, string latestMessageId = null, DateTimeOffset? latestMessageDateTime = null)
-        {
-            return null;
-        }
-
         public async Task MarkMessageAsReadAsync(string chatId, string messageId)
         {
 
@@ -151,7 +142,7 @@ namespace Softeq.XToolkit.Chat.HttpClient
             throw new NotImplementedException();
         }
 
-        public Task<PagingModel<ChatUserModel>> GetContactsForInviteAsync(string chatId, string nameFilter, int pageSize, int pageNumber)
+        public Task<PagingModel<ChatUserModel>> GetContactsForInviteAsync(ContactsQuery query)
         {
             throw new NotImplementedException();
         }
@@ -308,7 +299,7 @@ namespace Softeq.XToolkit.Chat.HttpClient
             throw new NotImplementedException();
         }
 
-        public Task<IList<ChatMessageModel>> GetOlderMessagesAsync(string chatId, string messageFromId = null, DateTimeOffset? messageFromDateTime = null, int? count = null)
+        public Task<IList<ChatMessageModel>> GetOlderMessagesAsync(MessagesQuery query)
         {
             throw new NotImplementedException();
         }
@@ -318,7 +309,7 @@ namespace Softeq.XToolkit.Chat.HttpClient
             throw new NotImplementedException();
         }
 
-        public Task<IList<ChatMessageModel>> GetMessagesFromAsync(string chatId, string messageFromId, DateTimeOffset messageFromDateTime, int? count = null)
+        public Task<IList<ChatMessageModel>> GetMessagesFromAsync(MessagesQuery query)
         {
             throw new NotImplementedException();
         }

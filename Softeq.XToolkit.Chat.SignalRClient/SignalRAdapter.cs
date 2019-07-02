@@ -9,36 +9,34 @@ using System.Reactive.Linq;
 using System.Reactive.Subjects;
 using System.Threading;
 using System.Threading.Tasks;
-using Softeq.NetKit.Chat.SignalRClient.DTOs.Channel;
-using Softeq.NetKit.Chat.SignalRClient.DTOs.Channel.Request;
-using Softeq.NetKit.Chat.SignalRClient.DTOs.Member.Request;
-using Softeq.NetKit.Chat.SignalRClient.DTOs.Message.Request;
-using Softeq.XToolkit.Auth;
+using Softeq.NetKit.Chat.TransportModels.Models.CommonModels.Request.Channel;
+using Softeq.NetKit.Chat.TransportModels.Models.CommonModels.Request.Member;
+using Softeq.NetKit.Chat.TransportModels.Models.CommonModels.Request.Message;
 using Softeq.XToolkit.Chat.Models;
 using Softeq.XToolkit.Chat.Models.Enum;
-using Softeq.XToolkit.Chat.Models.Exceptions;
 using Softeq.XToolkit.Chat.Models.Interfaces;
 using Softeq.XToolkit.Common;
 using Softeq.XToolkit.Common.Extensions;
 using Softeq.XToolkit.Common.Interfaces;
-using Softeq.XToolkit.RemoteData;
-using ChannelType = Softeq.NetKit.Chat.SignalRClient.DTOs.Channel.ChannelType;
+using ChannelType = Softeq.NetKit.Chat.TransportModels.Enums.ChannelType;
 
 namespace Softeq.XToolkit.Chat.SignalRClient
 {
     public class SignalRAdapter : ISocketChatAdapter
     {
-        private readonly IRefreshTokenService _refreshTokenService;
         private readonly ILogger _logger;
         private readonly SignalRClient _signalRClient;
+        private readonly IChatAuthService _authService;
 
         private readonly SemaphoreSlim _semaphoreSlim = new SemaphoreSlim(1, 1);
+
         private readonly ISubject<ChatMessageModel> _messageReceived = new Subject<ChatMessageModel>();
+        private readonly ISubject<ChatDeletedMessageModel> _messageDeleted = new Subject<ChatDeletedMessageModel>();
         private readonly ISubject<ChatMessageModel> _messageEdited = new Subject<ChatMessageModel>();
-        private readonly ISubject<(string DeletedMessageId, ChatSummaryModel UpdatedChatSummary)> _messageDeleted
-            = new Subject<(string DeletedMessageId, ChatSummaryModel UpdatedChatSummary)>();
         private readonly ISubject<ChatSummaryModel> _chatAdded = new Subject<ChatSummaryModel>();
+        private readonly ISubject<ChatSummaryModel> _chatUpdated = new Subject<ChatSummaryModel>();
         private readonly ISubject<string> _chatRemoved = new Subject<string>();
+        private readonly ISubject<string> _chatRead = new Subject<string>();
         private readonly ISubject<SocketConnectionStatus> _connectionStatusChanged = new Subject<SocketConnectionStatus>();
 
         private string _memberId;
@@ -46,14 +44,13 @@ namespace Softeq.XToolkit.Chat.SignalRClient
         private bool _canReconnectAutomatically = true;
 
         public SignalRAdapter(
-            IAccountService accountService,
-            IRefreshTokenService refreshTokenService,
+            IChatAuthService authService,
             ILogManager logManager,
             IChatConfig chatConfig)
         {
-            _refreshTokenService = refreshTokenService;
+            _authService = authService;
             _logger = logManager.GetLogger<SignalRAdapter>();
-            _signalRClient = new SignalRClient(chatConfig.BaseUrl, accountService);
+            _signalRClient = new SignalRClient(chatConfig.BaseUrl, _authService.GetAccessToken);
 
             SubscribeToEvents();
 
@@ -62,21 +59,14 @@ namespace Softeq.XToolkit.Chat.SignalRClient
         }
 
         public IObservable<ChatMessageModel> MessageReceived => _messageReceived;
-
-        public IObservable<(string DeletedMessageId, ChatSummaryModel UpdatedChatSummary)> MessageDeleted => _messageDeleted;
-
+        public IObservable<ChatDeletedMessageModel> MessageDeleted => _messageDeleted;
         public IObservable<ChatMessageModel> MessageEdited => _messageEdited;
-
         public IObservable<ChatSummaryModel> ChatAdded => _chatAdded;
-
         public IObservable<string> ChatRemoved => _chatRemoved;
-
-        public IObservable<string> ChatRead { get; private set; }
-
+        public IObservable<ChatSummaryModel> ChatUpdated => _chatUpdated;
+        public IObservable<string> ChatRead => _chatRead;
         public IObservable<(string ChatId, bool IsMuted)> IsChatMutedChanged => null;
-
         public IObservable<(string ChatId, int NewCount)> UnreadMessageCountChanged => null;
-
         public IObservable<SocketConnectionStatus> ConnectionStatusChanged => _connectionStatusChanged;
 
         public SocketConnectionStatus ConnectionStatus { get; private set; } = SocketConnectionStatus.Connecting;
@@ -87,8 +77,7 @@ namespace Softeq.XToolkit.Chat.SignalRClient
             {
                 var closeChannelRequest = new ChannelRequest
                 {
-                    ChannelId = new Guid(channelId),
-                    RequestId = Guid.NewGuid().ToString()
+                    ChannelId = new Guid(channelId)
                 };
                 return _signalRClient.CloseChannelAsync(closeChannelRequest);
             }));
@@ -100,8 +89,7 @@ namespace Softeq.XToolkit.Chat.SignalRClient
             {
                 var channelRequestModel = new ChannelRequest
                 {
-                    ChannelId = new Guid(channelId),
-                    RequestId = Guid.NewGuid().ToString()
+                    ChannelId = new Guid(channelId)
                 };
                 return _signalRClient.LeaveChannelAsync(channelRequestModel);
             }));
@@ -235,7 +223,7 @@ namespace Softeq.XToolkit.Chat.SignalRClient
         {
             _signalRClient.AccessTokenExpired += () =>
             {
-                _refreshTokenService.RefreshToken(null);
+                _authService.RefreshToken();
             };
 
             _signalRClient.MessageAdded += message =>
@@ -244,57 +232,50 @@ namespace Softeq.XToolkit.Chat.SignalRClient
                 messageModel.UpdateIsMineStatus(_memberId);
                 _messageReceived.OnNext(messageModel);
             };
+
             _signalRClient.MessageUpdated += message =>
             {
                 _messageEdited.OnNext(Mapper.DtoToChatMessage(message));
             };
-            _signalRClient.MessageDeleted += (deletedMessageId, updatedChatSummary) =>
+
+            _signalRClient.MessageDeleted += (messageId, channelId) =>
             {
-                _messageDeleted.OnNext((deletedMessageId.ToString(), Mapper.DtoToChatSummary(updatedChatSummary)));
+                _messageDeleted.OnNext(new ChatDeletedMessageModel
+                {
+                    MessageId = messageId.ToString(),
+                    ChannelId = channelId.ToString()
+                });
             };
-            _signalRClient.ChannelAdded += channel =>
+
+            _signalRClient.ChannelClosed += channelId =>
+            {
+                _chatRemoved.OnNext(channelId.ToString());
+            };
+
+            _signalRClient.ChannelUpdated += updatedChannel =>
+            {
+                var chat = Mapper.DtoToChatSummary(updatedChannel);
+                chat.UpdateIsCreatedByMeStatus(_memberId);
+                _chatUpdated.OnNext(chat);
+            };
+
+            _signalRClient.LastReadMessageUpdated += channelId =>
+            {
+                _chatRead.OnNext(channelId.ToString());
+            };
+
+            _signalRClient.MemberLeft += channelId =>
+            {
+                _chatRemoved.OnNext(channelId.ToString());
+            };
+
+            _signalRClient.MemberJoined += channel =>
             {
                 var chat = Mapper.DtoToChatSummary(channel);
                 chat.UpdateIsCreatedByMeStatus(_memberId);
                 _chatAdded.OnNext(chat);
             };
-            _signalRClient.ChannelClosed += channel =>
-            {
-                _chatRemoved.OnNext(channel.Id.ToString());
-            };
 
-            ChatRead = Observable
-                .FromEvent<Guid>(
-                    h => _signalRClient.LastReadMessageUpdated += h,
-                    h => _signalRClient.LastReadMessageUpdated -= h)
-                .Select(x => x.ToString());
-
-            _signalRClient.MemberLeft += (user, channelId) =>
-            {
-                if (user == null)
-                {
-                    return;
-                }
-
-                if (user.Id.ToString() == _memberId)
-                {
-                    _chatRemoved.OnNext(channelId.ToString());
-                }
-            };
-            _signalRClient.MemberJoined += (user, channel) =>
-            {
-                if (user == null)
-                {
-                    return;
-                }
-
-                if (user.Id.ToString() == _memberId)
-                {
-                    var chat = Mapper.DtoToChatSummary(channel);
-                    chat.UpdateIsCreatedByMeStatus(_memberId);
-                    _chatAdded.OnNext(chat);
-                }
-            };
             _signalRClient.Disconnected += OnDisconnected;
         }
 
@@ -348,11 +329,6 @@ namespace Softeq.XToolkit.Chat.SignalRClient
                 _isConnected = false;
                 return await CheckConnectionAndSendRequest(funcSendRequest).ConfigureAwait(false);
             }
-            catch (ChatValidationException ex)
-            {
-                //TODO YP: need an approach how to handle this exception for user
-                _logger.Error(ex);
-            }
             catch (Exception ex)
             {
                 _logger.Error(ex);
@@ -369,12 +345,6 @@ namespace Softeq.XToolkit.Chat.SignalRClient
                 {
                     UpdateConnectionStatus(SocketConnectionStatus.Connecting);
                     var client = await _signalRClient.ConnectAsync().ConfigureAwait(false);
-
-                    //TODO: review this
-                    if (client == null)
-                    {
-                        _logger.Error("SignalRAdapter: accessToken is not valid, please relogin");
-                    }
 
                     _memberId = client.MemberId.ToString();
 

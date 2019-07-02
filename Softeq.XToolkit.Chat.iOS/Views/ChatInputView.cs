@@ -1,3 +1,6 @@
+// Developed by Softeq Development Corporation
+// http://www.softeq.com
+
 using CoreGraphics;
 using Foundation;
 using Softeq.XToolkit.Common.Command;
@@ -14,6 +17,8 @@ using Softeq.XToolkit.WhiteLabel.ImagePicker;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using Softeq.XToolkit.Common;
+using System.Threading.Tasks;
+using System.IO;
 
 namespace Softeq.XToolkit.Chat.iOS.Views
 {
@@ -45,10 +50,6 @@ namespace Softeq.XToolkit.Chat.iOS.Views
             }
         }
 
-        private SimpleImagePicker _simpleImagePicker;
-        private Binding _attachedImageBinding;
-        private Binding _imagePickerBusyBinding;
-
         public ChatInputView(IntPtr handle) : base(handle)
         {
         }
@@ -78,8 +79,6 @@ namespace Softeq.XToolkit.Chat.iOS.Views
                 return new CGSize(Frame.Width, TopMargin + editContainerHeight + attachmentHeight + textHeight + BottomMargin);
             }
         }
-
-        public event EventHandler<GenericEventArgs<ImagePickerArgs>> SendRaised;
 
         protected override void Initialize()
         {
@@ -125,42 +124,11 @@ namespace Softeq.XToolkit.Chat.iOS.Views
 
         public void Init(UIViewController parentViewController)
         {
-            _simpleImagePicker = new SimpleImagePicker(parentViewController, Dependencies.Container.Resolve<IPermissionsManager>(), false);
-            OpenCameraButton.SetCommand(new RelayCommand(_simpleImagePicker.OpenCameraAsync));
-            OpenGalleryButton.SetCommand(new RelayCommand(_simpleImagePicker.OpenGalleryAsync));
-            DeleteButton.SetCommand(new RelayCommand(OnDeleteButtonTap));
         }
 
         public void SetBoundedScrollView(UIScrollView boundedScrollView, nfloat scrollViewBottomMargin)
         {
             ScrollViewDelegate = new ChatInputScrollViewDelegate(this, boundedScrollView, scrollViewBottomMargin);
-        }
-
-        public void AttachBindings()
-        {
-            _attachedImageBinding = this.SetBinding(() => _simpleImagePicker.Image).WhenSourceChanges(() =>
-            {
-                if (_simpleImagePicker.Image == null)
-                {
-                    AttachmentImage.Image = null;
-                    AttachmentContainer.Hidden = true;
-                }
-                else
-                {
-                    AttachmentImage.Image = _simpleImagePicker.Image;
-                    AttachmentContainer.Hidden = false;
-                }
-                LayoutIfNeeded();
-                InvalidateIntrinsicContentSize();
-            });
-            _imagePickerBusyBinding = this.SetBinding(() => _simpleImagePicker.IsBusy, () => ImageLoader.Hidden)
-                .ConvertSourceToTarget((x) => !x);
-        }
-
-        public void DetachBindings()
-        {
-            _attachedImageBinding.Detach();
-            _imagePickerBusyBinding.Detach();
         }
 
         public void StartEditing(string text)
@@ -193,11 +161,6 @@ namespace Softeq.XToolkit.Chat.iOS.Views
             InvalidateIntrinsicContentSize();
         }
 
-        private void OnDeleteButtonTap()
-        {
-            _simpleImagePicker.Clear();
-        }
-
         private void OnTextViewChanged()
         {
             var scrollEnabled = TextView.ContentSize.Height >= 300;
@@ -210,12 +173,20 @@ namespace Softeq.XToolkit.Chat.iOS.Views
             InvalidateIntrinsicContentSize();
         }
 
-        partial void OnSend(UIButton sender)
+        internal void SetImage(object imageObject)
         {
-            if(_simpleImagePicker.IsBusy) { return; }
-            var args = _simpleImagePicker.GetPickerData();
-            SendRaised?.Invoke(this, new GenericEventArgs<ImagePickerArgs>(args));
-            _simpleImagePicker.Clear();
+            if (imageObject == null)
+            {
+                AttachmentImage.Image = null;
+                AttachmentContainer.Hidden = true;
+            }
+            else
+            {
+                AttachmentImage.Image = (UIImage) imageObject;
+                AttachmentContainer.Hidden = false;
+            }
+            LayoutIfNeeded();
+            InvalidateIntrinsicContentSize();
         }
     }
 }

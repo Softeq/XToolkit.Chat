@@ -1,31 +1,26 @@
 // Developed by Softeq Development Corporation
 // http://www.softeq.com
 
-using Softeq.XToolkit.RemoteData;
+using Softeq.NetKit.Chat.TransportModels.Models.CommonModels.Request.Member;
+using Softeq.XToolkit.Common.Interfaces;
 using Softeq.XToolkit.RemoteData.HttpClient;
 
 namespace Softeq.XToolkit.Chat.HttpClient.Requests
 {
-    internal class GetMembersForInviteRequest : BaseRestRequest
+    internal class GetMembersForInviteRequest : BasePostRestRequest<GetPotentialChannelMembersRequest>
     {
         public GetMembersForInviteRequest(
             string apiUrl,
-            string chatId,
-            string nameFilter,
-            int pageNumber,
-            int pageSize)
+            IJsonSerializer jsonSerializer,
+            GetPotentialChannelMembersRequest dto,
+            string channelId)
+            : base(jsonSerializer, dto)
         {
-            var queryParams = new QueryStringBuilder()
-                .AddParam("pageNumber", pageNumber.ToString())
-                .AddParam("pageSize", pageSize.ToString())
-                .AddParam("nameFilter", nameFilter)
-                .Build();
-
-            EndpointUrl = $"{apiUrl}/channel/{chatId}/invite/user{queryParams}";
+            EndpointUrl = $"{apiUrl}/channel/{channelId}/invite/user";
         }
 
-        public override string EndpointUrl { get; }
-
         public override bool UseOriginalEndpoint => true;
+
+        public override string EndpointUrl { get; }
     }
 }

@@ -114,7 +114,6 @@ namespace Softeq.XToolkit.Chat.Droid.Views
         {
             _conversationsRecyclerView.GetAdapter().Dispose();
             _conversationsRecyclerView.ClearOnScrollListeners();
-            // TODO: remove onTouchListener
 
             base.OnDestroy();
         }

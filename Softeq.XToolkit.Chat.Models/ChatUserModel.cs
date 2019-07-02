@@ -2,6 +2,7 @@
 // http://www.softeq.com
 
 using System;
+using Softeq.XToolkit.Chat.Models.Enum;
 
 namespace Softeq.XToolkit.Chat.Models
 {
@@ -12,6 +13,7 @@ namespace Softeq.XToolkit.Chat.Models
         public string PhotoUrl { get; set; }
         public bool IsOnline { get; set; }
         public bool IsActive { get; set; }
+        public UserRole Role { get; set; }
         public DateTimeOffset LastActivity { get; set; }
     }
 }

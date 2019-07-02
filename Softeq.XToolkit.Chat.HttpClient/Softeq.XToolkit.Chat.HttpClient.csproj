@@ -6,13 +6,16 @@
 
   <ItemGroup>
     <Folder Include="Requests\" />
-    <Folder Include="Dtos\" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="System.Reactive" Version="4.0.0" />
+    <PackageReference Include="Softeq.NetKit.Chat.TransportModels" Version="1.0.0-alpha3" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\XToolkit\Softeq.XToolkit.RemoteData\Softeq.XToolkit.RemoteData.csproj" />
     <ProjectReference Include="..\Softeq.XToolkit.Chat.Models\Softeq.XToolkit.Chat.Models.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Remove="Dtos\ChatMessageDto.cs" />
   </ItemGroup>
 </Project>

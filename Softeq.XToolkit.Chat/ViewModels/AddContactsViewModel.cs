@@ -16,7 +16,6 @@ using Softeq.XToolkit.Common.Extensions;
 using Softeq.XToolkit.Common.Models;
 using Softeq.XToolkit.WhiteLabel.Interfaces;
 using Softeq.XToolkit.WhiteLabel.Mvvm;
-using Softeq.XToolkit.Auth;
 using Softeq.XToolkit.WhiteLabel.Threading;
 using Softeq.XToolkit.Chat.Services;
 
@@ -34,7 +33,7 @@ namespace Softeq.XToolkit.Chat.ViewModels
         private const int DefaultSearchResultsPageSize = 20;
 
         private readonly ICommand _contactSelectedCommand;
-        private readonly IAccountService _accountService;
+        private readonly IChatAuthService _authService;
 
         private string _contactNameSearchQuery;
         private ISearchContactsStrategy _searchContactsStrategy;
@@ -43,10 +42,10 @@ namespace Softeq.XToolkit.Chat.ViewModels
         private bool _hasResults;
 
         public AddContactsViewModel(
-            IAccountService accountService,
+            IChatAuthService authService,
             IChatLocalizedStrings chatLocalizedStrings)
         {
-            _accountService = accountService;
+            _authService = authService;
             Resources = chatLocalizedStrings;
             NoResultVisible = false;
 
@@ -152,7 +151,7 @@ namespace Softeq.XToolkit.Chat.ViewModels
             var filteredContacts = contacts.Where(x => !SelectedContacts
                 .Concat(_excludedContacts)
                 .Select(c => c.Id)
-                .Concat(new[] { _accountService.UserId })
+                .Concat(new[] { _authService.UserId })
                 .Contains(x.Id)
             ).ToList();
 

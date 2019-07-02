@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using Softeq.XToolkit.Chat.Exceptions;
 using Softeq.XToolkit.Chat.Models;
 using Softeq.XToolkit.Chat.Models.Interfaces;
+using Softeq.XToolkit.Chat.Models.Queries;
 using Softeq.XToolkit.Common;
 using Softeq.XToolkit.Common.Extensions;
 using Softeq.XToolkit.Common.Interfaces;
@@ -26,7 +27,7 @@ namespace Softeq.XToolkit.Chat
 
         private readonly SemaphoreSlim _semaphoreSlim = new SemaphoreSlim(1, 1);
 
-        private TaskReference<string, string, DateTimeOffset, IList<ChatMessageModel>> _getMessagesAsync;
+        private TaskReference<MessagesQuery, IList<ChatMessageModel>> _getMessagesAsync;
 
         public event Action<CacheUpdatedResults> CacheUpdated;
 
@@ -35,7 +36,7 @@ namespace Softeq.XToolkit.Chat
             _logger = logManager.GetLogger<ChatService>();
         }
 
-        public void Init(TaskReference<string, string, DateTimeOffset, IList<ChatMessageModel>> getMessagesAsync)
+        public void Init(TaskReference<MessagesQuery, IList<ChatMessageModel>> getMessagesAsync)
         {
             _getMessagesAsync = getMessagesAsync;
         }
@@ -59,23 +60,20 @@ namespace Softeq.XToolkit.Chat
             }));
         }
 
-        public Task<List<ChatMessageModel>> GetOlderMessagesAsync(
-            string chatId,
-            string messageFromId,
-            DateTimeOffset messageFromDateTime,
-            int count)
+        public Task<List<ChatMessageModel>> GetOlderMessagesAsync(MessagesQuery query)
         {
-            var messagesCollection = GetMessagesCollectionForChat(chatId);
+            var messagesCollection = GetMessagesCollectionForChat(query.ChannelId);
             return Task.FromResult(ModifyCollection(messagesCollection, collection =>
             {
                 // find older message than
-                var indexFrom = collection.FindIndex(x => x.Id == messageFromId);
+                var indexFrom = collection.FindIndex(x => x.Id == query.FromId);
                 if (indexFrom < 0)
                 {
                     indexFrom = collection.FindLastIndex(x =>
-                        x.DateTime.DateTime.IsEarlierOrEqualThan(messageFromDateTime.DateTime));
+                        x.DateTime.DateTime.IsEarlierOrEqualThan(query.FromDateTime.Value.DateTime));
                 }
 
+                var count = query.Count.Value;
                 if (indexFrom > count)
                 {
                     return collection.Skip(indexFrom - count).Take(count).ToList();
@@ -105,10 +103,10 @@ namespace Softeq.XToolkit.Chat
             });
         }
 
-        public void TryDeleteMessage(string chatId, string deletedMessageId)
+        public void TryDeleteMessage(string channelId, string deletedMessageId)
         {
-            var collection = GetMessagesCollectionForChat(chatId);
-            ModifyCollection(collection, x => x.RemoveAll(y => y.Id == deletedMessageId));
+            var channelMessages = GetMessagesCollectionForChat(channelId);
+            ModifyCollection(channelMessages, x => x.RemoveAll(y => y.Id == deletedMessageId));
         }
 
         public ChatMessageModel FindDuplicateMessage(ChatMessageModel message)
@@ -230,7 +228,7 @@ namespace Softeq.XToolkit.Chat
             {
                 // find messages for delete
                 var messagesToDelete = collection
-                    .Where(x => x.MessageType != MessageType.Info)
+                    .Where(x => x.MessageType != MessageType.System)
                     .Except(upToDateMessages)
                     .SkipWhile(x => x.IsEarlierThan(oldestMessage))
                     .TakeWhile(x => x.Status != ChatMessageStatus.Sending && x.IsEarlierOrEqualsThan(newestMessage))
@@ -265,7 +263,13 @@ namespace Softeq.XToolkit.Chat
             var messages = default(IList<ChatMessageModel>);
             try
             {
-                messages = await _getMessagesAsync.RunAsync(chatId, oldestMessageId, oldestMessageDate).ConfigureAwait(false);
+                var query = new MessagesQuery
+                {
+                    ChannelId = chatId,
+                    FromId = oldestMessageId,
+                    FromDateTime = oldestMessageDate
+                };
+                messages = await _getMessagesAsync.RunAsync(query).ConfigureAwait(false);
             }
             catch (Exception ex)
             {

@@ -28,7 +28,7 @@ namespace Softeq.XToolkit.Chat.iOS.Views
 
         [Outlet]
         [GeneratedCode ("iOS Designer", "1.0")]
-        UIKit.UIButton DeleteButton { get; set; }
+        public UIKit.UIButton DeleteButton { get; set; }
 
         [Outlet]
         [GeneratedCode ("iOS Designer", "1.0")]
@@ -52,11 +52,11 @@ namespace Softeq.XToolkit.Chat.iOS.Views
 
         [Outlet]
         [GeneratedCode ("iOS Designer", "1.0")]
-        UIKit.UIButton OpenCameraButton { get; set; }
+        public UIKit.UIButton OpenCameraButton { get; set; }
 
         [Outlet]
         [GeneratedCode ("iOS Designer", "1.0")]
-        UIKit.UIButton OpenGalleryButton { get; set; }
+        public UIKit.UIButton OpenGalleryButton { get; set; }
 
         [Outlet]
         [GeneratedCode ("iOS Designer", "1.0")]
@@ -64,7 +64,7 @@ namespace Softeq.XToolkit.Chat.iOS.Views
 
         [Outlet]
         [GeneratedCode ("iOS Designer", "1.0")]
-        UIKit.UIButton SendButton { get; set; }
+        public UIKit.UIButton SendButton { get; set; }
 
         [Outlet]
         [GeneratedCode ("iOS Designer", "1.0")]
