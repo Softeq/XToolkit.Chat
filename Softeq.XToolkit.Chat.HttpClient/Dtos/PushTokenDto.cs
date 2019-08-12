@@ -1,4 +1,7 @@
-﻿namespace Softeq.XToolkit.Chat.HttpClient.Dtos
+﻿// Developed by Softeq Development Corporation
+// http://www.softeq.com
+
+namespace Softeq.XToolkit.Chat.HttpClient.Dtos
 {
     public class PushTokenDto
     {

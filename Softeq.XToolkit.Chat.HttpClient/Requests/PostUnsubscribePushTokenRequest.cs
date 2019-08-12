@@ -1,4 +1,7 @@
-﻿using System.Net.Http;
+﻿// Developed by Softeq Development Corporation
+// http://www.softeq.com
+
+using System.Net.Http;
 using Softeq.XToolkit.Chat.HttpClient.Dtos;
 using Softeq.XToolkit.Common.Interfaces;
 using Softeq.XToolkit.RemoteData.HttpClient;
