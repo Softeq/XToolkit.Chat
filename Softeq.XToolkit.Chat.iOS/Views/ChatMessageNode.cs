@@ -326,7 +326,7 @@ namespace Softeq.XToolkit.Chat.iOS.Views
             {
                 CloseButtonTintColor = Common.iOS.Extensions.UIColorExtensions.ToHex(StyleHelper.Style.ButtonTintColor),
                 ImageUrl = url,
-                IosCloseButtonImageBundleName = StyleHelper.Style.CloseButtonImageBoundleName
+                IosCloseButtonImageBoundleName = StyleHelper.Style.CloseButtonImageBoundleName
             };
 
             _viewModelRef.Target?.ShowImage(options);
