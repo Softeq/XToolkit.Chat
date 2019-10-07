@@ -73,6 +73,7 @@ namespace Softeq.XToolkit.Chat.Droid.ViewHolders
             }
         }
 
+        private TaskParameter _downloadAttachTask;
         private LinearLayout MessageContainer { get; }
         private TextView MessageBodyTextView { get; }
         private TextView MessageDateTimeTextView { get; }
@@ -125,15 +126,16 @@ namespace Softeq.XToolkit.Chat.Droid.ViewHolders
                     return;
                 }
 
-                expr.DownSampleInDip(90, 90)
+                _downloadAttachTask = expr.DownSampleInDip(90, 90)
                     .Finish(x =>
                     {
                         Execute.BeginOnUIThread(UpdateAttachmentImageViewSizeAndVisibility);
-                    })
-                    .IntoAsync(AttachmentImageView);
+                    });
+                _downloadAttachTask.IntoAsync(AttachmentImageView);
             }
             else
             {
+                _downloadAttachTask?.Dispose();
                 AttachmentImageView.SetImageDrawable(null);
                 AttachmentImageView.Visibility = ViewStates.Gone;
             }
@@ -174,6 +176,7 @@ namespace Softeq.XToolkit.Chat.Droid.ViewHolders
             if (disposing)
             {
                 _messageLongClickSubscription?.Dispose();
+                _downloadAttachTask?.Dispose();
             }
 
             base.Dispose(disposing);
