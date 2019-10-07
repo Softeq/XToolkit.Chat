@@ -12,6 +12,7 @@ using Softeq.NetKit.Chat.TransportModels.Models.CommonModels.Response;
 using Softeq.NetKit.Chat.TransportModels.Models.CommonModels.Response.Channel;
 using Softeq.NetKit.Chat.TransportModels.Models.CommonModels.Response.Member;
 using Softeq.NetKit.Chat.TransportModels.Models.CommonModels.Response.Message;
+using Softeq.XToolkit.Chat.HttpClient.Dtos;
 using Softeq.XToolkit.Chat.HttpClient.Requests;
 using Softeq.XToolkit.Chat.Models;
 using Softeq.XToolkit.Chat.Models.Interfaces;
@@ -193,6 +194,32 @@ namespace Softeq.XToolkit.Chat.HttpClient
         public Task UnMuteChatAsync(string chatId)
         {
             var request = new PostUnMuteChatRequest(_chatConfig.ApiUrl, chatId);
+
+            return _httpClient.TrySendAsync(request, _logger);
+        }
+
+        public Task<bool> SubscribeForPushNotificationsAsync(string token, int devicePlatform)
+        {
+            var dto = new PushTokenDto
+            {
+                Token = token,
+                DevicePlatform = devicePlatform
+            };
+
+            var request = new PostSubscribePushTokenRequest(_chatConfig.ApiUrl, _jsonSerializer, dto);
+
+            return _httpClient.TrySendAsync(request, _logger);
+        }
+
+        public Task<bool> UnsubscribeFromPushNotificationsAsync(string token, int devicePlatform)
+        {
+            var dto = new PushTokenDto
+            {
+                Token = token,
+                DevicePlatform = devicePlatform
+            };
+
+            var request = new PostUnsubscribePushTokenRequest(_chatConfig.ApiUrl, _jsonSerializer, dto);
 
             return _httpClient.TrySendAsync(request, _logger);
         }

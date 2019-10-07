@@ -28,5 +28,9 @@ namespace Softeq.XToolkit.Chat.Models.Interfaces
         Task<IList<ChatUserModel>> GetChatMembersAsync(string chatId);
         Task<PagingModel<ChatUserModel>> GetContactsAsync(string nameFilter, int pageSize, int pageNumber);
         Task<PagingModel<ChatUserModel>> GetContactsForInviteAsync(ContactsQuery query);
+
+        // push-notifications
+        Task<bool> SubscribeForPushNotificationsAsync(string token, int devicePlatform);
+        Task<bool> UnsubscribeFromPushNotificationsAsync(string token, int devicePlatform);
     }
 }
