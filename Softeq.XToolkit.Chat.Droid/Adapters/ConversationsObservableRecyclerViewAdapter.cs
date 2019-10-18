@@ -3,16 +3,15 @@
 
 using System;
 using System.Collections.Specialized;
-using System.Linq;
 using System.ComponentModel;
+using System.Linq;
 using Android.Support.V7.Widget;
 using Android.Views;
+using Softeq.XToolkit.Chat.Droid.Controls;
 using Softeq.XToolkit.Chat.Droid.ViewHolders;
 using Softeq.XToolkit.Chat.ViewModels;
-using Softeq.XToolkit.Common;
 using Softeq.XToolkit.Common.Collections;
-using Softeq.XToolkit.Common.EventArguments;
-using Softeq.XToolkit.Chat.Droid.Controls;
+using Softeq.XToolkit.Common.Weak;
 
 namespace Softeq.XToolkit.Chat.Droid.Adapters
 {
@@ -46,27 +45,27 @@ namespace Softeq.XToolkit.Chat.Droid.Adapters
 
             if (data.ItemType == GroupItemTypes.Header)
             {
-                return (int)ViewHolderType.Header;
+                return (int) ViewHolderType.Header;
             }
 
-            var message = ((GroupDataItem<ChatMessageViewModel>)data).Data;
+            var message = ((GroupDataItem<ChatMessageViewModel>) data).Data;
 
             if (message.MessageType == Models.MessageType.System)
             {
-                return (int)ViewHolderType.SystemMessage;
+                return (int) ViewHolderType.SystemMessage;
             }
 
             if (message.IsMine)
             {
-                return (int)ViewHolderType.OutComingMessage;
+                return (int) ViewHolderType.OutComingMessage;
             }
 
-            return (int)ViewHolderType.InComingMessage;
+            return (int) ViewHolderType.InComingMessage;
         }
 
         public override RecyclerView.ViewHolder OnCreateViewHolder(ViewGroup parent, int viewType)
         {
-            switch ((ViewHolderType)viewType)
+            switch ((ViewHolderType) viewType)
             {
                 case ViewHolderType.Header:
                     return new ConversationInfoViewHolder(LayoutInflater.From(parent.Context)

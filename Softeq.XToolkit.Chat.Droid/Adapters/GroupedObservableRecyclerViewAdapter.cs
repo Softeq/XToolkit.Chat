@@ -7,11 +7,9 @@ using System.Linq;
 using Android.Support.V7.Widget;
 using Android.Views;
 using Softeq.XToolkit.Chat.Droid.ViewHolders;
-using Softeq.XToolkit.Common;
-using Softeq.XToolkit.Common.Extensions;
 using Softeq.XToolkit.Common.Collections;
-using Softeq.XToolkit.Common.EventArguments;
-using Softeq.XToolkit.Common.WeakSubscription;
+using Softeq.XToolkit.Common.Extensions;
+using Softeq.XToolkit.Common.Weak;
 using Softeq.XToolkit.WhiteLabel.Threading;
 
 namespace Softeq.XToolkit.Chat.Droid.Adapters
@@ -86,12 +84,12 @@ namespace Softeq.XToolkit.Chat.Droid.Adapters
 
             if (holder is IBindableViewHolder<TValue> dataViewHolder)
             {
-                BindModelToViewHolder(dataViewHolder, ((GroupDataItem<TValue>)item).Data);
+                BindModelToViewHolder(dataViewHolder, ((GroupDataItem<TValue>) item).Data);
             }
             else if (item.ItemType == GroupItemTypes.Header &&
                      holder is IBindableViewHolder<TKey> headerViewHolder)
             {
-                BindModelToViewHolder(headerViewHolder, ((GroupHeaderItem<TKey>)item).Data);
+                BindModelToViewHolder(headerViewHolder, ((GroupHeaderItem<TKey>) item).Data);
             }
         }
 

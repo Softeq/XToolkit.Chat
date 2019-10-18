@@ -9,9 +9,8 @@ using Android.Support.V7.Widget;
 using Android.Util;
 using Android.Views;
 using Softeq.XToolkit.Chat.Droid.ViewHolders;
-using Softeq.XToolkit.Common;
 using Softeq.XToolkit.Common.Extensions;
-using Softeq.XToolkit.Common.WeakSubscription;
+using Softeq.XToolkit.Common.Weak;
 
 namespace Softeq.XToolkit.Chat.Droid.Adapters
 {

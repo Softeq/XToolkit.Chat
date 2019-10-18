@@ -9,7 +9,7 @@ using Android.Graphics;
 using Android.Support.V7.Widget;
 using Android.Support.V7.Widget.Helper;
 using Android.Views;
-using Softeq.XToolkit.Common;
+using Softeq.XToolkit.Common.Weak;
 
 namespace Softeq.XToolkit.Chat.Droid.ItemTouchCallbacks
 {
@@ -194,7 +194,7 @@ namespace Softeq.XToolkit.Chat.Droid.ItemTouchCallbacks
                 motionEvent.Action == MotionEventActions.Up ||
                 motionEvent.Action == MotionEventActions.Move)
             {
-                var point = new Point((int)motionEvent.RawX, (int)motionEvent.RawY);
+                var point = new Point((int) motionEvent.RawX, (int) motionEvent.RawY);
 
                 if (rect.Top < point.Y && rect.Bottom > point.Y)
                 {
@@ -302,7 +302,7 @@ namespace Softeq.XToolkit.Chat.Droid.ItemTouchCallbacks
             canvas.DrawRect(rect, paint);
 
             // draw Text
-            paint.Color = Color.Argb((int)(255 * scale), 255, 255, 255);
+            paint.Color = Color.Argb((int) (255 * scale), 255, 255, 255);
             paint.TextSize = _options.TextSize * scale;
             paint.TextAlign = Paint.Align.Left;
 

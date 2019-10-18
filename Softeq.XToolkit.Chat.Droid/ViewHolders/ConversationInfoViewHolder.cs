@@ -4,7 +4,7 @@
 using System;
 using Android.Views;
 using Android.Widget;
-using Softeq.XToolkit.Common;
+using Softeq.XToolkit.Common.Weak;
 
 namespace Softeq.XToolkit.Chat.Droid.ViewHolders
 {

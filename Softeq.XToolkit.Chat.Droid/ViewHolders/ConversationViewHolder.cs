@@ -3,26 +3,25 @@
 
 using System;
 using System.ComponentModel;
+using Android.Content;
+using Android.Graphics.Drawables;
 using Android.Views;
 using Android.Widget;
 using FFImageLoading;
 using FFImageLoading.Cross;
 using FFImageLoading.Transformations;
 using FFImageLoading.Work;
+using Plugin.CurrentActivity;
 using Softeq.XToolkit.Bindings;
+using Softeq.XToolkit.Chat.Droid.Controls;
 using Softeq.XToolkit.Chat.Models;
 using Softeq.XToolkit.Chat.ViewModels;
-using Softeq.XToolkit.Common;
-using Softeq.XToolkit.Common.WeakSubscription;
+using Softeq.XToolkit.Common.Droid.Converters;
+using Softeq.XToolkit.Common.Droid.Extensions;
+using Softeq.XToolkit.Common.Weak;
 using Softeq.XToolkit.WhiteLabel.Droid.Extensions;
 using Softeq.XToolkit.WhiteLabel.Threading;
 using Softeq.XToolkit.WhiteLabel.ViewModels;
-using Softeq.XToolkit.Common.Droid.Extensions;
-using Android.Content;
-using Plugin.CurrentActivity;
-using Softeq.XToolkit.Common.Droid.Converters;
-using Android.Graphics.Drawables;
-using Softeq.XToolkit.Chat.Droid.Controls;
 
 namespace Softeq.XToolkit.Chat.Droid.ViewHolders
 {
@@ -184,7 +183,7 @@ namespace Softeq.XToolkit.Chat.Droid.ViewHolders
 
         private void MessageContainerLongClickHandler(object sender, View.LongClickEventArgs eventArgs)
         {
-            _actionHandler.Handle((View)sender, _viewModelRef.Target);
+            _actionHandler.Handle((View) sender, _viewModelRef.Target);
         }
 
         private void ChangeMessageViewStatus(ChatMessageStatus status)
@@ -269,12 +268,12 @@ namespace Softeq.XToolkit.Chat.Droid.ViewHolders
             if (isLandscape)
             {
                 var calculatedHeight = maxImageWidth / ratio;
-                return (maxImageWidth, (int)calculatedHeight);
+                return (maxImageWidth, (int) calculatedHeight);
             }
             else
             {
                 var calculatedWidth = maxImageWidth * ratio;
-                return ((int)calculatedWidth, maxImageWidth);
+                return ((int) calculatedWidth, maxImageWidth);
             }
         }
 
@@ -292,7 +291,7 @@ namespace Softeq.XToolkit.Chat.Droid.ViewHolders
                 paddingsAndMarginsOfContainer += 20 + 20 + 8;
             }
 
-            return displayWidth - (int)context.ToPixels(paddingsAndMarginsOfContainer);
+            return displayWidth - (int) context.ToPixels(paddingsAndMarginsOfContainer);
         }
     }
 }
