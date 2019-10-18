@@ -1,10 +1,10 @@
 // Developed by Softeq Development Corporation
 // http://www.softeq.com
 
-﻿using Softeq.XToolkit.Chat.Models;
+using Softeq.XToolkit.Chat.Models;
 using Softeq.XToolkit.Chat.ViewModels;
+using Softeq.XToolkit.Common;
 using Softeq.XToolkit.WhiteLabel.Interfaces;
-using Softeq.XToolkit.WhiteLabel.Mvvm;
 
 namespace Softeq.XToolkit.Chat.Services
 {

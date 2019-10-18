@@ -6,7 +6,7 @@ using FFImageLoading.Transformations;
 using Softeq.XToolkit.Bindings;
 using Softeq.XToolkit.Chat.iOS.Controls;
 using Softeq.XToolkit.Chat.ViewModels;
-using Softeq.XToolkit.Common.Command;
+using Softeq.XToolkit.Common.Commands;
 using Softeq.XToolkit.WhiteLabel.iOS.Extensions;
 using UIKit;
 

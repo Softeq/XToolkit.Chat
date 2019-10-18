@@ -1,9 +1,9 @@
 // Developed by Softeq Development Corporation
 // http://www.softeq.com
 
-﻿using System;
+using System;
 using Foundation;
-using Softeq.XToolkit.Common;
+using Softeq.XToolkit.Common.Weak;
 using UIKit;
 
 namespace Softeq.XToolkit.Chat.iOS.Views
@@ -21,14 +21,14 @@ namespace Softeq.XToolkit.Chat.iOS.Views
             _chatInputView = new WeakReferenceEx<ChatInputView>(chatInputView);
             _willShowObserver = NSNotificationCenter.DefaultCenter.AddObserver(UIKeyboard.WillShowNotification, (notification) =>
             {
-                if(!KeyBoardOpened)
+                if (!KeyBoardOpened)
                 {
                     TryInvokeOpenKeyboardEvent(notification);
                 }
             });
             _willHideObserver = NSNotificationCenter.DefaultCenter.AddObserver(UIKeyboard.WillHideNotification, (notification) =>
             {
-                if(KeyBoardOpened)
+                if (KeyBoardOpened)
                 {
                     KeyBoardOpened = false;
                     KeyboardHeightChanged?.Invoke(0);
@@ -36,7 +36,7 @@ namespace Softeq.XToolkit.Chat.iOS.Views
             });
             _willChangeFrameObserver = NSNotificationCenter.DefaultCenter.AddObserver(UIKeyboard.WillChangeFrameNotification, (notification) =>
             {
-                if(KeyBoardOpened)
+                if (KeyBoardOpened)
                 {
                     TryInvokeOpenKeyboardEvent(notification);
                 }
@@ -49,7 +49,7 @@ namespace Softeq.XToolkit.Chat.iOS.Views
 
         protected override void Dispose(bool disposing)
         {
-            if(disposing)
+            if (disposing)
             {
                 _willShowObserver.Dispose();
                 _willHideObserver.Dispose();

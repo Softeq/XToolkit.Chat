@@ -7,7 +7,7 @@ using Softeq.XToolkit.Bindings.iOS;
 using Softeq.XToolkit.Chat.iOS.Controls;
 using Softeq.XToolkit.Chat.iOS.Views;
 using Softeq.XToolkit.Chat.ViewModels;
-using Softeq.XToolkit.Common.EventArguments;
+using Softeq.XToolkit.Common;
 using Softeq.XToolkit.WhiteLabel.iOS;
 using Softeq.XToolkit.WhiteLabel.iOS.Extensions;
 using UIKit;

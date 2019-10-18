@@ -6,7 +6,7 @@ using System.IO;
 using System.Threading.Tasks;
 using Softeq.XToolkit.Chat.HttpClient.Requests;
 using Softeq.XToolkit.Chat.Models.Interfaces;
-using Softeq.XToolkit.Common.Interfaces;
+using Softeq.XToolkit.Common.Logger;
 using Softeq.XToolkit.RemoteData;
 using Softeq.XToolkit.RemoteData.HttpClient;
 

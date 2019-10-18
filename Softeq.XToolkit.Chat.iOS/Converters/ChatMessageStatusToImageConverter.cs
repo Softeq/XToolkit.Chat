@@ -1,10 +1,10 @@
 // Developed by Softeq Development Corporation
 // http://www.softeq.com
 
-﻿using System;
+using System;
 using System.ComponentModel;
 using Softeq.XToolkit.Chat.Models;
-using Softeq.XToolkit.Common.Interfaces;
+using Softeq.XToolkit.Common.Converters;
 using UIKit;
 
 namespace Softeq.XToolkit.Chat.iOS.Converters

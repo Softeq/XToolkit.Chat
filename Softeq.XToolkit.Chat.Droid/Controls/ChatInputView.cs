@@ -83,7 +83,7 @@ namespace Softeq.XToolkit.Chat.Droid.Controls
                 }
                 else
                 {
-                    _imagePreview.SetImageBitmap((Android.Graphics.Bitmap) _viewModelRef.Target.ImageObject);
+                    _imagePreview.SetImageBitmap((Android.Graphics.Bitmap)_viewModelRef.Target.ImageObject);
                     _editImageContainer.Visibility = ViewStates.Visible;
                 }
             }));

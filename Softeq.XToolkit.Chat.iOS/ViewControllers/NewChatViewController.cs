@@ -2,16 +2,16 @@
 // http://www.softeq.com
 
 using System;
-using UIKit;
 using CoreGraphics;
-using Softeq.XToolkit.WhiteLabel.iOS;
-using Softeq.XToolkit.Chat.ViewModels;
-using Softeq.XToolkit.Chat.iOS.Views;
 using Softeq.XToolkit.Bindings;
 using Softeq.XToolkit.Bindings.iOS;
 using Softeq.XToolkit.Chat.iOS.Controls;
+using Softeq.XToolkit.Chat.iOS.Views;
+using Softeq.XToolkit.Chat.ViewModels;
+using Softeq.XToolkit.Common;
+using Softeq.XToolkit.WhiteLabel.iOS;
 using Softeq.XToolkit.WhiteLabel.iOS.Extensions;
-using Softeq.XToolkit.Common.EventArguments;
+using UIKit;
 
 namespace Softeq.XToolkit.Chat.iOS.ViewControllers
 {
@@ -130,8 +130,8 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
             {
                 CancelsTouchesInView = false
             });
-            TableView.BackgroundView = new SearchNoResultView() 
-            { 
+            TableView.BackgroundView = new SearchNoResultView()
+            {
                 NoResultText = ViewModel.LocalizedStrings.SearchNoResults
             };
         }

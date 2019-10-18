@@ -4,7 +4,7 @@
 using System.Threading.Tasks;
 using Softeq.XToolkit.Chat.Models;
 using Softeq.XToolkit.Chat.Models.Interfaces;
-using Softeq.XToolkit.Common.Models;
+using Softeq.XToolkit.WhiteLabel.Model;
 
 namespace Softeq.XToolkit.Chat.Strategies.Search
 {

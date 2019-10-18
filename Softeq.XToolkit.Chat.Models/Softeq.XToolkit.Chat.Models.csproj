@@ -13,5 +13,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\XToolkit.WhiteLabel\Softeq.XToolkit.Common\Softeq.XToolkit.Common.csproj" />
+    <ProjectReference Include="..\..\XToolkit.WhiteLabel\Softeq.XToolkit.WhiteLabel\Softeq.XToolkit.WhiteLabel.csproj" />
   </ItemGroup>
 </Project>

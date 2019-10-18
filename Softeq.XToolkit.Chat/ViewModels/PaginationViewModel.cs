@@ -6,10 +6,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Softeq.XToolkit.Common;
 using Softeq.XToolkit.Common.Collections;
-using Softeq.XToolkit.Common.Models;
 using Softeq.XToolkit.WhiteLabel.Interfaces;
-using Softeq.XToolkit.WhiteLabel.Mvvm;
+using Softeq.XToolkit.WhiteLabel.Model;
 using Softeq.XToolkit.WhiteLabel.Threading;
 
 namespace Softeq.XToolkit.Chat.ViewModels
@@ -42,11 +42,11 @@ namespace Softeq.XToolkit.Chat.ViewModels
         {
             Interlocked.Exchange(ref _pageNumber, 1);
 
-            var viewModels = await LoadPageAsync((int)_pageNumber).ConfigureAwait(false);
+            var viewModels = await LoadPageAsync((int) _pageNumber).ConfigureAwait(false);
 
             if (!cancellationToken.IsCancellationRequested)
             {
-                Execute.BeginOnUIThread(() => 
+                Execute.BeginOnUIThread(() =>
                 {
                     Items.ReplaceRange(viewModels);
                 });
@@ -57,12 +57,12 @@ namespace Softeq.XToolkit.Chat.ViewModels
         {
             if (Interlocked.Read(ref _pageNumber) == 0)
             {
-                return; 
+                return;
             }
 
             Interlocked.Increment(ref _pageNumber);
 
-            var viewModels = await LoadPageAsync((int)_pageNumber).ConfigureAwait(false);
+            var viewModels = await LoadPageAsync((int) _pageNumber).ConfigureAwait(false);
 
             if (viewModels.Count > 0)
             {

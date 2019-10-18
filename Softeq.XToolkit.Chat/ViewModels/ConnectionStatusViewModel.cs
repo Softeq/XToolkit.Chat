@@ -3,12 +3,11 @@
 
 using System;
 using System.ComponentModel;
-using Softeq.XToolkit.Chat.Exceptions;
 using Softeq.XToolkit.Chat.Interfaces;
 using Softeq.XToolkit.Chat.Models.Enum;
 using Softeq.XToolkit.Chat.Models.Exceptions;
 using Softeq.XToolkit.Chat.Models.Interfaces;
-using Softeq.XToolkit.WhiteLabel.Mvvm;
+using Softeq.XToolkit.Common;
 
 namespace Softeq.XToolkit.Chat.ViewModels
 {

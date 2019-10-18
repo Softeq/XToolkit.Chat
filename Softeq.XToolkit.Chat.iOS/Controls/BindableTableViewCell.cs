@@ -1,12 +1,12 @@
 // Developed by Softeq Development Corporation
 // http://www.softeq.com
 
-﻿using System;
+using System;
 using System.Collections.Generic;
 using Softeq.XToolkit.Bindings;
 using Softeq.XToolkit.Bindings.Extensions;
 using Softeq.XToolkit.Common;
-using Softeq.XToolkit.WhiteLabel.Mvvm;
+using Softeq.XToolkit.Common.Weak;
 using UIKit;
 
 namespace Softeq.XToolkit.Chat.iOS.Controls

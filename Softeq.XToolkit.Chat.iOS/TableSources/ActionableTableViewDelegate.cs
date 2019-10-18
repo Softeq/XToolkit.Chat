@@ -1,10 +1,10 @@
 // Developed by Softeq Development Corporation
 // http://www.softeq.com
 
-﻿using System;
+using System;
 using Foundation;
+using Softeq.XToolkit.Common.Weak;
 using UIKit;
-using Softeq.XToolkit.Common;
 
 namespace Softeq.XToolkit.Chat.iOS.TableSources
 {

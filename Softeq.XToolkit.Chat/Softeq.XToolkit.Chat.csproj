@@ -9,6 +9,7 @@
     <ProjectReference Include="..\..\XToolkit.WhiteLabel\Softeq.XToolkit.WhiteLabel\Softeq.XToolkit.WhiteLabel.csproj" />
     <ProjectReference Include="..\Softeq.XToolkit.Chat.SignalRClient\Softeq.XToolkit.Chat.SignalRClient.csproj" />
     <ProjectReference Include="..\Softeq.XToolkit.Chat.HttpClient\Softeq.XToolkit.Chat.HttpClient.csproj" />
+    <ProjectReference Include="..\..\XToolkit.WhiteLabel\Softeq.XToolkit.Common\Softeq.XToolkit.Common.csproj" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="System.Reactive" Version="4.1.5" />

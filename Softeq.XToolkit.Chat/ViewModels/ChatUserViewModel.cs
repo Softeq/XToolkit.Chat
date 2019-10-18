@@ -3,8 +3,8 @@
 
 using System.Windows.Input;
 using Softeq.XToolkit.Chat.Models;
+using Softeq.XToolkit.Common;
 using Softeq.XToolkit.WhiteLabel.Interfaces;
-using Softeq.XToolkit.WhiteLabel.Mvvm;
 
 namespace Softeq.XToolkit.Chat.ViewModels
 {
