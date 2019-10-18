@@ -15,7 +15,7 @@ using Softeq.XToolkit.Chat.Droid.Adapters;
 using Softeq.XToolkit.Chat.Droid.LayoutManagers;
 using Softeq.XToolkit.Chat.Droid.ViewHolders;
 using Softeq.XToolkit.Chat.ViewModels;
-using Softeq.XToolkit.Common.Command;
+using Softeq.XToolkit.Common.Commands;
 using Softeq.XToolkit.Common.Droid.Converters;
 using Softeq.XToolkit.WhiteLabel;
 using Softeq.XToolkit.WhiteLabel.Droid;

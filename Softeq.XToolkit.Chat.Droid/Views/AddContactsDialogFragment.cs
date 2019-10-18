@@ -7,14 +7,14 @@ using Android.Views;
 using Android.Widget;
 using Softeq.XToolkit.Bindings;
 using Softeq.XToolkit.Bindings.Droid;
+using Softeq.XToolkit.Chat.Droid.Listeners;
 using Softeq.XToolkit.Chat.Droid.ViewHolders;
 using Softeq.XToolkit.Chat.ViewModels;
+using Softeq.XToolkit.Common.Commands;
+using Softeq.XToolkit.Common.Droid.Converters;
+using Softeq.XToolkit.Common.Tasks;
 using Softeq.XToolkit.WhiteLabel.Droid.Controls;
 using Softeq.XToolkit.WhiteLabel.Droid.Dialogs;
-using Softeq.XToolkit.Chat.Droid.Listeners;
-using Softeq.XToolkit.Common;
-using Softeq.XToolkit.Common.Droid.Converters;
-using Softeq.XToolkit.Common.Command;
 
 namespace Softeq.XToolkit.Chat.Droid.Views
 {
@@ -102,7 +102,7 @@ namespace Softeq.XToolkit.Chat.Droid.Views
                 },
                 (holder, i, item) =>
                 {
-                    var viewHolder = (SelectedContactViewHolder)holder;
+                    var viewHolder = (SelectedContactViewHolder) holder;
                     viewHolder.Bind(item);
                 });
             _addedMembers.SetAdapter(_selectedAdapter);
@@ -126,7 +126,7 @@ namespace Softeq.XToolkit.Chat.Droid.Views
                 },
                 (holder, i, item) =>
                 {
-                    var viewHolder = (FilteredItemViewHolder)holder;
+                    var viewHolder = (FilteredItemViewHolder) holder;
                     viewHolder.Bind(item);
                 });
             _filteredMembers.SetAdapter(_filteredAdapter);

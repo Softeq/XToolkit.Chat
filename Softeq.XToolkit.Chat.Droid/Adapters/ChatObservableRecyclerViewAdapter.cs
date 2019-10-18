@@ -7,7 +7,7 @@ using System.Collections.Specialized;
 using Android.Views;
 using Softeq.XToolkit.Chat.Droid.ViewHolders;
 using Softeq.XToolkit.Chat.ViewModels;
-using Softeq.XToolkit.Common;
+using Softeq.XToolkit.Common.Weak;
 
 namespace Softeq.XToolkit.Chat.Droid.Adapters
 {

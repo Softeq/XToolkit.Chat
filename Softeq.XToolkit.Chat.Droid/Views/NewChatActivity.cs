@@ -13,8 +13,8 @@ using Softeq.XToolkit.Chat.Droid.Controls;
 using Softeq.XToolkit.Chat.Droid.Listeners;
 using Softeq.XToolkit.Chat.Droid.ViewHolders;
 using Softeq.XToolkit.Chat.ViewModels;
-using Softeq.XToolkit.Common;
 using Softeq.XToolkit.Common.Droid.Converters;
+using Softeq.XToolkit.Common.Tasks;
 using Softeq.XToolkit.WhiteLabel.Droid;
 using Softeq.XToolkit.WhiteLabel.Droid.Controls;
 
@@ -120,7 +120,7 @@ namespace Softeq.XToolkit.Chat.Droid.Views
                 },
                 (holder, i, item) =>
                 {
-                    var viewHolder = (FilteredItemViewHolder)holder;
+                    var viewHolder = (FilteredItemViewHolder) holder;
                     viewHolder.Bind(item);
                 });
             _recyclerView.SetAdapter(_recyclerViewAdapter);

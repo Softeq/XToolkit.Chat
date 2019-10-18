@@ -1,28 +1,20 @@
 ﻿// Developed by Softeq Development Corporation
 // http://www.softeq.com
 
-using System;
 using Android.App;
 using Android.OS;
 using Android.Support.V7.Widget;
-using Android.Views;
 using Android.Widget;
-using FFImageLoading;
-using FFImageLoading.Views;
 using Softeq.XToolkit.Bindings;
 using Softeq.XToolkit.Chat.Droid.Adapters;
 using Softeq.XToolkit.Chat.Droid.Controls;
 using Softeq.XToolkit.Chat.Droid.LayoutManagers;
 using Softeq.XToolkit.Chat.Droid.Listeners;
 using Softeq.XToolkit.Chat.ViewModels;
-using Softeq.XToolkit.Common.Command;
+using Softeq.XToolkit.Common.Commands;
 using Softeq.XToolkit.Common.Droid.Converters;
-using Softeq.XToolkit.Common.EventArguments;
-using Softeq.XToolkit.WhiteLabel;
 using Softeq.XToolkit.WhiteLabel.Droid;
 using Softeq.XToolkit.WhiteLabel.Droid.Controls;
-using Softeq.XToolkit.WhiteLabel.Droid.Services;
-using Softeq.XToolkit.WhiteLabel.ImagePicker;
 using Softeq.XToolkit.WhiteLabel.Threading;
 
 namespace Softeq.XToolkit.Chat.Droid.Views

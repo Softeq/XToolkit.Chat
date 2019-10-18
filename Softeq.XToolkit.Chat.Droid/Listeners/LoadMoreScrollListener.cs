@@ -3,7 +3,7 @@
 
 using System;
 using Android.Support.V7.Widget;
-using Softeq.XToolkit.Common;
+using Softeq.XToolkit.Common.Tasks;
 
 namespace Softeq.XToolkit.Chat.Droid.Listeners
 {
@@ -24,7 +24,7 @@ namespace Softeq.XToolkit.Chat.Droid.Listeners
         {
             base.OnScrolled(recyclerView, dx, dy);
 
-            var linearLayoutManager = (LinearLayoutManager)recyclerView.GetLayoutManager();
+            var linearLayoutManager = (LinearLayoutManager) recyclerView.GetLayoutManager();
 
             var totalItemCount = linearLayoutManager.ItemCount;
             var lastVisibleItem = linearLayoutManager.FindLastVisibleItemPosition();

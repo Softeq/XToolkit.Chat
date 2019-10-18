@@ -4,17 +4,17 @@
 using System;
 using Android.Graphics;
 using Android.Graphics.Drawables;
+using Android.Support.V4.Content;
 using Android.Views;
 using Android.Widget;
-using Android.Support.V4.Content;
 using FFImageLoading.Cross;
 using FFImageLoading.Transformations;
 using Softeq.XToolkit.Bindings;
 using Softeq.XToolkit.Chat.Models;
 using Softeq.XToolkit.Chat.ViewModels;
-using Softeq.XToolkit.Common;
-using Softeq.XToolkit.Common.Command;
+using Softeq.XToolkit.Common.Commands;
 using Softeq.XToolkit.Common.Droid.Converters;
+using Softeq.XToolkit.Common.Weak;
 using Softeq.XToolkit.WhiteLabel.Droid.Controls;
 using Softeq.XToolkit.WhiteLabel.Droid.Extensions;
 

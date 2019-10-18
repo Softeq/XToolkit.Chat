@@ -9,11 +9,11 @@ using Android.Views;
 using Android.Widget;
 using FFImageLoading.Views;
 using Softeq.XToolkit.Bindings;
-using Softeq.XToolkit.Chat.ViewModels;
-using Softeq.XToolkit.Common;
-using Softeq.XToolkit.Common.Droid.Converters;
-using Softeq.XToolkit.WhiteLabel.Droid.Services;
 using Softeq.XToolkit.Bindings.Extensions;
+using Softeq.XToolkit.Chat.ViewModels;
+using Softeq.XToolkit.Common.Droid.Converters;
+using Softeq.XToolkit.Common.Weak;
+using Softeq.XToolkit.WhiteLabel.Droid.Services;
 
 namespace Softeq.XToolkit.Chat.Droid.Controls
 {
@@ -83,7 +83,7 @@ namespace Softeq.XToolkit.Chat.Droid.Controls
                 }
                 else
                 {
-                    _imagePreview.SetImageBitmap((Android.Graphics.Bitmap)_viewModelRef.Target.ImageObject);
+                    _imagePreview.SetImageBitmap((Android.Graphics.Bitmap) _viewModelRef.Target.ImageObject);
                     _editImageContainer.Visibility = ViewStates.Visible;
                 }
             }));

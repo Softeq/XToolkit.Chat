@@ -15,21 +15,21 @@ using FFImageLoading.Cross;
 using FFImageLoading.Transformations;
 using Softeq.XToolkit.Bindings;
 using Softeq.XToolkit.Chat.Droid.Adapters;
+using Softeq.XToolkit.Chat.Droid.Controls;
 using Softeq.XToolkit.Chat.Droid.ItemTouchCallbacks;
 using Softeq.XToolkit.Chat.Droid.LayoutManagers;
 using Softeq.XToolkit.Chat.Droid.ViewHolders;
 using Softeq.XToolkit.Chat.ViewModels;
-using Softeq.XToolkit.Common.Command;
+using Softeq.XToolkit.Common.Commands;
+using Softeq.XToolkit.Common.Droid.Converters;
 using Softeq.XToolkit.Common.Droid.Extensions;
 using Softeq.XToolkit.Permissions;
 using Softeq.XToolkit.WhiteLabel;
 using Softeq.XToolkit.WhiteLabel.Droid;
 using Softeq.XToolkit.WhiteLabel.Droid.Controls;
 using Softeq.XToolkit.WhiteLabel.Droid.Extensions;
-using Softeq.XToolkit.WhiteLabel.Threading;
-using Softeq.XToolkit.Common.Droid.Converters;
 using Softeq.XToolkit.WhiteLabel.Droid.Services;
-using Softeq.XToolkit.Chat.Droid.Controls;
+using Softeq.XToolkit.WhiteLabel.Threading;
 
 namespace Softeq.XToolkit.Chat.Droid.Views
 {
