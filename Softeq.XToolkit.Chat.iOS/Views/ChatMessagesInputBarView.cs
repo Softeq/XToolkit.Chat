@@ -5,13 +5,13 @@ using System;
 using CoreGraphics;
 using FFImageLoading;
 using Softeq.XToolkit.Bindings;
-using Softeq.XToolkit.Common.Command;
-using Softeq.XToolkit.Common.EventArguments;
+using Softeq.XToolkit.Common;
+using Softeq.XToolkit.Common.Commands;
 using Softeq.XToolkit.Permissions;
 using Softeq.XToolkit.WhiteLabel;
+using Softeq.XToolkit.WhiteLabel.ImagePicker;
 using Softeq.XToolkit.WhiteLabel.iOS.Controls;
 using Softeq.XToolkit.WhiteLabel.iOS.ImagePicker;
-using Softeq.XToolkit.WhiteLabel.ImagePicker;
 using Softeq.XToolkit.WhiteLabel.Threading;
 using UIKit;
 

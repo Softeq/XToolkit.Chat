@@ -6,9 +6,9 @@ using System.Collections.Generic;
 using System.Linq;
 using Softeq.XToolkit.Chat.Models;
 using Softeq.XToolkit.Chat.Models.Interfaces;
+using Softeq.XToolkit.Common;
 using Softeq.XToolkit.WhiteLabel;
 using Softeq.XToolkit.WhiteLabel.Interfaces;
-using Softeq.XToolkit.WhiteLabel.Mvvm;
 using Softeq.XToolkit.WhiteLabel.Threading;
 
 namespace Softeq.XToolkit.Chat.ViewModels

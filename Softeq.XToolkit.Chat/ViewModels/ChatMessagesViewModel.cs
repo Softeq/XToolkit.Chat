@@ -3,16 +3,16 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Windows.Input;
 using Softeq.XToolkit.Chat.Manager;
-using Softeq.XToolkit.Common.Command;
+using Softeq.XToolkit.Chat.Models;
+using Softeq.XToolkit.Chat.Models.Interfaces;
+using Softeq.XToolkit.Common.Commands;
+using Softeq.XToolkit.WhiteLabel.ImagePicker;
 using Softeq.XToolkit.WhiteLabel.Interfaces;
 using Softeq.XToolkit.WhiteLabel.Mvvm;
 using Softeq.XToolkit.WhiteLabel.Navigation;
-using Softeq.XToolkit.Chat.Models.Interfaces;
-using System.Linq;
-using Softeq.XToolkit.Chat.Models;
-using Softeq.XToolkit.WhiteLabel.ImagePicker;
 
 namespace Softeq.XToolkit.Chat.ViewModels
 {

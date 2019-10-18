@@ -1,7 +1,7 @@
 // Developed by Softeq Development Corporation
 // http://www.softeq.com
 
-﻿using System;
+using System;
 using Android.App;
 using Android.OS;
 using Android.Support.V7.Widget;

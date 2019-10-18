@@ -1,17 +1,16 @@
 // Developed by Softeq Development Corporation
 // http://www.softeq.com
 
-﻿using System.Windows.Input;
-using Softeq.XToolkit.Common.Command;
-using Softeq.XToolkit.Common.EventArguments;
-using Softeq.XToolkit.WhiteLabel.ImagePicker;
-using Softeq.XToolkit.WhiteLabel.Mvvm;
-using Softeq.XToolkit.Chat.Manager;
-using Softeq.XToolkit.WhiteLabel.Threading;
-using Softeq.XToolkit.Chat.Models.Interfaces;
-using System.Threading.Tasks;
-using System.IO;
 using System;
+using System.IO;
+using System.Threading.Tasks;
+using System.Windows.Input;
+using Softeq.XToolkit.Chat.Manager;
+using Softeq.XToolkit.Chat.Models.Interfaces;
+using Softeq.XToolkit.Common;
+using Softeq.XToolkit.Common.Commands;
+using Softeq.XToolkit.WhiteLabel.ImagePicker;
+using Softeq.XToolkit.WhiteLabel.Threading;
 
 namespace Softeq.XToolkit.Chat.ViewModels
 {

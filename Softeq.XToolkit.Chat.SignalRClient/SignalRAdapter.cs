@@ -15,9 +15,9 @@ using Softeq.NetKit.Chat.TransportModels.Models.CommonModels.Request.Message;
 using Softeq.XToolkit.Chat.Models;
 using Softeq.XToolkit.Chat.Models.Enum;
 using Softeq.XToolkit.Chat.Models.Interfaces;
-using Softeq.XToolkit.Common;
 using Softeq.XToolkit.Common.Extensions;
-using Softeq.XToolkit.Common.Interfaces;
+using Softeq.XToolkit.Common.Logger;
+using Softeq.XToolkit.Common.Tasks;
 using ChannelType = Softeq.NetKit.Chat.TransportModels.Enums.ChannelType;
 
 namespace Softeq.XToolkit.Chat.SignalRClient

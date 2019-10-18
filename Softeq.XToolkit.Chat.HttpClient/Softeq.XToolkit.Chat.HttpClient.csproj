@@ -14,6 +14,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\XToolkit\Softeq.XToolkit.RemoteData\Softeq.XToolkit.RemoteData.csproj" />
     <ProjectReference Include="..\Softeq.XToolkit.Chat.Models\Softeq.XToolkit.Chat.Models.csproj" />
+    <ProjectReference Include="..\..\XToolkit.WhiteLabel\Softeq.XToolkit.Common\Softeq.XToolkit.Common.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Compile Remove="Dtos\ChatMessageDto.cs" />

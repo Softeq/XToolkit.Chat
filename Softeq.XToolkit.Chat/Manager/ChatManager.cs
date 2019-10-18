@@ -14,10 +14,11 @@ using Softeq.XToolkit.Chat.Models.Enum;
 using Softeq.XToolkit.Chat.Models.Interfaces;
 using Softeq.XToolkit.Chat.Models.Queries;
 using Softeq.XToolkit.Chat.ViewModels;
-using Softeq.XToolkit.Common;
 using Softeq.XToolkit.Common.Collections;
 using Softeq.XToolkit.Common.Extensions;
 using Softeq.XToolkit.Common.Interfaces;
+using Softeq.XToolkit.Common.Logger;
+using Softeq.XToolkit.Common.Tasks;
 using Softeq.XToolkit.WhiteLabel.Interfaces;
 using Softeq.XToolkit.WhiteLabel.Messenger;
 
@@ -32,7 +33,7 @@ namespace Softeq.XToolkit.Chat.Manager
         private readonly IMessagesCache _messagesCache;
         private readonly IViewModelFactoryService _viewModelFactoryService;
         private readonly IUploadImageService _uploadImageService;
-        private readonly ILocalCache _localCache;
+        private readonly ICache _localCache;
         private readonly ILogger _logger;
 
         private readonly IList<IDisposable> _subscriptions = new List<IDisposable>();
@@ -54,7 +55,7 @@ namespace Softeq.XToolkit.Chat.Manager
             IViewModelFactoryService viewModelFactoryService,
             ILogManager logManager,
             IUploadImageService uploadImageService,
-            ILocalCache localCache)
+            ICache localCache)
         {
             _chatService = chatService;
             _messagesCache = messagesCache;

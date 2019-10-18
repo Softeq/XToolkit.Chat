@@ -10,7 +10,6 @@ using AsyncDisplayKitBindings;
 using CoreAnimation;
 using Foundation;
 using Softeq.XToolkit.Common.Collections;
-using Softeq.XToolkit.Common.EventArguments;
 using UIKit;
 
 namespace Softeq.XToolkit.Chat.iOS.TableSources
@@ -71,7 +70,7 @@ namespace Softeq.XToolkit.Chat.iOS.TableSources
 
         public override nint NumberOfRowsInSection(ASTableNode tableNode, nint section)
         {
-            var index = GetAdjustedIndex(DataSource.Count, (int)section);
+            var index = GetAdjustedIndex(DataSource.Count, (int) section);
             return _dataSource[index].Count;
         }
 

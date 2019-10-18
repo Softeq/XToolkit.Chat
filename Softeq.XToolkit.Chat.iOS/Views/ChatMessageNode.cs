@@ -3,26 +3,26 @@
 
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using AsyncDisplayKitBindings;
 using CoreGraphics;
+using FFImageLoading;
+using FFImageLoading.Work;
 using Foundation;
 using ObjCRuntime;
-using UIKit;
 using Softeq.XToolkit.Bindings;
-using Softeq.XToolkit.Chat.iOS.Extensions;
 using Softeq.XToolkit.Chat.iOS.Controls;
+using Softeq.XToolkit.Chat.iOS.Converters;
+using Softeq.XToolkit.Chat.iOS.Extensions;
 using Softeq.XToolkit.Chat.ViewModels;
-using Softeq.XToolkit.Common;
 using Softeq.XToolkit.Common.iOS.Helpers;
+using Softeq.XToolkit.Common.Weak;
+using Softeq.XToolkit.WhiteLabel;
+using Softeq.XToolkit.WhiteLabel.Interfaces;
 using Softeq.XToolkit.WhiteLabel.iOS.Helpers;
 using Softeq.XToolkit.WhiteLabel.Threading;
 using Softeq.XToolkit.WhiteLabel.ViewModels;
-using FFImageLoading;
-using System.Threading.Tasks;
-using FFImageLoading.Work;
-using Softeq.XToolkit.WhiteLabel;
-using Softeq.XToolkit.WhiteLabel.Interfaces;
-using Softeq.XToolkit.Chat.iOS.Converters;
+using UIKit;
 
 namespace Softeq.XToolkit.Chat.iOS.Views
 {

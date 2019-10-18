@@ -11,9 +11,9 @@ using Softeq.XToolkit.Chat.Exceptions;
 using Softeq.XToolkit.Chat.Models;
 using Softeq.XToolkit.Chat.Models.Interfaces;
 using Softeq.XToolkit.Chat.Models.Queries;
-using Softeq.XToolkit.Common;
 using Softeq.XToolkit.Common.Extensions;
-using Softeq.XToolkit.Common.Interfaces;
+using Softeq.XToolkit.Common.Logger;
+using Softeq.XToolkit.Common.Tasks;
 
 namespace Softeq.XToolkit.Chat
 {

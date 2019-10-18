@@ -1,24 +1,24 @@
 // Developed by Softeq Development Corporation
 // http://www.softeq.com
 
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using Softeq.XToolkit.Chat.Interfaces;
+using Softeq.XToolkit.Chat.Messages;
 using Softeq.XToolkit.Chat.Models;
 using Softeq.XToolkit.Chat.Models.Interfaces;
 using Softeq.XToolkit.Chat.Services;
 using Softeq.XToolkit.Chat.Strategies.Search;
-using Softeq.XToolkit.Common.Command;
+using Softeq.XToolkit.Common.Commands;
 using Softeq.XToolkit.Common.Extensions;
-using Softeq.XToolkit.Common.Models;
+using Softeq.XToolkit.Common.Logger;
+using Softeq.XToolkit.WhiteLabel.Messenger;
+using Softeq.XToolkit.WhiteLabel.Model;
 using Softeq.XToolkit.WhiteLabel.Mvvm;
 using Softeq.XToolkit.WhiteLabel.Navigation;
 using Softeq.XToolkit.WhiteLabel.Threading;
-using Softeq.XToolkit.Chat.Interfaces;
-using Softeq.XToolkit.Common.Interfaces;
-using Softeq.XToolkit.WhiteLabel.Messenger;
-using Softeq.XToolkit.Chat.Messages;
 
 namespace Softeq.XToolkit.Chat.ViewModels
 {
@@ -54,7 +54,7 @@ namespace Softeq.XToolkit.Chat.ViewModels
                 SearchLoader,
                 SearchFilter,
                 DefaultSearchResultsPageSize);
-            SearchCommand = new AsyncCommand(DoSearch); 
+            SearchCommand = new AsyncCommand(DoSearch);
             CancelCommand = new RelayCommand(GoBack);
             CreateGroupChatCommand = new RelayCommand(() => _pageNavigationService.NavigateToViewModel<CreateChatViewModel>());
             CreatePersonalChatCommand = new RelayCommand<ChatUserViewModel>(CreatePersonalChat);

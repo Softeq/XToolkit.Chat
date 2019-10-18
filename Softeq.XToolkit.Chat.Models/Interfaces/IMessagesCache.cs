@@ -5,7 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Softeq.XToolkit.Chat.Models.Queries;
-using Softeq.XToolkit.Common;
+using Softeq.XToolkit.Common.Tasks;
 
 namespace Softeq.XToolkit.Chat.Models.Interfaces
 {

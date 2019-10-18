@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Softeq.XToolkit.Chat.Models.Enum;
 using Softeq.XToolkit.Chat.Models.Queries;
-using Softeq.XToolkit.Common.Models;
+using Softeq.XToolkit.WhiteLabel.Model;
 
 namespace Softeq.XToolkit.Chat.Models.Interfaces
 {

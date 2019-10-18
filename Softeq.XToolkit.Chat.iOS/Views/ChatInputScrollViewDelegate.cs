@@ -1,9 +1,9 @@
 // Developed by Softeq Development Corporation
 // http://www.softeq.com
 
-﻿using System;
+using System;
 using Foundation;
-using Softeq.XToolkit.Common;
+using Softeq.XToolkit.Common.Weak;
 using UIKit;
 
 namespace Softeq.XToolkit.Chat.iOS.Views
@@ -35,9 +35,9 @@ namespace Softeq.XToolkit.Chat.iOS.Views
 
         private void KeyboardDelegate_KeyboardHeightChanged(nfloat height)
         {
-            if(_scrollView.Target == null) { return; }
+            if (_scrollView.Target == null) { return; }
 
-            if(_needSkip && _scrollView.Target?.ContentOffset.Y > 0)
+            if (_needSkip && _scrollView.Target?.ContentOffset.Y > 0)
             {
                 _needSkip = false;
                 return;

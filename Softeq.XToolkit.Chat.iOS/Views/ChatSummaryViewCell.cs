@@ -2,15 +2,15 @@
 // http://www.softeq.com
 
 using System;
-using Foundation;
-using UIKit;
-using Softeq.XToolkit.Common;
 using System.Collections.Generic;
+using Foundation;
 using Softeq.XToolkit.Bindings;
-using Softeq.XToolkit.WhiteLabel.iOS.Extensions;
-using Softeq.XToolkit.Common.Extensions;
-using Softeq.XToolkit.WhiteLabel.iOS.Helpers;
 using Softeq.XToolkit.Chat.ViewModels;
+using Softeq.XToolkit.Common.Extensions;
+using Softeq.XToolkit.Common.Weak;
+using Softeq.XToolkit.WhiteLabel.iOS.Extensions;
+using Softeq.XToolkit.WhiteLabel.iOS.Helpers;
+using UIKit;
 
 namespace Softeq.XToolkit.Chat.iOS.Views
 {

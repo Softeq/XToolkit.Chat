@@ -4,7 +4,7 @@
 using System;
 using CoreGraphics;
 using Foundation;
-using Softeq.XToolkit.Common;
+using Softeq.XToolkit.Common.Weak;
 using Softeq.XToolkit.WhiteLabel.Threading;
 using UIKit;
 

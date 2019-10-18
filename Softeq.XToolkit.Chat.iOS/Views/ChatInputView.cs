@@ -1,24 +1,11 @@
 // Developed by Softeq Development Corporation
 // http://www.softeq.com
 
+using System;
 using CoreGraphics;
 using Foundation;
-using Softeq.XToolkit.Common.Command;
-using Softeq.XToolkit.Permissions;
-using Softeq.XToolkit.WhiteLabel;
 using Softeq.XToolkit.WhiteLabel.iOS.Controls;
-using Softeq.XToolkit.WhiteLabel.iOS.ImagePicker;
-using Softeq.XToolkit.Bindings;
-using System;
 using UIKit;
-using FFImageLoading;
-using Softeq.XToolkit.Common.EventArguments;
-using Softeq.XToolkit.WhiteLabel.ImagePicker;
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
-using Softeq.XToolkit.Common;
-using System.Threading.Tasks;
-using System.IO;
 
 namespace Softeq.XToolkit.Chat.iOS.Views
 {
@@ -27,13 +14,13 @@ namespace Softeq.XToolkit.Chat.iOS.Views
         [Register("CustomTextView")]
         public class CustomTextView : UITextView
         {
-            public CustomTextView(IntPtr handle) : base(handle) 
+            public CustomTextView(IntPtr handle) : base(handle)
             {
                 Initialize();
             }
 
-            public override string Text 
-            { 
+            public override string Text
+            {
                 get => base.Text;
                 set
                 {
@@ -44,7 +31,7 @@ namespace Softeq.XToolkit.Chat.iOS.Views
 
             public event Action TextChanged;
 
-            private void Initialize ()
+            private void Initialize()
             {
                 Changed += (sender, e) => TextChanged?.Invoke();
             }
@@ -60,7 +47,7 @@ namespace Softeq.XToolkit.Chat.iOS.Views
 
         public nfloat TopMargin => 8;
 
-        public nfloat BottomMargin => KeyboardDelegate.KeyBoardOpened ? 
+        public nfloat BottomMargin => KeyboardDelegate.KeyBoardOpened ?
             8 : 8 + UIApplication.SharedApplication.KeyWindow.SafeAreaInsets.Bottom;
 
         public ChatInputKeyboardDelegate KeyboardDelegate { get; private set; }
@@ -71,9 +58,9 @@ namespace Softeq.XToolkit.Chat.iOS.Views
         {
             get
             {
-                var editContainerHeight = EditContainer.Hidden ? 
+                var editContainerHeight = EditContainer.Hidden ?
                     0 : EditContainer.SizeThatFits(new CGSize(EditContainer.Frame.Width, nfloat.MaxValue)).Height;
-                var attachmentHeight = AttachmentContainer.Hidden ? 
+                var attachmentHeight = AttachmentContainer.Hidden ?
                     0 : AttachmentContainer.SizeThatFits(new CGSize(AttachmentContainer.Frame.Width, nfloat.MaxValue)).Height;
                 var textHeight = TextView.SizeThatFits(new CGSize(EditContainer.Frame.Width, nfloat.MaxValue)).Height;
                 return new CGSize(Frame.Width, TopMargin + editContainerHeight + attachmentHeight + textHeight + BottomMargin);
@@ -99,9 +86,9 @@ namespace Softeq.XToolkit.Chat.iOS.Views
         public override void MovedToSuperview()
         {
             base.MovedToSuperview();
-            if(Superview != null)
+            if (Superview != null)
             {
-                NSLayoutConstraint.ActivateConstraints(new []
+                NSLayoutConstraint.ActivateConstraints(new[]
                 {
                     LeftAnchor.ConstraintEqualTo(Superview.LeftAnchor),
                     RightAnchor.ConstraintEqualTo(Superview.RightAnchor),
@@ -113,7 +100,7 @@ namespace Softeq.XToolkit.Chat.iOS.Views
 
         protected override void Dispose(bool disposing)
         {
-            if(disposing)
+            if (disposing)
             {
                 TextView.TextChanged -= OnTextViewChanged;
                 KeyboardDelegate.KeyboardHeightChanged -= Delegate_KeyboardFrameHeight;

@@ -6,18 +6,18 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
-using Softeq.XToolkit.Common.Collections;
-using Softeq.XToolkit.Common.Command;
-using Softeq.XToolkit.WhiteLabel;
-using Softeq.XToolkit.WhiteLabel.Messenger;
-using Softeq.XToolkit.WhiteLabel.Mvvm;
-using Softeq.XToolkit.WhiteLabel.Navigation;
-using Softeq.XToolkit.WhiteLabel.Threading;
 using Softeq.XToolkit.Chat.Interfaces;
 using Softeq.XToolkit.Chat.Messages;
 using Softeq.XToolkit.Chat.Models.Enum;
 using Softeq.XToolkit.Chat.Models.Interfaces;
 using Softeq.XToolkit.Chat.Strategies.Search;
+using Softeq.XToolkit.Common.Collections;
+using Softeq.XToolkit.Common.Commands;
+using Softeq.XToolkit.WhiteLabel;
+using Softeq.XToolkit.WhiteLabel.Messenger;
+using Softeq.XToolkit.WhiteLabel.Mvvm;
+using Softeq.XToolkit.WhiteLabel.Navigation;
+using Softeq.XToolkit.WhiteLabel.Threading;
 
 namespace Softeq.XToolkit.Chat.ViewModels
 {

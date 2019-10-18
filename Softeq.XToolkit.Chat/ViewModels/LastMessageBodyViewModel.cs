@@ -1,9 +1,9 @@
 // Developed by Softeq Development Corporation
 // http://www.softeq.com
 
-﻿using Softeq.XToolkit.Chat.Models;
+using Softeq.XToolkit.Chat.Models;
 using Softeq.XToolkit.Chat.Models.Interfaces;
-using Softeq.XToolkit.WhiteLabel.Mvvm;
+using Softeq.XToolkit.Common;
 using Softeq.XToolkit.WhiteLabel.Threading;
 
 namespace Softeq.XToolkit.Chat.ViewModels

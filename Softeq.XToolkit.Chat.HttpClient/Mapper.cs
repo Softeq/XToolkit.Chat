@@ -4,13 +4,13 @@
 using System;
 using System.ComponentModel;
 using System.Linq;
-using Softeq.XToolkit.Common.Models;
-using Softeq.XToolkit.Chat.Models;
 using Softeq.NetKit.Chat.TransportModels.Enums;
+using Softeq.NetKit.Chat.TransportModels.Models.CommonModels.Response;
 using Softeq.NetKit.Chat.TransportModels.Models.CommonModels.Response.Channel;
 using Softeq.NetKit.Chat.TransportModels.Models.CommonModels.Response.Member;
 using Softeq.NetKit.Chat.TransportModels.Models.CommonModels.Response.Message;
-using Softeq.NetKit.Chat.TransportModels.Models.CommonModels.Response;
+using Softeq.XToolkit.Chat.Models;
+using Softeq.XToolkit.WhiteLabel.Model;
 using MessageType = Softeq.NetKit.Chat.TransportModels.Enums.MessageType;
 
 namespace Softeq.XToolkit.Chat.HttpClient

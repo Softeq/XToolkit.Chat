@@ -3,16 +3,16 @@
 
 using System;
 using System.Collections.Generic;
+using CoreGraphics;
 using Foundation;
 using Softeq.XToolkit.Bindings;
 using Softeq.XToolkit.Bindings.iOS;
 using Softeq.XToolkit.Chat.iOS.Views;
 using Softeq.XToolkit.Chat.ViewModels;
-using Softeq.XToolkit.Common;
+using Softeq.XToolkit.Common.Weak;
 using Softeq.XToolkit.WhiteLabel.iOS;
-using UIKit;
 using Softeq.XToolkit.WhiteLabel.iOS.Extensions;
-using CoreGraphics;
+using UIKit;
 
 namespace Softeq.XToolkit.Chat.iOS.ViewControllers
 {

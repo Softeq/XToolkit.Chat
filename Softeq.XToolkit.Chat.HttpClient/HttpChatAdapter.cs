@@ -18,9 +18,10 @@ using Softeq.XToolkit.Chat.Models;
 using Softeq.XToolkit.Chat.Models.Interfaces;
 using Softeq.XToolkit.Chat.Models.Queries;
 using Softeq.XToolkit.Common.Interfaces;
-using Softeq.XToolkit.Common.Models;
+using Softeq.XToolkit.Common.Logger;
 using Softeq.XToolkit.RemoteData;
 using Softeq.XToolkit.RemoteData.HttpClient;
+using Softeq.XToolkit.WhiteLabel.Model;
 
 namespace Softeq.XToolkit.Chat.HttpClient
 {

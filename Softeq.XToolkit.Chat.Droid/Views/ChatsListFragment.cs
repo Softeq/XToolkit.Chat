@@ -85,7 +85,7 @@ namespace Softeq.XToolkit.Chat.Droid.Views
 
         protected override void Dispose(bool disposing)
         {
-            if(disposing)
+            if (disposing)
             {
                 _chatsRecyclerView.GetAdapter().Dispose();
             }
