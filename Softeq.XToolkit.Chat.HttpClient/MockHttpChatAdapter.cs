@@ -3,7 +3,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Reactive.Subjects;
 using System.Threading.Tasks;
 using Softeq.XToolkit.Chat.Models;
 using Softeq.XToolkit.Chat.Models.Interfaces;
@@ -23,6 +22,7 @@ namespace Softeq.XToolkit.Chat.HttpClient
         private const string Img4 = "http://www.camotionllc.com/images/BRP15_Horizontal_Bar_15_inch.jpg";
         private const string Img5 = "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e6/Noto_Emoji_KitKat_263a.svg/200px-Noto_Emoji_KitKat_263a.svg.png";
 
+        /*
         private readonly Subject<ChatMessageModel> _messageReceived = new Subject<ChatMessageModel>();
         private readonly Subject<string> _messageDeleted = new Subject<string>();
         private readonly Subject<string> _messageRead = new Subject<string>();
@@ -81,9 +81,12 @@ namespace Softeq.XToolkit.Chat.HttpClient
                 }
             };
         }
+        */
 
         public async Task<IList<ChatSummaryModel>> GetChannelsAsync()
         {
+            await Task.Yield();
+
             return new List<ChatSummaryModel>
             {
                 new ChatSummaryModel
@@ -132,9 +135,9 @@ namespace Softeq.XToolkit.Chat.HttpClient
             };
         }
 
-        public async Task MarkMessageAsReadAsync(string chatId, string messageId)
+        public Task MarkMessageAsReadAsync(string chatId, string messageId)
         {
-
+            return Task.CompletedTask;
         }
 
         public Task<PagingModel<ChatUserModel>> GetContactsAsync(string nameFilter, int pageSize, int pageNumber)
@@ -149,6 +152,8 @@ namespace Softeq.XToolkit.Chat.HttpClient
 
         public async Task<IList<ChatMessageModel>> GetAllMessagesAsync(string chatId)
         {
+            await Task.Yield();
+
             if (chatId == "1")
             {
                 return new List<ChatMessageModel>
@@ -243,6 +248,7 @@ namespace Softeq.XToolkit.Chat.HttpClient
             return new List<ChatMessageModel>();
         }
 
+        /*
         public Task<ChatMessageModel> SendMessageAsync(string chatId, string messageBody)
         {
             return Task.FromResult(new ChatMessageModel { Body = messageBody, Id = chatId, DateTime = DateTimeOffset.Now });
@@ -288,6 +294,7 @@ namespace Softeq.XToolkit.Chat.HttpClient
             await Task.Delay(delay);
             _messageEdited.OnNext(("2", "Test msg2 edited"));
         }
+        */
 
         public Task<ChatUserModel> GetUserSummaryAsync()
         {

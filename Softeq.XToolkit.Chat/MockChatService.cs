@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Threading.Tasks;
 using Softeq.XToolkit.Chat.Models;
 using Softeq.XToolkit.Chat.Models.Interfaces;
@@ -30,6 +31,7 @@ namespace Softeq.XToolkit.Chat
         /// </summary>
         public override async Task<IList<ChatMessageModel>> GetOlderMessagesAsync(MessagesQuery query)
         {
+            await Task.Yield();
             //await Task.Delay(1000);
             int messagesCount = 100;
             var testMessages = new List<ChatMessageModel>();

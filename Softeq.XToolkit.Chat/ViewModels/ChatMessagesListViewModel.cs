@@ -39,7 +39,7 @@ namespace Softeq.XToolkit.Chat.ViewModels
             _chatManager = chatManager;
             _messageAdded = messageAdded;
 
-            LoadOlderMessagesCommand = new RelayCommand(() => LoadOlderMessagesAsync().SafeTaskWrapper());
+            LoadOlderMessagesCommand = new RelayCommand(() => LoadOlderMessagesAsync().FireAndForget());
         }
 
         public ICommand LoadOlderMessagesCommand { get; }
@@ -61,12 +61,12 @@ namespace Softeq.XToolkit.Chat.ViewModels
 
             if (!_areLatestMessagesLoaded)
             {
-                LoadInitialMessagesAsync().SafeTaskWrapper();
+                LoadInitialMessagesAsync().FireAndForget();
                 _areLatestMessagesLoaded = true;
             }
             else
             {
-                RefreshMessagesAsync().SafeTaskWrapper();
+                RefreshMessagesAsync().FireAndForget();
             }
 
             Messages.ItemsChanged += OnMessagesAddedToCollection;

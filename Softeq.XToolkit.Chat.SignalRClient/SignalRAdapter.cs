@@ -55,7 +55,7 @@ namespace Softeq.XToolkit.Chat.SignalRClient
             SubscribeToEvents();
 
             // TODO YP: need investigate auto-connect (when init before login)
-            ConnectIfNotConnectedAsync().SafeTaskWrapper();
+            ConnectIfNotConnectedAsync().FireAndForget();
         }
 
         public IObservable<ChatMessageModel> MessageReceived => _messageReceived;
@@ -192,13 +192,13 @@ namespace Softeq.XToolkit.Chat.SignalRClient
 
         public void ForceReconnect()
         {
-            ConnectIfNotConnectedAsync(true).SafeTaskWrapper();
+            ConnectIfNotConnectedAsync(true).FireAndForget();
             _canReconnectAutomatically = true;
         }
 
         public void ForceDisconnect()
         {
-            _signalRClient.DisconnectAsync().SafeTaskWrapper();
+            _signalRClient.DisconnectAsync().FireAndForget();
             _isConnected = false;
             _canReconnectAutomatically = false;
         }
@@ -374,7 +374,7 @@ namespace Softeq.XToolkit.Chat.SignalRClient
             _isConnected = false;
             if (_canReconnectAutomatically)
             {
-                ConnectIfNotConnectedAsync().SafeTaskWrapper();
+                ConnectIfNotConnectedAsync().FireAndForget();
             }
         }
 
