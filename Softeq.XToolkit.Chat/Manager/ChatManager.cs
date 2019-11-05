@@ -123,7 +123,7 @@ namespace Softeq.XToolkit.Chat.Manager
             switch (connectionStatus)
             {
                 case SocketConnectionStatus.Connected:
-                    UpdateCacheAsync().SafeTaskWrapper();
+                    UpdateCacheAsync().FireAndForget();
                     break;
                 case SocketConnectionStatus.Connecting:
                     ConnectionStatus = ConnectionStatus.Connecting;

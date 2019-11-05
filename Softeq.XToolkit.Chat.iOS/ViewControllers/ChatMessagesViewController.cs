@@ -166,7 +166,7 @@ namespace Softeq.XToolkit.Chat.iOS.ViewControllers
 
             InitTableViewDelegate();
 
-            InitTableViewAsync().SafeTaskWrapper();
+            InitTableViewAsync().FireAndForget();
 
             _scrollToBottomConstraint = ScrollToBottomButton.BottomAnchor.ConstraintEqualTo(Table.BottomAnchor);
             _scrollToBottomConstraint.Constant = -16;

@@ -41,8 +41,8 @@ namespace Softeq.XToolkit.Chat.ViewModels
             IsMuted = chatModel.IsMuted;
 
             StartEditingCommand = new RelayCommand(StartEditing);
-            ChangeMuteNotificationsCommand = new RelayCommand(() => ChangeMuteNotificationsAsync().SafeTaskWrapper());
-            SaveCommand = new RelayCommand<Func<(Task<Stream>, string)>>(x => SaveAsync(x).SafeTaskWrapper());
+            ChangeMuteNotificationsCommand = new RelayCommand(() => ChangeMuteNotificationsAsync().FireAndForget());
+            SaveCommand = new RelayCommand<Func<(Task<Stream>, string)>>(x => SaveAsync(x).FireAndForget());
         }
 
         public string ChatName

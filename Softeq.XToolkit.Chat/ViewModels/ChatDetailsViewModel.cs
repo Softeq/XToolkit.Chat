@@ -85,14 +85,14 @@ namespace Softeq.XToolkit.Chat.ViewModels
 
             AddMembersCommand = new AsyncCommand(AddMembers);
             BackCommand = new RelayCommand(_pageNavigationService.GoBack, () => _pageNavigationService.CanGoBack);
-            RemoveMemberCommand = new RelayCommand<ChatUserViewModel>(x => RemoveMemberAsync(x).SafeTaskWrapper());
+            RemoveMemberCommand = new RelayCommand<ChatUserViewModel>(x => RemoveMemberAsync(x).FireAndForget());
         }
 
         public override void OnAppearing()
         {
             base.OnAppearing();
 
-            LoadDataAsync().SafeTaskWrapper();
+            LoadDataAsync().FireAndForget();
         }
 
         private async Task LoadDataAsync()

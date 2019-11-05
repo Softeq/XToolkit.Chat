@@ -60,10 +60,10 @@ namespace Softeq.XToolkit.Chat.Manager
         {
             if (ChatsCollection.Count == 0)
             {
-                UpdateChatsListWithLoader(_localCache.Get<IList<ChatSummaryModel>>(ChatsCacheKey)).SafeTaskWrapper();
+                UpdateChatsListWithLoader(_localCache.Get<IList<ChatSummaryModel>>(ChatsCacheKey)).FireAndForget();
             }
 
-            UpdateChatsListFromNetworkAsync().SafeTaskWrapper();
+            UpdateChatsListFromNetworkAsync().FireAndForget();
         }
 
         public async Task<bool> CreateChatAsync(string chatName, IList<string> participantsIds, string imagePath)
@@ -178,7 +178,7 @@ namespace Softeq.XToolkit.Chat.Manager
                 }
             });
 
-            _messagesCache.RemoveMessagesAsync(chatId).SafeTaskWrapper();
+            _messagesCache.RemoveMessagesAsync(chatId).FireAndForget();
         }
 
         private void ModifyChatsSafely(Action modifyAction)
